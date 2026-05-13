@@ -21,16 +21,66 @@ const BODY_TYPES = [
   { id: 'full_body', name: 'Cuerpo Completo', desc: 'Personaje de cuerpo entero', price: 25, original: null },
 ];
 
-const BACKGROUNDS = [
-  { id: 'bg-1', name: 'Escena del show' },
-  { id: 'bg-2', name: 'Ciudad' },
-  { id: 'bg-3', name: 'Naturaleza' },
-  { id: 'bg-4', name: 'Espacio' },
-  { id: 'bg-5', name: 'Casa' },
-  { id: 'bg-6', name: 'Nubes' },
-  { id: 'bg-7', name: 'Gradiente' },
-  { id: 'bg-8', name: 'Sin fondo' },
-];
+const BACKGROUNDS_BY_STYLE: Record<string, { id: string; name: string }[]> = {
+  'rick-morty': [
+    { id: 'rm-1', name: 'Garaje de Rick' },
+    { id: 'rm-2', name: 'Árboles Mega' },
+    { id: 'rm-3', name: 'Portal Dimensional' },
+    { id: 'rm-4', name: 'La Ciudadela' },
+    { id: 'rm-5', name: 'Sala de Estar' },
+    { id: 'rm-6', name: 'Planeta Purga' },
+    { id: 'rm-7', name: 'Anatomía Park' },
+    { id: 'rm-8', name: 'Gazorpazorp' },
+    { id: 'rm-9', name: 'Boda Espacial' },
+    { id: 'rm-10', name: 'Show Me What You Got' },
+    { id: 'none', name: 'Sin fondo' },
+  ],
+  'gravity-falls': [
+    { id: 'gf-1', name: 'Cabaña Misterio' },
+    { id: 'gf-2', name: 'Ático Dipper/Mabel' },
+    { id: 'gf-3', name: 'Bosque Profundo' },
+    { id: 'gf-4', name: 'Laboratorio Secreto' },
+    { id: 'gf-5', name: 'Lago del Monstruo' },
+    { id: 'gf-6', name: 'Centro del Pueblo' },
+    { id: 'gf-7', name: 'Tienda Dusk 2 Dawn' },
+    { id: 'gf-8', name: 'Raroarmagedón' },
+    { id: 'gf-9', name: 'Cueva de Cristales' },
+    { id: 'gf-10', name: 'Restaurante Linda' },
+    { id: 'none', name: 'Sin fondo' },
+  ],
+  'simpsons': [
+    { id: 'sp-1', name: 'Sofá Clásico' },
+    { id: 'sp-2', name: 'Casa Simpsons' },
+    { id: 'sp-3', name: 'Taberna de Moe' },
+    { id: 'sp-4', name: 'Escuela Primaria' },
+    { id: 'sp-5', name: 'Kwik-E-Mart' },
+    { id: 'sp-6', name: 'Planta Nuclear' },
+    { id: 'sp-7', name: 'Plaza Estatua' },
+    { id: 'sp-8', name: 'Tienda de Cómics' },
+    { id: 'sp-9', name: 'El Acantilado' },
+    { id: 'sp-10', name: 'Cielo Intro' },
+    { id: 'none', name: 'Sin fondo' },
+  ],
+  'fairly-odd': [
+    { id: 'fo-1', name: 'Cuarto de Timmy' },
+    { id: 'fo-2', name: 'Mundo Mágico' },
+    { id: 'fo-3', name: 'Escuela Dimmsdale' },
+    { id: 'fo-4', name: 'Parque Central' },
+    { id: 'fo-5', name: 'Castillo Pecera' },
+    { id: 'fo-6', name: 'Tribunal Mágico' },
+    { id: 'fo-7', name: 'Castillo de Vicky' },
+    { id: 'fo-8', name: 'Pista de Carreras' },
+    { id: 'fo-9', name: 'Mansión Trixie' },
+    { id: 'fo-10', name: 'Dimmadome' },
+    { id: 'none', name: 'Sin fondo' },
+  ],
+  'negasva': [
+    { id: 'none', name: 'Sin fondo' },
+  ],
+  'custom': [
+    { id: 'none', name: 'Sin fondo' },
+  ],
+};
 
 const ROLES = ['Yo', 'Pareja', 'Hijo/a', 'Padre/Madre', 'Amigo/a', 'Mascota', 'Otro'];
 
@@ -70,7 +120,7 @@ export default function StudioPage() {
 
   const totalPrice = () => {
     const perPerson = selected.bodyType === 'full_body' ? 25 : 15;
-    const bgCost = selected.background && selected.background !== 'bg-8' ? 15 : 0;
+    const bgCost = selected.background && selected.background !== 'none' ? 15 : 0;
     return selected.people.length * perPerson + bgCost;
   };
 
@@ -154,7 +204,7 @@ export default function StudioPage() {
               {STYLES.map((s) => (
                 <button
                   key={s.id}
-                  onClick={() => setSelected({ ...selected, style: s.id })}
+                  onClick={() => setSelected({ ...selected, style: s.id, background: '' })}
                   className={`rounded-2xl border-2 p-8 text-center transition-all focus:outline-none ${
                     selected.style === s.id
                       ? 'border-primary bg-primary-lighter ring-2 ring-primary shadow-lg'
@@ -298,7 +348,7 @@ export default function StudioPage() {
               <p className="text-lg text-secondary-lighter">Selecciona el escenario para tu retrato</p>
             </div>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-              {BACKGROUNDS.map((bg) => (
+              {(BACKGROUNDS_BY_STYLE[selected.style] ?? []).map((bg) => (
                 <button
                   key={bg.id}
                   onClick={() => setSelected({ ...selected, background: bg.id })}
@@ -312,7 +362,7 @@ export default function StudioPage() {
                     <span className="block text-primary text-xs font-bold mb-1">•</span>
                   )}
                   <p className="text-sm font-bold text-secondary">{bg.name}</p>
-                  {bg.id !== 'bg-8' && <p className="text-xs text-primary mt-1 font-bold">+$15</p>}
+                  {bg.id !== 'none' && <p className="text-xs text-primary mt-1 font-bold">+$15</p>}
                 </button>
               ))}
             </div>
@@ -384,10 +434,10 @@ export default function StudioPage() {
                     <span className="text-secondary-lighter">Personas:</span>
                     <span className="font-bold">{selected.people.map(p => p.name).join(', ')}</span>
                   </div>
-                  {selected.background && selected.background !== 'bg-8' && (
+                  {selected.background && selected.background !== 'none' && (
                     <div className="flex justify-between">
                       <span className="text-secondary-lighter">Fondo:</span>
-                      <span className="font-bold">{BACKGROUNDS.find(bg => bg.id === selected.background)?.name} (+$15)</span>
+                      <span className="font-bold">{(BACKGROUNDS_BY_STYLE[selected.style] ?? []).find(bg => bg.id === selected.background)?.name} (+$15)</span>
                     </div>
                   )}
                   <div className="flex justify-between border-t-2 border-primary pt-4 mt-4 font-black text-xl">
