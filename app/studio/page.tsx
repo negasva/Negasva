@@ -21,7 +21,7 @@ const BODY_TYPES = [
   { id: 'full_body', name: 'Cuerpo Completo', desc: 'Personaje de cuerpo entero', price: 25, original: null },
 ];
 
-const BACKGROUNDS_BY_STYLE: Record<string, { id: string; name: string }[]> = {
+const BACKGROUNDS_BY_STYLE: Record<string, { id: string; name: string; price?: number }[]> = {
   'rick-morty': [
     { id: 'rm-1', name: 'Garaje de Rick' },
     { id: 'rm-2', name: 'Árboles Mega' },
@@ -29,10 +29,8 @@ const BACKGROUNDS_BY_STYLE: Record<string, { id: string; name: string }[]> = {
     { id: 'rm-4', name: 'La Ciudadela' },
     { id: 'rm-5', name: 'Sala de Estar' },
     { id: 'rm-6', name: 'Planeta Purga' },
-    { id: 'rm-7', name: 'Anatomía Park' },
-    { id: 'rm-8', name: 'Gazorpazorp' },
-    { id: 'rm-9', name: 'Boda Espacial' },
     { id: 'rm-10', name: 'Show Me What You Got' },
+    { id: 'custom-bg', name: 'Fondo Personalizado', price: 25 },
     { id: 'none', name: 'Sin fondo' },
   ],
   'gravity-falls': [
@@ -46,6 +44,7 @@ const BACKGROUNDS_BY_STYLE: Record<string, { id: string; name: string }[]> = {
     { id: 'gf-8', name: 'Raroarmagedón' },
     { id: 'gf-9', name: 'Cueva de Cristales' },
     { id: 'gf-10', name: 'Restaurante Linda' },
+    { id: 'custom-bg', name: 'Fondo Personalizado', price: 25 },
     { id: 'none', name: 'Sin fondo' },
   ],
   'simpsons': [
@@ -59,6 +58,7 @@ const BACKGROUNDS_BY_STYLE: Record<string, { id: string; name: string }[]> = {
     { id: 'sp-8', name: 'Tienda de Cómics' },
     { id: 'sp-9', name: 'El Acantilado' },
     { id: 'sp-10', name: 'Cielo Intro' },
+    { id: 'custom-bg', name: 'Fondo Personalizado', price: 25 },
     { id: 'none', name: 'Sin fondo' },
   ],
   'fairly-odd': [
@@ -72,12 +72,15 @@ const BACKGROUNDS_BY_STYLE: Record<string, { id: string; name: string }[]> = {
     { id: 'fo-8', name: 'Pista de Carreras' },
     { id: 'fo-9', name: 'Mansión Trixie' },
     { id: 'fo-10', name: 'Dimmadome' },
+    { id: 'custom-bg', name: 'Fondo Personalizado', price: 25 },
     { id: 'none', name: 'Sin fondo' },
   ],
   'negasva': [
+    { id: 'custom-bg', name: 'Fondo Personalizado', price: 25 },
     { id: 'none', name: 'Sin fondo' },
   ],
   'custom': [
+    { id: 'custom-bg', name: 'Fondo Personalizado', price: 25 },
     { id: 'none', name: 'Sin fondo' },
   ],
 };
@@ -120,7 +123,7 @@ export default function StudioPage() {
 
   const totalPrice = () => {
     const perPerson = selected.bodyType === 'full_body' ? 25 : 15;
-    const bgCost = selected.background && selected.background !== 'none' ? 15 : 0;
+    const bgCost = selected.background === 'custom-bg' ? 25 : selected.background && selected.background !== 'none' ? 15 : 0;
     return selected.people.length * perPerson + bgCost;
   };
 
@@ -362,7 +365,7 @@ export default function StudioPage() {
                     <span className="block text-primary text-xs font-bold mb-1">•</span>
                   )}
                   <p className="text-sm font-bold text-secondary">{bg.name}</p>
-                  {bg.id !== 'none' && <p className="text-xs text-primary mt-1 font-bold">+$15</p>}
+                  {bg.id !== 'none' && <p className="text-xs text-primary mt-1 font-bold">+${bg.price ?? 15}</p>}
                 </button>
               ))}
             </div>
@@ -437,7 +440,7 @@ export default function StudioPage() {
                   {selected.background && selected.background !== 'none' && (
                     <div className="flex justify-between">
                       <span className="text-secondary-lighter">Fondo:</span>
-                      <span className="font-bold">{(BACKGROUNDS_BY_STYLE[selected.style] ?? []).find(bg => bg.id === selected.background)?.name} (+$15)</span>
+                      <span className="font-bold">{(BACKGROUNDS_BY_STYLE[selected.style] ?? []).find(bg => bg.id === selected.background)?.name} (+${selected.background === 'custom-bg' ? 25 : 15})</span>
                     </div>
                   )}
                   <div className="flex justify-between border-t-2 border-primary pt-4 mt-4 font-black text-xl">
