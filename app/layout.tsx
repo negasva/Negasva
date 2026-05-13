@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Montserrat } from "next/font/google";
 import "./globals.css";
+import { LanguageProvider } from "@/lib/i18n/LanguageContext";
 
 const montserrat = Montserrat({
   subsets: ["latin"],
@@ -40,7 +41,7 @@ export default function RootLayout({
         )}
       </head>
       <body className={`${montserrat.className} min-h-screen flex flex-col bg-white`}>
-        {children}
+        <LanguageProvider>{children}</LanguageProvider>
       </body>
     </html>
   );
