@@ -1,0 +1,60 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: white;
+  color: #1A1A1A;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+@layer components {
+  .font-black {
+    @apply tracking-tighter;
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center gap-2 rounded-lg bg-primary px-8 py-4 font-bold text-white hover:bg-primary-dark transition-all hover:shadow-lg;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center gap-2 rounded-lg border-2 border-secondary px-8 py-4 font-bold text-secondary hover:bg-secondary hover:text-white transition-colors;
+  }
+
+  .card-feature {
+    @apply p-8 bg-gradient-to-br from-primary-lighter to-white rounded-2xl border-2 border-primary-lighter hover:border-primary hover:shadow-xl transition-all;
+  }
+
+  .text-gradient {
+    @apply bg-gradient-to-r from-primary to-primary-dark bg-clip-text text-transparent;
+  }
+}
+
+/* Smooth animations */
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-20px); }
+}
+
+@keyframes pulse-scale {
+  0%, 100% { transform: scale(1); box-shadow: 0 4px 20px rgba(255, 158, 197, 0.3); }
+  50% { transform: scale(1.02); box-shadow: 0 8px 30px rgba(255, 158, 197, 0.5); }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+.animate-pulse-scale {
+  animation: pulse-scale 2s ease-in-out infinite;
+}
+
+/* Improve link colors */
+a {
+  @apply transition-colors;
+}
