@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { ChevronRight, Star, Zap, Heart, Package, Share2 } from 'lucide-react';
+import { ChevronRight, Star, Zap, Heart, Package, Share2, Sparkles } from 'lucide-react';
 import Logo from '@/components/Logo';
 
 export default function Home() {
@@ -13,12 +13,6 @@ export default function Home() {
           <div className="flex items-center justify-between h-16">
             <Logo href="/" size="md" />
             <div className="flex items-center gap-6">
-              <Link href="#" className="text-sm text-secondary-lighter hover:text-primary transition-colors">
-                Explorar
-              </Link>
-              <Link href="/login" className="text-sm text-secondary-lighter hover:text-primary transition-colors">
-                Iniciar Sesión
-              </Link>
               <Link href="/studio" className="rounded-lg bg-primary px-5 py-2.5 text-sm font-bold text-white hover:bg-primary-dark transition-colors">
                 Crear
               </Link>
@@ -49,7 +43,7 @@ export default function Home() {
                   Comenzar Ahora
                   <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                 </Link>
-                <Link href="#" className="inline-flex items-center gap-2 rounded-lg border-2 border-secondary px-8 py-4 font-bold text-secondary hover:bg-secondary hover:text-white transition-colors">
+                <Link href="/galeria" className="inline-flex items-center gap-2 rounded-lg border-2 border-secondary px-8 py-4 font-bold text-secondary hover:bg-secondary hover:text-white transition-colors">
                   Ver Galería
                 </Link>
               </div>
@@ -71,12 +65,8 @@ export default function Home() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
             <div>
-              <p className="font-black text-4xl text-primary mb-2">2500+</p>
+              <p className="font-black text-4xl text-primary mb-2">1000+</p>
               <p className="text-sm text-gray-300">Clientes Felices</p>
-            </div>
-            <div>
-              <p className="font-black text-4xl text-primary mb-2">4</p>
-              <p className="text-sm text-gray-300">Estilos Únicos</p>
             </div>
             <div>
               <p className="font-black text-4xl text-primary mb-2">48h</p>
@@ -85,6 +75,11 @@ export default function Home() {
             <div>
               <p className="font-black text-4xl text-primary mb-2">100%</p>
               <p className="text-sm text-gray-300">Satisfacción</p>
+              <p className="text-xs text-gray-400 mt-1">Con revisiones incluidas</p>
+            </div>
+            <div>
+              <p className="font-black text-4xl text-primary mb-2">4+</p>
+              <p className="text-sm text-gray-300">Estilos Únicos</p>
             </div>
           </div>
         </div>
@@ -102,7 +97,7 @@ export default function Home() {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
             <div className="group p-8 bg-gradient-to-br from-primary-lighter to-white rounded-2xl border-2 border-primary-lighter hover:border-primary hover:shadow-xl transition-all">
               <div className="w-14 h-14 bg-primary rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
                 <Zap className="w-7 h-7 text-white" />
@@ -126,6 +121,16 @@ export default function Home() {
               <h3 className="font-bold text-xl text-secondary mb-3">Personalizado</h3>
               <p className="text-secondary-lighter">Controla cada aspecto: poses, fondos, accesorios y estilos de caricatura.</p>
             </div>
+
+            <div className="group p-8 bg-gradient-to-br from-primary-lighter to-white rounded-2xl border-2 border-primary-lighter hover:border-primary hover:shadow-xl transition-all">
+              <div className="w-14 h-14 bg-primary rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                <Share2 className="w-7 h-7 text-white" />
+              </div>
+              <h3 className="font-bold text-xl text-secondary mb-3">Respaldado por Miles</h3>
+              <p className="text-secondary-lighter">
+                Artista verificado en redes sociales. <span className="font-bold text-secondary">@negasva</span> — más de <span className="font-bold text-primary">1.8M seguidores en TikTok</span> y <span className="font-bold text-primary">50k+ en Instagram</span>.
+              </p>
+            </div>
           </div>
         </div>
       </section>
@@ -137,10 +142,10 @@ export default function Home() {
             <h2 className="font-black text-4xl md:text-5xl tracking-tighter text-white mb-4">
               Elige tu Estilo Favorito
             </h2>
-            <p className="text-lg text-gray-300">Cuatro universos icónicos para elegir</p>
+            <p className="text-lg text-gray-300">Cuatro universos icónicos — o elige el tuyo propio</p>
           </div>
 
-          <div className="grid md:grid-cols-4 gap-6">
+          <div className="grid md:grid-cols-5 gap-6">
             {[
               { name: 'Rick & Morty', desc: 'Sci-fi y aventuras' },
               { name: 'Gravity Falls', desc: 'Misterio y magia' },
@@ -159,6 +164,17 @@ export default function Home() {
                 </div>
               </Link>
             ))}
+            <Link
+              href="/studio"
+              className="group relative rounded-2xl overflow-hidden bg-gradient-to-br from-secondary-lighter to-secondary p-8 text-center hover:shadow-2xl transition-all hover:-translate-y-2 border-2 border-primary border-dashed"
+            >
+              <div className="absolute inset-0 opacity-0 group-hover:opacity-10 bg-primary transition-opacity"></div>
+              <div className="relative">
+                <Sparkles className="w-6 h-6 text-primary mx-auto mb-2" />
+                <h4 className="font-bold text-white text-lg mb-1">Estilo Propio</h4>
+                <p className="text-sm text-gray-300">¿Otra serie animada? ¡Pídelo tú!</p>
+              </div>
+            </Link>
           </div>
         </div>
       </section>
