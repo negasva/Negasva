@@ -153,7 +153,7 @@ export default function StudioPage() {
       {/* Progress */}
       <div className="bg-white border-b-2 border-primary-lighter">
         <div className="mx-auto max-w-5xl px-4 py-6 flex justify-center">
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-1 sm:gap-4">
             {STEPS.map((label, i) => (
               <div key={label} className="flex items-center">
                 <button
@@ -161,19 +161,19 @@ export default function StudioPage() {
                   disabled={i + 1 > step}
                   className="flex flex-col items-center focus:outline-none disabled:cursor-not-allowed group"
                 >
-                  <div className={`flex h-10 w-10 items-center justify-center rounded-full text-sm font-bold transition-all ${
+                  <div className={`flex h-7 w-7 sm:h-10 sm:w-10 items-center justify-center rounded-full text-xs sm:text-sm font-bold transition-all ${
                     i + 1 < step ? 'bg-primary text-white group-hover:bg-primary-dark cursor-pointer' :
                     i + 1 === step ? 'bg-primary text-white ring-4 ring-primary-lighter' :
                     'bg-primary-lighter text-secondary'
                   }`}>
-                    {i + 1 < step ? '•' : i + 1}
+                    {i + 1 < step ? '✓' : i + 1}
                   </div>
-                  <span className={`mt-2 text-xs hidden sm:block font-bold ${i + 1 === step ? 'text-primary' : 'text-secondary-lighter'}`}>
+                  <span className={`mt-1 text-xs hidden sm:block font-bold ${i + 1 === step ? 'text-primary' : 'text-secondary-lighter'}`}>
                     {label}
                   </span>
                 </button>
                 {i < 4 && (
-                  <div className={`w-12 h-1 mx-2 ${i + 1 < step ? 'bg-primary' : 'bg-primary-lighter'}`} />
+                  <div className={`w-5 sm:w-12 h-1 mx-1 sm:mx-2 ${i + 1 < step ? 'bg-primary' : 'bg-primary-lighter'}`} />
                 )}
               </div>
             ))}
@@ -221,7 +221,7 @@ export default function StudioPage() {
             </div>
 
             {/* Body Type selector */}
-            <div className="grid grid-cols-2 gap-8 max-w-3xl mx-auto mb-12">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto mb-12">
               {BODY_TYPES.map((b, idx) => (
                 <button
                   key={b.id}

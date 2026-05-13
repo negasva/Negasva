@@ -20,7 +20,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="scroll-smooth">
+    <html lang="en" className="scroll-smooth overflow-x-hidden">
       <head>
         {process.env.NEXT_PUBLIC_GA_ID && (
           <>
@@ -39,7 +39,7 @@ export default function RootLayout({
           <script src={`https://www.recaptcha.net/recaptcha/api.js?render=${process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY}`}></script>
         )}
       </head>
-      <body className={`${montserrat.className} min-h-screen flex flex-col bg-white`}>
+      <body className={`${montserrat.className} min-h-screen flex flex-col bg-white overflow-x-hidden`}>
         {children}
       </body>
     </html>
