@@ -1,5 +1,6 @@
 'use client';
 
+import { memo } from 'react';
 import Link from 'next/link';
 import Logo from '@/components/Logo';
 import { useLanguage } from '@/lib/i18n/LanguageContext';
@@ -8,7 +9,7 @@ interface PageFooterProps {
   minimal?: boolean;
 }
 
-export default function PageFooter({ minimal = false }: PageFooterProps) {
+function PageFooter({ minimal = false }: PageFooterProps) {
   const { t } = useLanguage();
 
   if (minimal) {
@@ -79,3 +80,5 @@ export default function PageFooter({ minimal = false }: PageFooterProps) {
     </footer>
   );
 }
+
+export default memo(PageFooter);

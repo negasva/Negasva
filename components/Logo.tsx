@@ -1,5 +1,6 @@
 'use client';
 
+import { memo } from 'react';
 import Link from 'next/link';
 
 interface LogoProps {
@@ -8,7 +9,7 @@ interface LogoProps {
   size?: 'sm' | 'md' | 'lg';
 }
 
-export default function Logo({ href = '/', className = '', size = 'md' }: LogoProps) {
+function Logo({ href = '/', className = '', size = 'md' }: LogoProps) {
   const sizeClasses = {
     sm: 'text-xl',
     md: 'text-2xl',
@@ -32,3 +33,5 @@ export default function Logo({ href = '/', className = '', size = 'md' }: LogoPr
 
   return <div className={className || ''}>{content}</div>;
 }
+
+export default memo(Logo);
