@@ -143,6 +143,14 @@ export const translations = {
         torso_now: 'now',
         selected: 'SELECTED',
         per_person: '/person',
+        torso_name: 'Torso Only',
+        torso_desc: 'Bust up to the waist',
+        full_name: 'Full Body',
+        full_desc: 'Full body character',
+      },
+      backgrounds: {
+        none: 'No background',
+        custom: 'Custom Background',
       },
     },
     gallery: {
@@ -378,6 +386,14 @@ export const translations = {
         torso_now: 'ahora',
         selected: 'SELECCIONADO',
         per_person: '/persona',
+        torso_name: 'Solo Torso',
+        torso_desc: 'Busto hasta la cintura',
+        full_name: 'Cuerpo Completo',
+        full_desc: 'Personaje de cuerpo entero',
+      },
+      backgrounds: {
+        none: 'Sin fondo',
+        custom: 'Fondo Personalizado',
       },
     },
     gallery: {
@@ -613,6 +629,14 @@ export const translations = {
         torso_now: 'maintenant',
         selected: 'SÉLECTIONNÉ',
         per_person: '/personne',
+        torso_name: 'Buste Seulement',
+        torso_desc: 'Buste jusqu\'à la taille',
+        full_name: 'Corps Entier',
+        full_desc: 'Personnage en pied',
+      },
+      backgrounds: {
+        none: 'Sans fond',
+        custom: 'Arrière-plan Personnalisé',
       },
     },
     gallery: {
