@@ -149,7 +149,7 @@ export default function StudioPage() {
   return (
     <div className="min-h-screen bg-white">
       {/* Nav */}
-      <nav className="bg-white border-b border-primary-lighter sticky top-0 z-10">
+      <nav className="bg-white border-b border-primary-lighter sticky top-0 z-10 w-full overflow-x-hidden">
         <div className="mx-auto max-w-5xl px-4 py-4 flex items-center justify-between">
           <Logo href="/" size="md" />
           <div className="flex items-center gap-4">
@@ -164,9 +164,9 @@ export default function StudioPage() {
       </nav>
 
       {/* Progress */}
-      <div className="bg-white border-b-2 border-primary-lighter">
-        <div className="mx-auto max-w-5xl px-4 py-6 flex justify-center">
-          <div className="flex items-center gap-4">
+      <div className="bg-white border-b-2 border-primary-lighter w-full overflow-x-hidden">
+        <div className="mx-auto max-w-5xl px-4 py-4 flex justify-center">
+          <div className="flex items-center gap-1 sm:gap-3">
             {STEPS.map((label, i) => (
               <div key={label} className="flex items-center">
                 <button
@@ -174,19 +174,19 @@ export default function StudioPage() {
                   disabled={i + 1 > step}
                   className="flex flex-col items-center focus:outline-none disabled:cursor-not-allowed group"
                 >
-                  <div className={`flex h-10 w-10 items-center justify-center rounded-full text-sm font-bold transition-all ${
+                  <div className={`flex h-7 w-7 sm:h-10 sm:w-10 items-center justify-center rounded-full text-xs sm:text-sm font-bold transition-all ${
                     i + 1 < step ? 'bg-primary text-white group-hover:bg-primary-dark cursor-pointer' :
                     i + 1 === step ? 'bg-primary text-white ring-4 ring-primary-lighter' :
                     'bg-primary-lighter text-secondary'
                   }`}>
-                    {i + 1 < step ? '•' : i + 1}
+                    {i + 1 < step ? '✓' : i + 1}
                   </div>
-                  <span className={`mt-2 text-xs hidden sm:block font-bold ${i + 1 === step ? 'text-primary' : 'text-secondary-lighter'}`}>
+                  <span className={`mt-1 text-xs hidden sm:block font-bold ${i + 1 === step ? 'text-primary' : 'text-secondary-lighter'}`}>
                     {label}
                   </span>
                 </button>
                 {i < 4 && (
-                  <div className={`w-12 h-1 mx-2 ${i + 1 < step ? 'bg-primary' : 'bg-primary-lighter'}`} />
+                  <div className={`w-4 sm:w-10 h-1 mx-1 sm:mx-2 ${i + 1 < step ? 'bg-primary' : 'bg-primary-lighter'}`} />
                 )}
               </div>
             ))}
@@ -195,7 +195,7 @@ export default function StudioPage() {
       </div>
 
       {/* Content */}
-      <main className="mx-auto max-w-5xl px-4 py-12">
+      <main className="mx-auto max-w-5xl px-4 py-8 w-full overflow-x-hidden">
 
         {/* PASO 1: Estilo */}
         {step === 1 && (
@@ -234,28 +234,31 @@ export default function StudioPage() {
             </div>
 
             {/* Body Type selector */}
-            <div className="grid grid-cols-2 gap-8 max-w-3xl mx-auto mb-12">
-              {BODY_TYPES.map((b, idx) => (
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-3xl mx-auto mb-10">
+              {[
+                { id: 'torso_only', name: t.studio.body_types.torso_name, desc: t.studio.body_types.torso_desc, price: 15, original: 20 },
+                { id: 'full_body', name: t.studio.body_types.full_name, desc: t.studio.body_types.full_desc, price: 25, original: null as null },
+              ].map((b, idx) => (
                 <button
                   key={b.id}
                   onClick={() => setSelected({ ...selected, bodyType: b.id })}
-                  className={`rounded-2xl border-2 p-10 text-center transition-all focus:outline-none relative overflow-visible ${
+                  className={`rounded-2xl border-2 p-6 text-center transition-all focus:outline-none relative ${
                     selected.bodyType === b.id
                       ? 'border-primary bg-primary-lighter ring-2 ring-primary shadow-xl'
                       : 'border-primary-lighter bg-white hover:border-primary hover:shadow-lg'
                   } ${idx === 0 ? 'animate-pulse-scale' : ''}`}
                 >
                   {b.original && (
-                    <div className="inline-flex items-center gap-1.5 bg-secondary text-white px-3 py-1.5 rounded-full text-xs font-black mb-3 shadow">
+                    <div className="inline-flex items-center gap-1 bg-secondary text-white px-2.5 py-1 rounded-full text-xs font-black mb-3 shadow">
                       {t.studio.body_types.torso_badge} <span className="line-through text-gray-400">${b.original}</span> {t.studio.body_types.torso_now} <span className="text-primary-lighter font-black">${b.price}</span>
                     </div>
                   )}
                   {selected.bodyType === b.id && (
                     <span className="block text-primary font-bold text-xs mb-2">{t.studio.body_types.selected}</span>
                   )}
-                  <p className="font-black text-2xl text-secondary mb-3 tracking-tighter">{b.name}</p>
-                  <p className="text-secondary-lighter mb-6">{b.desc}</p>
-                  <div className="bg-gradient-to-r from-primary to-primary-dark text-white rounded-xl px-6 py-4 font-black text-3xl">
+                  <p className="font-black text-xl sm:text-2xl text-secondary mb-2 tracking-tighter">{b.name}</p>
+                  <p className="text-secondary-lighter text-sm mb-4">{b.desc}</p>
+                  <div className="bg-gradient-to-r from-primary to-primary-dark text-white rounded-xl px-4 py-3 font-black text-2xl sm:text-3xl">
                     ${b.price}{t.studio.body_types.per_person}
                   </div>
                 </button>
@@ -351,24 +354,31 @@ export default function StudioPage() {
               <h1 className="font-black text-4xl text-secondary mb-3 tracking-tighter">{t.studio.step3.title}</h1>
               <p className="text-lg text-secondary-lighter">{t.studio.step3.subtitle}</p>
             </div>
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-              {(BACKGROUNDS_BY_STYLE[selected.style] ?? []).map((bg) => (
-                <button
-                  key={bg.id}
-                  onClick={() => setSelected({ ...selected, background: bg.id })}
-                  className={`rounded-2xl border-2 p-5 text-center transition-all focus:outline-none ${
-                    selected.background === bg.id
-                      ? 'border-primary bg-primary-lighter ring-2 ring-primary shadow-lg'
-                      : 'border-primary-lighter bg-white hover:border-primary hover:shadow-md'
-                  }`}
-                >
-                  {selected.background === bg.id && (
-                    <span className="block text-primary text-xs font-bold mb-1">•</span>
-                  )}
-                  <p className="text-sm font-bold text-secondary">{bg.name}</p>
-                  {bg.id !== 'none' && <p className="text-xs text-primary mt-1 font-bold">+${bg.price ?? 15}</p>}
-                </button>
-              ))}
+            <div className="grid grid-cols-2 gap-3">
+              {(BACKGROUNDS_BY_STYLE[selected.style] ?? []).map((bg) => {
+                const displayName = bg.id === 'none'
+                  ? t.studio.backgrounds.none
+                  : bg.id === 'custom-bg'
+                    ? t.studio.backgrounds.custom
+                    : bg.name;
+                return (
+                  <button
+                    key={bg.id}
+                    onClick={() => setSelected({ ...selected, background: bg.id })}
+                    className={`rounded-2xl border-2 p-4 text-center transition-all focus:outline-none ${
+                      selected.background === bg.id
+                        ? 'border-primary bg-primary-lighter ring-2 ring-primary shadow-lg'
+                        : 'border-primary-lighter bg-white hover:border-primary hover:shadow-md'
+                    }`}
+                  >
+                    {selected.background === bg.id && (
+                      <span className="block text-primary text-xs font-bold mb-1">•</span>
+                    )}
+                    <p className="text-sm font-bold text-secondary leading-tight">{displayName}</p>
+                    {bg.id !== 'none' && <p className="text-xs text-primary mt-1 font-bold">+${bg.price ?? 15}</p>}
+                  </button>
+                );
+              })}
             </div>
           </div>
         )}
@@ -441,7 +451,7 @@ export default function StudioPage() {
                   {selected.background && selected.background !== 'none' && (
                     <div className="flex justify-between">
                       <span className="text-secondary-lighter">{t.studio.summary.background}</span>
-                      <span className="font-bold">{(BACKGROUNDS_BY_STYLE[selected.style] ?? []).find(bg => bg.id === selected.background)?.name} (+${selected.background === 'custom-bg' ? 25 : 15})</span>
+                      <span className="font-bold">{selected.background === 'none' ? t.studio.backgrounds.none : selected.background === 'custom-bg' ? t.studio.backgrounds.custom : (BACKGROUNDS_BY_STYLE[selected.style] ?? []).find(bg => bg.id === selected.background)?.name} (+${selected.background === 'custom-bg' ? 25 : 15})</span>
                     </div>
                   )}
                   <div className="flex justify-between border-t-2 border-primary pt-4 mt-4 font-black text-xl">
