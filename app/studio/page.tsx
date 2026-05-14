@@ -5,8 +5,8 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Minus, Plus } from 'lucide-react';
 import Logo from '@/components/Logo';
-
-const STEPS = ['Estilo', 'Cuerpo', 'Fondo', 'Detalles', 'Fotos'];
+import LanguageSwitcher from '@/components/LanguageSwitcher';
+import { useLanguage } from '@/lib/i18n/LanguageContext';
 
 const STYLES = [
   { id: 'rick-morty', name: 'Rick & Morty' },
@@ -85,20 +85,18 @@ const BACKGROUNDS_BY_STYLE: Record<string, { id: string; name: string; price?: n
   ],
 };
 
-const ROLES = ['Yo', 'Pareja', 'Hijo/a', 'Padre/Madre', 'Amigo/a', 'Mascota', 'Otro'];
-
-const getBodyImage = (style: string, bodyType: string) => {
-  return '';
-};
-
 export default function StudioPage() {
   const router = useRouter();
+  const { t } = useLanguage();
+  const STEPS = t.studio.steps as unknown as string[];
+  const ROLES = t.studio.step2.roles as unknown as string[];
+
   const [step, setStep] = useState(1);
   const [selected, setSelected] = useState({
     style: '',
     bodyType: '',
     background: '',
-    people: [{ name: '', role: 'Yo' }],
+    people: [{ name: '', role: ROLES[0] }],
     specialRequests: '',
     photos: [] as File[],
   });
@@ -129,7 +127,7 @@ export default function StudioPage() {
 
   const addPerson = () => {
     if (selected.people.length < 4) {
-      setSelected({ ...selected, people: [...selected.people, { name: '', role: 'Amigo/a' }] });
+      setSelected({ ...selected, people: [...selected.people, { name: '', role: ROLES[4] }] });
     }
   };
 
@@ -154,11 +152,14 @@ export default function StudioPage() {
       <nav className="bg-white border-b border-primary-lighter sticky top-0 z-10">
         <div className="mx-auto max-w-5xl px-4 py-4 flex items-center justify-between">
           <Logo href="/" size="md" />
-          {selected.bodyType && (
-            <span className="text-sm font-bold text-white bg-primary px-4 py-2 rounded-full">
-              Total: ${totalPrice()}
-            </span>
-          )}
+          <div className="flex items-center gap-4">
+            <LanguageSwitcher />
+            {selected.bodyType && (
+              <span className="text-sm font-bold text-white bg-primary px-4 py-2 rounded-full">
+                Total: ${totalPrice()}
+              </span>
+            )}
+          </div>
         </div>
       </nav>
 
@@ -200,8 +201,8 @@ export default function StudioPage() {
         {step === 1 && (
           <div>
             <div className="text-center mb-10">
-              <h1 className="font-black text-4xl text-secondary mb-3 tracking-tighter">Elige tu Estilo</h1>
-              <p className="text-lg text-secondary-lighter">En qué universo de caricatura quieres verte</p>
+              <h1 className="font-black text-4xl text-secondary mb-3 tracking-tighter">{t.studio.step1.title}</h1>
+              <p className="text-lg text-secondary-lighter">{t.studio.step1.subtitle}</p>
             </div>
             <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
               {STYLES.map((s) => (
@@ -228,8 +229,8 @@ export default function StudioPage() {
         {step === 2 && (
           <div>
             <div className="text-center mb-10">
-              <h1 className="font-black text-4xl text-secondary mb-3 tracking-tighter">Tipo de Cuerpo</h1>
-              <p className="text-lg text-secondary-lighter">Cómo quieres que aparezca tu personaje</p>
+              <h1 className="font-black text-4xl text-secondary mb-3 tracking-tighter">{t.studio.step2.title}</h1>
+              <p className="text-lg text-secondary-lighter">{t.studio.step2.subtitle}</p>
             </div>
 
             {/* Body Type selector */}
@@ -246,16 +247,16 @@ export default function StudioPage() {
                 >
                   {b.original && (
                     <div className="inline-flex items-center gap-1.5 bg-secondary text-white px-3 py-1.5 rounded-full text-xs font-black mb-3 shadow">
-                      Antes <span className="line-through text-gray-400">${b.original}</span> ahora <span className="text-primary-lighter font-black">${b.price}</span>
+                      {t.studio.body_types.torso_badge} <span className="line-through text-gray-400">${b.original}</span> {t.studio.body_types.torso_now} <span className="text-primary-lighter font-black">${b.price}</span>
                     </div>
                   )}
                   {selected.bodyType === b.id && (
-                    <span className="block text-primary font-bold text-xs mb-2">SELECCIONADO</span>
+                    <span className="block text-primary font-bold text-xs mb-2">{t.studio.body_types.selected}</span>
                   )}
                   <p className="font-black text-2xl text-secondary mb-3 tracking-tighter">{b.name}</p>
                   <p className="text-secondary-lighter mb-6">{b.desc}</p>
                   <div className="bg-gradient-to-r from-primary to-primary-dark text-white rounded-xl px-6 py-4 font-black text-3xl">
-                    ${b.price}/persona
+                    ${b.price}{t.studio.body_types.per_person}
                   </div>
                 </button>
               ))}
@@ -265,8 +266,8 @@ export default function StudioPage() {
             <div className="max-w-3xl mx-auto">
               <div className="flex items-center justify-between mb-6">
                 <div>
-                  <h2 className="font-black text-2xl text-secondary tracking-tighter">Cantidad de Personas/Mascotas</h2>
-                  <p className="text-secondary-lighter text-sm mt-1">Añade hasta 4 personas al retrato</p>
+                  <h2 className="font-black text-2xl text-secondary tracking-tighter">{t.studio.step2.people_title}</h2>
+                  <p className="text-secondary-lighter text-sm mt-1">{t.studio.step2.people_subtitle}</p>
                 </div>
                 {/* Contador rápido */}
                 <div className="flex items-center gap-3 bg-primary-lighter rounded-2xl px-4 py-2">
@@ -296,7 +297,7 @@ export default function StudioPage() {
                     </div>
                     <div className="grid grid-cols-2 gap-3 flex-1">
                       <div>
-                        <label className="block text-xs font-bold text-secondary mb-2">Nombre</label>
+                        <label className="block text-xs font-bold text-secondary mb-2">{t.studio.step2.name_label}</label>
                         <input
                           type="text"
                           value={person.name}
@@ -306,7 +307,7 @@ export default function StudioPage() {
                         />
                       </div>
                       <div>
-                        <label className="block text-xs font-bold text-secondary mb-2">Relación</label>
+                        <label className="block text-xs font-bold text-secondary mb-2">{t.studio.step2.role_label}</label>
                         <select
                           value={person.role}
                           onChange={(e) => updatePerson(i, 'role', e.target.value)}
@@ -347,8 +348,8 @@ export default function StudioPage() {
         {step === 3 && (
           <div>
             <div className="text-center mb-10">
-              <h1 className="font-black text-4xl text-secondary mb-3 tracking-tighter">Elige el Fondo</h1>
-              <p className="text-lg text-secondary-lighter">Selecciona el escenario para tu retrato</p>
+              <h1 className="font-black text-4xl text-secondary mb-3 tracking-tighter">{t.studio.step3.title}</h1>
+              <p className="text-lg text-secondary-lighter">{t.studio.step3.subtitle}</p>
             </div>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
               {(BACKGROUNDS_BY_STYLE[selected.style] ?? []).map((bg) => (
@@ -376,17 +377,17 @@ export default function StudioPage() {
         {step === 4 && (
           <div>
             <div className="text-center mb-10">
-              <h1 className="font-black text-4xl text-secondary mb-3 tracking-tighter">Detalles Finales</h1>
-              <p className="text-lg text-secondary-lighter">Agrega notas especiales para tu retrato</p>
+              <h1 className="font-black text-4xl text-secondary mb-3 tracking-tighter">{t.studio.step4.title}</h1>
+              <p className="text-lg text-secondary-lighter">{t.studio.step4.subtitle}</p>
             </div>
             <div className="max-w-2xl mx-auto">
               <label className="block font-bold text-secondary mb-3">
-                Notas especiales <span className="font-normal text-secondary-lighter">(opcional)</span>
+                {t.studio.step4.notes_label} <span className="font-normal text-secondary-lighter">{t.studio.step4.notes_optional}</span>
               </label>
               <textarea
                 value={selected.specialRequests}
                 onChange={(e) => setSelected({ ...selected, specialRequests: e.target.value })}
-                placeholder="Ej: Quiero que lleve sombrero, cambiar color de cabello a rubio, incluir mascota, accesorios especiales..."
+                placeholder={t.studio.step4.notes_placeholder}
                 rows={6}
                 maxLength={500}
                 className="w-full rounded-lg border-2 border-primary-lighter px-4 py-3 text-sm text-secondary focus:border-primary focus:outline-none resize-none"
@@ -400,51 +401,51 @@ export default function StudioPage() {
         {step === 5 && (
           <div>
             <div className="text-center mb-10">
-              <h1 className="font-black text-4xl text-secondary mb-3 tracking-tighter">Sube tus Fotos</h1>
-              <p className="text-lg text-secondary-lighter">Necesitamos fotos claras de cada persona para crear el retrato</p>
+              <h1 className="font-black text-4xl text-secondary mb-3 tracking-tighter">{t.studio.step5.title}</h1>
+              <p className="text-lg text-secondary-lighter">{t.studio.step5.subtitle}</p>
             </div>
             <div className="max-w-2xl mx-auto">
               <div className="rounded-2xl border-2 border-dashed border-primary-lighter bg-white p-12 text-center hover:border-primary hover:bg-primary-lighter transition-all cursor-pointer">
-                <p className="font-bold text-secondary mb-2">Arrastra tus fotos aquí</p>
-                <p className="text-secondary-lighter mb-6">o haz clic para seleccionar</p>
+                <p className="font-bold text-secondary mb-2">{t.studio.step5.drag}</p>
+                <p className="text-secondary-lighter mb-6">{t.studio.step5.or}</p>
                 <label className="inline-block cursor-pointer rounded-lg bg-primary px-6 py-3 text-sm font-bold text-white hover:bg-primary-dark transition-colors">
-                  Seleccionar fotos
+                  {t.studio.step5.select_btn}
                   <input type="file" multiple accept="image/*" onChange={handlePhotoUpload} className="hidden" />
                 </label>
                 {selected.photos.length > 0 && (
                   <div className="mt-6 text-sm text-primary font-bold">
-                    {selected.photos.length} foto{selected.photos.length > 1 ? 's' : ''} seleccionada{selected.photos.length > 1 ? 's' : ''}
+                    {selected.photos.length} {selected.photos.length > 1 ? t.studio.step5.selected_plural : t.studio.step5.selected}
                   </div>
                 )}
                 <p className="mt-6 text-xs text-secondary-lighter">
-                  JPG, PNG o WEBP · Máx 5MB por foto · {selected.people.length} foto{selected.people.length > 1 ? 's' : ''} requerida{selected.people.length > 1 ? 's' : ''}
+                  {t.studio.step5.max_size} · {selected.people.length} {selected.people.length > 1 ? t.studio.step5.required_photos_plural : t.studio.step5.required_photos}
                 </p>
               </div>
 
               {/* Resumen del pedido */}
               <div className="mt-8 rounded-2xl bg-primary-lighter border-2 border-primary p-8">
-                <p className="font-black text-secondary mb-5 text-lg tracking-tighter">Resumen de tu pedido</p>
+                <p className="font-black text-secondary mb-5 text-lg tracking-tighter">{t.studio.summary.title}</p>
                 <div className="space-y-3 text-secondary">
                   <div className="flex justify-between">
-                    <span className="text-secondary-lighter">Estilo:</span>
+                    <span className="text-secondary-lighter">{t.studio.summary.style}</span>
                     <span className="font-bold">{STYLES.find(s => s.id === selected.style)?.name}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-secondary-lighter">Tipo:</span>
-                    <span className="font-bold">{selected.bodyType === 'full_body' ? 'Cuerpo completo' : 'Solo torso'}</span>
+                    <span className="text-secondary-lighter">{t.studio.summary.type}</span>
+                    <span className="font-bold">{selected.bodyType === 'full_body' ? t.studio.summary.full_body : t.studio.summary.torso}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-secondary-lighter">Personas:</span>
+                    <span className="text-secondary-lighter">{t.studio.summary.people}</span>
                     <span className="font-bold">{selected.people.map(p => p.name).join(', ')}</span>
                   </div>
                   {selected.background && selected.background !== 'none' && (
                     <div className="flex justify-between">
-                      <span className="text-secondary-lighter">Fondo:</span>
+                      <span className="text-secondary-lighter">{t.studio.summary.background}</span>
                       <span className="font-bold">{(BACKGROUNDS_BY_STYLE[selected.style] ?? []).find(bg => bg.id === selected.background)?.name} (+${selected.background === 'custom-bg' ? 25 : 15})</span>
                     </div>
                   )}
                   <div className="flex justify-between border-t-2 border-primary pt-4 mt-4 font-black text-xl">
-                    <span>Total:</span>
+                    <span>{t.studio.summary.total}</span>
                     <span className="text-primary">${totalPrice()}</span>
                   </div>
                 </div>
@@ -459,7 +460,7 @@ export default function StudioPage() {
             onClick={prevStep}
             className="text-secondary-lighter hover:text-primary text-sm font-bold px-6 py-3 rounded-lg hover:bg-primary-lighter transition-colors"
           >
-            {step === 1 ? <Link href="/">Volver al inicio</Link> : 'Anterior'}
+            {step === 1 ? <Link href="/">{t.studio.nav.back_home}</Link> : t.studio.nav.prev}
           </button>
           <button
             onClick={nextStep}
@@ -470,12 +471,12 @@ export default function StudioPage() {
                 : 'bg-secondary-lighter text-gray-400 cursor-not-allowed'
             }`}
           >
-            {step === 5 ? 'Ir al pago' : 'Siguiente'}
+            {step === 5 ? t.studio.nav.checkout : t.studio.nav.next}
           </button>
         </div>
 
         <p className="text-center text-xs text-secondary-lighter mt-8">
-          Pago seguro con Stripe · Tu información está protegida
+          {t.studio.nav.secure}
         </p>
       </main>
     </div>
