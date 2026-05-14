@@ -1,5 +1,6 @@
 'use client';
 
+import { memo } from 'react';
 import { useLanguage } from '@/lib/i18n/LanguageContext';
 
 const REVIEWS = [
@@ -23,7 +24,7 @@ const REVIEWS = [
 const row1 = REVIEWS.slice(0, 9);
 const row2 = REVIEWS.slice(6, 15);
 
-function ReviewCard({ name, comment, stars }: { name: string; comment: string; stars: number }) {
+const ReviewCard = memo(function ReviewCard({ name, comment, stars }: { name: string; comment: string; stars: number }) {
   return (
     <div className="w-72 flex-shrink-0 bg-gradient-to-br from-white to-primary-lighter rounded-2xl border-2 border-primary-lighter p-6 mx-3 shadow-sm">
       <div className="flex gap-1 mb-3">
@@ -35,9 +36,9 @@ function ReviewCard({ name, comment, stars }: { name: string; comment: string; s
       <p className="font-bold text-secondary text-sm">{name}</p>
     </div>
   );
-}
+});
 
-export default function TestimonialsScroll() {
+function TestimonialsScroll() {
   const { t } = useLanguage();
 
   return (
@@ -74,3 +75,5 @@ export default function TestimonialsScroll() {
     </section>
   );
 }
+
+export default memo(TestimonialsScroll);

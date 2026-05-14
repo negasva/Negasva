@@ -71,8 +71,15 @@ export const CheckoutSchema = z.object({
 
 // Auth
 export const SignupSchema = z.object({
-  email: z.string().email('Invalid email'),
-  password: z.string().min(8, 'Password must be at least 8 characters'),
+  email: z.string()
+    .email('Invalid email')
+    .max(255, 'Email too long'),
+  password: z.string()
+    .min(12, 'Password must be at least 12 characters')
+    .regex(/[a-z]/, 'Must contain lowercase letter')
+    .regex(/[A-Z]/, 'Must contain uppercase letter')
+    .regex(/[0-9]/, 'Must contain number')
+    .regex(/[^a-zA-Z0-9]/, 'Must contain special character'),
   confirmPassword: z.string(),
 }).refine((data) => data.password === data.confirmPassword, {
   message: "Passwords don't match",
@@ -80,6 +87,8 @@ export const SignupSchema = z.object({
 });
 
 export const LoginSchema = z.object({
-  email: z.string().email('Invalid email'),
-  password: z.string().min(1, 'Password required'),
+  email: z.string()
+    .email('Invalid email')
+    .max(255, 'Email too long'),
+  password: z.string().min(1, 'Password required').max(255),
 });

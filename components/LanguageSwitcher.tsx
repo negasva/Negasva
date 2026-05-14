@@ -1,11 +1,12 @@
 'use client';
 
+import { memo } from 'react';
 import { useLanguage } from '@/lib/i18n/LanguageContext';
 import type { Lang } from '@/lib/i18n/translations';
 
 const LANGS: Lang[] = ['en', 'es', 'fr'];
 
-export default function LanguageSwitcher() {
+function LanguageSwitcher() {
   const { lang, setLang } = useLanguage();
 
   return (
@@ -28,3 +29,5 @@ export default function LanguageSwitcher() {
     </div>
   );
 }
+
+export default memo(LanguageSwitcher);

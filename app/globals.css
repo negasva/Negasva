@@ -35,24 +35,6 @@ body {
   }
 }
 
-/* Smooth animations */
-@keyframes float {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-20px); }
-}
-
-@keyframes pulse-scale {
-  0%, 100% { transform: scale(1); box-shadow: 0 4px 20px rgba(255, 158, 197, 0.3); }
-  50% { transform: scale(1.02); box-shadow: 0 8px 30px rgba(255, 158, 197, 0.5); }
-}
-
-.animate-float {
-  animation: float 3s ease-in-out infinite;
-}
-
-.animate-pulse-scale {
-  animation: pulse-scale 2s ease-in-out infinite;
-}
 
 /* Improve link colors */
 a {

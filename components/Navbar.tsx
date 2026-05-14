@@ -1,11 +1,12 @@
 'use client';
 
+import { memo } from 'react';
 import Link from 'next/link';
 import Logo from '@/components/Logo';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
 import { useLanguage } from '@/lib/i18n/LanguageContext';
 
-export default function Navbar() {
+function Navbar() {
   const { t } = useLanguage();
 
   return (
@@ -27,3 +28,5 @@ export default function Navbar() {
     </nav>
   );
 }
+
+export default memo(Navbar);
