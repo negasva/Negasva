@@ -21,67 +21,55 @@ const BODY_TYPES = [
   { id: 'full_body', name: 'Cuerpo Completo', desc: 'Personaje de cuerpo entero', price: 25, original: null },
 ];
 
-const BACKGROUNDS_BY_STYLE: Record<string, { id: string; name: string; price?: number }[]> = {
+const BACKGROUNDS_BY_STYLE: Record<string, { id: string; price?: number }[]> = {
   'rick-morty': [
-    { id: 'rm-1', name: 'Garaje de Rick' },
-    { id: 'rm-2', name: 'Árboles Mega' },
-    { id: 'rm-3', name: 'Portal Dimensional' },
-    { id: 'rm-4', name: 'La Ciudadela' },
-    { id: 'rm-5', name: 'Sala de Estar' },
-    { id: 'rm-6', name: 'Planeta Purga' },
-    { id: 'rm-10', name: 'Show Me What You Got' },
-    { id: 'custom-bg', name: 'Fondo Personalizado', price: 25 },
-    { id: 'none', name: 'Sin fondo' },
+    { id: 'rm-1' },
+    { id: 'rm-3' },
+    { id: 'rm-4' },
+    { id: 'rm-5' },
+    { id: 'rm-6' },
+    { id: 'rm-10' },
+    { id: 'custom-bg', price: 25 },
+    { id: 'none' },
   ],
   'gravity-falls': [
-    { id: 'gf-1', name: 'Cabaña Misterio' },
-    { id: 'gf-2', name: 'Ático Dipper/Mabel' },
-    { id: 'gf-3', name: 'Bosque Profundo' },
-    { id: 'gf-4', name: 'Laboratorio Secreto' },
-    { id: 'gf-5', name: 'Lago del Monstruo' },
-    { id: 'gf-6', name: 'Centro del Pueblo' },
-    { id: 'gf-7', name: 'Tienda Dusk 2 Dawn' },
-    { id: 'gf-8', name: 'Raroarmagedón' },
-    { id: 'gf-9', name: 'Cueva de Cristales' },
-    { id: 'gf-10', name: 'Restaurante Linda' },
-    { id: 'custom-bg', name: 'Fondo Personalizado', price: 25 },
-    { id: 'none', name: 'Sin fondo' },
+    { id: 'gf-1' },
+    { id: 'gf-2' },
+    { id: 'gf-3' },
+    { id: 'gf-4' },
+    { id: 'gf-5' },
+    { id: 'gf-8' },
+    { id: 'gf-9' },
+    { id: 'custom-bg', price: 25 },
+    { id: 'none' },
   ],
   'simpsons': [
-    { id: 'sp-1', name: 'Sofá Clásico' },
-    { id: 'sp-2', name: 'Casa Simpsons' },
-    { id: 'sp-3', name: 'Taberna de Moe' },
-    { id: 'sp-4', name: 'Escuela Primaria' },
-    { id: 'sp-5', name: 'Kwik-E-Mart' },
-    { id: 'sp-6', name: 'Planta Nuclear' },
-    { id: 'sp-7', name: 'Plaza Estatua' },
-    { id: 'sp-8', name: 'Tienda de Cómics' },
-    { id: 'sp-9', name: 'El Acantilado' },
-    { id: 'sp-10', name: 'Cielo Intro' },
-    { id: 'custom-bg', name: 'Fondo Personalizado', price: 25 },
-    { id: 'none', name: 'Sin fondo' },
+    { id: 'sp-1' },
+    { id: 'sp-2' },
+    { id: 'sp-3' },
+    { id: 'sp-4' },
+    { id: 'sp-5' },
+    { id: 'sp-6' },
+    { id: 'sp-10' },
+    { id: 'custom-bg', price: 25 },
+    { id: 'none' },
   ],
   'fairly-odd': [
-    { id: 'fo-1', name: 'Cuarto de Timmy' },
-    { id: 'fo-2', name: 'Mundo Mágico' },
-    { id: 'fo-3', name: 'Escuela Dimmsdale' },
-    { id: 'fo-4', name: 'Parque Central' },
-    { id: 'fo-5', name: 'Castillo Pecera' },
-    { id: 'fo-6', name: 'Tribunal Mágico' },
-    { id: 'fo-7', name: 'Castillo de Vicky' },
-    { id: 'fo-8', name: 'Pista de Carreras' },
-    { id: 'fo-9', name: 'Mansión Trixie' },
-    { id: 'fo-10', name: 'Dimmadome' },
-    { id: 'custom-bg', name: 'Fondo Personalizado', price: 25 },
-    { id: 'none', name: 'Sin fondo' },
+    { id: 'fo-1' },
+    { id: 'fo-2' },
+    { id: 'fo-3' },
+    { id: 'fo-5' },
+    { id: 'fo-10' },
+    { id: 'custom-bg', price: 25 },
+    { id: 'none' },
   ],
   'negasva': [
-    { id: 'custom-bg', name: 'Fondo Personalizado', price: 25 },
-    { id: 'none', name: 'Sin fondo' },
+    { id: 'custom-bg', price: 25 },
+    { id: 'none' },
   ],
   'custom': [
-    { id: 'custom-bg', name: 'Fondo Personalizado', price: 25 },
-    { id: 'none', name: 'Sin fondo' },
+    { id: 'custom-bg', price: 25 },
+    { id: 'none' },
   ],
 };
 
@@ -140,6 +128,9 @@ export default function StudioPage() {
     people[i] = { ...people[i], [field]: value };
     setSelected({ ...selected, people });
   };
+
+  const getBgName = (id: string) =>
+    (t.studio.backgrounds as Record<string, string>)[id] ?? id;
 
   const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
@@ -355,30 +346,23 @@ export default function StudioPage() {
               <p className="text-lg text-secondary-lighter">{t.studio.step3.subtitle}</p>
             </div>
             <div className="grid grid-cols-2 gap-3">
-              {(BACKGROUNDS_BY_STYLE[selected.style] ?? []).map((bg) => {
-                const displayName = bg.id === 'none'
-                  ? t.studio.backgrounds.none
-                  : bg.id === 'custom-bg'
-                    ? t.studio.backgrounds.custom
-                    : bg.name;
-                return (
-                  <button
-                    key={bg.id}
-                    onClick={() => setSelected({ ...selected, background: bg.id })}
-                    className={`rounded-2xl border-2 p-4 text-center transition-all focus:outline-none ${
-                      selected.background === bg.id
-                        ? 'border-primary bg-primary-lighter ring-2 ring-primary shadow-lg'
-                        : 'border-primary-lighter bg-white hover:border-primary hover:shadow-md'
-                    }`}
-                  >
-                    {selected.background === bg.id && (
-                      <span className="block text-primary text-xs font-bold mb-1">•</span>
-                    )}
-                    <p className="text-sm font-bold text-secondary leading-tight">{displayName}</p>
-                    {bg.id !== 'none' && <p className="text-xs text-primary mt-1 font-bold">+${bg.price ?? 15}</p>}
-                  </button>
-                );
-              })}
+              {(BACKGROUNDS_BY_STYLE[selected.style] ?? []).map((bg) => (
+                <button
+                  key={bg.id}
+                  onClick={() => setSelected({ ...selected, background: bg.id })}
+                  className={`rounded-2xl border-2 p-4 text-center transition-all focus:outline-none ${
+                    selected.background === bg.id
+                      ? 'border-primary bg-primary-lighter ring-2 ring-primary shadow-lg'
+                      : 'border-primary-lighter bg-white hover:border-primary hover:shadow-md'
+                  }`}
+                >
+                  {selected.background === bg.id && (
+                    <span className="block text-primary text-xs font-bold mb-1">•</span>
+                  )}
+                  <p className="text-sm font-bold text-secondary leading-tight">{getBgName(bg.id)}</p>
+                  {bg.id !== 'none' && <p className="text-xs text-primary mt-1 font-bold">+${bg.price ?? 15}</p>}
+                </button>
+              ))}
             </div>
           </div>
         )}
@@ -451,7 +435,7 @@ export default function StudioPage() {
                   {selected.background && selected.background !== 'none' && (
                     <div className="flex justify-between">
                       <span className="text-secondary-lighter">{t.studio.summary.background}</span>
-                      <span className="font-bold">{selected.background === 'none' ? t.studio.backgrounds.none : selected.background === 'custom-bg' ? t.studio.backgrounds.custom : (BACKGROUNDS_BY_STYLE[selected.style] ?? []).find(bg => bg.id === selected.background)?.name} (+${selected.background === 'custom-bg' ? 25 : 15})</span>
+                      <span className="font-bold">{getBgName(selected.background)} (+${selected.background === 'custom-bg' ? 25 : 15})</span>
                     </div>
                   )}
                   <div className="flex justify-between border-t-2 border-primary pt-4 mt-4 font-black text-xl">
