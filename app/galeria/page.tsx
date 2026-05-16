@@ -3,6 +3,7 @@
 import { useLanguage } from '@/lib/i18n/LanguageContext';
 import Navbar from '@/components/Navbar';
 import PageFooter from '@/components/PageFooter';
+import BeforeAfterSlider from '@/components/BeforeAfterSlider';
 import Link from 'next/link';
 
 export default function GaleriaPage() {
@@ -27,6 +28,24 @@ export default function GaleriaPage() {
           <p className="text-lg text-secondary-lighter max-w-2xl">
             {t.gallery.subtitle}
           </p>
+        </div>
+      </section>
+
+      {/* Before/After showcase */}
+      <section className="py-16 px-4 bg-white">
+        <div className="mx-auto max-w-3xl">
+          <div className="text-center mb-8">
+            <h2 className="font-black text-3xl md:text-4xl tracking-tighter text-secondary mb-2">
+              Arrastra para ver la transformación
+            </h2>
+            <p className="text-secondary-lighter">De foto real a personaje animado</p>
+          </div>
+          <BeforeAfterSlider
+            beforeSrc="/samples/before-1.svg"
+            afterSrc="/samples/after-1.svg"
+            beforeLabel="Antes"
+            afterLabel="Después"
+          />
         </div>
       </section>
 

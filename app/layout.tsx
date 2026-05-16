@@ -4,6 +4,8 @@ import Script from "next/script";
 import "./globals.css";
 import { LanguageProvider } from "@/lib/i18n/LanguageContext";
 import { CurrencyProvider } from "@/lib/currency/CurrencyContext";
+import InstagramFloat from "@/components/InstagramFloat";
+import EmailCapturePopup from "@/components/EmailCapturePopup";
 
 const montserrat = Montserrat({
   subsets: ["latin"],
@@ -59,7 +61,11 @@ export default function RootLayout({
       </head>
       <body className={`${montserrat.className} min-h-screen flex flex-col bg-white`}>
         <LanguageProvider>
-          <CurrencyProvider>{children}</CurrencyProvider>
+          <CurrencyProvider>
+            {children}
+            <InstagramFloat />
+            <EmailCapturePopup />
+          </CurrencyProvider>
         </LanguageProvider>
       </body>
     </html>

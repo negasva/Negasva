@@ -91,6 +91,7 @@ export default function StudioPage() {
     people: [{ name: '', role: ROLES[0] }],
     specialRequests: '',
     photos: [] as File[],
+    express: false,
   });
 
   const canAdvance = () => {
@@ -111,11 +112,34 @@ export default function StudioPage() {
     if (step > 1) setStep(step - 1);
   };
 
-  const totalPrice = () => {
-    const perPerson = selected.bodyType === 'full_body' ? 25 : 15;
-    const bgCost = selected.background === 'custom' ? 25 : selected.background && selected.background !== 'none' ? 15 : 0;
-    return selected.people.length * perPerson + bgCost;
+  const familyDiscount = (count: number) => {
+    if (count >= 5) return 0.25;
+    if (count >= 3) return 0.15;
+    return 0;
   };
+
+  const priceBreakdown = () => {
+    const perPerson = selected.bodyType === 'full_body' ? 25 : 15;
+    const peopleSubtotal = selected.people.length * perPerson;
+    const discountRate = familyDiscount(selected.people.length);
+    const discount = peopleSubtotal * discountRate;
+    const peopleAfterDiscount = peopleSubtotal - discount;
+    const bgCost = selected.background === 'custom' ? 25 : selected.background && selected.background !== 'none' ? 15 : 0;
+    const subtotal = peopleAfterDiscount + bgCost;
+    const expressSurcharge = selected.express ? subtotal * 0.30 : 0;
+    return {
+      perPerson,
+      peopleSubtotal,
+      discountRate,
+      discount,
+      bgCost,
+      subtotal,
+      expressSurcharge,
+      total: subtotal + expressSurcharge,
+    };
+  };
+
+  const totalPrice = () => priceBreakdown().total;
 
   const addPerson = () => {
     if (selected.people.length < 4) {
@@ -329,16 +353,36 @@ export default function StudioPage() {
               </div>
 
               {/* Precio dinámico */}
-              {selected.bodyType && (
-                <div className="mt-6 bg-primary-lighter rounded-2xl p-5 border-2 border-primary">
-                  <div className="flex justify-between items-center">
-                    <span className="text-secondary">
-                      {selected.people.length} persona{selected.people.length > 1 ? 's' : ''} x {fmt(selected.bodyType === 'full_body' ? 25 : 15)}
-                    </span>
-                    <span className="font-black text-xl text-primary">{fmt(selected.people.length * (selected.bodyType === 'full_body' ? 25 : 15))}</span>
+              {selected.bodyType && (() => {
+                const b = priceBreakdown();
+                const nextTierAt = selected.people.length < 3 ? 3 : selected.people.length < 5 ? 5 : null;
+                const nextRate = selected.people.length < 3 ? 15 : 25;
+                return (
+                  <div className="mt-6 bg-primary-lighter rounded-2xl p-5 border-2 border-primary space-y-2">
+                    <div className="flex justify-between items-center">
+                      <span className="text-secondary">
+                        {selected.people.length} persona{selected.people.length > 1 ? 's' : ''} x {fmt(b.perPerson)}
+                      </span>
+                      <span className={`font-black text-xl ${b.discountRate ? 'text-secondary-lighter line-through text-base' : 'text-primary'}`}>
+                        {fmt(b.peopleSubtotal)}
+                      </span>
+                    </div>
+                    {b.discountRate > 0 && (
+                      <div className="flex justify-between items-center bg-white rounded-xl px-3 py-2">
+                        <span className="font-bold text-primary text-sm">
+                          🎉 Pack familia −{Math.round(b.discountRate * 100)}%
+                        </span>
+                        <span className="font-black text-xl text-primary">{fmt(b.peopleSubtotal - b.discount)}</span>
+                      </div>
+                    )}
+                    {nextTierAt && (
+                      <p className="text-xs text-secondary-lighter text-center">
+                        Añade {nextTierAt - selected.people.length} persona{nextTierAt - selected.people.length > 1 ? 's' : ''} más y obtén {nextRate}% off
+                      </p>
+                    )}
                   </div>
-                </div>
-              )}
+                );
+              })()}
             </div>
           </div>
         )}
@@ -459,6 +503,30 @@ export default function StudioPage() {
                 className="w-full rounded-lg border-2 border-primary-lighter px-4 py-3 text-sm text-secondary focus:border-primary focus:outline-none resize-none"
               />
               <p className="text-right text-xs text-secondary-lighter mt-2">{selected.specialRequests.length}/500</p>
+
+              {/* Express 24h */}
+              <button
+                type="button"
+                onClick={() => setSelected({ ...selected, express: !selected.express })}
+                className={`mt-6 w-full rounded-2xl border-2 p-5 text-left transition-all ${
+                  selected.express
+                    ? 'border-primary bg-primary-lighter ring-2 ring-primary'
+                    : 'border-primary-lighter bg-white hover:border-primary'
+                }`}
+              >
+                <div className="flex items-start gap-4">
+                  <div className={`mt-1 w-6 h-6 rounded-md border-2 flex items-center justify-center flex-shrink-0 ${selected.express ? 'bg-primary border-primary text-white' : 'border-secondary-lighter'}`}>
+                    {selected.express && '✓'}
+                  </div>
+                  <div className="flex-1">
+                    <p className="font-black text-secondary text-lg tracking-tighter">⚡ Entrega exprés 24h</p>
+                    <p className="text-sm text-secondary-lighter mt-1">
+                      Saltamos la cola. Listo en 24 horas en vez de 48.
+                    </p>
+                  </div>
+                  <span className="font-black text-primary whitespace-nowrap">+30%</span>
+                </div>
+              </button>
             </div>
           </div>
         )}
@@ -510,6 +578,25 @@ export default function StudioPage() {
                       <span className="font-bold">{getBgName(selected.background)} (+{fmt(selected.background === 'custom' ? 25 : 15)})</span>
                     </div>
                   )}
+                  {(() => {
+                    const b = priceBreakdown();
+                    return (
+                      <>
+                        {b.discountRate > 0 && (
+                          <div className="flex justify-between text-primary">
+                            <span>🎉 Pack familia (−{Math.round(b.discountRate * 100)}%)</span>
+                            <span className="font-bold">−{fmt(b.discount)}</span>
+                          </div>
+                        )}
+                        {selected.express && (
+                          <div className="flex justify-between text-primary">
+                            <span>⚡ Exprés 24h (+30%)</span>
+                            <span className="font-bold">+{fmt(b.expressSurcharge)}</span>
+                          </div>
+                        )}
+                      </>
+                    );
+                  })()}
                   <div className="flex justify-between border-t-2 border-primary pt-4 mt-4 font-black text-xl">
                     <span>{t.studio.summary.total}</span>
                     <span className="text-primary">{fmt(totalPrice())}</span>

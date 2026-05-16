@@ -54,6 +54,8 @@ function PageFooter({ minimal = false }: PageFooterProps) {
               <li><Link href="/estilos" className="hover:text-primary transition-colors">{t.footer.styles}</Link></li>
               <li><Link href="/precios" className="hover:text-primary transition-colors">{t.footer.pricing}</Link></li>
               <li><Link href="/galeria" className="hover:text-primary transition-colors">{t.footer.gallery}</Link></li>
+              <li><Link href="/productos" className="hover:text-primary transition-colors">Productos</Link></li>
+              <li><Link href="/seguimiento" className="hover:text-primary transition-colors">Seguimiento</Link></li>
             </ul>
           </div>
           <div>
@@ -62,6 +64,7 @@ function PageFooter({ minimal = false }: PageFooterProps) {
               <li><Link href="/sobre" className="hover:text-primary transition-colors">{t.footer.about}</Link></li>
               <li><Link href="/blog" className="hover:text-primary transition-colors">{t.footer.blog}</Link></li>
               <li><Link href="/contacto" className="hover:text-primary transition-colors">{t.footer.contact}</Link></li>
+              <li><Link href="/faq" className="hover:text-primary transition-colors">FAQ</Link></li>
             </ul>
           </div>
           <div>
