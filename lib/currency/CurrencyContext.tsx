@@ -46,7 +46,13 @@ export function CurrencyProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     const saved = localStorage.getItem('negasva-currency') as Currency | null;
-    if (saved && CURRENCIES.includes(saved)) setCurrencyState(saved);
+    if (saved && CURRENCIES.includes(saved)) {
+      setCurrencyState(saved);
+    } else {
+      const cookieMatch = document.cookie.match(/(?:^|;\s*)negasva-geo-currency=([^;]+)/);
+      const geo = cookieMatch?.[1] as Currency | undefined;
+      if (geo && CURRENCIES.includes(geo)) setCurrencyState(geo);
+    }
 
     fetch('/api/rates')
       .then((r) => r.json())
