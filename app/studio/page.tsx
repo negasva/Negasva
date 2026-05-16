@@ -30,7 +30,7 @@ const BACKGROUNDS_BY_STYLE: Record<string, { id: string; price?: number }[]> = {
     { id: 'rm-5' },
     { id: 'rm-6' },
     { id: 'rm-10' },
-    { id: 'custom-bg', price: 25 },
+    { id: 'custom', price: 25 },
     { id: 'none' },
   ],
   'gravity-falls': [
@@ -41,7 +41,7 @@ const BACKGROUNDS_BY_STYLE: Record<string, { id: string; price?: number }[]> = {
     { id: 'gf-5' },
     { id: 'gf-8' },
     { id: 'gf-9' },
-    { id: 'custom-bg', price: 25 },
+    { id: 'custom', price: 25 },
     { id: 'none' },
   ],
   'simpsons': [
@@ -52,7 +52,7 @@ const BACKGROUNDS_BY_STYLE: Record<string, { id: string; price?: number }[]> = {
     { id: 'sp-5' },
     { id: 'sp-6' },
     { id: 'sp-10' },
-    { id: 'custom-bg', price: 25 },
+    { id: 'custom', price: 25 },
     { id: 'none' },
   ],
   'fairly-odd': [
@@ -61,15 +61,15 @@ const BACKGROUNDS_BY_STYLE: Record<string, { id: string; price?: number }[]> = {
     { id: 'fo-3' },
     { id: 'fo-5' },
     { id: 'fo-10' },
-    { id: 'custom-bg', price: 25 },
+    { id: 'custom', price: 25 },
     { id: 'none' },
   ],
   'negasva': [
-    { id: 'custom-bg', price: 25 },
+    { id: 'custom', price: 25 },
     { id: 'none' },
   ],
   'custom': [
-    { id: 'custom-bg', price: 25 },
+    { id: 'custom', price: 25 },
     { id: 'none' },
   ],
 };
@@ -110,7 +110,7 @@ export default function StudioPage() {
 
   const totalPrice = () => {
     const perPerson = selected.bodyType === 'full_body' ? 25 : 15;
-    const bgCost = selected.background === 'custom-bg' ? 25 : selected.background && selected.background !== 'none' ? 15 : 0;
+    const bgCost = selected.background === 'custom' ? 25 : selected.background && selected.background !== 'none' ? 15 : 0;
     return selected.people.length * perPerson + bgCost;
   };
 
@@ -348,41 +348,85 @@ export default function StudioPage() {
             </div>
             <div className="grid grid-cols-2 gap-3">
               {(BACKGROUNDS_BY_STYLE[selected.style] ?? []).map((bg) => {
-                const bgImage = bg.id !== 'none' && bg.id !== 'custom-bg'
-                  ? `/backgrounds/${bg.id}.jpg`
-                  : null;
+                const isSelected = selected.background === bg.id;
+
+                if (bg.id === 'none') {
+                  return (
+                    <button
+                      key={bg.id}
+                      onClick={() => setSelected({ ...selected, background: bg.id })}
+                      className={`rounded-2xl border-2 text-center transition-all focus:outline-none overflow-hidden flex flex-col items-center justify-center min-h-[152px] ${
+                        isSelected
+                          ? 'border-secondary bg-secondary-light ring-2 ring-secondary shadow-lg'
+                          : 'border-secondary bg-secondary hover:bg-secondary-light hover:shadow-md'
+                      }`}
+                    >
+                      {isSelected && (
+                        <span className="block text-white text-base font-black mb-2 tracking-widest">✓</span>
+                      )}
+                      <p className="font-montserrat font-black text-white text-sm uppercase tracking-[0.12em] leading-tight px-3">
+                        {getBgName(bg.id)}
+                      </p>
+                    </button>
+                  );
+                }
+
+                if (bg.id === 'custom') {
+                  return (
+                    <button
+                      key={bg.id}
+                      onClick={() => setSelected({ ...selected, background: bg.id })}
+                      className={`rounded-2xl border-2 text-center transition-all focus:outline-none overflow-hidden flex flex-col animate-wiggle-slow animate-glow-pulse ${
+                        isSelected
+                          ? 'border-primary ring-2 ring-primary shadow-lg'
+                          : 'border-primary-lighter bg-white hover:border-primary'
+                      }`}
+                    >
+                      <div className="relative h-24 w-full flex items-center justify-center bg-gradient-to-br from-primary-lighter via-white to-primary-light flex-shrink-0">
+                        <span className="text-4xl select-none" style={{ filter: 'drop-shadow(0 0 6px rgba(255,158,197,0.8))' }}>✦</span>
+                        {isSelected && (
+                          <div className="absolute inset-0 bg-primary/20 flex items-center justify-center">
+                            <span className="text-white text-lg font-black drop-shadow">✓</span>
+                          </div>
+                        )}
+                      </div>
+                      <div className="p-3">
+                        <p className="text-sm font-black text-secondary leading-tight uppercase tracking-tight">
+                          {getBgName(bg.id)}
+                        </p>
+                        <p className="text-xs text-primary mt-1 font-bold">+${bg.price ?? 25}</p>
+                      </div>
+                    </button>
+                  );
+                }
+
                 return (
                   <button
                     key={bg.id}
                     onClick={() => setSelected({ ...selected, background: bg.id })}
-                    className={`rounded-2xl border-2 text-center transition-all focus:outline-none overflow-hidden ${
-                      selected.background === bg.id
+                    className={`rounded-2xl border-2 text-center transition-all focus:outline-none overflow-hidden flex flex-col ${
+                      isSelected
                         ? 'border-primary ring-2 ring-primary shadow-lg'
                         : 'border-primary-lighter bg-white hover:border-primary hover:shadow-md'
                     }`}
                   >
-                    {bgImage && (
-                      <div className="relative w-full h-24">
-                        <Image
-                          src={bgImage}
-                          alt={getBgName(bg.id)}
-                          fill
-                          className="object-cover"
-                          sizes="(max-width: 768px) 50vw, 25vw"
-                        />
-                        {selected.background === bg.id && (
-                          <div className="absolute inset-0 bg-primary/20 flex items-center justify-center">
-                            <span className="text-white text-lg font-bold drop-shadow">✓</span>
-                          </div>
-                        )}
-                      </div>
-                    )}
-                    <div className={`p-3 ${bgImage ? '' : 'py-6'}`}>
-                      {!bgImage && selected.background === bg.id && (
-                        <span className="block text-primary text-xs font-bold mb-1">•</span>
+                    <div className="relative w-full h-24 flex-shrink-0">
+                      <Image
+                        src={`/backgrounds/${bg.id}.jpg`}
+                        alt={getBgName(bg.id)}
+                        fill
+                        className="object-cover"
+                        sizes="(max-width: 768px) 50vw, 25vw"
+                      />
+                      {isSelected && (
+                        <div className="absolute inset-0 bg-primary/20 flex items-center justify-center">
+                          <span className="text-white text-lg font-bold drop-shadow">✓</span>
+                        </div>
                       )}
+                    </div>
+                    <div className="p-3">
                       <p className="text-sm font-bold text-secondary leading-tight">{getBgName(bg.id)}</p>
-                      {bg.id !== 'none' && <p className="text-xs text-primary mt-1 font-bold">+${bg.price ?? 15}</p>}
+                      <p className="text-xs text-primary mt-1 font-bold">+${bg.price ?? 15}</p>
                     </div>
                   </button>
                 );
@@ -459,7 +503,7 @@ export default function StudioPage() {
                   {selected.background && selected.background !== 'none' && (
                     <div className="flex justify-between">
                       <span className="text-secondary-lighter">{t.studio.summary.background}</span>
-                      <span className="font-bold">{getBgName(selected.background)} (+${selected.background === 'custom-bg' ? 25 : 15})</span>
+                      <span className="font-bold">{getBgName(selected.background)} (+${selected.background === 'custom' ? 25 : 15})</span>
                     </div>
                   )}
                   <div className="flex justify-between border-t-2 border-primary pt-4 mt-4 font-black text-xl">
