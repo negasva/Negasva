@@ -1,6 +1,6 @@
 'use client';
 
-import { memo, useRef, useEffect, useState } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import { useCurrency, CURRENCIES, type Currency } from '@/lib/currency/CurrencyContext';
 
 function CurrencySwitcher() {
@@ -71,4 +71,4 @@ function CurrencySwitcher() {
   );
 }
 
-export default memo(CurrencySwitcher);
+export default CurrencySwitcher;
