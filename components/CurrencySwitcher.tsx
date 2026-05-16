@@ -6,11 +6,16 @@ import { useCurrency, CURRENCIES, type Currency } from '@/lib/currency/CurrencyC
 function CurrencySwitcher() {
   const { currency, setCurrency } = useCurrency();
   const [isOpen, setIsOpen] = useState(false);
+  const buttonRef = useRef<HTMLButtonElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      const target = event.target as Node;
+      if (
+        buttonRef.current && !buttonRef.current.contains(target) &&
+        dropdownRef.current && !dropdownRef.current.contains(target)
+      ) {
         setIsOpen(false);
       }
     }
@@ -27,8 +32,9 @@ function CurrencySwitcher() {
   };
 
   return (
-    <div className="relative" ref={dropdownRef}>
+    <div className="relative">
       <button
+        ref={buttonRef}
         onClick={() => setIsOpen(!isOpen)}
         className="text-xs font-bold bg-transparent border border-primary-lighter rounded-md px-3 py-1.5 text-secondary-lighter hover:border-primary hover:text-secondary focus:outline-none focus:border-primary cursor-pointer transition-colors text-center"
         aria-label="Currency"
@@ -39,10 +45,12 @@ function CurrencySwitcher() {
       </button>
 
       {isOpen && (
-        <div className="fixed top-auto left-auto bg-secondary-light rounded-lg shadow-lg overflow-visible border border-secondary-lighter z-[9999]"
+        <div
+          ref={dropdownRef}
+          className="fixed top-auto left-auto bg-secondary-light rounded-lg shadow-lg overflow-visible border border-secondary-lighter z-[9999]"
           style={{
-            top: dropdownRef.current ? (dropdownRef.current.getBoundingClientRect().bottom + window.scrollY) + 'px' : 'auto',
-            right: dropdownRef.current ? (window.innerWidth - dropdownRef.current.getBoundingClientRect().right + window.scrollX) + 'px' : 'auto',
+            top: buttonRef.current ? (buttonRef.current.getBoundingClientRect().bottom + window.scrollY) + 'px' : 'auto',
+            right: buttonRef.current ? (window.innerWidth - buttonRef.current.getBoundingClientRect().right + window.scrollX) + 'px' : 'auto',
             minWidth: '120px'
           }}>
           {CURRENCIES.map((c) => (
