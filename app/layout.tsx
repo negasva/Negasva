@@ -3,6 +3,7 @@ import { Montserrat } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
 import { LanguageProvider } from "@/lib/i18n/LanguageContext";
+import { CurrencyProvider } from "@/lib/currency/CurrencyContext";
 
 const montserrat = Montserrat({
   subsets: ["latin"],
@@ -57,7 +58,9 @@ export default function RootLayout({
         )}
       </head>
       <body className={`${montserrat.className} min-h-screen flex flex-col bg-white`}>
-        <LanguageProvider>{children}</LanguageProvider>
+        <LanguageProvider>
+          <CurrencyProvider>{children}</CurrencyProvider>
+        </LanguageProvider>
       </body>
     </html>
   );
