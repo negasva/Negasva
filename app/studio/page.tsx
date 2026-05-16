@@ -8,6 +8,8 @@ import { Minus, Plus } from 'lucide-react';
 import Logo from '@/components/Logo';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
 import { useLanguage } from '@/lib/i18n/LanguageContext';
+import { useCurrency } from '@/lib/currency/CurrencyContext';
+import CurrencySwitcher from '@/components/CurrencySwitcher';
 
 const STYLES = [
   { id: 'rick-morty', name: 'Rick & Morty' },
@@ -77,6 +79,7 @@ const BACKGROUNDS_BY_STYLE: Record<string, { id: string; price?: number }[]> = {
 export default function StudioPage() {
   const router = useRouter();
   const { t } = useLanguage();
+  const { fmt } = useCurrency();
   const STEPS = t.studio.steps as unknown as string[];
   const ROLES = t.studio.step2.roles as unknown as string[];
 
@@ -145,10 +148,11 @@ export default function StudioPage() {
         <div className="mx-auto max-w-5xl px-4 py-4 flex items-center justify-between">
           <Logo href="/" size="md" />
           <div className="flex items-center gap-4">
+            <CurrencySwitcher />
             <LanguageSwitcher />
             {selected.bodyType && (
               <span className="text-sm font-bold text-white bg-primary px-4 py-2 rounded-full">
-                Total: ${totalPrice()}
+                Total: {fmt(totalPrice())}
               </span>
             )}
           </div>
@@ -242,7 +246,7 @@ export default function StudioPage() {
                 >
                   {b.original && (
                     <div className="inline-flex items-center gap-1 bg-secondary text-white px-2.5 py-1 rounded-full text-xs font-black mb-3 shadow">
-                      {t.studio.body_types.torso_badge} <span className="line-through text-gray-400">${b.original}</span> {t.studio.body_types.torso_now} <span className="text-primary-lighter font-black">${b.price}</span>
+                      {t.studio.body_types.torso_badge} <span className="line-through text-gray-400">{fmt(b.original)}</span> {t.studio.body_types.torso_now} <span className="text-primary-lighter font-black">{fmt(b.price)}</span>
                     </div>
                   )}
                   {selected.bodyType === b.id && (
@@ -251,7 +255,7 @@ export default function StudioPage() {
                   <p className="font-black text-xl sm:text-2xl text-secondary mb-2 tracking-tighter">{b.name}</p>
                   <p className="text-secondary-lighter text-sm mb-4">{b.desc}</p>
                   <div className="bg-gradient-to-r from-primary to-primary-dark text-white rounded-xl px-4 py-3 font-black text-2xl sm:text-3xl">
-                    ${b.price}{t.studio.body_types.per_person}
+                    {fmt(b.price)}{t.studio.body_types.per_person}
                   </div>
                 </button>
               ))}
@@ -329,9 +333,9 @@ export default function StudioPage() {
                 <div className="mt-6 bg-primary-lighter rounded-2xl p-5 border-2 border-primary">
                   <div className="flex justify-between items-center">
                     <span className="text-secondary">
-                      {selected.people.length} persona{selected.people.length > 1 ? 's' : ''} x ${selected.bodyType === 'full_body' ? 25 : 15}
+                      {selected.people.length} persona{selected.people.length > 1 ? 's' : ''} x {fmt(selected.bodyType === 'full_body' ? 25 : 15)}
                     </span>
-                    <span className="font-black text-xl text-primary">${selected.people.length * (selected.bodyType === 'full_body' ? 25 : 15)}</span>
+                    <span className="font-black text-xl text-primary">{fmt(selected.people.length * (selected.bodyType === 'full_body' ? 25 : 15))}</span>
                   </div>
                 </div>
               )}
@@ -394,7 +398,7 @@ export default function StudioPage() {
                         <p className="text-sm font-black text-secondary leading-tight uppercase tracking-tight">
                           {getBgName(bg.id)}
                         </p>
-                        <p className="text-xs text-primary mt-1 font-bold">+${bg.price ?? 25}</p>
+                        <p className="text-xs text-primary mt-1 font-bold">+{fmt(bg.price ?? 25)}</p>
                       </div>
                     </button>
                   );
@@ -426,7 +430,7 @@ export default function StudioPage() {
                     </div>
                     <div className="p-3">
                       <p className="text-sm font-bold text-secondary leading-tight">{getBgName(bg.id)}</p>
-                      <p className="text-xs text-primary mt-1 font-bold">+${bg.price ?? 15}</p>
+                      <p className="text-xs text-primary mt-1 font-bold">+{fmt(bg.price ?? 15)}</p>
                     </div>
                   </button>
                 );
@@ -503,12 +507,12 @@ export default function StudioPage() {
                   {selected.background && selected.background !== 'none' && (
                     <div className="flex justify-between">
                       <span className="text-secondary-lighter">{t.studio.summary.background}</span>
-                      <span className="font-bold">{getBgName(selected.background)} (+${selected.background === 'custom' ? 25 : 15})</span>
+                      <span className="font-bold">{getBgName(selected.background)} (+{fmt(selected.background === 'custom' ? 25 : 15)})</span>
                     </div>
                   )}
                   <div className="flex justify-between border-t-2 border-primary pt-4 mt-4 font-black text-xl">
                     <span>{t.studio.summary.total}</span>
-                    <span className="text-primary">${totalPrice()}</span>
+                    <span className="text-primary">{fmt(totalPrice())}</span>
                   </div>
                 </div>
               </div>
