@@ -39,12 +39,17 @@ function CurrencySwitcher() {
       </button>
 
       {isOpen && (
-        <div className="absolute top-full right-0 mt-2 bg-secondary-light rounded-lg shadow-lg overflow-hidden border border-secondary-lighter z-50">
+        <div className="fixed top-auto left-auto bg-secondary-light rounded-lg shadow-lg overflow-visible border border-secondary-lighter z-[9999]"
+          style={{
+            top: dropdownRef.current ? (dropdownRef.current.getBoundingClientRect().bottom + window.scrollY) + 'px' : 'auto',
+            right: dropdownRef.current ? (window.innerWidth - dropdownRef.current.getBoundingClientRect().right + window.scrollX) + 'px' : 'auto',
+            minWidth: '120px'
+          }}>
           {CURRENCIES.map((c) => (
             <button
               key={c}
               onClick={() => handleSelect(c)}
-              className="w-full px-4 py-3 text-left text-sm text-accent hover:bg-secondary-lighter transition-colors flex items-center justify-between"
+              className="w-full px-4 py-3 text-left text-sm text-accent hover:bg-secondary-lighter transition-colors flex items-center justify-between whitespace-nowrap"
             >
               <span>{c}</span>
               {c === currency && (
