@@ -27,6 +27,15 @@ const config: Config = {
       letterSpacing: {
         tighter: "-0.05em",
       },
+      keyframes: {
+        wiggle: {
+          '0%, 100%': { transform: 'rotate(-0.7deg)' },
+          '50%': { transform: 'rotate(0.7deg)' },
+        },
+      },
+      animation: {
+        'wiggle-slow': 'wiggle 3s ease-in-out infinite',
+      },
     },
   },
   plugins: [],

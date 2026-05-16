@@ -56,3 +56,11 @@ a {
 .animate-marquee-right {
   animation: marquee-right 40s linear infinite;
 }
+
+@keyframes glow-pulse {
+  0%, 100% { box-shadow: 0 0 6px 1px rgba(255, 158, 197, 0.35); }
+  50%       { box-shadow: 0 0 18px 5px rgba(255, 158, 197, 0.7); }
+}
+.animate-glow-pulse {
+  animation: glow-pulse 2.5s ease-in-out infinite;
+}

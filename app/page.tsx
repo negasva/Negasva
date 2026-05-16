@@ -3,12 +3,14 @@
 import Link from 'next/link';
 import { ChevronRight, Star, Zap, Heart, Share2, Sparkles } from 'lucide-react';
 import { useLanguage } from '@/lib/i18n/LanguageContext';
+import { useCurrency } from '@/lib/currency/CurrencyContext';
 import Navbar from '@/components/Navbar';
 import PageFooter from '@/components/PageFooter';
 import TestimonialsScroll from '@/components/TestimonialsScroll';
 
 export default function Home() {
   const { t } = useLanguage();
+  const { fmt } = useCurrency();
 
   return (
     <div className="min-h-screen bg-white">
@@ -228,7 +230,7 @@ export default function Home() {
                   <h4 className="font-bold text-secondary text-lg">{t.home.pricing.one_torso}</h4>
                   <p className="text-sm text-secondary-lighter mt-1">{t.home.pricing.one_torso_desc}</p>
                 </div>
-                <span className="font-black text-3xl text-primary">$15</span>
+                <span className="font-black text-3xl text-primary">{fmt(15)}</span>
               </div>
             </div>
 
@@ -238,7 +240,7 @@ export default function Home() {
                   <h4 className="font-bold text-secondary text-lg">{t.home.pricing.one_full}</h4>
                   <p className="text-sm text-secondary-lighter mt-1">{t.home.pricing.one_full_desc}</p>
                 </div>
-                <span className="font-black text-3xl text-primary">$25</span>
+                <span className="font-black text-3xl text-primary">{fmt(25)}</span>
               </div>
             </div>
 
@@ -248,7 +250,7 @@ export default function Home() {
                   <h4 className="font-bold text-secondary text-lg">{t.home.pricing.background}</h4>
                   <p className="text-sm text-secondary-lighter mt-1">{t.home.pricing.background_desc}</p>
                 </div>
-                <span className="font-black text-3xl text-primary">+$15</span>
+                <span className="font-black text-3xl text-primary">+{fmt(15)}</span>
               </div>
             </div>
           </div>
@@ -256,7 +258,7 @@ export default function Home() {
           <div className="bg-gradient-to-br from-primary to-primary-dark rounded-2xl p-8 text-white mb-8">
             <p className="text-lg font-bold mb-2">{t.home.pricing.example}</p>
             <p className="text-sm text-primary-lighter mb-4">{t.home.pricing.example_calc}</p>
-            <p className="font-black text-5xl tracking-tighter">$65</p>
+            <p className="font-black text-5xl tracking-tighter">{fmt(65)}</p>
           </div>
 
           <Link

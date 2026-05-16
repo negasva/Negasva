@@ -4,6 +4,7 @@ import { memo } from 'react';
 import Link from 'next/link';
 import Logo from '@/components/Logo';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
+import CurrencySwitcher from '@/components/CurrencySwitcher';
 import { useLanguage } from '@/lib/i18n/LanguageContext';
 
 function Navbar() {
@@ -15,6 +16,7 @@ function Navbar() {
         <div className="flex items-center justify-between h-16">
           <Logo href="/" size="md" />
           <div className="flex items-center gap-4">
+            <CurrencySwitcher />
             <LanguageSwitcher />
             <Link
               href="/studio"
