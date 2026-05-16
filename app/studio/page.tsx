@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Minus, Plus } from 'lucide-react';
@@ -346,23 +347,46 @@ export default function StudioPage() {
               <p className="text-lg text-secondary-lighter">{t.studio.step3.subtitle}</p>
             </div>
             <div className="grid grid-cols-2 gap-3">
-              {(BACKGROUNDS_BY_STYLE[selected.style] ?? []).map((bg) => (
-                <button
-                  key={bg.id}
-                  onClick={() => setSelected({ ...selected, background: bg.id })}
-                  className={`rounded-2xl border-2 p-4 text-center transition-all focus:outline-none ${
-                    selected.background === bg.id
-                      ? 'border-primary bg-primary-lighter ring-2 ring-primary shadow-lg'
-                      : 'border-primary-lighter bg-white hover:border-primary hover:shadow-md'
-                  }`}
-                >
-                  {selected.background === bg.id && (
-                    <span className="block text-primary text-xs font-bold mb-1">•</span>
-                  )}
-                  <p className="text-sm font-bold text-secondary leading-tight">{getBgName(bg.id)}</p>
-                  {bg.id !== 'none' && <p className="text-xs text-primary mt-1 font-bold">+${bg.price ?? 15}</p>}
-                </button>
-              ))}
+              {(BACKGROUNDS_BY_STYLE[selected.style] ?? []).map((bg) => {
+                const bgImage = bg.id !== 'none' && bg.id !== 'custom-bg'
+                  ? `/backgrounds/${bg.id}.jpg`
+                  : null;
+                return (
+                  <button
+                    key={bg.id}
+                    onClick={() => setSelected({ ...selected, background: bg.id })}
+                    className={`rounded-2xl border-2 text-center transition-all focus:outline-none overflow-hidden ${
+                      selected.background === bg.id
+                        ? 'border-primary ring-2 ring-primary shadow-lg'
+                        : 'border-primary-lighter bg-white hover:border-primary hover:shadow-md'
+                    }`}
+                  >
+                    {bgImage && (
+                      <div className="relative w-full h-24">
+                        <Image
+                          src={bgImage}
+                          alt={getBgName(bg.id)}
+                          fill
+                          className="object-cover"
+                          sizes="(max-width: 768px) 50vw, 25vw"
+                        />
+                        {selected.background === bg.id && (
+                          <div className="absolute inset-0 bg-primary/20 flex items-center justify-center">
+                            <span className="text-white text-lg font-bold drop-shadow">✓</span>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                    <div className={`p-3 ${bgImage ? '' : 'py-6'}`}>
+                      {!bgImage && selected.background === bg.id && (
+                        <span className="block text-primary text-xs font-bold mb-1">•</span>
+                      )}
+                      <p className="text-sm font-bold text-secondary leading-tight">{getBgName(bg.id)}</p>
+                      {bg.id !== 'none' && <p className="text-xs text-primary mt-1 font-bold">+${bg.price ?? 15}</p>}
+                    </div>
+                  </button>
+                );
+              })}
             </div>
           </div>
         )}
