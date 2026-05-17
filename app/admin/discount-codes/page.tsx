@@ -5,7 +5,7 @@ import type { DiscountCode } from '@/types/admin';
 
 const EMPTY_FORM = {
   code: '',
-  type: 'percentage' as const,
+  type: 'percentage' as 'percentage' | 'fixed',
   value: '',
   expires_at: '',
   max_uses: '',
