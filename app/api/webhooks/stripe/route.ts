@@ -8,26 +8,12 @@ const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET!;
 
 export const config = { api: { bodyParser: false } };
 
-type OrderRow = {
-  stripe_session_id: string;
-  stripe_payment_intent_id: string | null;
-  amount_total: number | null;
-  currency: string | null;
-  style: string | undefined;
-  body_type: string | undefined;
-  background: string | undefined;
-  people_count: number;
-  express: boolean;
-  special_requests: string | null;
-  status: 'paid' | 'pending';
-  customer_email: string | null;
-};
-
-function rowFromSession(session: Stripe.Checkout.Session, status: 'paid' | 'pending'): OrderRow {
+function rowFromSession(session: Stripe.Checkout.Session, status: 'paid' | 'pending') {
   const meta = session.metadata ?? {};
   return {
-    stripe_session_id: session.id,
-    stripe_payment_intent_id: (session.payment_intent as string) ?? null,
+    provider: 'stripe' as const,
+    provider_reference: session.id,
+    provider_transaction_id: (session.payment_intent as string) ?? null,
     amount_total: session.amount_total,
     currency: session.currency,
     style: meta.style,
@@ -63,7 +49,7 @@ export async function POST(request: Request) {
         // For OXXO/SEPA/ACSS: payment_status === 'unpaid' → wait for async_payment_succeeded.
         const status: 'paid' | 'pending' = session.payment_status === 'paid' ? 'paid' : 'pending';
         await supabase.from('orders').upsert(rowFromSession(session, status), {
-          onConflict: 'stripe_session_id',
+          onConflict: 'provider_reference',
         });
         break;
       }
@@ -73,7 +59,7 @@ export async function POST(request: Request) {
         await supabase
           .from('orders')
           .update({ status: 'paid' })
-          .eq('stripe_session_id', session.id);
+          .eq('provider_reference', session.id);
         break;
       }
 
@@ -82,7 +68,7 @@ export async function POST(request: Request) {
         await supabase
           .from('orders')
           .update({ status: 'failed' })
-          .eq('stripe_session_id', session.id);
+          .eq('provider_reference', session.id);
         break;
       }
 
@@ -92,7 +78,7 @@ export async function POST(request: Request) {
           await supabase
             .from('orders')
             .update({ status: 'refunded' })
-            .eq('stripe_payment_intent_id', charge.payment_intent as string);
+            .eq('provider_transaction_id', charge.payment_intent as string);
         }
         break;
       }
@@ -103,14 +89,13 @@ export async function POST(request: Request) {
           await supabase
             .from('orders')
             .update({ status: 'disputed' })
-            .eq('stripe_payment_intent_id', dispute.payment_intent as string);
+            .eq('provider_transaction_id', dispute.payment_intent as string);
         }
         break;
       }
     }
   } catch (err) {
     console.error(`[webhook] ${event.type} handler failed:`, err);
-    // Return 200 anyway — log for manual review, don't make Stripe retry forever
   }
 
   return NextResponse.json({ received: true });

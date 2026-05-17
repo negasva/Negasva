@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import Stripe from 'stripe';
 import { z } from 'zod';
 import { errorResponse, rateLimitByIp, readJson } from '@/lib/security/apiHelpers';
+import { buildWompiCheckoutUrl, newWompiReference } from '@/lib/payments/wompi';
+import { createServiceClient } from '@/lib/supabase/server';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, { apiVersion: '2024-11-20.acacia' as any });
@@ -21,14 +23,12 @@ const CheckoutSchema = z.object({
   rate: z.number().positive().finite().max(10_000),
 });
 
-// Payment methods available per currency in Stripe Checkout
-const PAYMENT_METHODS: Record<string, Stripe.Checkout.SessionCreateParams.PaymentMethodType[]> = {
+const STRIPE_PAYMENT_METHODS: Record<string, Stripe.Checkout.SessionCreateParams.PaymentMethodType[]> = {
   usd: ['card', 'link'],
   eur: ['card', 'sepa_debit', 'ideal', 'klarna', 'link'],
   gbp: ['card', 'link'],
   mxn: ['card'],
   cad: ['card', 'acss_debit', 'link'],
-  cop: ['card'],
 };
 
 export async function POST(request: Request) {
@@ -45,7 +45,7 @@ export async function POST(request: Request) {
 
   const d = parsed.data;
 
-  // Calculate totals in USD then convert
+  // Total in USD, then convert to local currency
   const perPersonUsd = d.bodyType === 'full_body' ? 29.99 : 25;
   const subtotalPeopleUsd = d.peopleCount * perPersonUsd;
   const discountRate = FAMILY_DISCOUNT(d.peopleCount);
@@ -54,23 +54,56 @@ export async function POST(request: Request) {
   const subtotalUsd = afterDiscountUsd + bgUsd;
   const expressUsd = d.express ? subtotalUsd * 0.3 : 0;
   const totalUsd = subtotalUsd + expressUsd;
-
-  // Convert to local currency (in minor units for Stripe)
-  // COP has no minor units — Stripe expects integer COP
   const totalLocal = totalUsd * d.rate;
-  const isCopLike = d.currency === 'cop';
-  const amountMinor = isCopLike
-    ? Math.ceil(totalLocal / 1000) * 1000  // round up to nearest 1,000
-    : Math.round(totalLocal * 100);        // cents
 
-  if (amountMinor < (isCopLike ? 5000 : 50)) {
+  // COP has no minor units; round up to nearest 1.000 for clean prices
+  const isCop = d.currency === 'cop';
+  const amountMinor = isCop
+    ? Math.ceil(totalLocal / 1000) * 1000
+    : Math.round(totalLocal * 100);
+
+  if (amountMinor < (isCop ? 5000 : 50)) {
     return errorResponse('Amount too small', 400);
   }
 
   const origin = request.headers.get('origin') ?? process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000';
 
-  const line_items: Stripe.Checkout.SessionCreateParams.LineItem[] = [
-    {
+  // ── Wompi for Colombia (COP) ───────────────────────────────────────────
+  if (isCop) {
+    const reference = newWompiReference();
+
+    // Persist a pending order so the webhook can find it by reference
+    try {
+      const supabase = createServiceClient();
+      await supabase.from('orders').insert({
+        provider: 'wompi',
+        provider_reference: reference,
+        amount_total: amountMinor,
+        currency: 'cop',
+        style: d.style,
+        body_type: d.bodyType,
+        background: d.background,
+        people_count: d.peopleCount,
+        express: d.express,
+        special_requests: d.specialRequests || null,
+        status: 'pending',
+      });
+    } catch (err) {
+      console.error('[checkout/wompi] failed to pre-insert order:', err);
+    }
+
+    const url = buildWompiCheckoutUrl({
+      amountInCents: amountMinor,
+      reference,
+      redirectUrl: `${origin}/checkout/success?provider=wompi`,
+    });
+    return NextResponse.json({ url });
+  }
+
+  // ── Stripe for everyone else ──────────────────────────────────────────
+  const session = await stripe.checkout.sessions.create({
+    mode: 'payment',
+    line_items: [{
       price_data: {
         currency: d.currency,
         product_data: {
@@ -85,13 +118,8 @@ export async function POST(request: Request) {
         unit_amount: amountMinor,
       },
       quantity: 1,
-    },
-  ];
-
-  const session = await stripe.checkout.sessions.create({
-    mode: 'payment',
-    line_items,
-    payment_method_types: PAYMENT_METHODS[d.currency] ?? ['card'],
+    }],
+    payment_method_types: STRIPE_PAYMENT_METHODS[d.currency] ?? ['card'],
     success_url: `${origin}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
     cancel_url: `${origin}/studio`,
     metadata: {
