@@ -34,20 +34,18 @@ CREATE TABLE IF NOT EXISTS public.packages (
   created_at  timestamptz NOT NULL DEFAULT now()
 );
 
--- Backgrounds table
-CREATE TABLE IF NOT EXISTS public.backgrounds (
-  id         uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  name       text NOT NULL,
-  image_url  text NOT NULL,
-  active     boolean NOT NULL DEFAULT true,
-  created_at timestamptz NOT NULL DEFAULT now()
-);
+-- Backgrounds already exists from 001_initial_schema.sql.
+-- Add columns expected by the admin panel if they don't exist yet.
+ALTER TABLE public.backgrounds ADD COLUMN IF NOT EXISTS image_url text;
+UPDATE public.backgrounds SET image_url = thumbnail_url WHERE image_url IS NULL;
+ALTER TABLE public.backgrounds ADD COLUMN IF NOT EXISTS active boolean NOT NULL DEFAULT true;
+UPDATE public.backgrounds SET active = is_active;
 
 -- RLS: only authenticated users with admin role can read/write admin tables
 ALTER TABLE public.prices          ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.discount_codes  ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.packages        ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.backgrounds     ENABLE ROW LEVEL SECURITY;
+-- backgrounds RLS already enabled in 002_rls_policies.sql
 
 -- Helper function to check admin role from JWT
 CREATE OR REPLACE FUNCTION public.is_admin()
@@ -72,14 +70,8 @@ CREATE POLICY "admin write discounts" ON public.discount_codes FOR ALL    USING 
 CREATE POLICY "admin read packages"  ON public.packages FOR SELECT USING (is_admin());
 CREATE POLICY "admin write packages" ON public.packages FOR ALL    USING (is_admin());
 
--- Backgrounds policies
-CREATE POLICY "admin read backgrounds"  ON public.backgrounds FOR SELECT USING (is_admin());
-CREATE POLICY "admin write backgrounds" ON public.backgrounds FOR ALL    USING (is_admin());
-
--- Public can read active backgrounds (needed by the frontend gallery)
-CREATE POLICY "public read active backgrounds"
-  ON public.backgrounds FOR SELECT
-  USING (active = true);
+-- Backgrounds: add admin write policy (read policy already exists in 002)
+CREATE POLICY "admin write backgrounds" ON public.backgrounds FOR ALL USING (is_admin());
 
 -- Storage bucket for background images (run separately in Supabase dashboard or via CLI)
 -- INSERT INTO storage.buckets (id, name, public) VALUES ('backgrounds', 'backgrounds', false);
