@@ -81,7 +81,9 @@ export function CurrencyProvider({ children }: { children: React.ReactNode }) {
       const sym = SYMBOLS[currency];
 
       if (currency === 'COP') {
-        return `${sym}${Math.round(amount).toLocaleString('es-CO')}`;
+        // Round UP to nearest 1.000 so prices always look clean (e.g. 113.404 → 114.000)
+        const rounded = Math.ceil(amount / 1000) * 1000;
+        return `${sym}${rounded.toLocaleString('es-CO')}`;
       }
       if (currency === 'EUR' || currency === 'GBP') {
         const rounded = parseFloat(amount.toFixed(2));
