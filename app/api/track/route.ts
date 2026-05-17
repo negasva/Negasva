@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { supabase } from '@/lib/supabase/client';
+import { getSupabase } from '@/lib/supabase/client';
 
 const STATUS_LABEL: Record<string, string> = {
   pending: 'Pendiente de pago',
@@ -24,7 +24,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Missing orderId or email' }, { status: 400 });
   }
 
-  const { data, error } = await supabase
+  const { data, error } = await getSupabase()
     .from('orders')
     .select('id, production_status, status, created_at, completed_at')
     .eq('id', orderId)
