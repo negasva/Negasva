@@ -79,7 +79,7 @@ CREATE POLICY "admin write backgrounds" ON public.backgrounds FOR ALL    USING (
 -- Public can read active backgrounds (needed by the frontend gallery)
 CREATE POLICY "public read active backgrounds"
   ON public.backgrounds FOR SELECT
-  USING (active = true);
+  USING (is_active = true);
 
 -- Storage bucket for background images (run separately in Supabase dashboard or via CLI)
 -- INSERT INTO storage.buckets (id, name, public) VALUES ('backgrounds', 'backgrounds', false);
