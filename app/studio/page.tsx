@@ -19,11 +19,6 @@ const STYLES = [
   { id: 'negasva', name: 'Estilo NEGASVA' },
 ];
 
-const BODY_TYPES = [
-  { id: 'torso_only', name: 'Solo Torso', desc: 'Busto hasta la cintura', price: 15, original: 20 },
-  { id: 'full_body', name: 'Cuerpo Completo', desc: 'Personaje de cuerpo entero', price: 25, original: null },
-];
-
 const BACKGROUNDS_BY_STYLE: Record<string, { id: string; price?: number }[]> = {
   'rick-morty': [
     { id: 'rm-1' },
@@ -81,14 +76,13 @@ export default function StudioPage() {
   const { t } = useLanguage();
   const { fmt } = useCurrency();
   const STEPS = t.studio.steps as unknown as string[];
-  const ROLES = t.studio.step2.roles as unknown as string[];
 
   const [step, setStep] = useState(1);
   const [selected, setSelected] = useState({
     style: '',
     bodyType: '',
     background: '',
-    people: [{ name: '', role: ROLES[0] }],
+    peopleCount: 1,
     specialRequests: '',
     photos: [] as File[],
     express: false,
@@ -96,10 +90,10 @@ export default function StudioPage() {
 
   const canAdvance = () => {
     if (step === 1) return !!selected.style;
-    if (step === 2) return !!selected.bodyType && selected.people.every(p => p.name.trim().length >= 2);
+    if (step === 2) return !!selected.bodyType;
     if (step === 3) return !!selected.background;
     if (step === 4) return true;
-    if (step === 5) return selected.photos.length >= selected.people.length;
+    if (step === 5) return selected.photos.length >= selected.peopleCount;
     return true;
   };
 
@@ -119,9 +113,9 @@ export default function StudioPage() {
   };
 
   const priceBreakdown = () => {
-    const perPerson = selected.bodyType === 'full_body' ? 25 : 15;
-    const peopleSubtotal = selected.people.length * perPerson;
-    const discountRate = familyDiscount(selected.people.length);
+    const perPerson = selected.bodyType === 'full_body' ? 29.99 : 25;
+    const peopleSubtotal = selected.peopleCount * perPerson;
+    const discountRate = familyDiscount(selected.peopleCount);
     const discount = peopleSubtotal * discountRate;
     const peopleAfterDiscount = peopleSubtotal - discount;
     const bgCost = selected.background === 'custom' ? 25 : selected.background && selected.background !== 'none' ? 15 : 0;
@@ -141,22 +135,6 @@ export default function StudioPage() {
 
   const totalPrice = () => priceBreakdown().total;
 
-  const addPerson = () => {
-    if (selected.people.length < 4) {
-      setSelected({ ...selected, people: [...selected.people, { name: '', role: ROLES[4] }] });
-    }
-  };
-
-  const removePerson = (i: number) => {
-    setSelected({ ...selected, people: selected.people.filter((_, idx) => idx !== i) });
-  };
-
-  const updatePerson = (i: number, field: string, value: string) => {
-    const people = [...selected.people];
-    people[i] = { ...people[i], [field]: value };
-    setSelected({ ...selected, people });
-  };
-
   const getBgName = (id: string) =>
     (t.studio.backgrounds as Record<string, string>)[id] ?? id;
 
@@ -165,11 +143,82 @@ export default function StudioPage() {
     setSelected({ ...selected, photos: files });
   };
 
+  // Order summary sidebar — shown from step 2 onward
+  const OrderSummary = () => {
+    const b = priceBreakdown();
+    const styleName = STYLES.find(s => s.id === selected.style)?.name;
+    const hasAnyContent = !!selected.style;
+    if (!hasAnyContent) return null;
+
+    return (
+      <div className="rounded-2xl bg-primary-lighter border-2 border-primary p-5 sticky top-24 space-y-3 text-sm">
+        <p className="font-black text-secondary text-base tracking-tighter">{t.studio.summary.title}</p>
+        <div className="space-y-2">
+          {selected.style && (
+            <div className="flex justify-between">
+              <span className="text-secondary-lighter">{t.studio.summary.style}</span>
+              <span className="font-bold text-secondary">{styleName}</span>
+            </div>
+          )}
+          {selected.bodyType && (
+            <div className="flex justify-between">
+              <span className="text-secondary-lighter">{t.studio.summary.type}</span>
+              <span className="font-bold text-secondary">
+                {selected.bodyType === 'full_body' ? t.studio.summary.full_body : t.studio.summary.torso}
+              </span>
+            </div>
+          )}
+          {selected.bodyType && (
+            <>
+              <div className="flex justify-between">
+                <span className="text-secondary-lighter">
+                  {selected.peopleCount} {t.studio.summary.people_count} × {fmt(b.perPerson)}
+                </span>
+                <span className={`font-bold ${b.discountRate > 0 ? 'line-through text-secondary-lighter' : 'text-secondary'}`}>
+                  {fmt(b.peopleSubtotal)}
+                </span>
+              </div>
+              {b.discountRate > 0 && (
+                <div className="flex justify-between bg-white rounded-xl px-3 py-1.5">
+                  <span className="text-primary font-bold">🎉 −{Math.round(b.discountRate * 100)}%</span>
+                  <span className="font-bold text-primary">−{fmt(b.discount)}</span>
+                </div>
+              )}
+            </>
+          )}
+          {selected.background && selected.background !== 'none' && (
+            <div className="flex justify-between">
+              <span className="text-secondary-lighter">{t.studio.summary.background}</span>
+              <span className="font-bold text-secondary">+{fmt(b.bgCost)}</span>
+            </div>
+          )}
+          {selected.background && selected.background !== 'none' && (
+            <div className="flex justify-between text-xs text-secondary-lighter pl-2">
+              <span>{getBgName(selected.background)}</span>
+            </div>
+          )}
+          {selected.express && (
+            <div className="flex justify-between">
+              <span className="text-secondary-lighter">{t.studio.summary.express}</span>
+              <span className="font-bold text-secondary">+{fmt(b.expressSurcharge)}</span>
+            </div>
+          )}
+        </div>
+        {selected.bodyType && (
+          <div className="flex justify-between border-t-2 border-primary pt-3 font-black text-lg">
+            <span className="text-secondary">{t.studio.summary.total}</span>
+            <span className="text-primary">{fmt(totalPrice())}</span>
+          </div>
+        )}
+      </div>
+    );
+  };
+
   return (
     <div className="min-h-screen bg-white">
       {/* Nav */}
       <nav className="bg-white border-b border-primary-lighter sticky top-0 z-10 w-full overflow-x-hidden">
-        <div className="mx-auto max-w-5xl px-4 py-4 flex items-center justify-between">
+        <div className="mx-auto max-w-6xl px-4 py-4 flex items-center justify-between">
           <Logo href="/" size="md" />
           <div className="flex items-center gap-4">
             <CurrencySwitcher />
@@ -185,7 +234,7 @@ export default function StudioPage() {
 
       {/* Progress */}
       <div className="bg-white border-b-2 border-primary-lighter w-full overflow-x-hidden">
-        <div className="mx-auto max-w-5xl px-4 py-4 flex justify-center">
+        <div className="mx-auto max-w-6xl px-4 py-4 flex justify-center">
           <div className="flex items-center gap-1 sm:gap-3">
             {STEPS.map((label, i) => (
               <div key={label} className="flex items-center">
@@ -215,422 +264,364 @@ export default function StudioPage() {
       </div>
 
       {/* Content */}
-      <main className="mx-auto max-w-5xl px-4 py-8 w-full overflow-x-hidden">
+      <main className="mx-auto max-w-6xl px-4 py-8 w-full overflow-x-hidden">
+        <div className={`${step > 1 ? 'lg:grid lg:grid-cols-3 lg:gap-8' : ''}`}>
+          {/* Main step content */}
+          <div className={step > 1 ? 'lg:col-span-2' : ''}>
 
-        {/* PASO 1: Estilo */}
-        {step === 1 && (
-          <div>
-            <div className="text-center mb-10">
-              <h1 className="font-black text-4xl text-secondary mb-3 tracking-tighter">{t.studio.step1.title}</h1>
-              <p className="text-lg text-secondary-lighter">{t.studio.step1.subtitle}</p>
-            </div>
-            <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-              {STYLES.map((s) => (
-                <button
-                  key={s.id}
-                  onClick={() => setSelected({ ...selected, style: s.id, background: '' })}
-                  className={`rounded-2xl border-2 p-8 text-center transition-all focus:outline-none ${
-                    selected.style === s.id
-                      ? 'border-primary bg-primary-lighter ring-2 ring-primary shadow-lg'
-                      : 'border-primary-lighter bg-white hover:border-primary hover:shadow-md'
-                  }`}
-                >
-                  {selected.style === s.id && (
-                    <span className="absolute top-2 right-2 flex h-6 w-6 items-center justify-center rounded-full bg-primary text-white text-xs font-bold">•</span>
-                  )}
-                  <p className="font-bold text-secondary">{s.name}</p>
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* PASO 2: Cuerpo + Personas */}
-        {step === 2 && (
-          <div>
-            <div className="text-center mb-10">
-              <h1 className="font-black text-4xl text-secondary mb-3 tracking-tighter">{t.studio.step2.title}</h1>
-              <p className="text-lg text-secondary-lighter">{t.studio.step2.subtitle}</p>
-            </div>
-
-            {/* Body Type selector */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-3xl mx-auto mb-10">
-              {[
-                { id: 'torso_only', name: t.studio.body_types.torso_name, desc: t.studio.body_types.torso_desc, price: 15, original: 20 },
-                { id: 'full_body', name: t.studio.body_types.full_name, desc: t.studio.body_types.full_desc, price: 25, original: null as null },
-              ].map((b, idx) => (
-                <button
-                  key={b.id}
-                  onClick={() => setSelected({ ...selected, bodyType: b.id })}
-                  className={`rounded-2xl border-2 p-6 text-center transition-all focus:outline-none relative ${
-                    selected.bodyType === b.id
-                      ? 'border-primary bg-primary-lighter ring-2 ring-primary shadow-xl'
-                      : 'border-primary-lighter bg-white hover:border-primary hover:shadow-lg'
-                  } ${idx === 0 ? 'animate-pulse-scale' : ''}`}
-                >
-                  {b.original && (
-                    <div className="inline-flex items-center gap-1 bg-secondary text-white px-2.5 py-1 rounded-full text-xs font-black mb-3 shadow">
-                      {t.studio.body_types.torso_badge} <span className="line-through text-gray-400">{fmt(b.original)}</span> {t.studio.body_types.torso_now} <span className="text-primary-lighter font-black">{fmt(b.price)}</span>
-                    </div>
-                  )}
-                  {selected.bodyType === b.id && (
-                    <span className="block text-primary font-bold text-xs mb-2">{t.studio.body_types.selected}</span>
-                  )}
-                  <p className="font-black text-xl sm:text-2xl text-secondary mb-2 tracking-tighter">{b.name}</p>
-                  <p className="text-secondary-lighter text-sm mb-4">{b.desc}</p>
-                  <div className="bg-gradient-to-r from-primary to-primary-dark text-white rounded-xl px-4 py-3 font-black text-2xl sm:text-3xl">
-                    {fmt(b.price)}{t.studio.body_types.per_person}
-                  </div>
-                </button>
-              ))}
-            </div>
-
-            {/* Personas section */}
-            <div className="max-w-3xl mx-auto">
-              <div className="flex items-center justify-between mb-6">
-                <div>
-                  <h2 className="font-black text-2xl text-secondary tracking-tighter">{t.studio.step2.people_title}</h2>
-                  <p className="text-secondary-lighter text-sm mt-1">{t.studio.step2.people_subtitle}</p>
+            {/* PASO 1: Estilo */}
+            {step === 1 && (
+              <div>
+                <div className="text-center mb-10">
+                  <h1 className="font-black text-4xl text-secondary mb-3 tracking-tighter">{t.studio.step1.title}</h1>
+                  <p className="text-lg text-secondary-lighter">{t.studio.step1.subtitle}</p>
                 </div>
-                {/* Contador rápido */}
-                <div className="flex items-center gap-3 bg-primary-lighter rounded-2xl px-4 py-2">
-                  <button
-                    onClick={() => selected.people.length > 1 && removePerson(selected.people.length - 1)}
-                    disabled={selected.people.length <= 1}
-                    className="w-8 h-8 rounded-full bg-white shadow flex items-center justify-center text-secondary hover:bg-primary hover:text-white transition-all disabled:opacity-30"
-                  >
-                    <Minus className="w-4 h-4" />
-                  </button>
-                  <span className="font-black text-xl text-secondary w-6 text-center">{selected.people.length}</span>
-                  <button
-                    onClick={addPerson}
-                    disabled={selected.people.length >= 4}
-                    className="w-8 h-8 rounded-full bg-primary text-white shadow flex items-center justify-center hover:bg-primary-dark transition-all disabled:opacity-30 disabled:bg-primary-lighter disabled:text-secondary"
-                  >
-                    <Plus className="w-4 h-4" />
-                  </button>
-                </div>
-              </div>
-
-              <div className="space-y-4">
-                {selected.people.map((person, i) => (
-                  <div key={i} className="bg-white rounded-2xl border-2 border-primary-lighter p-6 flex items-center gap-4">
-                    <div className="w-10 h-10 rounded-full bg-primary text-white font-black flex items-center justify-center flex-shrink-0">
-                      {i + 1}
-                    </div>
-                    <div className="grid grid-cols-2 gap-3 flex-1">
-                      <div>
-                        <label className="block text-xs font-bold text-secondary mb-2">{t.studio.step2.name_label}</label>
-                        <input
-                          type="text"
-                          value={person.name}
-                          onChange={(e) => updatePerson(i, 'name', e.target.value)}
-                          placeholder="Ej: María"
-                          className="w-full rounded-lg border-2 border-primary-lighter px-4 py-2.5 text-sm text-secondary focus:border-primary focus:outline-none"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-xs font-bold text-secondary mb-2">{t.studio.step2.role_label}</label>
-                        <select
-                          value={person.role}
-                          onChange={(e) => updatePerson(i, 'role', e.target.value)}
-                          className="w-full rounded-lg border-2 border-primary-lighter px-4 py-2.5 text-sm text-secondary focus:border-primary focus:outline-none"
-                        >
-                          {ROLES.map(r => <option key={r} value={r}>{r}</option>)}
-                        </select>
-                      </div>
-                    </div>
-                    {i > 0 && (
-                      <button
-                        onClick={() => removePerson(i)}
-                        className="text-secondary-lighter hover:text-primary transition-colors flex-shrink-0 font-bold text-xl"
-                      >
-                        ×
-                      </button>
-                    )}
-                  </div>
-                ))}
-              </div>
-
-              {/* Precio dinámico */}
-              {selected.bodyType && (() => {
-                const b = priceBreakdown();
-                const nextTierAt = selected.people.length < 3 ? 3 : selected.people.length < 5 ? 5 : null;
-                const nextRate = selected.people.length < 3 ? 15 : 25;
-                return (
-                  <div className="mt-6 bg-primary-lighter rounded-2xl p-5 border-2 border-primary space-y-2">
-                    <div className="flex justify-between items-center">
-                      <span className="text-secondary">
-                        {selected.people.length} persona{selected.people.length > 1 ? 's' : ''} x {fmt(b.perPerson)}
-                      </span>
-                      <span className={`font-black text-xl ${b.discountRate ? 'text-secondary-lighter line-through text-base' : 'text-primary'}`}>
-                        {fmt(b.peopleSubtotal)}
-                      </span>
-                    </div>
-                    {b.discountRate > 0 && (
-                      <div className="flex justify-between items-center bg-white rounded-xl px-3 py-2">
-                        <span className="font-bold text-primary text-sm">
-                          🎉 Pack familia −{Math.round(b.discountRate * 100)}%
-                        </span>
-                        <span className="font-black text-xl text-primary">{fmt(b.peopleSubtotal - b.discount)}</span>
-                      </div>
-                    )}
-                    {nextTierAt && (
-                      <p className="text-xs text-secondary-lighter text-center">
-                        Añade {nextTierAt - selected.people.length} persona{nextTierAt - selected.people.length > 1 ? 's' : ''} más y obtén {nextRate}% off
-                      </p>
-                    )}
-                  </div>
-                );
-              })()}
-            </div>
-          </div>
-        )}
-
-        {/* PASO 3: Fondo */}
-        {step === 3 && (
-          <div>
-            <div className="text-center mb-10">
-              <h1 className="font-black text-4xl text-secondary mb-3 tracking-tighter">{t.studio.step3.title}</h1>
-              <p className="text-lg text-secondary-lighter">{t.studio.step3.subtitle}</p>
-            </div>
-            <div className="grid grid-cols-2 gap-3">
-              {(BACKGROUNDS_BY_STYLE[selected.style] ?? []).map((bg) => {
-                const isSelected = selected.background === bg.id;
-
-                if (bg.id === 'none') {
-                  return (
+                <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+                  {STYLES.map((s) => (
                     <button
-                      key={bg.id}
-                      onClick={() => setSelected({ ...selected, background: bg.id })}
-                      className={`rounded-2xl border-2 text-center transition-all focus:outline-none overflow-hidden flex flex-col items-center justify-center min-h-[152px] ${
-                        isSelected
-                          ? 'border-secondary bg-secondary-light ring-2 ring-secondary shadow-lg'
-                          : 'border-secondary bg-secondary hover:bg-secondary-light hover:shadow-md'
+                      key={s.id}
+                      onClick={() => {
+                        setSelected({ ...selected, style: s.id, background: '' });
+                        setTimeout(() => setStep(2), 300);
+                      }}
+                      className={`rounded-2xl border-2 p-8 text-center transition-all focus:outline-none ${
+                        selected.style === s.id
+                          ? 'border-primary bg-primary-lighter ring-2 ring-primary shadow-lg'
+                          : 'border-primary-lighter bg-white hover:border-primary hover:shadow-md'
                       }`}
                     >
-                      {isSelected && (
-                        <span className="block text-white text-base font-black mb-2 tracking-widest">✓</span>
-                      )}
-                      <p className="font-montserrat font-black text-white text-sm uppercase tracking-[0.12em] leading-tight px-3">
-                        {getBgName(bg.id)}
-                      </p>
+                      <p className="font-bold text-secondary">{s.name}</p>
                     </button>
-                  );
-                }
+                  ))}
+                </div>
+              </div>
+            )}
 
-                if (bg.id === 'custom') {
-                  return (
+            {/* PASO 2: Cuerpo + Personas */}
+            {step === 2 && (
+              <div>
+                <div className="text-center mb-10">
+                  <h1 className="font-black text-4xl text-secondary mb-3 tracking-tighter">{t.studio.step2.title}</h1>
+                  <p className="text-lg text-secondary-lighter">{t.studio.step2.subtitle}</p>
+                </div>
+
+                {/* Body Type selector */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-2xl mx-auto mb-10">
+                  {[
+                    {
+                      id: 'torso_only',
+                      name: t.studio.body_types.torso_name,
+                      desc: t.studio.body_types.torso_desc,
+                      price: 25,
+                      original: null as null,
+                      bestValue: false,
+                    },
+                    {
+                      id: 'full_body',
+                      name: t.studio.body_types.full_name,
+                      desc: t.studio.body_types.full_desc,
+                      price: 29.99,
+                      original: 39.99,
+                      bestValue: true,
+                    },
+                  ].map((b) => (
                     <button
-                      key={bg.id}
-                      onClick={() => setSelected({ ...selected, background: bg.id })}
-                      className={`rounded-2xl border-2 text-center transition-all focus:outline-none overflow-hidden flex flex-col animate-wiggle-slow animate-glow-pulse ${
-                        isSelected
-                          ? 'border-primary ring-2 ring-primary shadow-lg'
-                          : 'border-primary-lighter bg-white hover:border-primary'
-                      }`}
+                      key={b.id}
+                      onClick={() => setSelected({ ...selected, bodyType: b.id })}
+                      className={`rounded-2xl border-2 p-6 text-center transition-all focus:outline-none relative ${
+                        selected.bodyType === b.id
+                          ? 'border-primary bg-primary-lighter ring-2 ring-primary shadow-xl'
+                          : 'border-primary-lighter bg-white hover:border-primary hover:shadow-lg'
+                      } ${b.bestValue ? 'animate-wiggle-slow' : ''}`}
                     >
-                      <div className="relative h-24 w-full flex items-center justify-center bg-gradient-to-br from-primary-lighter via-white to-primary-light flex-shrink-0">
-                        <span className="text-4xl select-none" style={{ filter: 'drop-shadow(0 0 6px rgba(255,158,197,0.8))' }}>✦</span>
-                        {isSelected && (
-                          <div className="absolute inset-0 bg-primary/20 flex items-center justify-center">
-                            <span className="text-white text-lg font-black drop-shadow">✓</span>
-                          </div>
-                        )}
-                      </div>
-                      <div className="p-3">
-                        <p className="text-sm font-black text-secondary leading-tight uppercase tracking-tight">
-                          {getBgName(bg.id)}
-                        </p>
-                        <p className="text-xs text-primary mt-1 font-bold">+{fmt(bg.price ?? 25)}</p>
-                      </div>
-                    </button>
-                  );
-                }
-
-                return (
-                  <button
-                    key={bg.id}
-                    onClick={() => setSelected({ ...selected, background: bg.id })}
-                    className={`rounded-2xl border-2 text-center transition-all focus:outline-none overflow-hidden flex flex-col ${
-                      isSelected
-                        ? 'border-primary ring-2 ring-primary shadow-lg'
-                        : 'border-primary-lighter bg-white hover:border-primary hover:shadow-md'
-                    }`}
-                  >
-                    <div className="relative w-full h-24 flex-shrink-0">
-                      <Image
-                        src={`/backgrounds/${bg.id}.jpg`}
-                        alt={getBgName(bg.id)}
-                        fill
-                        className="object-cover"
-                        sizes="(max-width: 768px) 50vw, 25vw"
-                      />
-                      {isSelected && (
-                        <div className="absolute inset-0 bg-primary/20 flex items-center justify-center">
-                          <span className="text-white text-lg font-bold drop-shadow">✓</span>
+                      {b.bestValue && (
+                        <div className="inline-flex items-center gap-1 bg-primary text-white px-3 py-1 rounded-full text-xs font-black mb-3 shadow-lg ring-2 ring-primary-light">
+                          ✨ {t.studio.body_types.best_value}
                         </div>
                       )}
-                    </div>
-                    <div className="p-3">
-                      <p className="text-sm font-bold text-secondary leading-tight">{getBgName(bg.id)}</p>
-                      <p className="text-xs text-primary mt-1 font-bold">+{fmt(bg.price ?? 15)}</p>
-                    </div>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-        )}
-
-        {/* PASO 4: Detalles */}
-        {step === 4 && (
-          <div>
-            <div className="text-center mb-10">
-              <h1 className="font-black text-4xl text-secondary mb-3 tracking-tighter">{t.studio.step4.title}</h1>
-              <p className="text-lg text-secondary-lighter">{t.studio.step4.subtitle}</p>
-            </div>
-            <div className="max-w-2xl mx-auto">
-              <label className="block font-bold text-secondary mb-3">
-                {t.studio.step4.notes_label} <span className="font-normal text-secondary-lighter">{t.studio.step4.notes_optional}</span>
-              </label>
-              <textarea
-                value={selected.specialRequests}
-                onChange={(e) => setSelected({ ...selected, specialRequests: e.target.value })}
-                placeholder={t.studio.step4.notes_placeholder}
-                rows={6}
-                maxLength={500}
-                className="w-full rounded-lg border-2 border-primary-lighter px-4 py-3 text-sm text-secondary focus:border-primary focus:outline-none resize-none"
-              />
-              <p className="text-right text-xs text-secondary-lighter mt-2">{selected.specialRequests.length}/500</p>
-
-              {/* Express 24h */}
-              <button
-                type="button"
-                onClick={() => setSelected({ ...selected, express: !selected.express })}
-                className={`mt-6 w-full rounded-2xl border-2 p-5 text-left transition-all ${
-                  selected.express
-                    ? 'border-primary bg-primary-lighter ring-2 ring-primary'
-                    : 'border-primary-lighter bg-white hover:border-primary'
-                }`}
-              >
-                <div className="flex items-start gap-4">
-                  <div className={`mt-1 w-6 h-6 rounded-md border-2 flex items-center justify-center flex-shrink-0 ${selected.express ? 'bg-primary border-primary text-white' : 'border-secondary-lighter'}`}>
-                    {selected.express && '✓'}
-                  </div>
-                  <div className="flex-1">
-                    <p className="font-black text-secondary text-lg tracking-tighter">⚡ Entrega exprés 24h</p>
-                    <p className="text-sm text-secondary-lighter mt-1">
-                      Saltamos la cola. Listo en 24 horas en vez de 48.
-                    </p>
-                  </div>
-                  <span className="font-black text-primary whitespace-nowrap">+30%</span>
+                      {selected.bodyType === b.id && (
+                        <span className="block text-primary font-bold text-xs mb-2">{t.studio.body_types.selected}</span>
+                      )}
+                      <p className="font-black text-xl sm:text-2xl text-secondary mb-2 tracking-tighter">{b.name}</p>
+                      <p className="text-secondary-lighter text-sm mb-4">{b.desc}</p>
+                      {b.original && (
+                        <p className="text-xs text-secondary-lighter line-through mb-1">{fmt(b.original)}</p>
+                      )}
+                      <div className={`bg-gradient-to-r from-primary to-primary-dark text-white rounded-xl px-4 py-3 font-black text-2xl sm:text-3xl ${b.bestValue ? 'shadow-lg shadow-primary/40' : ''}`}>
+                        {fmt(b.price)}{t.studio.body_types.per_person}
+                      </div>
+                    </button>
+                  ))}
                 </div>
-              </button>
-            </div>
-          </div>
-        )}
 
-        {/* PASO 5: Fotos */}
-        {step === 5 && (
-          <div>
-            <div className="text-center mb-10">
-              <h1 className="font-black text-4xl text-secondary mb-3 tracking-tighter">{t.studio.step5.title}</h1>
-              <p className="text-lg text-secondary-lighter">{t.studio.step5.subtitle}</p>
-            </div>
-            <div className="max-w-2xl mx-auto">
-              <div className="rounded-2xl border-2 border-dashed border-primary-lighter bg-white p-12 text-center hover:border-primary hover:bg-primary-lighter transition-all cursor-pointer">
-                <p className="font-bold text-secondary mb-2">{t.studio.step5.drag}</p>
-                <p className="text-secondary-lighter mb-6">{t.studio.step5.or}</p>
-                <label className="inline-block cursor-pointer rounded-lg bg-primary px-6 py-3 text-sm font-bold text-white hover:bg-primary-dark transition-colors">
-                  {t.studio.step5.select_btn}
-                  <input type="file" multiple accept="image/*" onChange={handlePhotoUpload} className="hidden" />
-                </label>
-                {selected.photos.length > 0 && (
-                  <div className="mt-6 text-sm text-primary font-bold">
-                    {selected.photos.length} {selected.photos.length > 1 ? t.studio.step5.selected_plural : t.studio.step5.selected}
-                  </div>
-                )}
-                <p className="mt-6 text-xs text-secondary-lighter">
-                  {t.studio.step5.max_size} · {selected.people.length} {selected.people.length > 1 ? t.studio.step5.required_photos_plural : t.studio.step5.required_photos}
-                </p>
-              </div>
-
-              {/* Resumen del pedido */}
-              <div className="mt-8 rounded-2xl bg-primary-lighter border-2 border-primary p-8">
-                <p className="font-black text-secondary mb-5 text-lg tracking-tighter">{t.studio.summary.title}</p>
-                <div className="space-y-3 text-secondary">
-                  <div className="flex justify-between">
-                    <span className="text-secondary-lighter">{t.studio.summary.style}</span>
-                    <span className="font-bold">{STYLES.find(s => s.id === selected.style)?.name}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-secondary-lighter">{t.studio.summary.type}</span>
-                    <span className="font-bold">{selected.bodyType === 'full_body' ? t.studio.summary.full_body : t.studio.summary.torso}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-secondary-lighter">{t.studio.summary.people}</span>
-                    <span className="font-bold">{selected.people.map(p => p.name).join(', ')}</span>
-                  </div>
-                  {selected.background && selected.background !== 'none' && (
-                    <div className="flex justify-between">
-                      <span className="text-secondary-lighter">{t.studio.summary.background}</span>
-                      <span className="font-bold">{getBgName(selected.background)} (+{fmt(selected.background === 'custom' ? 25 : 15)})</span>
+                {/* Personas counter */}
+                <div className="max-w-2xl mx-auto">
+                  <div className="flex items-center justify-between mb-4">
+                    <div>
+                      <h2 className="font-black text-2xl text-secondary tracking-tighter">{t.studio.step2.people_title}</h2>
+                      <p className="text-secondary-lighter text-sm mt-1">
+                        {t.studio.step2.people_subtitle.replace('4', '8')}
+                      </p>
                     </div>
-                  )}
-                  {(() => {
+                    <div className="flex items-center gap-3 bg-primary-lighter rounded-2xl px-4 py-2">
+                      <button
+                        onClick={() => selected.peopleCount > 1 && setSelected({ ...selected, peopleCount: selected.peopleCount - 1 })}
+                        disabled={selected.peopleCount <= 1}
+                        className="w-8 h-8 rounded-full bg-white shadow flex items-center justify-center text-secondary hover:bg-primary hover:text-white transition-all disabled:opacity-30"
+                      >
+                        <Minus className="w-4 h-4" />
+                      </button>
+                      <span className="font-black text-xl text-secondary w-6 text-center">{selected.peopleCount}</span>
+                      <button
+                        onClick={() => selected.peopleCount < 8 && setSelected({ ...selected, peopleCount: selected.peopleCount + 1 })}
+                        disabled={selected.peopleCount >= 8}
+                        className="w-8 h-8 rounded-full bg-primary text-white shadow flex items-center justify-center hover:bg-primary-dark transition-all disabled:opacity-30 disabled:bg-primary-lighter disabled:text-secondary"
+                      >
+                        <Plus className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Dynamic price breakdown */}
+                  {selected.bodyType && (() => {
                     const b = priceBreakdown();
+                    const nextTierAt = selected.peopleCount < 3 ? 3 : selected.peopleCount < 5 ? 5 : null;
+                    const nextRate = selected.peopleCount < 3 ? 15 : 25;
                     return (
-                      <>
+                      <div className="mt-4 bg-primary-lighter rounded-2xl p-5 border-2 border-primary space-y-2">
+                        <div className="flex justify-between items-center">
+                          <span className="text-secondary">
+                            {selected.peopleCount} × {fmt(b.perPerson)}
+                          </span>
+                          <span className={`font-black text-xl ${b.discountRate ? 'text-secondary-lighter line-through text-base' : 'text-primary'}`}>
+                            {fmt(b.peopleSubtotal)}
+                          </span>
+                        </div>
                         {b.discountRate > 0 && (
-                          <div className="flex justify-between text-primary">
-                            <span>🎉 Pack familia (−{Math.round(b.discountRate * 100)}%)</span>
-                            <span className="font-bold">−{fmt(b.discount)}</span>
+                          <div className="flex justify-between items-center bg-white rounded-xl px-3 py-2">
+                            <span className="font-bold text-primary text-sm">
+                              🎉 Pack familia −{Math.round(b.discountRate * 100)}%
+                            </span>
+                            <span className="font-black text-xl text-primary">{fmt(b.peopleSubtotal - b.discount)}</span>
                           </div>
                         )}
-                        {selected.express && (
-                          <div className="flex justify-between text-primary">
-                            <span>⚡ Exprés 24h (+30%)</span>
-                            <span className="font-bold">+{fmt(b.expressSurcharge)}</span>
-                          </div>
+                        {nextTierAt && (
+                          <p className="text-xs text-secondary-lighter text-center">
+                            +{nextTierAt - selected.peopleCount} más → {nextRate}% off
+                          </p>
                         )}
-                      </>
+                      </div>
                     );
                   })()}
-                  <div className="flex justify-between border-t-2 border-primary pt-4 mt-4 font-black text-xl">
-                    <span>{t.studio.summary.total}</span>
-                    <span className="text-primary">{fmt(totalPrice())}</span>
+                </div>
+              </div>
+            )}
+
+            {/* PASO 3: Fondo */}
+            {step === 3 && (
+              <div>
+                <div className="text-center mb-10">
+                  <h1 className="font-black text-4xl text-secondary mb-3 tracking-tighter">{t.studio.step3.title}</h1>
+                  <p className="text-lg text-secondary-lighter">{t.studio.step3.subtitle}</p>
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  {(BACKGROUNDS_BY_STYLE[selected.style] ?? []).map((bg) => {
+                    const isSelected = selected.background === bg.id;
+
+                    if (bg.id === 'none') {
+                      return (
+                        <button
+                          key={bg.id}
+                          onClick={() => setSelected({ ...selected, background: bg.id })}
+                          className={`rounded-2xl border-2 text-center transition-all focus:outline-none overflow-hidden flex flex-col items-center justify-center min-h-[152px] ${
+                            isSelected
+                              ? 'border-secondary bg-secondary-light ring-2 ring-secondary shadow-lg'
+                              : 'border-secondary bg-secondary hover:bg-secondary-light hover:shadow-md'
+                          }`}
+                        >
+                          {isSelected && (
+                            <span className="block text-white text-base font-black mb-2 tracking-widest">✓</span>
+                          )}
+                          <p className="font-montserrat font-black text-white text-sm uppercase tracking-[0.12em] leading-tight px-3">
+                            {getBgName(bg.id)}
+                          </p>
+                        </button>
+                      );
+                    }
+
+                    if (bg.id === 'custom') {
+                      return (
+                        <button
+                          key={bg.id}
+                          onClick={() => setSelected({ ...selected, background: bg.id })}
+                          className={`rounded-2xl border-2 text-center transition-all focus:outline-none overflow-hidden flex flex-col animate-wiggle-slow ${
+                            isSelected
+                              ? 'border-primary ring-2 ring-primary shadow-lg'
+                              : 'border-primary-lighter bg-white hover:border-primary'
+                          }`}
+                        >
+                          <div className="relative h-24 w-full flex items-center justify-center bg-gradient-to-br from-primary-lighter via-white to-primary-light flex-shrink-0">
+                            <span className="text-4xl select-none" style={{ filter: 'drop-shadow(0 0 6px rgba(255,158,197,0.8))' }}>✦</span>
+                            {isSelected && (
+                              <div className="absolute inset-0 bg-primary/20 flex items-center justify-center">
+                                <span className="text-white text-lg font-black drop-shadow">✓</span>
+                              </div>
+                            )}
+                          </div>
+                          <div className="p-3">
+                            <p className="text-sm font-black text-secondary leading-tight uppercase tracking-tight">
+                              {getBgName(bg.id)}
+                            </p>
+                            <p className="text-xs text-primary mt-1 font-bold">+{fmt(bg.price ?? 25)}</p>
+                          </div>
+                        </button>
+                      );
+                    }
+
+                    return (
+                      <button
+                        key={bg.id}
+                        onClick={() => setSelected({ ...selected, background: bg.id })}
+                        className={`rounded-2xl border-2 text-center transition-all focus:outline-none overflow-hidden flex flex-col ${
+                          isSelected
+                            ? 'border-primary ring-2 ring-primary shadow-lg'
+                            : 'border-primary-lighter bg-white hover:border-primary hover:shadow-md'
+                        }`}
+                      >
+                        <div className="relative w-full h-24 flex-shrink-0">
+                          <Image
+                            src={`/backgrounds/${bg.id}.jpg`}
+                            alt={getBgName(bg.id)}
+                            fill
+                            className="object-cover"
+                            sizes="(max-width: 768px) 50vw, 25vw"
+                          />
+                          {isSelected && (
+                            <div className="absolute inset-0 bg-primary/20 flex items-center justify-center">
+                              <span className="text-white text-lg font-bold drop-shadow">✓</span>
+                            </div>
+                          )}
+                        </div>
+                        <div className="p-3">
+                          <p className="text-sm font-bold text-secondary leading-tight">{getBgName(bg.id)}</p>
+                          <p className="text-xs text-primary mt-1 font-bold">+{fmt(bg.price ?? 15)}</p>
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {/* PASO 4: Detalles */}
+            {step === 4 && (
+              <div>
+                <div className="text-center mb-10">
+                  <h1 className="font-black text-4xl text-secondary mb-3 tracking-tighter">{t.studio.step4.title}</h1>
+                  <p className="text-lg text-secondary-lighter">{t.studio.step4.subtitle}</p>
+                </div>
+                <div className="max-w-2xl mx-auto">
+                  <label className="block font-bold text-secondary mb-3">
+                    {t.studio.step4.notes_label} <span className="font-normal text-secondary-lighter">{t.studio.step4.notes_optional}</span>
+                  </label>
+                  <textarea
+                    value={selected.specialRequests}
+                    onChange={(e) => setSelected({ ...selected, specialRequests: e.target.value })}
+                    placeholder={t.studio.step4.notes_placeholder}
+                    rows={6}
+                    maxLength={500}
+                    className="w-full rounded-lg border-2 border-primary-lighter px-4 py-3 text-sm text-secondary focus:border-primary focus:outline-none resize-none"
+                  />
+                  <p className="text-right text-xs text-secondary-lighter mt-2">{selected.specialRequests.length}/500</p>
+
+                  {/* Express 24h */}
+                  <button
+                    type="button"
+                    onClick={() => setSelected({ ...selected, express: !selected.express })}
+                    className={`mt-6 w-full rounded-2xl border-2 p-5 text-left transition-all ${
+                      selected.express
+                        ? 'border-primary bg-primary-lighter ring-2 ring-primary'
+                        : 'border-primary-lighter bg-white hover:border-primary'
+                    }`}
+                  >
+                    <div className="flex items-start gap-4">
+                      <div className={`mt-1 w-6 h-6 rounded-md border-2 flex items-center justify-center flex-shrink-0 ${selected.express ? 'bg-primary border-primary text-white' : 'border-secondary-lighter'}`}>
+                        {selected.express && '✓'}
+                      </div>
+                      <div className="flex-1">
+                        <p className="font-black text-secondary text-lg tracking-tighter">{t.studio.step4.express_title}</p>
+                        <p className="text-sm text-secondary-lighter mt-1">{t.studio.step4.express_desc}</p>
+                      </div>
+                      <span className="font-black text-secondary text-xl whitespace-nowrap">{t.studio.step4.express_surcharge}</span>
+                    </div>
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* PASO 5: Fotos */}
+            {step === 5 && (
+              <div>
+                <div className="text-center mb-10">
+                  <h1 className="font-black text-4xl text-secondary mb-3 tracking-tighter">{t.studio.step5.title}</h1>
+                  <p className="text-lg text-secondary-lighter">{t.studio.step5.subtitle}</p>
+                </div>
+                <div className="max-w-2xl mx-auto">
+                  <div className="rounded-2xl border-2 border-dashed border-primary-lighter bg-white p-12 text-center hover:border-primary hover:bg-primary-lighter transition-all cursor-pointer">
+                    <p className="font-bold text-secondary mb-2">{t.studio.step5.drag}</p>
+                    <p className="text-secondary-lighter mb-6">{t.studio.step5.or}</p>
+                    <label className="inline-block cursor-pointer rounded-lg bg-primary px-6 py-3 text-sm font-bold text-white hover:bg-primary-dark transition-colors">
+                      {t.studio.step5.select_btn}
+                      <input type="file" multiple accept="image/*" onChange={handlePhotoUpload} className="hidden" />
+                    </label>
+                    {selected.photos.length > 0 && (
+                      <div className="mt-6 text-sm text-primary font-bold">
+                        {selected.photos.length} {selected.photos.length > 1 ? t.studio.step5.selected_plural : t.studio.step5.selected}
+                      </div>
+                    )}
+                    <p className="mt-6 text-xs text-secondary-lighter">
+                      {t.studio.step5.max_size} · {selected.peopleCount} {selected.peopleCount > 1 ? t.studio.step5.required_photos_plural : t.studio.step5.required_photos}
+                    </p>
                   </div>
                 </div>
               </div>
+            )}
+
+            {/* Navigation */}
+            <div className="flex justify-between items-center mt-14">
+              <button
+                onClick={prevStep}
+                className="text-secondary-lighter hover:text-primary text-sm font-bold px-6 py-3 rounded-lg hover:bg-primary-lighter transition-colors"
+              >
+                {step === 1 ? <Link href="/">{t.studio.nav.back_home}</Link> : t.studio.nav.prev}
+              </button>
+              {step > 1 && (
+                <button
+                  onClick={nextStep}
+                  disabled={!canAdvance()}
+                  className={`rounded-lg px-10 py-3 font-bold text-white transition-all ${
+                    canAdvance()
+                      ? 'bg-primary hover:bg-primary-dark shadow-lg hover:shadow-xl'
+                      : 'bg-secondary-lighter text-gray-400 cursor-not-allowed'
+                  }`}
+                >
+                  {step === 5 ? t.studio.nav.checkout : t.studio.nav.next}
+                </button>
+              )}
             </div>
+
+            <p className="text-center text-xs text-secondary-lighter mt-8">
+              {t.studio.nav.secure}
+            </p>
           </div>
-        )}
 
-        {/* Navegación */}
-        <div className="flex justify-between items-center mt-14">
-          <button
-            onClick={prevStep}
-            className="text-secondary-lighter hover:text-primary text-sm font-bold px-6 py-3 rounded-lg hover:bg-primary-lighter transition-colors"
-          >
-            {step === 1 ? <Link href="/">{t.studio.nav.back_home}</Link> : t.studio.nav.prev}
-          </button>
-          <button
-            onClick={nextStep}
-            disabled={!canAdvance()}
-            className={`rounded-lg px-10 py-3 font-bold text-white transition-all ${
-              canAdvance()
-                ? 'bg-primary hover:bg-primary-dark shadow-lg hover:shadow-xl'
-                : 'bg-secondary-lighter text-gray-400 cursor-not-allowed'
-            }`}
-          >
-            {step === 5 ? t.studio.nav.checkout : t.studio.nav.next}
-          </button>
+          {/* Sidebar: Order Summary */}
+          {step > 1 && (
+            <div className="hidden lg:block">
+              <OrderSummary />
+            </div>
+          )}
         </div>
-
-        <p className="text-center text-xs text-secondary-lighter mt-8">
-          {t.studio.nav.secure}
-        </p>
       </main>
     </div>
   );
