@@ -113,6 +113,9 @@ export const translations = {
         notes_label: 'Special notes',
         notes_optional: '(optional)',
         notes_placeholder: 'E.g.: I want them wearing a hat, change hair color to blonde, include pet, special accessories...',
+        express_title: '⚡ Express Delivery 24h',
+        express_desc: 'Skip the queue. Ready in 24h instead of 48h.',
+        express_surcharge: '+30%',
       },
       step5: {
         title: 'Upload Your Photos',
@@ -135,6 +138,11 @@ export const translations = {
         total: 'Total:',
         full_body: 'Full body',
         torso: 'Torso only',
+        per_person: '/person',
+        subtotal: 'Subtotal:',
+        discount: 'Family discount:',
+        express: '⚡ Express 24h:',
+        people_count: 'people',
       },
       nav: {
         back_home: 'Back to home',
@@ -152,6 +160,7 @@ export const translations = {
         torso_desc: 'Bust up to the waist',
         full_name: 'Full Body',
         full_desc: 'Full body character',
+        best_value: 'Best Value',
       },
       backgrounds: {
         none: 'No background',
@@ -386,6 +395,9 @@ export const translations = {
         notes_label: 'Notas especiales',
         notes_optional: '(opcional)',
         notes_placeholder: 'Ej: Quiero que lleve sombrero, cambiar color de cabello a rubio, incluir mascota, accesorios especiales...',
+        express_title: '⚡ Entrega exprés 24h',
+        express_desc: 'Saltamos la cola. Listo en 24 horas en vez de 48.',
+        express_surcharge: '+30%',
       },
       step5: {
         title: 'Sube tus Fotos',
@@ -408,6 +420,11 @@ export const translations = {
         total: 'Total:',
         full_body: 'Cuerpo completo',
         torso: 'Solo torso',
+        per_person: '/persona',
+        subtotal: 'Subtotal:',
+        discount: 'Descuento familia:',
+        express: '⚡ Exprés 24h:',
+        people_count: 'personas',
       },
       nav: {
         back_home: 'Volver al inicio',
@@ -425,6 +442,7 @@ export const translations = {
         torso_desc: 'Busto hasta la cintura',
         full_name: 'Cuerpo Completo',
         full_desc: 'Personaje de cuerpo entero',
+        best_value: 'Mejor Valor',
       },
       backgrounds: {
         none: 'Sin fondo',
@@ -659,6 +677,9 @@ export const translations = {
         notes_label: 'Notes spéciales',
         notes_optional: '(optionnel)',
         notes_placeholder: 'Ex: Je veux qu\'il porte un chapeau, changer la couleur des cheveux en blond, inclure un animal, accessoires spéciaux...',
+        express_title: '⚡ Livraison express 24h',
+        express_desc: 'On passe devant. Prêt en 24h au lieu de 48h.',
+        express_surcharge: '+30%',
       },
       step5: {
         title: 'Téléchargez vos Photos',
@@ -681,6 +702,11 @@ export const translations = {
         total: 'Total:',
         full_body: 'Corps entier',
         torso: 'Buste seulement',
+        per_person: '/personne',
+        subtotal: 'Sous-total:',
+        discount: 'Remise famille:',
+        express: '⚡ Express 24h:',
+        people_count: 'personnes',
       },
       nav: {
         back_home: 'Retour à l\'accueil',
@@ -698,6 +724,7 @@ export const translations = {
         torso_desc: 'Buste jusqu\'à la taille',
         full_name: 'Corps Entier',
         full_desc: 'Personnage en pied',
+        best_value: 'Meilleure Valeur',
       },
       backgrounds: {
         none: 'Sans fond',
