@@ -6,8 +6,6 @@ import { createServiceClient } from '@/lib/supabase/server';
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, { apiVersion: '2024-11-20.acacia' as any });
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET!;
 
-export const config = { api: { bodyParser: false } };
-
 function rowFromSession(session: Stripe.Checkout.Session, status: 'paid' | 'pending') {
   const meta = session.metadata ?? {};
   return {
