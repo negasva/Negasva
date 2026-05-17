@@ -74,7 +74,7 @@ const BACKGROUNDS_BY_STYLE: Record<string, { id: string; price?: number }[]> = {
 export default function StudioPage() {
   const router = useRouter();
   const { t } = useLanguage();
-  const { fmt } = useCurrency();
+  const { fmt, currency, rates } = useCurrency();
   const STEPS = t.studio.steps as unknown as string[];
 
   const [step, setStep] = useState(1);
@@ -88,6 +88,8 @@ export default function StudioPage() {
     express: false,
   });
 
+  const [checkoutLoading, setCheckoutLoading] = useState(false);
+
   const canAdvance = () => {
     if (step === 1) return !!selected.style;
     if (step === 2) return !!selected.bodyType;
@@ -97,9 +99,37 @@ export default function StudioPage() {
     return true;
   };
 
-  const nextStep = () => {
-    if (step < 5) setStep(step + 1);
-    else router.push('/checkout');
+  const nextStep = async () => {
+    if (step < 5) { setStep(step + 1); return; }
+
+    // Step 5: launch Stripe Checkout
+    setCheckoutLoading(true);
+    try {
+      const res = await fetch('/api/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          style: selected.style,
+          bodyType: selected.bodyType,
+          background: selected.background,
+          peopleCount: selected.peopleCount,
+          express: selected.express,
+          specialRequests: selected.specialRequests,
+          currency: currency.toLowerCase(),
+          rate: rates[currency] ?? 1,
+        }),
+      });
+      const data = await res.json();
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        alert('Error al iniciar el pago. Intenta de nuevo.');
+        setCheckoutLoading(false);
+      }
+    } catch {
+      alert('Error de red. Intenta de nuevo.');
+      setCheckoutLoading(false);
+    }
   };
 
   const prevStep = () => {
@@ -608,13 +638,16 @@ export default function StudioPage() {
               {step > 1 && (
                 <button
                   onClick={nextStep}
-                  disabled={!canAdvance()}
-                  className={`rounded-lg px-10 py-3 font-bold text-white transition-all ${
-                    canAdvance()
+                  disabled={!canAdvance() || checkoutLoading}
+                  className={`rounded-lg px-10 py-3 font-bold text-white transition-all flex items-center gap-2 ${
+                    canAdvance() && !checkoutLoading
                       ? 'bg-primary hover:bg-primary-dark shadow-lg hover:shadow-xl'
                       : 'bg-secondary-lighter text-gray-400 cursor-not-allowed'
                   }`}
                 >
+                  {checkoutLoading && (
+                    <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  )}
                   {step === 5 ? t.studio.nav.checkout : t.studio.nav.next}
                 </button>
               )}
