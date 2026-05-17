@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { ChevronRight, Star, Zap, Heart, Share2, Sparkles } from 'lucide-react';
 import { useLanguage } from '@/lib/i18n/LanguageContext';
 import { useCurrency } from '@/lib/currency/CurrencyContext';
@@ -17,38 +18,73 @@ export default function Home() {
       <Navbar />
 
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-white via-primary-lighter to-white pt-20 pb-32">
-        <div className="absolute top-10 right-0 w-96 h-96 bg-primary-light rounded-full mix-blend-multiply filter blur-3xl opacity-20"></div>
-        <div className="absolute bottom-0 left-1/4 w-96 h-96 bg-primary-lighter rounded-full mix-blend-multiply filter blur-3xl opacity-20"></div>
-
+      <section className="relative overflow-hidden bg-white pt-16 pb-24">
         <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-2 gap-12 items-center">
+            {/* Left: Text */}
             <div>
               <div className="inline-block mb-6 px-4 py-2 bg-primary-lighter rounded-full">
-                <span className="text-sm font-bold text-secondary">{t.home.badge}</span>
+                <span className="text-xs font-bold text-primary tracking-widest">{t.home.hero_badge}</span>
               </div>
-              <h1 className="font-black text-5xl md:text-6xl tracking-tighter text-secondary mb-6 leading-tight">
-                {t.home.title}
+              <h1 className="font-black text-5xl md:text-6xl tracking-tighter mb-6 leading-tight">
+                <span className="text-secondary block">{t.home.title_part1}</span>
+                <span className="text-primary block">{t.home.title_part2}</span>
               </h1>
-              <p className="text-lg text-secondary-lighter mb-8 leading-relaxed">
+              <p className="text-base text-secondary-lighter mb-8 leading-relaxed max-w-md">
                 {t.home.subtitle}
               </p>
-              <div className="flex gap-4">
-                <Link href="/studio" className="group inline-flex items-center gap-2 rounded-lg bg-primary px-8 py-4 font-bold text-white hover:bg-primary-dark transition-all hover:shadow-lg">
+              <div className="flex flex-wrap gap-4 mb-8">
+                <Link href="/studio" className="inline-flex items-center gap-2 rounded-lg bg-secondary px-8 py-4 font-bold text-white hover:bg-secondary-light transition-all hover:shadow-lg">
                   {t.home.cta_primary}
-                  <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                 </Link>
                 <Link href="/galeria" className="inline-flex items-center gap-2 rounded-lg border-2 border-secondary px-8 py-4 font-bold text-secondary hover:bg-secondary hover:text-white transition-colors">
                   {t.home.cta_secondary}
                 </Link>
               </div>
-            </div>
-            <div className="relative">
-              <div className="aspect-square bg-gradient-to-br from-primary-light to-primary rounded-3xl shadow-2xl overflow-hidden group hover:shadow-3xl transition-shadow">
-                <div className="absolute inset-0 bg-gradient-to-br from-primary-lighter opacity-40"></div>
+              <div className="flex items-center gap-8">
+                <div>
+                  <span className="font-black text-secondary text-xl">1.8M</span>
+                  <span className="text-secondary-lighter text-sm ml-2">{t.home.social_tiktok.replace('1.8M ', '').replace('1,8M ', '')}</span>
+                </div>
+                <div>
+                  <span className="font-black text-secondary text-xl">50K</span>
+                  <span className="text-secondary-lighter text-sm ml-2">{t.home.social_instagram.replace('50K ', '')}</span>
+                </div>
               </div>
-              <div className="absolute -bottom-4 -right-4 w-24 h-24 bg-white rounded-full shadow-lg flex items-center justify-center font-bold text-lg text-secondary border-4 border-primary">
-                +120%
+            </div>
+
+            {/* Right: Image card */}
+            <div className="relative mt-8 md:mt-0">
+              {/* Pig icon floating top-left */}
+              <div className="absolute -top-5 left-2 z-10 w-14 h-14 bg-primary-lighter rounded-2xl shadow-lg overflow-hidden">
+                <Image
+                  src="/pig-icon.png"
+                  alt="Negasva"
+                  width={56}
+                  height={56}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+
+              {/* Main showcase image */}
+              <div className="relative rounded-3xl overflow-hidden shadow-2xl">
+                <Image
+                  src="/backgrounds/rm-1.jpg"
+                  alt="Rick & Morty Style"
+                  width={600}
+                  height={400}
+                  className="w-full object-cover"
+                  priority
+                />
+                <div className="absolute bottom-0 left-0 right-0 px-5 py-4 bg-gradient-to-t from-black/70 to-transparent">
+                  <span className="text-white font-bold text-sm">Rick &amp; Morty Style</span>
+                </div>
+              </div>
+
+              {/* +1000 clientes badge */}
+              <div className="absolute -bottom-4 -right-4 bg-primary rounded-2xl px-5 py-4 shadow-xl">
+                <p className="font-black text-2xl text-secondary leading-none">+1000</p>
+                <p className="text-xs text-secondary font-medium mt-1">clientes</p>
               </div>
             </div>
           </div>
