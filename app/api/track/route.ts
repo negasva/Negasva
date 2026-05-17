@@ -1,5 +1,11 @@
 import { NextResponse } from 'next/server';
 import { getSupabase } from '@/lib/supabase/client';
+import { TrackOrderSchema } from '@/lib/validation/schemas';
+import {
+  errorResponse,
+  rateLimitByIp,
+  readJson,
+} from '@/lib/security/apiHelpers';
 
 const STATUS_LABEL: Record<string, string> = {
   pending: 'Pendiente de pago',
@@ -9,20 +15,21 @@ const STATUS_LABEL: Record<string, string> = {
   sent: 'Enviado',
 };
 
-export async function POST(request: Request) {
-  let orderId: string | undefined;
-  let email: string | undefined;
-  try {
-    const body = await request.json();
-    orderId = typeof body?.orderId === 'string' ? body.orderId.trim() : undefined;
-    email = typeof body?.email === 'string' ? body.email.trim().toLowerCase() : undefined;
-  } catch {
-    return NextResponse.json({ error: 'Invalid body' }, { status: 400 });
-  }
+// Generic 404 — never differentiate "wrong email" vs "order doesn't exist"
+// or attackers can enumerate which order ids exist by probing.
+const NOT_FOUND = 'Pedido no encontrado';
 
-  if (!orderId || !email) {
-    return NextResponse.json({ error: 'Missing orderId or email' }, { status: 400 });
-  }
+export async function POST(request: Request) {
+  const rl = rateLimitByIp(request, { prefix: 'track', max: 10, windowMs: 60_000 });
+  if (rl) return rl;
+
+  const body = await readJson(request);
+  if (!body) return errorResponse('Invalid body', 400);
+
+  const parsed = TrackOrderSchema.safeParse(body);
+  if (!parsed.success) return errorResponse(NOT_FOUND, 404);
+
+  const { orderId, email } = parsed.data;
 
   const { data, error } = await getSupabase()
     .from('orders')
@@ -31,9 +38,8 @@ export async function POST(request: Request) {
     .eq('customer_email', email)
     .maybeSingle();
 
-  if (error || !data) {
-    return NextResponse.json({ error: 'Pedido no encontrado' }, { status: 404 });
-  }
+  if (error) return errorResponse(NOT_FOUND, 404, error);
+  if (!data) return errorResponse(NOT_FOUND, 404);
 
   return NextResponse.json({
     orderId: data.id,

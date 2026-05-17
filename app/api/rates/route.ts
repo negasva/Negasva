@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { rateLimitByIp } from '@/lib/security/apiHelpers';
 
 const NEEDED = ['EUR', 'GBP', 'MXN', 'CAD', 'COP'] as const;
 
@@ -13,7 +14,12 @@ const FALLBACK: Record<string, number> = {
 
 export const revalidate = 3600;
 
-export async function GET() {
+export async function GET(request: Request) {
+  // Generous limit — response is cached and lightweight, but cap absurd
+  // abuse from a single IP (scrapers, broken clients).
+  const rl = rateLimitByIp(request, { prefix: 'rates', max: 60, windowMs: 60_000 });
+  if (rl) return rl;
+
   try {
     const res = await fetch('https://api.exchangerate-api.com/v4/latest/USD', {
       next: { revalidate: 3600 },

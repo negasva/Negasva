@@ -1,5 +1,13 @@
 import { NextResponse } from 'next/server';
 import { createRouteClient } from '@/lib/supabase/server';
+import { AdminPriceUpdateSchema } from '@/lib/validation/schemas';
+import {
+  errorResponse,
+  pickFields,
+  rateLimitByIp,
+  readJson,
+  validateSameOrigin,
+} from '@/lib/security/apiHelpers';
 
 async function requireAdmin() {
   const supabase = createRouteClient();
@@ -8,33 +16,52 @@ async function requireAdmin() {
   return supabase;
 }
 
-export async function GET() {
+function guard(request: Request, mutating: boolean) {
+  if (mutating && !validateSameOrigin(request)) {
+    return errorResponse('Invalid origin', 403);
+  }
+  const rl = rateLimitByIp(request, { prefix: 'admin-price', max: 60, windowMs: 60_000 });
+  return rl;
+}
+
+export async function GET(request: Request) {
+  const blocked = guard(request, false);
+  if (blocked) return blocked;
+
   const supabase = await requireAdmin();
-  if (!supabase) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  if (!supabase) return errorResponse('Unauthorized', 401);
 
   const { data, error } = await supabase
     .from('prices')
     .select('*')
     .order('key');
 
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  if (error) return errorResponse('Failed to load prices', 500, error);
   return NextResponse.json(data);
 }
 
 export async function PUT(request: Request) {
-  const supabase = await requireAdmin();
-  if (!supabase) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  const blocked = guard(request, true);
+  if (blocked) return blocked;
 
-  const { id, amount } = await request.json();
-  if (!id || typeof amount !== 'number') {
-    return NextResponse.json({ error: 'Missing fields' }, { status: 400 });
+  const supabase = await requireAdmin();
+  if (!supabase) return errorResponse('Unauthorized', 401);
+
+  const body = await readJson(request);
+  if (!body) return errorResponse('Invalid body', 400);
+
+  const parsed = AdminPriceUpdateSchema.safeParse(body);
+  if (!parsed.success) {
+    return errorResponse(parsed.error.issues[0]?.message ?? 'Invalid input', 400);
   }
+
+  const fields = pickFields(parsed.data, ['amount']);
 
   const { error } = await supabase
     .from('prices')
-    .update({ amount, updated_at: new Date().toISOString() })
-    .eq('id', id);
+    .update({ ...fields, updated_at: new Date().toISOString() })
+    .eq('id', parsed.data.id);
 
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  if (error) return errorResponse('Failed to update price', 500, error);
   return NextResponse.json({ ok: true });
 }

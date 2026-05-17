@@ -92,3 +92,96 @@ export const LoginSchema = z.object({
     .max(255, 'Email too long'),
   password: z.string().min(1, 'Password required').max(255),
 });
+
+// ─── Public API schemas ────────────────────────────────────────────────
+
+// Accepts UUIDs or short alphanumeric/dashed ids; the DB query enforces actual existence.
+const OrderIdSchema = z.string().trim().min(6).max(64).regex(
+  /^[A-Za-z0-9-]+$/,
+  'Invalid order id',
+);
+
+export const TrackOrderSchema = z.object({
+  orderId: OrderIdSchema,
+  email: z.string().trim().toLowerCase().email('Invalid email').max(255),
+});
+
+export const NewsletterSchema = z.object({
+  email: z.string().trim().toLowerCase().email('Invalid email').max(255),
+  source: z.string().trim().max(50).optional(),
+});
+
+// ─── Admin API schemas ─────────────────────────────────────────────────
+
+// Reject javascript:, data:, file:, etc. — only http(s) URLs to known hosts.
+const SafeUrlSchema = z.string().trim().max(2048).refine((s) => {
+  try {
+    const u = new URL(s);
+    return u.protocol === 'http:' || u.protocol === 'https:';
+  } catch {
+    return false;
+  }
+}, 'URL must be http(s)');
+
+const IdSchema = z.string().trim().min(1).max(64);
+const MoneySchema = z.number().finite().min(0).max(100_000);
+
+export const AdminBackgroundCreateSchema = z.object({
+  name: z.string().trim().min(1).max(120),
+  image_url: SafeUrlSchema,
+  active: z.boolean().optional(),
+});
+
+export const AdminBackgroundUpdateSchema = z.object({
+  id: IdSchema,
+  name: z.string().trim().min(1).max(120).optional(),
+  image_url: SafeUrlSchema.optional(),
+  active: z.boolean().optional(),
+});
+
+export const AdminPackageCreateSchema = z.object({
+  name: z.string().trim().min(1).max(120),
+  description: z.string().trim().max(2000).optional().nullable(),
+  final_price: MoneySchema,
+  active: z.boolean().optional(),
+});
+
+export const AdminPackageUpdateSchema = z.object({
+  id: IdSchema,
+  name: z.string().trim().min(1).max(120).optional(),
+  description: z.string().trim().max(2000).optional().nullable(),
+  final_price: MoneySchema.optional(),
+  active: z.boolean().optional(),
+});
+
+export const AdminDiscountCodeCreateSchema = z.object({
+  code: z.string().trim().min(2).max(40).regex(
+    /^[A-Z0-9_-]+$/i,
+    'Code must contain only letters, numbers, _ or -',
+  ),
+  type: z.enum(['percentage', 'fixed']),
+  value: z.number().finite().positive().max(100_000),
+  expires_at: z.string().datetime().optional().nullable(),
+  max_uses: z.number().int().positive().max(1_000_000).optional().nullable(),
+  active: z.boolean().optional(),
+}).refine(
+  (d) => d.type !== 'percentage' || d.value <= 100,
+  { message: 'Percentage discount cannot exceed 100', path: ['value'] },
+);
+
+export const AdminDiscountCodeUpdateSchema = z.object({
+  id: IdSchema,
+  code: z.string().trim().min(2).max(40).regex(/^[A-Z0-9_-]+$/i).optional(),
+  type: z.enum(['percentage', 'fixed']).optional(),
+  value: z.number().finite().positive().max(100_000).optional(),
+  expires_at: z.string().datetime().optional().nullable(),
+  max_uses: z.number().int().positive().max(1_000_000).optional().nullable(),
+  active: z.boolean().optional(),
+});
+
+export const AdminPriceUpdateSchema = z.object({
+  id: IdSchema,
+  amount: MoneySchema,
+});
+
+export const DeleteByIdSchema = z.object({ id: IdSchema });
