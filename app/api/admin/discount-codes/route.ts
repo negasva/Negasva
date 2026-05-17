@@ -1,5 +1,17 @@
 import { NextResponse } from 'next/server';
 import { createRouteClient } from '@/lib/supabase/server';
+import {
+  AdminDiscountCodeCreateSchema,
+  AdminDiscountCodeUpdateSchema,
+  DeleteByIdSchema,
+} from '@/lib/validation/schemas';
+import {
+  errorResponse,
+  pickFields,
+  rateLimitByIp,
+  readJson,
+  validateSameOrigin,
+} from '@/lib/security/apiHelpers';
 
 async function requireAdmin() {
   const supabase = createRouteClient();
@@ -8,64 +20,106 @@ async function requireAdmin() {
   return supabase;
 }
 
-export async function GET() {
+function guard(request: Request, mutating: boolean) {
+  if (mutating && !validateSameOrigin(request)) {
+    return errorResponse('Invalid origin', 403);
+  }
+  const rl = rateLimitByIp(request, { prefix: 'admin-dc', max: 60, windowMs: 60_000 });
+  return rl;
+}
+
+export async function GET(request: Request) {
+  const blocked = guard(request, false);
+  if (blocked) return blocked;
+
   const supabase = await requireAdmin();
-  if (!supabase) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  if (!supabase) return errorResponse('Unauthorized', 401);
 
   const { data, error } = await supabase
     .from('discount_codes')
     .select('*')
     .order('created_at', { ascending: false });
 
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  if (error) return errorResponse('Failed to load discount codes', 500, error);
   return NextResponse.json(data);
 }
 
 export async function POST(request: Request) {
+  const blocked = guard(request, true);
+  if (blocked) return blocked;
+
   const supabase = await requireAdmin();
-  if (!supabase) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  if (!supabase) return errorResponse('Unauthorized', 401);
 
-  const body = await request.json();
-  const { code, type, value, expires_at, max_uses, active } = body;
+  const body = await readJson(request);
+  if (!body) return errorResponse('Invalid body', 400);
 
-  if (!code || !type || value === undefined) {
-    return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
+  const parsed = AdminDiscountCodeCreateSchema.safeParse(body);
+  if (!parsed.success) {
+    return errorResponse(parsed.error.issues[0]?.message ?? 'Invalid input', 400);
   }
 
+  const d = parsed.data;
   const { data, error } = await supabase
     .from('discount_codes')
-    .insert({ code, type, value, expires_at: expires_at || null, max_uses: max_uses || null, active: active ?? true })
+    .insert({
+      code: d.code.toUpperCase(),
+      type: d.type,
+      value: d.value,
+      expires_at: d.expires_at ?? null,
+      max_uses: d.max_uses ?? null,
+      active: d.active ?? true,
+    })
     .select()
     .single();
 
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  if (error) return errorResponse('Failed to create discount code', 500, error);
   return NextResponse.json(data, { status: 201 });
 }
 
 export async function PUT(request: Request) {
+  const blocked = guard(request, true);
+  if (blocked) return blocked;
+
   const supabase = await requireAdmin();
-  if (!supabase) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  if (!supabase) return errorResponse('Unauthorized', 401);
 
-  const { id, ...fields } = await request.json();
-  if (!id) return NextResponse.json({ error: 'Missing id' }, { status: 400 });
+  const body = await readJson(request);
+  if (!body) return errorResponse('Invalid body', 400);
 
-  const { error } = await supabase
-    .from('discount_codes')
-    .update(fields)
-    .eq('id', id);
+  const parsed = AdminDiscountCodeUpdateSchema.safeParse(body);
+  if (!parsed.success) {
+    return errorResponse(parsed.error.issues[0]?.message ?? 'Invalid input', 400);
+  }
 
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  const { id } = parsed.data;
+  const fields = pickFields(parsed.data, [
+    'code', 'type', 'value', 'expires_at', 'max_uses', 'active',
+  ]);
+  if (Object.keys(fields).length === 0) {
+    return errorResponse('No fields to update', 400);
+  }
+  if (typeof fields.code === 'string') fields.code = fields.code.toUpperCase();
+
+  const { error } = await supabase.from('discount_codes').update(fields).eq('id', id);
+  if (error) return errorResponse('Failed to update discount code', 500, error);
   return NextResponse.json({ ok: true });
 }
 
 export async function DELETE(request: Request) {
+  const blocked = guard(request, true);
+  if (blocked) return blocked;
+
   const supabase = await requireAdmin();
-  if (!supabase) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  if (!supabase) return errorResponse('Unauthorized', 401);
 
-  const { id } = await request.json();
-  if (!id) return NextResponse.json({ error: 'Missing id' }, { status: 400 });
+  const body = await readJson(request);
+  if (!body) return errorResponse('Invalid body', 400);
 
-  const { error } = await supabase.from('discount_codes').delete().eq('id', id);
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  const parsed = DeleteByIdSchema.safeParse(body);
+  if (!parsed.success) return errorResponse('Missing id', 400);
+
+  const { error } = await supabase.from('discount_codes').delete().eq('id', parsed.data.id);
+  if (error) return errorResponse('Failed to delete discount code', 500, error);
   return NextResponse.json({ ok: true });
 }
