@@ -23,10 +23,15 @@ export const translations = {
     },
     home: {
       badge: 'Turn your photo into art',
+      hero_badge: 'PERSONALIZED DIGITAL ILLUSTRATION',
       title: 'Your Animated Portrait',
+      title_part1: 'Your Animated',
+      title_part2: 'Portrait',
       subtitle: 'Transform your photo into an iconic cartoon character. Rick and Morty, Gravity Falls, The Simpsons and more.',
       cta_primary: 'Start Now',
       cta_secondary: 'View Gallery',
+      social_tiktok: '1.8M followers on TikTok',
+      social_instagram: '50K on Instagram',
       stats: {
         clients: 'Happy Clients',
         delivery: 'Fast Delivery',
@@ -291,10 +296,15 @@ export const translations = {
     },
     home: {
       badge: 'Convierte tu foto en arte',
+      hero_badge: 'ILUSTRACIÓN DIGITAL PERSONALIZADA',
       title: 'Tu Retrato Animado',
+      title_part1: 'Tu Retrato',
+      title_part2: 'Animado',
       subtitle: 'Transforma tu foto en un personaje de caricatura icónico. Rick y Morty, Gravity Falls, Los Simpsons y más.',
       cta_primary: 'Comenzar Ahora',
       cta_secondary: 'Ver Galería',
+      social_tiktok: '1.8M seguidores en TikTok',
+      social_instagram: '50K en Instagram',
       stats: {
         clients: 'Clientes Felices',
         delivery: 'Entrega Rápida',
@@ -559,10 +569,15 @@ export const translations = {
     },
     home: {
       badge: 'Transformez votre photo en art',
+      hero_badge: 'ILLUSTRATION NUMÉRIQUE PERSONNALISÉE',
       title: 'Votre Portrait Animé',
+      title_part1: 'Votre Portrait',
+      title_part2: 'Animé',
       subtitle: 'Transformez votre photo en un personnage de dessin animé iconique. Rick et Morty, Gravity Falls, Les Simpson et plus encore.',
       cta_primary: 'Commencer Maintenant',
       cta_secondary: 'Voir la Galerie',
+      social_tiktok: '1,8M abonnés sur TikTok',
+      social_instagram: '50K sur Instagram',
       stats: {
         clients: 'Clients Satisfaits',
         delivery: 'Livraison Rapide',
