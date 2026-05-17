@@ -1,6 +1,6 @@
 'use client';
 
-import { useCurrency, CURRENCIES, type Currency } from '@/lib/currency/CurrencyContext';
+import { useCurrency, CURRENCIES, CURRENCY_FLAGS, type Currency } from '@/lib/currency/CurrencyContext';
 
 function CurrencySwitcher() {
   const { currency, setCurrency } = useCurrency();
@@ -15,7 +15,7 @@ function CurrencySwitcher() {
         style={{ touchAction: 'manipulation' }}
       >
         {CURRENCIES.map((c) => (
-          <option key={c} value={c}>{c}</option>
+          <option key={c} value={c}>{CURRENCY_FLAGS[c]} {c}</option>
         ))}
       </select>
       <span
