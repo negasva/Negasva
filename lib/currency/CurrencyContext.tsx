@@ -6,6 +6,15 @@ export type Currency = 'USD' | 'EUR' | 'GBP' | 'MXN' | 'CAD' | 'COP';
 
 export const CURRENCIES: Currency[] = ['USD', 'EUR', 'GBP', 'MXN', 'CAD', 'COP'];
 
+export const CURRENCY_FLAGS: Record<Currency, string> = {
+  USD: '🇺🇸',
+  EUR: '🇪🇺',
+  GBP: '🇬🇧',
+  MXN: '🇲🇽',
+  CAD: '🇨🇦',
+  COP: '🇨🇴',
+};
+
 const SYMBOLS: Record<Currency, string> = {
   USD: '$',
   EUR: '€',
