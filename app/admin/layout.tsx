@@ -4,6 +4,10 @@ import AdminSidebar from './AdminSidebar';
 
 export const metadata = { title: 'Admin — NEGASVA' };
 
+// Admin pages read the Supabase auth cookie on every request — they must
+// not be prerendered at build time.
+export const dynamic = 'force-dynamic';
+
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   const supabase = createServerClient();
   const { data: { session } } = await supabase.auth.getSession();
