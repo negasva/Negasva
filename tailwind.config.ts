@@ -32,9 +32,14 @@ const config: Config = {
           '0%, 100%': { transform: 'rotate(-0.7deg)' },
           '50%': { transform: 'rotate(0.7deg)' },
         },
+        'pulse-slow': {
+          '0%, 100%': { opacity: '1', transform: 'scale(1)' },
+          '50%': { opacity: '0.92', transform: 'scale(1.02)' },
+        },
       },
       animation: {
         'wiggle-slow': 'wiggle 3s ease-in-out infinite',
+        'pulse-slow': 'pulse-slow 2s ease-in-out infinite',
       },
     },
   },

@@ -102,6 +102,7 @@ export const translations = {
         name_label: 'Name',
         role_label: 'Role',
         roles: ['Me', 'Partner', 'Son/Daughter', 'Father/Mother', 'Friend', 'Pet', 'Other'],
+        next_tier: 'Add {n} more and get {pct}% OFF!',
       },
       step3: {
         title: 'Choose Background',
@@ -384,6 +385,7 @@ export const translations = {
         name_label: 'Nombre',
         role_label: 'Relación',
         roles: ['Yo', 'Pareja', 'Hijo/a', 'Padre/Madre', 'Amigo/a', 'Mascota', 'Otro'],
+        next_tier: '¡Añade {n} más y obtén {pct}% DESCUENTO!',
       },
       step3: {
         title: 'Elige el Fondo',
@@ -666,6 +668,7 @@ export const translations = {
         name_label: 'Prénom',
         role_label: 'Rôle',
         roles: ['Moi', 'Partenaire', 'Fils/Fille', 'Père/Mère', 'Ami/e', 'Animal', 'Autre'],
+        next_tier: 'Ajoutez {n} de plus et obtenez {pct}% DE RÉDUCTION!',
       },
       step3: {
         title: 'Choisir l\'Arrière-plan',
