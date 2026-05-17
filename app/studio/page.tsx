@@ -217,7 +217,7 @@ export default function StudioPage() {
   return (
     <div className="min-h-screen bg-white">
       {/* Nav */}
-      <nav className="bg-white border-b border-primary-lighter sticky top-0 z-10 w-full overflow-x-hidden">
+      <nav className="bg-white border-b border-primary-lighter sticky top-0 z-[60] w-full">
         <div className="mx-auto max-w-6xl px-4 py-4 flex items-center justify-between">
           <Logo href="/" size="md" />
           <div className="flex items-center gap-4">
