@@ -47,7 +47,7 @@ CREATE POLICY "Users can view own order transactions"
   );
 
 CREATE POLICY "Service role can insert transactions"
-  ON public.transactions FOR INSERT USING (auth.role() = 'service_role');
+  ON public.transactions FOR INSERT WITH CHECK (auth.role() = 'service_role');
 
 CREATE POLICY "Service role can update transactions"
   ON public.transactions FOR UPDATE USING (auth.role() = 'service_role');
@@ -66,7 +66,7 @@ CREATE POLICY "Service role can manage rate limits"
 
 -- Analytics Events: service role only
 CREATE POLICY "Service role can insert analytics"
-  ON public.analytics_events FOR INSERT USING (auth.role() = 'service_role');
+  ON public.analytics_events FOR INSERT WITH CHECK (auth.role() = 'service_role');
 
 -- Audit Logs: service role only
 CREATE POLICY "Service role can manage audit logs"
