@@ -12,7 +12,7 @@ const FAMILY_DISCOUNT = (n: number) => (n >= 5 ? 0.25 : n >= 3 ? 0.15 : 0);
 
 const CheckoutSchema = z.object({
   style: z.string().min(1).max(60),
-  bodyType: z.enum(['torso_only', 'full_body']),
+  bodyType: z.string().min(1).max(60),
   background: z.string().max(60).default('none'),
   peopleCount: z.number().int().min(1).max(8),
   express: z.boolean().default(false),
@@ -45,8 +45,27 @@ export async function POST(request: Request) {
 
   const d = parsed.data;
 
-  // Total in USD, then convert to local currency
-  const perPersonUsd = d.bodyType === 'full_body' ? 29.99 : 25;
+  // Look up body type price from DB; fall back to hardcoded for legacy slugs
+  let perPersonUsd: number;
+  try {
+    const svc = createServiceClient();
+    const { data: bt } = await svc
+      .from('body_types')
+      .select('price_usd')
+      .eq('slug', d.bodyType)
+      .eq('is_active', true)
+      .maybeSingle();
+    if (bt?.price_usd != null) {
+      perPersonUsd = Number(bt.price_usd);
+    } else {
+      perPersonUsd = d.bodyType === 'full_body' ? 29.99 : d.bodyType === 'torso_only' ? 25 : NaN;
+    }
+  } catch {
+    perPersonUsd = d.bodyType === 'full_body' ? 29.99 : d.bodyType === 'torso_only' ? 25 : NaN;
+  }
+  if (!Number.isFinite(perPersonUsd) || perPersonUsd <= 0) {
+    return errorResponse('Unknown body type', 400);
+  }
   const subtotalPeopleUsd = d.peopleCount * perPersonUsd;
   const discountRate = FAMILY_DISCOUNT(d.peopleCount);
   const afterDiscountUsd = subtotalPeopleUsd * (1 - discountRate);
@@ -112,7 +131,7 @@ export async function POST(request: Request) {
         product_data: {
           name: `NEGASVA Portrait — ${d.style}`,
           description: [
-            `${d.bodyType === 'full_body' ? 'Full Body' : 'Torso Only'} × ${d.peopleCount}`,
+            `${d.bodyType} × ${d.peopleCount}`,
             d.background !== 'none' ? `Background: ${d.background}` : null,
             d.express ? 'Express 24h delivery' : null,
             d.specialRequests ? `Notes: ${d.specialRequests.slice(0, 80)}` : null,

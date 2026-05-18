@@ -13,7 +13,8 @@ import CurrencySwitcher from '@/components/CurrencySwitcher';
 import { loadStripe } from '@stripe/stripe-js';
 import { EmbeddedCheckout, EmbeddedCheckoutProvider } from '@stripe/react-stripe-js';
 
-const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
+const STRIPE_PK = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY;
+const stripePromise = STRIPE_PK ? loadStripe(STRIPE_PK) : null;
 
 const FALLBACK_STYLES = [
   { id: 'rick-morty',    name: 'Rick & Morty'          },
@@ -83,12 +84,44 @@ export default function StudioPage() {
   const [dynamicBgs, setDynamicBgs] = useState<Record<string, BgItem[]>>({});
   const [styles, setStyles] = useState<{ id: string; name: string }[]>(FALLBACK_STYLES);
 
+  interface BodyTypeItem {
+    id: string;
+    name: string;
+    desc: string;
+    price: number;
+    original: number | null;
+    bestValue: boolean;
+  }
+  const FALLBACK_BODY_TYPES: BodyTypeItem[] = [
+    { id: 'torso_only', name: t.studio.body_types.torso_name, desc: t.studio.body_types.torso_desc, price: 25, original: null, bestValue: false },
+    { id: 'full_body',  name: t.studio.body_types.full_name,  desc: t.studio.body_types.full_desc,  price: 29.99, original: 39.99, bestValue: true },
+  ];
+  const [bodyTypes, setBodyTypes] = useState<BodyTypeItem[]>(FALLBACK_BODY_TYPES);
+
   useEffect(() => {
     fetch('/api/styles')
       .then(r => r.ok ? r.json() : null)
       .then((data: Array<{ slug: string; name: string }> | null) => {
         if (data && data.length > 0) {
           setStyles(data.map(s => ({ id: s.slug, name: s.name })));
+        }
+      })
+      .catch(() => null);
+  }, []);
+
+  useEffect(() => {
+    fetch('/api/body-types')
+      .then(r => r.ok ? r.json() : null)
+      .then((data: Array<{ slug: string; name: string; description: string | null; price_usd: number; original_price_usd: number | null; is_best_value: boolean }> | null) => {
+        if (data && data.length > 0) {
+          setBodyTypes(data.map(b => ({
+            id: b.slug,
+            name: b.name,
+            desc: b.description ?? '',
+            price: Number(b.price_usd),
+            original: b.original_price_usd != null ? Number(b.original_price_usd) : null,
+            bestValue: b.is_best_value,
+          })));
         }
       })
       .catch(() => null);
@@ -163,15 +196,29 @@ export default function StudioPage() {
     setStep(6);
   };
 
+  const [checkoutError, setCheckoutError] = useState<string | null>(null);
+
   const fetchClientSecret = useCallback(async () => {
     if (!checkoutParams) return '';
-    const res = await fetch('/api/checkout', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(checkoutParams),
-    });
-    const data = await res.json();
-    return data.client_secret ?? '';
+    try {
+      const res = await fetch('/api/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(checkoutParams),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.client_secret) {
+        setCheckoutError(data.error || `Error ${res.status}`);
+        console.error('Checkout error:', data);
+        return '';
+      }
+      setCheckoutError(null);
+      return data.client_secret;
+    } catch (err) {
+      console.error('Checkout fetch failed:', err);
+      setCheckoutError('Error de red al iniciar el pago');
+      return '';
+    }
   }, [checkoutParams]);
 
   const prevStep = () => {
@@ -185,7 +232,8 @@ export default function StudioPage() {
   };
 
   const priceBreakdown = () => {
-    const perPerson = selected.bodyType === 'full_body' ? 29.99 : 25;
+    const bt = bodyTypes.find(b => b.id === selected.bodyType);
+    const perPerson = bt?.price ?? (selected.bodyType === 'full_body' ? 29.99 : 25);
     const peopleSubtotal = selected.peopleCount * perPerson;
     const discountRate = familyDiscount(selected.peopleCount);
     const discount = peopleSubtotal * discountRate;
@@ -247,7 +295,8 @@ export default function StudioPage() {
             <div className="flex justify-between">
               <span className="text-secondary-lighter">{t.studio.summary.type}</span>
               <span className="font-bold text-secondary">
-                {selected.bodyType === 'full_body' ? t.studio.summary.full_body : t.studio.summary.torso}
+                {bodyTypes.find(b => b.id === selected.bodyType)?.name ??
+                  (selected.bodyType === 'full_body' ? t.studio.summary.full_body : t.studio.summary.torso)}
               </span>
             </div>
           )}
@@ -389,25 +438,8 @@ export default function StudioPage() {
                 </div>
 
                 {/* Body Type selector */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-2xl mx-auto mb-10">
-                  {[
-                    {
-                      id: 'torso_only',
-                      name: t.studio.body_types.torso_name,
-                      desc: t.studio.body_types.torso_desc,
-                      price: 25,
-                      original: null as null,
-                      bestValue: false,
-                    },
-                    {
-                      id: 'full_body',
-                      name: t.studio.body_types.full_name,
-                      desc: t.studio.body_types.full_desc,
-                      price: 29.99,
-                      original: 39.99,
-                      bestValue: true,
-                    },
-                  ].map((b) => (
+                <div className={`grid grid-cols-1 ${bodyTypes.length === 2 ? 'sm:grid-cols-2' : bodyTypes.length === 3 ? 'sm:grid-cols-3' : 'sm:grid-cols-2 lg:grid-cols-4'} gap-4 max-w-4xl mx-auto mb-10`}>
+                  {bodyTypes.map((b) => (
                     <button
                       key={b.id}
                       onClick={() => setSelected({ ...selected, bodyType: b.id })}
@@ -700,9 +732,24 @@ export default function StudioPage() {
                     </div>
                   </div>
                   <div className="p-4">
-                    <EmbeddedCheckoutProvider stripe={stripePromise} options={{ fetchClientSecret }}>
-                      <EmbeddedCheckout />
-                    </EmbeddedCheckoutProvider>
+                    {!STRIPE_PK ? (
+                      <div className="text-center py-10 text-sm">
+                        <p className="text-red-600 font-bold mb-2">Configuración faltante</p>
+                        <p className="text-secondary-lighter">Falta la variable NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY.</p>
+                      </div>
+                    ) : checkoutError ? (
+                      <div className="text-center py-10 text-sm">
+                        <p className="text-red-600 font-bold mb-2">No se pudo iniciar el pago</p>
+                        <p className="text-secondary-lighter mb-4">{checkoutError}</p>
+                        <button onClick={() => { setCheckoutError(null); setCheckoutParams({ ...checkoutParams }); }} className="text-primary font-bold hover:underline">
+                          Reintentar
+                        </button>
+                      </div>
+                    ) : (
+                      <EmbeddedCheckoutProvider stripe={stripePromise} options={{ fetchClientSecret }}>
+                        <EmbeddedCheckout />
+                      </EmbeddedCheckoutProvider>
+                    )}
                   </div>
                 </div>
                 <div className="mt-6 text-center">
