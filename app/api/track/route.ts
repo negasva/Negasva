@@ -33,8 +33,8 @@ export async function POST(request: Request) {
 
   const { data, error } = await getSupabase()
     .from('orders')
-    .select('id, production_status, status, created_at, completed_at')
-    .eq('id', orderId)
+    .select('id, provider_reference, production_status, status, created_at, completed_at')
+    .eq('provider_reference', orderId)
     .eq('customer_email', email)
     .maybeSingle();
 
