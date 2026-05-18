@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { createRouteClient } from '@/lib/supabase/server';
+import { createRouteClient, createServiceClient } from '@/lib/supabase/server';
 import {
   AdminBackgroundCreateSchema,
   AdminBackgroundUpdateSchema,
@@ -17,7 +17,8 @@ async function requireAdmin() {
   const supabase = createRouteClient();
   const { data: { session } } = await supabase.auth.getSession();
   if (!session || session.user.user_metadata?.role !== 'admin') return null;
-  return supabase;
+  // Use service client for DB ops so RLS doesn't block writes
+  return createServiceClient();
 }
 
 function guard(request: Request, mutating: boolean) {

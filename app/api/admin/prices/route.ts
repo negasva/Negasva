@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { createRouteClient } from '@/lib/supabase/server';
+import { createRouteClient, createServiceClient } from '@/lib/supabase/server';
 import { AdminPriceUpdateSchema } from '@/lib/validation/schemas';
 import {
   errorResponse,
@@ -13,7 +13,7 @@ async function requireAdmin() {
   const supabase = createRouteClient();
   const { data: { session } } = await supabase.auth.getSession();
   if (!session || session.user.user_metadata?.role !== 'admin') return null;
-  return supabase;
+  return createServiceClient();
 }
 
 function guard(request: Request, mutating: boolean) {

@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { createRouteClient } from '@/lib/supabase/server';
+import { createRouteClient, createServiceClient } from '@/lib/supabase/server';
 import { AdminOrderCreateSchema, AdminOrderUpdateSchema, DeleteByIdSchema } from '@/lib/validation/schemas';
 import { errorResponse, pickFields, rateLimitByIp, readJson, validateSameOrigin } from '@/lib/security/apiHelpers';
 
@@ -7,7 +7,7 @@ async function requireAdmin() {
   const supabase = createRouteClient();
   const { data: { session } } = await supabase.auth.getSession();
   if (!session || session.user.user_metadata?.role !== 'admin') return null;
-  return supabase;
+  return createServiceClient();
 }
 
 function guard(request: Request, mutating: boolean) {
