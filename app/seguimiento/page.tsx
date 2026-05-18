@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { Check } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import PageFooter from '@/components/PageFooter';
@@ -22,11 +23,20 @@ interface TrackResult {
 }
 
 export default function SeguimientoPage() {
+  const params = useSearchParams();
+  const refParam = params.get('ref');
+
   const [orderId, setOrderId] = useState('');
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [result, setResult] = useState<TrackResult | null>(null);
+
+  useEffect(() => {
+    if (refParam) {
+      setOrderId(refParam);
+    }
+  }, [refParam]);
 
   const lookup = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -70,6 +80,13 @@ export default function SeguimientoPage() {
 
       <section className="py-12 px-4">
         <div className="mx-auto max-w-xl">
+          {refParam && (
+            <div className="mb-6 bg-green-50 border-2 border-green-200 rounded-2xl p-6">
+              <p className="text-xs font-bold text-secondary-lighter uppercase tracking-widest mb-2">Tu referencia de compra</p>
+              <p className="font-mono text-lg font-bold text-secondary break-all mb-3">{refParam}</p>
+              <p className="text-sm text-secondary-lighter">Ingresa el correo con el que pagaste para ver el estado de tu pedido.</p>
+            </div>
+          )}
           <form onSubmit={lookup} className="bg-white rounded-2xl border-2 border-primary-lighter p-6 space-y-4">
             <div>
               <label className="block text-xs font-bold text-secondary mb-2">ID de pedido</label>
