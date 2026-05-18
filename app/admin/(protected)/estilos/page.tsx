@@ -22,6 +22,7 @@ export default function EstilosAdminPage() {
   const [editId, setEditId] = useState<string | null>(null);
   const [form, setForm] = useState(EMPTY_FORM);
   const [saving, setSaving] = useState(false);
+  const [reordering, setReordering] = useState<string | null>(null);
   const [toast, setToast] = useState('');
   const [imageMode, setImageMode] = useState<'url' | 'file'>('url');
   const fileRef = useRef<HTMLInputElement>(null);
@@ -111,6 +112,32 @@ export default function EstilosAdminPage() {
     setShowForm(false);
     await load();
     setSaving(false);
+  }
+
+  async function move(s: DrawingStyle, dir: 'up' | 'down') {
+    const idx = styles.findIndex(x => x.id === s.id);
+    const swapIdx = dir === 'up' ? idx - 1 : idx + 1;
+    if (swapIdx < 0 || swapIdx >= styles.length) return;
+
+    setReordering(s.id);
+    const swap = styles[swapIdx];
+    const myOrder = (s as DrawingStyle & { sort_order?: number }).sort_order ?? idx;
+    const swapOrder = (swap as DrawingStyle & { sort_order?: number }).sort_order ?? swapIdx;
+
+    await Promise.all([
+      fetch('/api/admin/styles', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: s.id, sort_order: swapOrder }),
+      }),
+      fetch('/api/admin/styles', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: swap.id, sort_order: myOrder }),
+      }),
+    ]);
+    await load();
+    setReordering(null);
   }
 
   async function handleToggle(s: DrawingStyle) {
@@ -271,25 +298,43 @@ export default function EstilosAdminPage() {
                   </span>
                 </div>
                 {style.description && <p className="text-xs text-secondary-lighter leading-relaxed">{style.description}</p>}
-                <div className="mt-auto pt-3 border-t border-gray-50 flex gap-2">
-                  <button
-                    onClick={() => openEdit(style)}
-                    className="flex-1 text-xs font-bold text-secondary-lighter hover:text-secondary border border-gray-100 hover:border-primary-lighter rounded-lg py-1.5 transition-colors"
-                  >
-                    Editar
-                  </button>
-                  <button
-                    onClick={() => handleToggle(style)}
-                    className="flex-1 text-xs font-bold text-secondary-lighter hover:text-secondary border border-gray-100 hover:border-primary-lighter rounded-lg py-1.5 transition-colors"
-                  >
-                    {style.is_active ? 'Desactivar' : 'Activar'}
-                  </button>
-                  <button
-                    onClick={() => handleDelete(style)}
-                    className="text-xs font-bold text-red-400 hover:text-red-600 border border-gray-100 hover:border-red-200 rounded-lg px-3 py-1.5 transition-colors"
-                  >
-                    Eliminar
-                  </button>
+                <div className="mt-auto pt-3 border-t border-gray-50 space-y-2">
+                  <div className="flex gap-1">
+                    <button
+                      onClick={() => move(style, 'up')}
+                      disabled={styles.indexOf(style) === 0 || reordering === style.id}
+                      className="flex-1 text-xs font-black text-secondary-lighter hover:text-primary border border-gray-100 hover:border-primary-lighter rounded-lg py-1.5 transition-colors disabled:opacity-30"
+                    >
+                      ▲
+                    </button>
+                    <button
+                      onClick={() => move(style, 'down')}
+                      disabled={styles.indexOf(style) === styles.length - 1 || reordering === style.id}
+                      className="flex-1 text-xs font-black text-secondary-lighter hover:text-primary border border-gray-100 hover:border-primary-lighter rounded-lg py-1.5 transition-colors disabled:opacity-30"
+                    >
+                      ▼
+                    </button>
+                  </div>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => openEdit(style)}
+                      className="flex-1 text-xs font-bold text-secondary-lighter hover:text-secondary border border-gray-100 hover:border-primary-lighter rounded-lg py-1.5 transition-colors"
+                    >
+                      Editar
+                    </button>
+                    <button
+                      onClick={() => handleToggle(style)}
+                      className="flex-1 text-xs font-bold text-secondary-lighter hover:text-secondary border border-gray-100 hover:border-primary-lighter rounded-lg py-1.5 transition-colors"
+                    >
+                      {style.is_active ? 'Desactivar' : 'Activar'}
+                    </button>
+                    <button
+                      onClick={() => handleDelete(style)}
+                      className="text-xs font-bold text-red-400 hover:text-red-600 border border-gray-100 hover:border-red-200 rounded-lg px-3 py-1.5 transition-colors"
+                    >
+                      Eliminar
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>

@@ -254,4 +254,5 @@ export const AdminStyleUpdateSchema = z.object({
   description: z.string().trim().max(2000).optional().nullable(),
   example_image_url: SafeImageSchema.optional().nullable(),
   is_active: z.boolean().optional(),
+  sort_order: z.number().int().optional(),
 });

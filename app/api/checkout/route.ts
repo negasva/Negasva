@@ -100,9 +100,12 @@ export async function POST(request: Request) {
     return NextResponse.json({ url });
   }
 
-  // ── Stripe for everyone else ──────────────────────────────────────────
-  const session = await stripe.checkout.sessions.create({
+  // ── Stripe embedded checkout ──────────────────────────────────────────
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const session = await (stripe.checkout.sessions.create as any)({
     mode: 'payment',
+    ui_mode: 'embedded',
+    return_url: `${origin}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
     line_items: [{
       price_data: {
         currency: d.currency,
@@ -120,8 +123,6 @@ export async function POST(request: Request) {
       quantity: 1,
     }],
     payment_method_types: STRIPE_PAYMENT_METHODS[d.currency] ?? ['card'],
-    success_url: `${origin}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
-    cancel_url: `${origin}/studio`,
     metadata: {
       style: d.style,
       bodyType: d.bodyType,
@@ -132,5 +133,5 @@ export async function POST(request: Request) {
     },
   });
 
-  return NextResponse.json({ url: session.url });
+  return NextResponse.json({ client_secret: session.client_secret });
 }

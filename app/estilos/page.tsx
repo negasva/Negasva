@@ -12,25 +12,21 @@ export default function EstilosPage() {
   const styles = [
     {
       name: 'Rick & Morty',
-      emoji: '🛸',
       desc: t.styles.rm_desc,
       features: [t.styles.rm_f1, t.styles.rm_f2, t.styles.rm_f3],
     },
     {
       name: 'Gravity Falls',
-      emoji: '🌲',
       desc: t.styles.gf_desc,
       features: [t.styles.gf_f1, t.styles.gf_f2, t.styles.gf_f3],
     },
     {
       name: 'The Simpsons',
-      emoji: '🍩',
       desc: t.styles.sp_desc,
       features: [t.styles.sp_f1, t.styles.sp_f2, t.styles.sp_f3],
     },
     {
       name: 'The Fairly OddParents',
-      emoji: '⭐',
       desc: t.styles.fo_desc,
       features: [t.styles.fo_f1, t.styles.fo_f2, t.styles.fo_f3],
     },
@@ -61,7 +57,6 @@ export default function EstilosPage() {
                 <div className="bg-gradient-to-br from-primary-light to-primary p-12 text-center relative overflow-hidden">
                   <div className="absolute inset-0 opacity-0 group-hover:opacity-20 bg-white transition-opacity"></div>
                   <div className="relative">
-                    <div className="text-8xl mb-4">{style.emoji}</div>
                     <h3 className="font-black text-3xl text-white mb-2">{style.name}</h3>
                   </div>
                 </div>
