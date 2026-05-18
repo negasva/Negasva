@@ -13,9 +13,9 @@ export default async function ProtectedAdminLayout({ children }: { children: Rea
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex">
+    <div className="min-h-screen bg-gray-50">
       <AdminSidebar />
-      <main className="flex-1 ml-56 p-8 min-h-screen">
+      <main className="lg:ml-56 pt-16 lg:pt-0 p-4 lg:p-8 min-h-screen">
         {children}
       </main>
     </div>

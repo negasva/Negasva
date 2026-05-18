@@ -66,13 +66,14 @@ export default function PackagesPage() {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-8">
+      <div className="flex items-center justify-between mb-5">
         <div>
-          <h1 className="text-2xl font-black text-secondary mb-1">Paquetes</h1>
+          <h1 className="text-xl lg:text-2xl font-black text-secondary mb-1">Paquetes</h1>
           <p className="text-sm text-secondary-lighter">Crea y gestiona los paquetes de productos.</p>
         </div>
-        <button onClick={openCreate} className="bg-primary hover:bg-primary-dark text-white font-bold px-5 py-2.5 rounded-xl text-sm transition-colors">
-          + Nuevo paquete
+        <button onClick={openCreate} className="bg-primary hover:bg-primary-dark text-white font-bold px-4 py-2.5 rounded-xl text-sm transition-colors flex items-center gap-1">
+          <span>+</span>
+          <span className="hidden sm:inline">Nuevo paquete</span>
         </button>
       </div>
 

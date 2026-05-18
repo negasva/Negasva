@@ -49,55 +49,90 @@ export default function PricesPage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-black text-secondary mb-1">Precios</h1>
-      <p className="text-sm text-secondary-lighter mb-8">Edita los precios base en USD. El frontend convierte según la divisa del usuario.</p>
+      <h1 className="text-xl lg:text-2xl font-black text-secondary mb-1">Precios</h1>
+      <p className="text-sm text-secondary-lighter mb-6">Edita los precios base en USD. El frontend convierte según la divisa del usuario.</p>
 
       {loading ? (
         <div className="text-center py-16 text-secondary-lighter text-sm">Cargando...</div>
       ) : (
-        <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="border-b border-gray-100 bg-gray-50">
-                <th className="text-left px-5 py-3 text-xs font-bold text-secondary-lighter uppercase tracking-wide">Clave</th>
-                <th className="text-left px-5 py-3 text-xs font-bold text-secondary-lighter uppercase tracking-wide">Descripción</th>
-                <th className="text-left px-5 py-3 text-xs font-bold text-secondary-lighter uppercase tracking-wide">Divisa</th>
-                <th className="text-right px-5 py-3 text-xs font-bold text-secondary-lighter uppercase tracking-wide">Precio (USD)</th>
-                <th className="px-5 py-3"></th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-50">
-              {prices.map((price) => (
-                <tr key={price.id} className="hover:bg-gray-50 transition-colors">
-                  <td className="px-5 py-4">
-                    <code className="text-xs bg-primary-lighter text-secondary px-2 py-0.5 rounded">{price.key}</code>
-                  </td>
-                  <td className="px-5 py-4 text-secondary">{price.label}</td>
-                  <td className="px-5 py-4 text-secondary-lighter">{price.currency}</td>
-                  <td className="px-5 py-4 text-right">
-                    <input
-                      type="number"
-                      min="0"
-                      step="0.01"
-                      value={edits[price.id] ?? price.amount}
-                      onChange={(e) => setEdits({ ...edits, [price.id]: e.target.value })}
-                      className="w-28 text-right border border-primary-lighter rounded-lg px-3 py-1.5 text-sm font-bold text-secondary focus:outline-none focus:border-primary transition-colors"
-                    />
-                  </td>
-                  <td className="px-5 py-4 text-right">
-                    <button
-                      onClick={() => handleSave(price)}
-                      disabled={saving === price.id || edits[price.id] === undefined}
-                      className="bg-primary hover:bg-primary-dark text-white text-xs font-bold px-4 py-1.5 rounded-lg transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
-                    >
-                      {saving === price.id ? '...' : 'Guardar'}
-                    </button>
-                  </td>
+        <>
+          {/* Desktop table */}
+          <div className="hidden sm:block bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-gray-100 bg-gray-50">
+                  <th className="text-left px-5 py-3 text-xs font-bold text-secondary-lighter uppercase tracking-wide">Clave</th>
+                  <th className="text-left px-5 py-3 text-xs font-bold text-secondary-lighter uppercase tracking-wide">Descripción</th>
+                  <th className="text-left px-5 py-3 text-xs font-bold text-secondary-lighter uppercase tracking-wide">Divisa</th>
+                  <th className="text-right px-5 py-3 text-xs font-bold text-secondary-lighter uppercase tracking-wide">Precio (USD)</th>
+                  <th className="px-5 py-3"></th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody className="divide-y divide-gray-50">
+                {prices.map((price) => (
+                  <tr key={price.id} className="hover:bg-gray-50 transition-colors">
+                    <td className="px-5 py-4">
+                      <code className="text-xs bg-primary-lighter text-secondary px-2 py-0.5 rounded">{price.key}</code>
+                    </td>
+                    <td className="px-5 py-4 text-secondary">{price.label}</td>
+                    <td className="px-5 py-4 text-secondary-lighter">{price.currency}</td>
+                    <td className="px-5 py-4 text-right">
+                      <input
+                        type="number"
+                        min="0"
+                        step="0.01"
+                        value={edits[price.id] ?? price.amount}
+                        onChange={(e) => setEdits({ ...edits, [price.id]: e.target.value })}
+                        className="w-28 text-right border border-primary-lighter rounded-lg px-3 py-1.5 text-sm font-bold text-secondary focus:outline-none focus:border-primary transition-colors"
+                      />
+                    </td>
+                    <td className="px-5 py-4 text-right">
+                      <button
+                        onClick={() => handleSave(price)}
+                        disabled={saving === price.id || edits[price.id] === undefined}
+                        className="bg-primary hover:bg-primary-dark text-white text-xs font-bold px-4 py-1.5 rounded-lg transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                      >
+                        {saving === price.id ? '...' : 'Guardar'}
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Mobile cards */}
+          <div className="sm:hidden space-y-3">
+            {prices.map((price) => (
+              <div key={price.id} className="bg-white rounded-xl border border-gray-100 shadow-sm p-4 space-y-3">
+                <div className="flex items-start justify-between gap-2">
+                  <div className="min-w-0">
+                    <p className="text-sm font-bold text-secondary mb-1">{price.label}</p>
+                    <code className="text-xs bg-primary-lighter text-secondary px-2 py-0.5 rounded">{price.key}</code>
+                  </div>
+                  <span className="text-xs text-secondary-lighter flex-shrink-0">{price.currency}</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <input
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    value={edits[price.id] ?? price.amount}
+                    onChange={(e) => setEdits({ ...edits, [price.id]: e.target.value })}
+                    className="flex-1 border border-primary-lighter rounded-lg px-3 py-2 text-sm font-bold text-secondary focus:outline-none focus:border-primary transition-colors"
+                  />
+                  <button
+                    onClick={() => handleSave(price)}
+                    disabled={saving === price.id || edits[price.id] === undefined}
+                    className="bg-primary hover:bg-primary-dark text-white text-sm font-bold px-4 py-2 rounded-lg transition-colors disabled:opacity-40 disabled:cursor-not-allowed whitespace-nowrap"
+                  >
+                    {saving === price.id ? '...' : 'Guardar'}
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </>
       )}
 
       {toast && (
