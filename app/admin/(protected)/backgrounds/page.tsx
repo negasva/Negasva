@@ -161,7 +161,7 @@ export default function BackgroundsPage() {
               <label className={labelCls}>Estilo de dibujo</label>
               <select required className={inputCls} value={styleInput} onChange={(e) => setStyleInput(e.target.value)}>
                 {STYLES.filter(s => s.id !== 'all').map(s => (
-                  <option key={s.id} value={s.id}>{s.emoji} {s.label}</option>
+                  <option key={s.id} value={s.id}>{s.label}</option>
                 ))}
               </select>
             </div>
