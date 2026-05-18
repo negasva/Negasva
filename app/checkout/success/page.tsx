@@ -7,10 +7,11 @@ import Logo from '@/components/Logo';
 
 function SuccessContent() {
   const params = useSearchParams();
-  const sessionId = params.get('session_id');                  // Stripe
-  const wompiId = params.get('id');                             // Wompi transaction id
+  const sessionId = params.get('session_id');                  // Stripe — also the provider_reference
+  const wompiRef = params.get('ref');                           // Wompi provider_reference (negasva-…)
   const wompiStatus = params.get('status') ?? 'APPROVED';       // APPROVED | DECLINED | VOIDED | ERROR | PENDING
-  const ref = sessionId ?? wompiId ?? '';
+  // ref = the value stored as provider_reference in orders table — used for tracking
+  const ref = sessionId ?? wompiRef ?? '';
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
@@ -47,7 +48,7 @@ function SuccessContent() {
       <p className="text-secondary-lighter mb-2">{ui.body}</p>
       {ref && (
         <p className="text-xs text-secondary-lighter mt-1 font-mono break-all">
-          Ref: {ref.slice(-12)}
+          Ref: <span className="select-all">{ref}</span>
         </p>
       )}
       <div className="mt-8 space-y-3">
@@ -60,7 +61,7 @@ function SuccessContent() {
           </Link>
         ) : (
           <Link
-            href="/track"
+            href={ref ? `/track?ref=${encodeURIComponent(ref)}` : '/track'}
             className="block w-full rounded-lg bg-primary px-6 py-3 font-bold text-white hover:bg-primary-dark transition-colors"
           >
             Seguir mi pedido

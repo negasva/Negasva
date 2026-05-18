@@ -95,7 +95,7 @@ export async function POST(request: Request) {
     const url = buildWompiCheckoutUrl({
       amountInCents: amountMinor,
       reference,
-      redirectUrl: `${origin}/checkout/success?provider=wompi`,
+      redirectUrl: `${origin}/checkout/success?provider=wompi&ref=${encodeURIComponent(reference)}`,
     });
     return NextResponse.json({ url });
   }
