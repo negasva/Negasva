@@ -1,13 +1,29 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Check } from 'lucide-react';
 import { useLanguage } from '@/lib/i18n/LanguageContext';
 import Navbar from '@/components/Navbar';
 import PageFooter from '@/components/PageFooter';
 
+interface PackageItem {
+  id: string;
+  name: string;
+  description: string | null;
+  final_price: number;
+}
+
 export default function PreciosPage() {
   const { t } = useLanguage();
+  const [packages, setPackages] = useState<PackageItem[]>([]);
+
+  useEffect(() => {
+    fetch('/api/packages')
+      .then((r) => r.json())
+      .then((data) => { if (Array.isArray(data)) setPackages(data); })
+      .catch(() => {});
+  }, []);
 
   return (
     <div className="min-h-screen bg-white">
@@ -97,6 +113,27 @@ export default function PreciosPage() {
               </ul>
             </div>
           </div>
+
+          {/* Packages / Promotions */}
+          {packages.length > 0 && (
+            <div className="mb-12">
+              <h2 className="font-black text-2xl text-secondary mb-2 tracking-tighter">Paquetes y promociones</h2>
+              <p className="text-sm text-secondary-lighter mb-6">Combina opciones y ahorra con nuestros paquetes.</p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {packages.map((pkg) => (
+                  <div key={pkg.id} className="bg-gradient-to-br from-primary-lighter to-white rounded-xl p-6 border-2 border-primary-lighter hover:border-primary hover:shadow-lg transition-all">
+                    <div className="flex items-start justify-between gap-4 mb-3">
+                      <h3 className="font-black text-lg text-secondary leading-tight">{pkg.name}</h3>
+                      <span className="font-black text-2xl text-primary flex-shrink-0">${pkg.final_price}</span>
+                    </div>
+                    {pkg.description && (
+                      <p className="text-sm text-secondary-lighter">{pkg.description}</p>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
 
           <div className="bg-gradient-to-br from-primary to-primary-dark rounded-2xl p-12 text-white mb-12">
             <h3 className="font-black text-3xl mb-6 tracking-tighter">{t.pricing.examples_title}</h3>

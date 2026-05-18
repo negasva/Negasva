@@ -1,7 +1,10 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import type { DrawingStyle } from '@/types/admin';
+
+const BUCKET = 'backgrounds';
 
 const EMPTY_FORM = {
   slug: '',
@@ -12,6 +15,7 @@ const EMPTY_FORM = {
 };
 
 export default function EstilosAdminPage() {
+  const supabase = createClientComponentClient();
   const [styles, setStyles] = useState<DrawingStyle[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
@@ -19,6 +23,8 @@ export default function EstilosAdminPage() {
   const [form, setForm] = useState(EMPTY_FORM);
   const [saving, setSaving] = useState(false);
   const [toast, setToast] = useState('');
+  const [imageMode, setImageMode] = useState<'url' | 'file'>('url');
+  const fileRef = useRef<HTMLInputElement>(null);
 
   function showToast(msg: string) {
     setToast(msg);
@@ -36,6 +42,8 @@ export default function EstilosAdminPage() {
   function openCreate() {
     setEditId(null);
     setForm(EMPTY_FORM);
+    setImageMode('url');
+    if (fileRef.current) fileRef.current.value = '';
     setShowForm(true);
   }
 
@@ -48,16 +56,39 @@ export default function EstilosAdminPage() {
       example_image_url: s.example_image_url ?? '',
       is_active: s.is_active,
     });
+    setImageMode('url');
+    if (fileRef.current) fileRef.current.value = '';
     setShowForm(true);
   }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setSaving(true);
+
+    let imageUrl = form.example_image_url;
+
+    if (imageMode === 'file') {
+      const file = fileRef.current?.files?.[0];
+      if (file) {
+        const ext = file.name.split('.').pop();
+        const fileName = `styles/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+        const { error: uploadError } = await supabase.storage
+          .from(BUCKET)
+          .upload(fileName, file, { cacheControl: '3600', upsert: false });
+        if (uploadError) {
+          showToast('Error al subir imagen');
+          setSaving(false);
+          return;
+        }
+        const { data: urlData } = supabase.storage.from(BUCKET).getPublicUrl(fileName);
+        imageUrl = urlData.publicUrl;
+      }
+    }
+
     const payload = {
       ...form,
       description: form.description || null,
-      example_image_url: form.example_image_url || null,
+      example_image_url: imageUrl || null,
     };
 
     if (editId) {
@@ -156,13 +187,37 @@ export default function EstilosAdminPage() {
               />
             </div>
             <div className="sm:col-span-2">
-              <label className={labelCls}>Imagen de ejemplo (URL o ruta)</label>
-              <input
-                className={inputCls}
-                value={form.example_image_url}
-                onChange={(e) => setForm({ ...form, example_image_url: e.target.value })}
-                placeholder="/backgrounds/rm-1.jpg"
-              />
+              <label className={labelCls}>Imagen de ejemplo</label>
+              <div className="flex gap-2 mb-3">
+                <button type="button" onClick={() => setImageMode('url')} className={`text-xs font-bold px-3 py-1.5 rounded-lg transition-colors ${imageMode === 'url' ? 'bg-primary text-white' : 'bg-gray-100 text-secondary-lighter hover:bg-gray-200'}`}>
+                  URL o ruta
+                </button>
+                <button type="button" onClick={() => setImageMode('file')} className={`text-xs font-bold px-3 py-1.5 rounded-lg transition-colors ${imageMode === 'file' ? 'bg-primary text-white' : 'bg-gray-100 text-secondary-lighter hover:bg-gray-200'}`}>
+                  Subir archivo
+                </button>
+              </div>
+              {imageMode === 'url' ? (
+                <input
+                  className={inputCls}
+                  value={form.example_image_url}
+                  onChange={(e) => setForm({ ...form, example_image_url: e.target.value })}
+                  placeholder="/backgrounds/rm-1.jpg o https://..."
+                />
+              ) : (
+                <input
+                  ref={fileRef}
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp"
+                  className="w-full text-sm text-secondary-lighter file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-primary-lighter file:text-secondary file:font-bold file:text-xs file:cursor-pointer cursor-pointer"
+                />
+              )}
+              {editId && form.example_image_url && imageMode === 'url' && (
+                <div className="mt-2 flex items-center gap-3">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={form.example_image_url} alt="" className="w-16 h-10 object-cover rounded border border-gray-100" />
+                  <p className="text-xs text-secondary-lighter">Imagen actual</p>
+                </div>
+              )}
             </div>
             <div>
               <label className={labelCls}>Estado</label>
