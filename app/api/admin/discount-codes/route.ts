@@ -17,7 +17,7 @@ async function requireAdmin() {
   const supabase = createRouteClient();
   const { data: { session } } = await supabase.auth.getSession();
   if (!session || session.user.user_metadata?.role !== 'admin') return null;
-  return createServiceClient();
+  return supabase;
 }
 
 function guard(request: Request, mutating: boolean) {
@@ -50,6 +50,7 @@ export async function POST(request: Request) {
 
   const supabase = await requireAdmin();
   if (!supabase) return errorResponse('Unauthorized', 401);
+  const db = createServiceClient();
 
   const body = await readJson(request);
   if (!body) return errorResponse('Invalid body', 400);
@@ -60,7 +61,7 @@ export async function POST(request: Request) {
   }
 
   const d = parsed.data;
-  const { data, error } = await supabase
+  const { data, error } = await db
     .from('discount_codes')
     .insert({
       code: d.code.toUpperCase(),
@@ -83,6 +84,7 @@ export async function PUT(request: Request) {
 
   const supabase = await requireAdmin();
   if (!supabase) return errorResponse('Unauthorized', 401);
+  const db = createServiceClient();
 
   const body = await readJson(request);
   if (!body) return errorResponse('Invalid body', 400);
@@ -101,7 +103,7 @@ export async function PUT(request: Request) {
   }
   if (typeof fields.code === 'string') fields.code = fields.code.toUpperCase();
 
-  const { error } = await supabase.from('discount_codes').update(fields).eq('id', id);
+  const { error } = await db.from('discount_codes').update(fields).eq('id', id);
   if (error) return errorResponse('Failed to update discount code', 500, error);
   return NextResponse.json({ ok: true });
 }
@@ -112,6 +114,7 @@ export async function DELETE(request: Request) {
 
   const supabase = await requireAdmin();
   if (!supabase) return errorResponse('Unauthorized', 401);
+  const db = createServiceClient();
 
   const body = await readJson(request);
   if (!body) return errorResponse('Invalid body', 400);
@@ -119,7 +122,7 @@ export async function DELETE(request: Request) {
   const parsed = DeleteByIdSchema.safeParse(body);
   if (!parsed.success) return errorResponse('Missing id', 400);
 
-  const { error } = await supabase.from('discount_codes').delete().eq('id', parsed.data.id);
+  const { error } = await db.from('discount_codes').delete().eq('id', parsed.data.id);
   if (error) return errorResponse('Failed to delete discount code', 500, error);
   return NextResponse.json({ ok: true });
 }

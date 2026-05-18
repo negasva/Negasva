@@ -13,7 +13,7 @@ async function requireAdmin() {
   const supabase = createRouteClient();
   const { data: { session } } = await supabase.auth.getSession();
   if (!session || session.user.user_metadata?.role !== 'admin') return null;
-  return createServiceClient();
+  return supabase;
 }
 
 function guard(request: Request, mutating: boolean) {
@@ -46,6 +46,7 @@ export async function PUT(request: Request) {
 
   const supabase = await requireAdmin();
   if (!supabase) return errorResponse('Unauthorized', 401);
+  const db = createServiceClient();
 
   const body = await readJson(request);
   if (!body) return errorResponse('Invalid body', 400);
@@ -57,7 +58,7 @@ export async function PUT(request: Request) {
 
   const fields = pickFields(parsed.data, ['amount']);
 
-  const { error } = await supabase
+  const { error } = await db
     .from('prices')
     .update({ ...fields, updated_at: new Date().toISOString() })
     .eq('id', parsed.data.id);

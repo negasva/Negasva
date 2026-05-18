@@ -17,8 +17,7 @@ async function requireAdmin() {
   const supabase = createRouteClient();
   const { data: { session } } = await supabase.auth.getSession();
   if (!session || session.user.user_metadata?.role !== 'admin') return null;
-  // Use service client for DB ops so RLS doesn't block writes
-  return createServiceClient();
+  return supabase;
 }
 
 function guard(request: Request, mutating: boolean) {
@@ -51,6 +50,7 @@ export async function POST(request: Request) {
 
   const supabase = await requireAdmin();
   if (!supabase) return errorResponse('Unauthorized', 401);
+  const db = createServiceClient();
 
   const body = await readJson(request);
   if (!body) return errorResponse('Invalid body', 400);
@@ -60,7 +60,7 @@ export async function POST(request: Request) {
     return errorResponse(parsed.error.issues[0]?.message ?? 'Invalid input', 400);
   }
 
-  const { data, error } = await supabase
+  const { data, error } = await db
     .from('backgrounds')
     .insert({ ...parsed.data, active: parsed.data.active ?? true })
     .select()
@@ -76,6 +76,7 @@ export async function PUT(request: Request) {
 
   const supabase = await requireAdmin();
   if (!supabase) return errorResponse('Unauthorized', 401);
+  const db = createServiceClient();
 
   const body = await readJson(request);
   if (!body) return errorResponse('Invalid body', 400);
@@ -91,7 +92,7 @@ export async function PUT(request: Request) {
     return errorResponse('No fields to update', 400);
   }
 
-  const { error } = await supabase.from('backgrounds').update(fields).eq('id', id);
+  const { error } = await db.from('backgrounds').update(fields).eq('id', id);
   if (error) return errorResponse('Failed to update background', 500, error);
   return NextResponse.json({ ok: true });
 }
@@ -102,6 +103,7 @@ export async function DELETE(request: Request) {
 
   const supabase = await requireAdmin();
   if (!supabase) return errorResponse('Unauthorized', 401);
+  const db = createServiceClient();
 
   const body = await readJson(request);
   if (!body) return errorResponse('Invalid body', 400);
@@ -109,7 +111,7 @@ export async function DELETE(request: Request) {
   const parsed = DeleteByIdSchema.safeParse(body);
   if (!parsed.success) return errorResponse('Missing id', 400);
 
-  const { error } = await supabase.from('backgrounds').delete().eq('id', parsed.data.id);
+  const { error } = await db.from('backgrounds').delete().eq('id', parsed.data.id);
   if (error) return errorResponse('Failed to delete background', 500, error);
   return NextResponse.json({ ok: true });
 }
