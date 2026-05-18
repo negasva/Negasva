@@ -6,13 +6,14 @@ import { useState } from 'react';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 
 const NAV = [
-  { href: '/admin',               label: 'Dashboard'  },
-  { href: '/admin/orders',        label: 'Pedidos'     },
-  { href: '/admin/estilos',       label: 'Estilos'     },
-  { href: '/admin/backgrounds',   label: 'Fondos'      },
-  { href: '/admin/prices',        label: 'Precios'     },
-  { href: '/admin/discount-codes',label: 'Descuentos'  },
-  { href: '/admin/packages',      label: 'Paquetes'    },
+  { href: '/admin',               label: 'Dashboard'      },
+  { href: '/admin/orders',        label: 'Pedidos'         },
+  { href: '/admin/estilos',       label: 'Estilos'         },
+  { href: '/admin/body-types',    label: 'Tipos de cuerpo' },
+  { href: '/admin/backgrounds',   label: 'Fondos'          },
+  { href: '/admin/prices',        label: 'Precios'         },
+  { href: '/admin/discount-codes',label: 'Descuentos'      },
+  { href: '/admin/packages',      label: 'Paquetes'        },
 ];
 
 function Brand() {

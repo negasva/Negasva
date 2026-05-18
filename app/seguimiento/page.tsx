@@ -6,10 +6,10 @@ import Navbar from '@/components/Navbar';
 import PageFooter from '@/components/PageFooter';
 
 const STAGES = [
-  { key: 'uploaded', label: 'Fotos recibidas', emoji: '📷' },
-  { key: 'drawing', label: 'Dibujando', emoji: '🎨' },
-  { key: 'ready', label: 'Listo', emoji: '✨' },
-  { key: 'sent', label: 'Enviado', emoji: '📨' },
+  { key: 'uploaded', label: 'Fotos recibidas', icon: '1' },
+  { key: 'drawing', label: 'Dibujando', icon: '2' },
+  { key: 'ready', label: 'Listo', icon: '3' },
+  { key: 'sent', label: 'Enviado', icon: '4' },
 ] as const;
 
 type StageKey = typeof STAGES[number]['key'];
@@ -117,7 +117,7 @@ export default function SeguimientoPage() {
                       <div className={`w-10 h-10 rounded-full flex items-center justify-center font-black flex-shrink-0 transition-colors ${
                         done ? 'bg-primary text-white' : 'bg-primary-lighter text-secondary-lighter'
                       } ${active ? 'ring-4 ring-primary-lighter' : ''}`}>
-                        {done && i < currentIdx ? <Check className="w-5 h-5" /> : stage.emoji}
+                        {done && i < currentIdx ? <Check className="w-5 h-5" /> : stage.icon}
                       </div>
                       <div className="flex-1">
                         <p className={`font-bold ${done ? 'text-secondary' : 'text-secondary-lighter'}`}>

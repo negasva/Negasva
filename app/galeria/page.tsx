@@ -58,8 +58,8 @@ export default function GaleriaPage() {
                 key={item.id}
                 className="group rounded-2xl overflow-hidden border-2 border-primary-lighter hover:border-primary hover:shadow-xl transition-all"
               >
-                <div className="aspect-square bg-gradient-to-br from-primary-lighter to-primary flex items-center justify-center text-6xl group-hover:scale-110 transition-transform">
-                  🎨
+                <div className="aspect-square bg-gradient-to-br from-primary-lighter to-primary flex items-center justify-center group-hover:scale-110 transition-transform">
+                  <div className="w-16 h-16 rounded-full bg-white/20" />
                 </div>
                 <div className="p-6 bg-white">
                   <h3 className="font-bold text-secondary mb-2">{item.title}</h3>

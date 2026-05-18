@@ -5,12 +5,12 @@ import Navbar from '@/components/Navbar';
 import PageFooter from '@/components/PageFooter';
 
 const PRODUCTS = [
-  { name: 'Taza cerámica', emoji: '☕', desc: 'Tu retrato en una taza de 11oz' },
-  { name: 'Camiseta', emoji: '👕', desc: 'Estampado vibrante en algodón premium' },
-  { name: 'Póster', emoji: '🖼️', desc: 'Papel mate 30×40 cm, listo para enmarcar' },
-  { name: 'Lienzo', emoji: '🎨', desc: 'Canvas montado en bastidor de madera' },
-  { name: 'Cojín', emoji: '🛋️', desc: 'Funda de 40×40 cm con retrato a doble cara' },
-  { name: 'Funda de móvil', emoji: '📱', desc: 'Para iPhone y Android, varios modelos' },
+  { name: 'Taza cerámica', desc: 'Tu retrato en una taza de 11oz' },
+  { name: 'Camiseta', desc: 'Estampado vibrante en algodón premium' },
+  { name: 'Póster', desc: 'Papel mate 30×40 cm, listo para enmarcar' },
+  { name: 'Lienzo', desc: 'Canvas montado en bastidor de madera' },
+  { name: 'Cojín', desc: 'Funda de 40×40 cm con retrato a doble cara' },
+  { name: 'Funda de móvil', desc: 'Para iPhone y Android, varios modelos' },
 ];
 
 export default function ProductosPage() {
@@ -59,7 +59,6 @@ export default function ProductosPage() {
                 <span className="absolute top-3 right-3 bg-secondary text-white text-[10px] font-black px-2 py-1 rounded-full tracking-widest">
                   PRONTO
                 </span>
-                <div className="text-6xl mb-4">{p.emoji}</div>
                 <h3 className="font-black text-secondary text-lg mb-2 tracking-tighter">{p.name}</h3>
                 <p className="text-sm text-secondary-lighter">{p.desc}</p>
               </div>
@@ -78,7 +77,7 @@ export default function ProductosPage() {
           </p>
           {done ? (
             <div className="bg-primary text-white font-bold rounded-xl py-4 px-6">
-              ¡Listo! Te avisamos en cuanto abramos. 🎉
+              Listo. Te avisamos en cuanto abramos.
             </div>
           ) : (
             <form onSubmit={notify} className="flex flex-col sm:flex-row gap-2">

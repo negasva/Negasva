@@ -11,6 +11,7 @@ export async function GET(request: Request) {
     .from('portrait_styles')
     .select('id, slug, name, description, example_image_url')
     .eq('is_active', true)
+    .order('sort_order', { ascending: true })
     .order('name');
 
   if (error) return errorResponse('Failed to load styles', 500, error);

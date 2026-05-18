@@ -2,14 +2,18 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import { Minus, Plus } from 'lucide-react';
+import { Minus, Plus, Lock, ShieldCheck } from 'lucide-react';
 import Logo from '@/components/Logo';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
 import { useLanguage } from '@/lib/i18n/LanguageContext';
 import { useCurrency } from '@/lib/currency/CurrencyContext';
 import CurrencySwitcher from '@/components/CurrencySwitcher';
+import { loadStripe } from '@stripe/stripe-js';
+import { EmbeddedCheckout, EmbeddedCheckoutProvider } from '@stripe/react-stripe-js';
+
+const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
 
 const FALLBACK_STYLES = [
   { id: 'rick-morty',    name: 'Rick & Morty'          },
@@ -106,6 +110,7 @@ export default function StudioPage() {
   }, [selected.style]);
 
   const [checkoutLoading, setCheckoutLoading] = useState(false);
+  const [checkoutParams, setCheckoutParams] = useState<Record<string, unknown> | null>(null);
 
   const canAdvance = () => {
     if (step === 1) return !!selected.style;
@@ -119,35 +124,55 @@ export default function StudioPage() {
   const nextStep = async () => {
     if (step < 5) { setStep(step + 1); return; }
 
-    // Step 5: launch Stripe Checkout
-    setCheckoutLoading(true);
-    try {
-      const res = await fetch('/api/checkout', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          style: selected.style,
-          bodyType: selected.bodyType,
-          background: selected.background,
-          peopleCount: selected.peopleCount,
-          express: selected.express,
-          specialRequests: selected.specialRequests,
-          currency: currency.toLowerCase(),
-          rate: rates[currency] ?? 1,
-        }),
-      });
-      const data = await res.json();
-      if (data.url) {
-        window.location.href = data.url;
-      } else {
-        alert('Error al iniciar el pago. Intenta de nuevo.');
+    const params = {
+      style: selected.style,
+      bodyType: selected.bodyType,
+      background: selected.background,
+      peopleCount: selected.peopleCount,
+      express: selected.express,
+      specialRequests: selected.specialRequests,
+      currency: currency.toLowerCase(),
+      rate: rates[currency] ?? 1,
+    };
+
+    // COP: Wompi redirect (unchanged)
+    if (currency === 'COP') {
+      setCheckoutLoading(true);
+      try {
+        const res = await fetch('/api/checkout', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(params),
+        });
+        const data = await res.json();
+        if (data.url) {
+          window.location.href = data.url;
+        } else {
+          alert('Error al iniciar el pago. Intenta de nuevo.');
+          setCheckoutLoading(false);
+        }
+      } catch {
+        alert('Error de red. Intenta de nuevo.');
         setCheckoutLoading(false);
       }
-    } catch {
-      alert('Error de red. Intenta de nuevo.');
-      setCheckoutLoading(false);
+      return;
     }
+
+    // Stripe: embedded checkout (step 6)
+    setCheckoutParams(params);
+    setStep(6);
   };
+
+  const fetchClientSecret = useCallback(async () => {
+    if (!checkoutParams) return '';
+    const res = await fetch('/api/checkout', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(checkoutParams),
+    });
+    const data = await res.json();
+    return data.client_secret ?? '';
+  }, [checkoutParams]);
 
   const prevStep = () => {
     if (step > 1) setStep(step - 1);
@@ -238,7 +263,7 @@ export default function StudioPage() {
               </div>
               {b.discountRate > 0 && (
                 <div className="flex justify-between bg-white rounded-xl px-3 py-1.5">
-                  <span className="text-primary font-bold">🎉 −{Math.round(b.discountRate * 100)}%</span>
+                  <span className="text-primary font-bold">−{Math.round(b.discountRate * 100)}%</span>
                   <span className="font-bold text-primary">−{fmt(b.discount)}</span>
                 </div>
               )}
@@ -290,8 +315,8 @@ export default function StudioPage() {
         </div>
       </nav>
 
-      {/* Progress */}
-      <div className="bg-white border-b-2 border-primary-lighter w-full overflow-x-hidden">
+      {/* Progress (hidden on payment step) */}
+      <div className={`bg-white border-b-2 border-primary-lighter w-full overflow-x-hidden ${step === 6 ? 'hidden' : ''}`}>
         <div className="mx-auto max-w-6xl px-4 py-4 flex justify-center">
           <div className="flex items-center gap-1 sm:gap-3">
             {STEPS.map((label, i) => (
@@ -323,9 +348,9 @@ export default function StudioPage() {
 
       {/* Content */}
       <main className="mx-auto max-w-6xl px-4 py-8 w-full overflow-x-hidden">
-        <div className={`${step > 1 ? 'lg:grid lg:grid-cols-3 lg:gap-8' : ''}`}>
+        <div className={`${step > 1 && step < 6 ? 'lg:grid lg:grid-cols-3 lg:gap-8' : ''}`}>
           {/* Main step content */}
-          <div className={step > 1 ? 'lg:col-span-2' : ''}>
+          <div className={step > 1 && step < 6 ? 'lg:col-span-2' : ''}>
 
             {/* PASO 1: Estilo */}
             {step === 1 && (
@@ -398,7 +423,7 @@ export default function StudioPage() {
                     >
                       {b.bestValue && (
                         <div className="inline-flex items-center gap-1 bg-primary text-white px-3 py-1 rounded-full text-xs font-black mb-3 shadow-lg ring-2 ring-primary-light">
-                          ✨ {t.studio.body_types.best_value}
+                          {t.studio.body_types.best_value}
                         </div>
                       )}
                       {selected.bodyType === b.id && (
@@ -462,7 +487,7 @@ export default function StudioPage() {
                         {b.discountRate > 0 && (
                           <div className="flex justify-between items-center bg-white rounded-xl px-3 py-2">
                             <span className="font-bold text-primary text-sm">
-                              🎉 Pack familia −{Math.round(b.discountRate * 100)}%
+                              Pack familia −{Math.round(b.discountRate * 100)}%
                             </span>
                             <span className="font-black text-xl text-primary">{fmt(b.peopleSubtotal - b.discount)}</span>
                           </div>
@@ -655,39 +680,76 @@ export default function StudioPage() {
               </div>
             )}
 
-            {/* Navigation */}
-            <div className="flex justify-between items-center mt-14">
-              <button
-                onClick={prevStep}
-                className="text-secondary-lighter hover:text-primary text-sm font-bold px-6 py-3 rounded-lg hover:bg-primary-lighter transition-colors"
-              >
-                {step === 1 ? <Link href="/">{t.studio.nav.back_home}</Link> : t.studio.nav.prev}
-              </button>
-              {step > 1 && (
-                <button
-                  onClick={nextStep}
-                  disabled={!canAdvance() || checkoutLoading}
-                  className={`rounded-lg px-10 py-3 font-bold text-white transition-all flex items-center gap-2 ${
-                    canAdvance() && !checkoutLoading
-                      ? 'bg-primary hover:bg-primary-dark shadow-lg hover:shadow-xl'
-                      : 'bg-secondary-lighter text-gray-400 cursor-not-allowed'
-                  }`}
-                >
-                  {checkoutLoading && (
-                    <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                  )}
-                  {step === 5 ? t.studio.nav.checkout : t.studio.nav.next}
-                </button>
-              )}
-            </div>
+            {/* PASO 6: Embedded Checkout */}
+            {step === 6 && checkoutParams && (
+              <div>
+                <div className="text-center mb-8">
+                  <h1 className="font-black text-3xl text-secondary mb-2 tracking-tighter">Pago seguro</h1>
+                  <div className="flex items-center justify-center gap-4 text-xs text-secondary-lighter flex-wrap">
+                    <span className="flex items-center gap-1"><Lock className="w-3 h-3 text-primary" /> Cifrado SSL 256-bit</span>
+                    <span className="flex items-center gap-1"><ShieldCheck className="w-3 h-3 text-primary" /> Procesado por Stripe</span>
+                    <span className="flex items-center gap-1"><ShieldCheck className="w-3 h-3 text-primary" /> Nunca guardamos tu tarjeta</span>
+                  </div>
+                </div>
+                <div className="max-w-xl mx-auto bg-white rounded-2xl border-2 border-primary-lighter shadow-lg overflow-hidden">
+                  <div className="bg-primary-lighter px-6 py-4 flex items-center justify-between">
+                    <span className="font-black text-secondary text-sm">Total: {fmt(totalPrice())}</span>
+                    <div className="flex items-center gap-2 text-xs text-secondary-lighter">
+                      <Lock className="w-3 h-3" />
+                      <span>Pago seguro</span>
+                    </div>
+                  </div>
+                  <div className="p-4">
+                    <EmbeddedCheckoutProvider stripe={stripePromise} options={{ fetchClientSecret }}>
+                      <EmbeddedCheckout />
+                    </EmbeddedCheckoutProvider>
+                  </div>
+                </div>
+                <div className="mt-6 text-center">
+                  <button onClick={() => setStep(5)} className="text-secondary-lighter hover:text-primary text-sm font-bold transition-colors">
+                    Volver al paso anterior
+                  </button>
+                </div>
+              </div>
+            )}
 
-            <p className="text-center text-xs text-secondary-lighter mt-8">
-              {t.studio.nav.secure}
-            </p>
+            {/* Navigation (steps 1–5 only) */}
+            {step < 6 && (
+              <>
+                <div className="flex justify-between items-center mt-14">
+                  <button
+                    onClick={prevStep}
+                    className="text-secondary-lighter hover:text-primary text-sm font-bold px-6 py-3 rounded-lg hover:bg-primary-lighter transition-colors"
+                  >
+                    {step === 1 ? <Link href="/">{t.studio.nav.back_home}</Link> : t.studio.nav.prev}
+                  </button>
+                  {step > 1 && (
+                    <button
+                      onClick={nextStep}
+                      disabled={!canAdvance() || checkoutLoading}
+                      className={`rounded-lg px-10 py-3 font-bold text-white transition-all flex items-center gap-2 ${
+                        canAdvance() && !checkoutLoading
+                          ? 'bg-primary hover:bg-primary-dark shadow-lg hover:shadow-xl'
+                          : 'bg-secondary-lighter text-gray-400 cursor-not-allowed'
+                      }`}
+                    >
+                      {checkoutLoading && (
+                        <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                      )}
+                      {step === 5 ? t.studio.nav.checkout : t.studio.nav.next}
+                    </button>
+                  )}
+                </div>
+
+                <p className="text-center text-xs text-secondary-lighter mt-8">
+                  {t.studio.nav.secure}
+                </p>
+              </>
+            )}
           </div>
 
           {/* Sidebar: Order Summary */}
-          {step > 1 && (
+          {step > 1 && step < 6 && (
             <div className="hidden lg:block">
               <OrderSummary />
             </div>

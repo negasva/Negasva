@@ -22,10 +22,10 @@ function SuccessContent() {
   const isPending = wompiStatus === 'PENDING';
 
   const ui = isFailure
-    ? { emoji: '😕', title: 'Pago no completado', body: 'Tu pago no se procesó. Puedes intentarlo de nuevo desde el estudio.' }
+    ? { icon: 'fail', title: 'Pago no completado', body: 'Tu pago no se procesó. Puedes intentarlo de nuevo desde el estudio.' }
     : isPending
-    ? { emoji: '⏳', title: 'Pago pendiente', body: 'Tu pago está siendo procesado. Te enviaremos un email cuando se confirme.' }
-    : { emoji: '🎉', title: '¡Pago recibido!', body: 'Tu pedido está en camino. Te enviaremos un email de confirmación pronto.' };
+    ? { icon: 'pending', title: 'Pago pendiente', body: 'Tu pago está siendo procesado. Te enviaremos un email cuando se confirme.' }
+    : { icon: 'success', title: '¡Pago recibido!', body: 'Tu pedido está en camino. Te enviaremos un email de confirmación pronto.' };
 
   if (!ready) {
     return (
@@ -38,7 +38,9 @@ function SuccessContent() {
 
   return (
     <>
-      <div className="text-6xl mb-6">{ui.emoji}</div>
+      <div className={`w-16 h-16 rounded-full flex items-center justify-center mb-6 mx-auto ${ui.icon === 'success' ? 'bg-green-100' : ui.icon === 'pending' ? 'bg-yellow-100' : 'bg-red-100'}`}>
+        <div className={`w-8 h-8 rounded-full ${ui.icon === 'success' ? 'bg-green-500' : ui.icon === 'pending' ? 'bg-yellow-500' : 'bg-red-400'}`} />
+      </div>
       <h1 className="font-black text-3xl text-secondary tracking-tighter mb-3">
         {ui.title}
       </h1>
