@@ -7,7 +7,7 @@ async function requireAdmin() {
   const supabase = createRouteClient();
   const { data: { session } } = await supabase.auth.getSession();
   if (!session || session.user.user_metadata?.role !== 'admin') return null;
-  return createServiceClient();
+  return supabase;
 }
 
 function guard(request: Request, mutating: boolean) {
@@ -35,6 +35,7 @@ export async function POST(request: Request) {
   if (blocked) return blocked;
   const supabase = await requireAdmin();
   if (!supabase) return errorResponse('Unauthorized', 401);
+  const db = createServiceClient();
 
   const body = await readJson(request);
   if (!body) return errorResponse('Invalid body', 400);
@@ -42,7 +43,7 @@ export async function POST(request: Request) {
   const parsed = AdminOrderCreateSchema.safeParse(body);
   if (!parsed.success) return errorResponse(parsed.error.issues[0]?.message ?? 'Invalid input', 400);
 
-  const { data, error } = await supabase.from('admin_orders').insert(parsed.data).select().single();
+  const { data, error } = await db.from('admin_orders').insert(parsed.data).select().single();
   if (error) return errorResponse('Failed to create order', 500, error);
   return NextResponse.json(data, { status: 201 });
 }
@@ -52,6 +53,7 @@ export async function PUT(request: Request) {
   if (blocked) return blocked;
   const supabase = await requireAdmin();
   if (!supabase) return errorResponse('Unauthorized', 401);
+  const db = createServiceClient();
 
   const body = await readJson(request);
   if (!body) return errorResponse('Invalid body', 400);
@@ -68,7 +70,7 @@ export async function PUT(request: Request) {
 
   if (Object.keys(fields).length === 0) return errorResponse('No fields to update', 400);
 
-  const { error } = await supabase.from('admin_orders').update(fields).eq('id', id);
+  const { error } = await db.from('admin_orders').update(fields).eq('id', id);
   if (error) return errorResponse('Failed to update order', 500, error);
   return NextResponse.json({ ok: true });
 }
@@ -78,6 +80,7 @@ export async function DELETE(request: Request) {
   if (blocked) return blocked;
   const supabase = await requireAdmin();
   if (!supabase) return errorResponse('Unauthorized', 401);
+  const db = createServiceClient();
 
   const body = await readJson(request);
   if (!body) return errorResponse('Invalid body', 400);
@@ -85,7 +88,7 @@ export async function DELETE(request: Request) {
   const parsed = DeleteByIdSchema.safeParse(body);
   if (!parsed.success) return errorResponse('Missing id', 400);
 
-  const { error } = await supabase.from('admin_orders').delete().eq('id', parsed.data.id);
+  const { error } = await db.from('admin_orders').delete().eq('id', parsed.data.id);
   if (error) return errorResponse('Failed to delete order', 500, error);
   return NextResponse.json({ ok: true });
 }
