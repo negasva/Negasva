@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Minus, Plus } from 'lucide-react';
 import Logo from '@/components/Logo';
@@ -19,57 +19,46 @@ const STYLES = [
   { id: 'negasva', name: 'Estilo NEGASVA' },
 ];
 
-const BACKGROUNDS_BY_STYLE: Record<string, { id: string; price?: number }[]> = {
+// Fallback backgrounds if API is unavailable
+const FALLBACK_BACKGROUNDS: Record<string, { id: string; url: string; name: string; price?: number }[]> = {
   'rick-morty': [
-    { id: 'rm-1' },
-    { id: 'rm-3' },
-    { id: 'rm-4' },
-    { id: 'rm-5' },
-    { id: 'rm-6' },
-    { id: 'rm-10' },
-    { id: 'custom', price: 25 },
-    { id: 'none' },
+    { id: 'rm-1', url: '/backgrounds/rm-1.jpg', name: 'Portal' },
+    { id: 'rm-3', url: '/backgrounds/rm-3.jpg', name: 'Garage' },
+    { id: 'rm-4', url: '/backgrounds/rm-4.jpg', name: 'Espacio' },
+    { id: 'rm-5', url: '/backgrounds/rm-5.jpg', name: 'Planeta C-137' },
+    { id: 'rm-6', url: '/backgrounds/rm-6.jpg', name: 'Nave espacial' },
+    { id: 'rm-10', url: '/backgrounds/rm-10.jpg', name: 'Dimensión' },
   ],
   'gravity-falls': [
-    { id: 'gf-1' },
-    { id: 'gf-2' },
-    { id: 'gf-3' },
-    { id: 'gf-4' },
-    { id: 'gf-5' },
-    { id: 'gf-8' },
-    { id: 'gf-9' },
-    { id: 'custom', price: 25 },
-    { id: 'none' },
+    { id: 'gf-1', url: '/backgrounds/gf-1.jpg', name: 'Bosque' },
+    { id: 'gf-2', url: '/backgrounds/gf-2.jpg', name: 'Cabaña' },
+    { id: 'gf-3', url: '/backgrounds/gf-3.jpg', name: 'Pueblo' },
+    { id: 'gf-4', url: '/backgrounds/gf-4.jpg', name: 'Lago' },
+    { id: 'gf-5', url: '/backgrounds/gf-5.jpg', name: 'Cueva' },
+    { id: 'gf-8', url: '/backgrounds/gf-8.jpg', name: 'Noche' },
+    { id: 'gf-9', url: '/backgrounds/gf-9.jpg', name: 'Misterio' },
   ],
   'simpsons': [
-    { id: 'sp-1' },
-    { id: 'sp-2' },
-    { id: 'sp-3' },
-    { id: 'sp-4' },
-    { id: 'sp-5' },
-    { id: 'sp-6' },
-    { id: 'sp-10' },
-    { id: 'custom', price: 25 },
-    { id: 'none' },
+    { id: 'sp-1', url: '/backgrounds/sp-1.jpg', name: 'Springfield' },
+    { id: 'sp-2', url: '/backgrounds/sp-2.jpg', name: 'Casa' },
+    { id: 'sp-3', url: '/backgrounds/sp-3.jpg', name: "Bar de Moe" },
+    { id: 'sp-4', url: '/backgrounds/sp-4.jpg', name: 'Nuclear' },
+    { id: 'sp-5', url: '/backgrounds/sp-5.jpg', name: 'Escuela' },
+    { id: 'sp-6', url: '/backgrounds/sp-6.jpg', name: 'Calle' },
+    { id: 'sp-10', url: '/backgrounds/sp-10.jpg', name: 'Noche Springfield' },
   ],
   'fairly-odd': [
-    { id: 'fo-1' },
-    { id: 'fo-2' },
-    { id: 'fo-3' },
-    { id: 'fo-5' },
-    { id: 'fo-10' },
-    { id: 'custom', price: 25 },
-    { id: 'none' },
+    { id: 'fo-1', url: '/backgrounds/fo-1.jpg', name: 'Dimmsdale' },
+    { id: 'fo-2', url: '/backgrounds/fo-2.jpg', name: 'Casa Turner' },
+    { id: 'fo-3', url: '/backgrounds/fo-3.jpg', name: 'Hada World' },
+    { id: 'fo-5', url: '/backgrounds/fo-5.jpg', name: 'Escuela' },
+    { id: 'fo-10', url: '/backgrounds/fo-10.jpg', name: 'Cosmos' },
   ],
-  'negasva': [
-    { id: 'custom', price: 25 },
-    { id: 'none' },
-  ],
-  'custom': [
-    { id: 'custom', price: 25 },
-    { id: 'none' },
-  ],
+  'negasva': [],
+  'custom': [],
 };
+
+interface BgItem { id: string; url: string; name: string; price?: number; }
 
 export default function StudioPage() {
   const router = useRouter();
@@ -87,6 +76,22 @@ export default function StudioPage() {
     photos: [] as File[],
     express: false,
   });
+  const [dynamicBgs, setDynamicBgs] = useState<Record<string, BgItem[]>>({});
+
+  useEffect(() => {
+    if (!selected.style || selected.style === 'negasva' || selected.style === 'custom') return;
+    fetch(`/api/backgrounds?style=${selected.style}`)
+      .then(r => r.ok ? r.json() : null)
+      .then((data: Array<{ id: string; name: string; image_url: string }> | null) => {
+        if (data && data.length > 0) {
+          setDynamicBgs(prev => ({
+            ...prev,
+            [selected.style]: data.map(b => ({ id: b.id, url: b.image_url, name: b.name })),
+          }));
+        }
+      })
+      .catch(() => null);
+  }, [selected.style]);
 
   const [checkoutLoading, setCheckoutLoading] = useState(false);
 
@@ -168,6 +173,17 @@ export default function StudioPage() {
   const getBgName = (id: string) =>
     (t.studio.backgrounds as Record<string, string>)[id] ?? id;
 
+  const getStyleBgs = (): BgItem[] => {
+    const fromApi = dynamicBgs[selected.style];
+    const fallback = FALLBACK_BACKGROUNDS[selected.style] ?? [];
+    const base = fromApi && fromApi.length > 0 ? fromApi : fallback;
+    return [
+      ...base,
+      { id: 'custom', url: '', name: getBgName('custom'), price: 25 },
+      { id: 'none', url: '', name: getBgName('none') },
+    ];
+  };
+
   const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
     setSelected({ ...selected, photos: files });
@@ -224,7 +240,7 @@ export default function StudioPage() {
           )}
           {selected.background && selected.background !== 'none' && (
             <div className="flex justify-between text-xs text-secondary-lighter pl-2">
-              <span>{getBgName(selected.background)}</span>
+              <span>{getStyleBgs().find(b => b.id === selected.background)?.name ?? getBgName(selected.background)}</span>
             </div>
           )}
           {selected.express && (
@@ -465,7 +481,7 @@ export default function StudioPage() {
                   <p className="text-lg text-secondary-lighter">{t.studio.step3.subtitle}</p>
                 </div>
                 <div className="grid grid-cols-2 gap-3">
-                  {(BACKGROUNDS_BY_STYLE[selected.style] ?? []).map((bg) => {
+                  {getStyleBgs().map((bg) => {
                     const isSelected = selected.background === bg.id;
 
                     if (bg.id === 'none') {
@@ -483,7 +499,7 @@ export default function StudioPage() {
                             <span className="block text-white text-base font-black mb-2 tracking-widest">✓</span>
                           )}
                           <p className="font-montserrat font-black text-white text-sm uppercase tracking-[0.12em] leading-tight px-3">
-                            {getBgName(bg.id)}
+                            {bg.name}
                           </p>
                         </button>
                       );
@@ -510,7 +526,7 @@ export default function StudioPage() {
                           </div>
                           <div className="p-3">
                             <p className="text-sm font-black text-secondary leading-tight uppercase tracking-tight">
-                              {getBgName(bg.id)}
+                              {bg.name}
                             </p>
                             <p className="text-xs text-primary mt-1 font-bold">+{fmt(bg.price ?? 25)}</p>
                           </div>
@@ -530,8 +546,8 @@ export default function StudioPage() {
                       >
                         <div className="relative w-full h-24 flex-shrink-0">
                           <Image
-                            src={`/backgrounds/${bg.id}.jpg`}
-                            alt={getBgName(bg.id)}
+                            src={bg.url}
+                            alt={bg.name}
                             fill
                             className="object-cover"
                             sizes="(max-width: 768px) 50vw, 25vw"
@@ -543,7 +559,7 @@ export default function StudioPage() {
                           )}
                         </div>
                         <div className="p-3">
-                          <p className="text-sm font-bold text-secondary leading-tight">{getBgName(bg.id)}</p>
+                          <p className="text-sm font-bold text-secondary leading-tight">{bg.name}</p>
                           <p className="text-xs text-primary mt-1 font-bold">+{fmt(bg.price ?? 15)}</p>
                         </div>
                       </button>

@@ -85,7 +85,7 @@ export async function PUT(request: Request) {
   }
 
   const { id } = parsed.data;
-  const fields = pickFields(parsed.data, ['name', 'image_url', 'active']);
+  const fields = pickFields(parsed.data, ['name', 'image_url', 'style', 'active']);
   if (Object.keys(fields).length === 0) {
     return errorResponse('No fields to update', 400);
   }

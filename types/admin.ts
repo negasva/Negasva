@@ -32,6 +32,7 @@ export interface Background {
   id: string;
   name: string;
   image_url: string;
+  style: string | null;
   active: boolean;
   created_at: string;
 }

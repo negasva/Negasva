@@ -126,9 +126,18 @@ const SafeUrlSchema = z.string().trim().max(2048).refine((s) => {
 const IdSchema = z.string().trim().min(1).max(64);
 const MoneySchema = z.number().finite().min(0).max(100_000);
 
+const DrawingStyleSchema = z.enum([
+  'rick-morty',
+  'gravity-falls',
+  'simpsons',
+  'fairly-odd',
+  'negasva',
+]).nullable().optional();
+
 export const AdminBackgroundCreateSchema = z.object({
   name: z.string().trim().min(1).max(120),
   image_url: SafeUrlSchema,
+  style: DrawingStyleSchema,
   active: z.boolean().optional(),
 });
 
@@ -136,6 +145,7 @@ export const AdminBackgroundUpdateSchema = z.object({
   id: IdSchema,
   name: z.string().trim().min(1).max(120).optional(),
   image_url: SafeUrlSchema.optional(),
+  style: DrawingStyleSchema,
   active: z.boolean().optional(),
 });
 
