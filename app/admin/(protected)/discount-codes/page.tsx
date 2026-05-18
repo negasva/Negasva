@@ -44,7 +44,7 @@ export default function DiscountCodesPage() {
         code: form.code.toUpperCase(),
         type: form.type,
         value: parseFloat(form.value),
-        expires_at: form.expires_at || null,
+        expires_at: form.expires_at ? new Date(form.expires_at).toISOString() : null,
         max_uses: form.max_uses ? parseInt(form.max_uses) : null,
         active: form.active,
       }),
