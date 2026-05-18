@@ -1,111 +1,259 @@
 'use client';
 
-import Link from 'next/link';
+import { useEffect, useState } from 'react';
+import type { DrawingStyle } from '@/types/admin';
 
-const STYLES = [
-  {
-    id: 'rick-morty',
-    name: 'Rick & Morty',
-    emoji: '🛸',
-    desc: 'Estilo de ciencia ficción y aventuras interdimensionales. Personajes con proporciones exageradas, ojos grandes y colores vibrantes.',
-    features: ['Personajes caricaturizados con proporciones únicas', 'Colores saturados y fondos de ciencia ficción', 'Expresiones exageradas y cómicas'],
-    bgCount: { id: 'rick-morty' },
-  },
-  {
-    id: 'gravity-falls',
-    name: 'Gravity Falls',
-    emoji: '🌲',
-    desc: 'Estilo misterioso con toques sobrenaturales. Colores cálidos y atmosféricos con detalles únicos en personajes y entornos.',
-    features: ['Diseño con toques de misterio y aventura', 'Paleta de colores cálidos y otoñales', 'Fondos de bosque, misterio y magia'],
-    bgCount: { id: 'gravity-falls' },
-  },
-  {
-    id: 'simpsons',
-    name: 'The Simpsons',
-    emoji: '🍩',
-    desc: 'El estilo más icónico de la animación. Personajes amarillos con 4 dedos, ojos redondos y expresiones características.',
-    features: ['Piel amarilla característica de Springfield', 'Ojos redondos y proporciones clásicas', 'Fondos del pueblo de Springfield'],
-    bgCount: { id: 'simpsons' },
-  },
-  {
-    id: 'fairly-odd',
-    name: 'Padrinos Mágicos',
-    emoji: '⭐',
-    desc: 'Estilo mágico y colorido con personajes de formas redondeadas. Perfecto para retratos llenos de fantasía y color.',
-    features: ['Formas redondeadas y colores brillantes', 'Estética mágica y fantasiosa', 'Fondos de Dimmsdale y mundo de las hadas'],
-    bgCount: { id: 'fairly-odd' },
-  },
-  {
-    id: 'negasva',
-    name: 'Estilo NEGASVA',
-    emoji: '🎨',
-    desc: 'El estilo propio y exclusivo de NEGASVA. Una mezcla única de influencias que crea retratos personalizados inconfundibles.',
-    features: ['Estilo propio y exclusivo', 'Personalización máxima', 'Toque artístico único'],
-    bgCount: { id: 'negasva' },
-  },
-];
+const EMPTY_FORM = {
+  slug: '',
+  name: '',
+  description: '',
+  example_image_url: '',
+  is_active: true,
+};
 
 export default function EstilosAdminPage() {
+  const [styles, setStyles] = useState<DrawingStyle[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [showForm, setShowForm] = useState(false);
+  const [editId, setEditId] = useState<string | null>(null);
+  const [form, setForm] = useState(EMPTY_FORM);
+  const [saving, setSaving] = useState(false);
+  const [toast, setToast] = useState('');
+
+  function showToast(msg: string) {
+    setToast(msg);
+    setTimeout(() => setToast(''), 2500);
+  }
+
+  async function load() {
+    const res = await fetch('/api/admin/styles');
+    setStyles(await res.json());
+    setLoading(false);
+  }
+
+  useEffect(() => { load(); }, []);
+
+  function openCreate() {
+    setEditId(null);
+    setForm(EMPTY_FORM);
+    setShowForm(true);
+  }
+
+  function openEdit(s: DrawingStyle) {
+    setEditId(s.id);
+    setForm({
+      slug: s.slug,
+      name: s.name,
+      description: s.description ?? '',
+      example_image_url: s.example_image_url ?? '',
+      is_active: s.is_active,
+    });
+    setShowForm(true);
+  }
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setSaving(true);
+    const payload = {
+      ...form,
+      description: form.description || null,
+      example_image_url: form.example_image_url || null,
+    };
+
+    if (editId) {
+      const res = await fetch('/api/admin/styles', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: editId, ...payload }),
+      });
+      showToast(res.ok ? 'Estilo actualizado' : 'Error al actualizar');
+    } else {
+      const res = await fetch('/api/admin/styles', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      showToast(res.ok ? 'Estilo creado' : 'Error al crear');
+    }
+
+    setShowForm(false);
+    await load();
+    setSaving(false);
+  }
+
+  async function handleToggle(s: DrawingStyle) {
+    await fetch('/api/admin/styles', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id: s.id, is_active: !s.is_active }),
+    });
+    setStyles((prev) => prev.map((x) => x.id === s.id ? { ...x, is_active: !s.is_active } : x));
+  }
+
+  async function handleDelete(s: DrawingStyle) {
+    if (!confirm(`Eliminar el estilo "${s.name}"?`)) return;
+    await fetch('/api/admin/styles', {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id: s.id }),
+    });
+    setStyles((prev) => prev.filter((x) => x.id !== s.id));
+    showToast('Estilo eliminado');
+  }
+
   return (
     <div>
-      <div className="mb-6">
-        <h1 className="text-xl lg:text-2xl font-black text-secondary mb-1">Estilos de dibujo</h1>
-        <p className="text-sm text-secondary-lighter">Visión general de los estilos disponibles. Gestiona los fondos de cada estilo desde la sección de Fondos.</p>
+      <div className="flex items-center justify-between mb-5">
+        <div>
+          <h1 className="text-xl lg:text-2xl font-black text-secondary mb-0.5">Estilos de dibujo</h1>
+          <p className="text-sm text-secondary-lighter">Gestiona los estilos disponibles en el studio.</p>
+        </div>
+        <button
+          onClick={openCreate}
+          className="bg-primary hover:bg-primary-dark text-white font-bold px-4 py-2.5 rounded-xl text-sm transition-colors"
+        >
+          + Nuevo estilo
+        </button>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 lg:gap-5">
-        {STYLES.map((style) => (
-          <div key={style.id} className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden flex flex-col">
-            {/* Header */}
-            <div className="bg-gradient-to-br from-primary-light to-primary p-6 text-center">
-              <div className="text-5xl mb-3">{style.emoji}</div>
-              <h2 className="font-black text-white text-lg">{style.name}</h2>
-            </div>
-
-            {/* Body */}
-            <div className="p-4 flex flex-col flex-1 gap-4">
-              <p className="text-sm text-secondary-lighter leading-relaxed">{style.desc}</p>
-
+      {showForm && (
+        <form onSubmit={handleSubmit} className="bg-white rounded-xl border border-primary-lighter shadow-sm p-4 lg:p-6 mb-5 space-y-4">
+          <h2 className="font-black text-secondary text-base">{editId ? 'Editar estilo' : 'Nuevo estilo'}</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {!editId && (
               <div>
-                <p className="text-xs font-bold text-secondary-lighter uppercase tracking-wide mb-2">Características</p>
-                <ul className="space-y-1.5">
-                  {style.features.map((f) => (
-                    <li key={f} className="flex items-start gap-2 text-xs text-secondary-lighter">
-                      <span className="w-1.5 h-1.5 rounded-full bg-primary flex-shrink-0 mt-1.5" />
-                      {f}
-                    </li>
-                  ))}
-                </ul>
+                <label className={labelCls}>Slug (identificador unico)</label>
+                <input
+                  required
+                  className={inputCls}
+                  value={form.slug}
+                  onChange={(e) => setForm({ ...form, slug: e.target.value.toLowerCase().replace(/\s+/g, '-') })}
+                  placeholder="rick-morty"
+                  pattern="[a-z0-9-]+"
+                  title="Solo letras minusculas, numeros y guiones"
+                />
+                <p className="text-xs text-secondary-lighter mt-1">Ejemplo: rick-morty, gravity-falls</p>
               </div>
-
-              <div className="mt-auto pt-3 border-t border-gray-50 flex gap-2">
-                <Link
-                  href={`/admin/backgrounds?style=${style.id}`}
-                  className="flex-1 text-center text-xs font-bold bg-primary hover:bg-primary-dark text-white px-3 py-2 rounded-lg transition-colors"
-                >
-                  🖼 Gestionar fondos
-                </Link>
-                <Link
-                  href={`/estilos`}
-                  target="_blank"
-                  className="text-xs font-bold border border-gray-100 hover:border-primary-lighter text-secondary-lighter hover:text-secondary px-3 py-2 rounded-lg transition-colors"
-                >
-                  👁 Ver en web
-                </Link>
-              </div>
+            )}
+            <div className={!editId ? '' : 'sm:col-span-2'}>
+              <label className={labelCls}>Nombre visible</label>
+              <input
+                required
+                className={inputCls}
+                value={form.name}
+                onChange={(e) => setForm({ ...form, name: e.target.value })}
+                placeholder="Rick & Morty"
+              />
+            </div>
+            <div className="sm:col-span-2">
+              <label className={labelCls}>Descripcion</label>
+              <textarea
+                rows={2}
+                className={inputCls}
+                value={form.description}
+                onChange={(e) => setForm({ ...form, description: e.target.value })}
+                placeholder="Descripcion del estilo..."
+              />
+            </div>
+            <div className="sm:col-span-2">
+              <label className={labelCls}>Imagen de ejemplo (URL o ruta)</label>
+              <input
+                className={inputCls}
+                value={form.example_image_url}
+                onChange={(e) => setForm({ ...form, example_image_url: e.target.value })}
+                placeholder="/backgrounds/rm-1.jpg"
+              />
+            </div>
+            <div>
+              <label className={labelCls}>Estado</label>
+              <label className="flex items-center gap-2 cursor-pointer mt-1">
+                <input
+                  type="checkbox"
+                  checked={form.is_active}
+                  onChange={(e) => setForm({ ...form, is_active: e.target.checked })}
+                  className="accent-primary w-4 h-4"
+                />
+                <span className="text-sm text-secondary">Activo (visible en el studio)</span>
+              </label>
             </div>
           </div>
-        ))}
-      </div>
+          <div className="flex gap-3 pt-2">
+            <button type="submit" disabled={saving} className="bg-primary hover:bg-primary-dark text-white font-bold px-5 py-2 rounded-lg text-sm transition-colors disabled:opacity-60">
+              {saving ? 'Guardando...' : editId ? 'Actualizar' : 'Crear'}
+            </button>
+            <button type="button" onClick={() => setShowForm(false)} className="text-secondary-lighter hover:text-secondary text-sm font-bold px-4 py-2">
+              Cancelar
+            </button>
+          </div>
+        </form>
+      )}
 
-      {/* Info banner */}
-      <div className="mt-6 bg-primary-lighter rounded-xl p-4 border border-primary/20">
-        <p className="text-sm text-secondary font-bold mb-1">💡 Cómo funciona</p>
-        <p className="text-xs text-secondary-lighter leading-relaxed">
-          Los estilos de dibujo están disponibles para los clientes en el studio. Cada estilo tiene sus propios fondos que puedes activar o desactivar.
-          Para añadir o eliminar fondos de un estilo, ve a <strong>Fondos</strong> y selecciona el estilo correspondiente.
-        </p>
-      </div>
+      {loading ? (
+        <div className="text-center py-16 text-secondary-lighter text-sm">Cargando...</div>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
+          {styles.map((style) => (
+            <div key={style.id} className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden flex flex-col">
+              {style.example_image_url && (
+                <div className="h-36 bg-gray-100 overflow-hidden">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={style.example_image_url}
+                    alt={style.name}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              )}
+              <div className="p-4 flex flex-col flex-1 gap-3">
+                <div className="flex items-start justify-between gap-2">
+                  <div>
+                    <p className="font-black text-secondary">{style.name}</p>
+                    <code className="text-xs bg-gray-100 text-secondary-lighter px-2 py-0.5 rounded mt-1 inline-block">{style.slug}</code>
+                  </div>
+                  <span className={`text-xs font-bold px-2 py-0.5 rounded-full flex-shrink-0 ${style.is_active ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}`}>
+                    {style.is_active ? 'Activo' : 'Inactivo'}
+                  </span>
+                </div>
+                {style.description && <p className="text-xs text-secondary-lighter leading-relaxed">{style.description}</p>}
+                <div className="mt-auto pt-3 border-t border-gray-50 flex gap-2">
+                  <button
+                    onClick={() => openEdit(style)}
+                    className="flex-1 text-xs font-bold text-secondary-lighter hover:text-secondary border border-gray-100 hover:border-primary-lighter rounded-lg py-1.5 transition-colors"
+                  >
+                    Editar
+                  </button>
+                  <button
+                    onClick={() => handleToggle(style)}
+                    className="flex-1 text-xs font-bold text-secondary-lighter hover:text-secondary border border-gray-100 hover:border-primary-lighter rounded-lg py-1.5 transition-colors"
+                  >
+                    {style.is_active ? 'Desactivar' : 'Activar'}
+                  </button>
+                  <button
+                    onClick={() => handleDelete(style)}
+                    className="text-xs font-bold text-red-400 hover:text-red-600 border border-gray-100 hover:border-red-200 rounded-lg px-3 py-1.5 transition-colors"
+                  >
+                    Eliminar
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))}
+          {styles.length === 0 && (
+            <p className="col-span-3 text-center py-10 text-secondary-lighter text-sm">
+              No hay estilos. Ejecuta la migracion 008 o crea uno nuevo.
+            </p>
+          )}
+        </div>
+      )}
+
+      {toast && (
+        <div className="fixed bottom-4 right-4 lg:bottom-6 lg:right-6 bg-secondary text-white text-sm font-bold px-5 py-3 rounded-xl shadow-lg z-50">
+          {toast}
+        </div>
+      )}
     </div>
   );
 }
+
+const labelCls = 'block text-xs font-bold text-secondary-lighter mb-1.5 uppercase tracking-wide';
+const inputCls = 'w-full border border-primary-lighter rounded-lg px-3 py-2 text-sm text-secondary focus:outline-none focus:border-primary transition-colors bg-white';

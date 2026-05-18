@@ -11,12 +11,12 @@ import { useLanguage } from '@/lib/i18n/LanguageContext';
 import { useCurrency } from '@/lib/currency/CurrencyContext';
 import CurrencySwitcher from '@/components/CurrencySwitcher';
 
-const STYLES = [
-  { id: 'rick-morty', name: 'Rick & Morty' },
-  { id: 'gravity-falls', name: 'Gravity Falls' },
-  { id: 'simpsons', name: 'Simpsons' },
-  { id: 'fairly-odd', name: 'Los Padrinos Mágicos' },
-  { id: 'negasva', name: 'Estilo NEGASVA' },
+const FALLBACK_STYLES = [
+  { id: 'rick-morty',    name: 'Rick & Morty'          },
+  { id: 'gravity-falls', name: 'Gravity Falls'          },
+  { id: 'simpsons',      name: 'Los Simpsons'           },
+  { id: 'fairly-odd',    name: 'Los Padrinos Magicos'   },
+  { id: 'negasva',       name: 'Estilo NEGASVA'         },
 ];
 
 // Fallback backgrounds if API is unavailable
@@ -77,6 +77,18 @@ export default function StudioPage() {
     express: false,
   });
   const [dynamicBgs, setDynamicBgs] = useState<Record<string, BgItem[]>>({});
+  const [styles, setStyles] = useState<{ id: string; name: string }[]>(FALLBACK_STYLES);
+
+  useEffect(() => {
+    fetch('/api/styles')
+      .then(r => r.ok ? r.json() : null)
+      .then((data: Array<{ slug: string; name: string }> | null) => {
+        if (data && data.length > 0) {
+          setStyles(data.map(s => ({ id: s.slug, name: s.name })));
+        }
+      })
+      .catch(() => null);
+  }, []);
 
   useEffect(() => {
     if (!selected.style || selected.style === 'negasva' || selected.style === 'custom') return;
@@ -192,7 +204,7 @@ export default function StudioPage() {
   // Order summary sidebar — shown from step 2 onward
   const OrderSummary = () => {
     const b = priceBreakdown();
-    const styleName = STYLES.find(s => s.id === selected.style)?.name;
+    const styleName = styles.find(s => s.id === selected.style)?.name;
     const hasAnyContent = !!selected.style;
     if (!hasAnyContent) return null;
 
@@ -323,7 +335,7 @@ export default function StudioPage() {
                   <p className="text-lg text-secondary-lighter">{t.studio.step1.subtitle}</p>
                 </div>
                 <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-                  {STYLES.map((s) => (
+                  {styles.map((s) => (
                     <button
                       key={s.id}
                       onClick={() => {

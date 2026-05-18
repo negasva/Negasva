@@ -113,7 +113,8 @@ export const NewsletterSchema = z.object({
 
 // ─── Admin API schemas ─────────────────────────────────────────────────
 
-// Reject javascript:, data:, file:, etc. — only http(s) URLs to known hosts.
+// Reject javascript:, data:, file:, etc. — only http(s) URLs to known hosts,
+// or root-relative paths starting with / (for local public assets).
 const SafeUrlSchema = z.string().trim().max(2048).refine((s) => {
   try {
     const u = new URL(s);
@@ -122,6 +123,17 @@ const SafeUrlSchema = z.string().trim().max(2048).refine((s) => {
     return false;
   }
 }, 'URL must be http(s)');
+
+// Like SafeUrlSchema but also accepts root-relative paths (/backgrounds/rm-1.jpg)
+const SafeImageSchema = z.string().trim().max(2048).refine((s) => {
+  if (s.startsWith('/') && !s.includes('..') && !s.includes('\0')) return true;
+  try {
+    const u = new URL(s);
+    return u.protocol === 'http:' || u.protocol === 'https:';
+  } catch {
+    return false;
+  }
+}, 'Must be an https URL or a root-relative path starting with /');
 
 const IdSchema = z.string().trim().min(1).max(64);
 const MoneySchema = z.number().finite().min(0).max(100_000);
@@ -136,7 +148,7 @@ const DrawingStyleSchema = z.enum([
 
 export const AdminBackgroundCreateSchema = z.object({
   name: z.string().trim().min(1).max(120),
-  image_url: SafeUrlSchema,
+  image_url: SafeImageSchema,
   style: DrawingStyleSchema,
   active: z.boolean().optional(),
 });
@@ -144,7 +156,7 @@ export const AdminBackgroundCreateSchema = z.object({
 export const AdminBackgroundUpdateSchema = z.object({
   id: IdSchema,
   name: z.string().trim().min(1).max(120).optional(),
-  image_url: SafeUrlSchema.optional(),
+  image_url: SafeImageSchema.optional(),
   style: DrawingStyleSchema,
   active: z.boolean().optional(),
 });
@@ -195,3 +207,51 @@ export const AdminPriceUpdateSchema = z.object({
 });
 
 export const DeleteByIdSchema = z.object({ id: IdSchema });
+
+export const AdminOrderCreateSchema = z.object({
+  client_name: z.string().trim().min(1).max(200),
+  client_email: z.string().trim().email().max(255).optional().nullable(),
+  client_instagram: z.string().trim().max(100).optional().nullable(),
+  style: z.string().trim().max(100).optional().nullable(),
+  body_type: z.enum(['torso_only', 'full_body']).optional().nullable(),
+  background_name: z.string().trim().max(200).optional().nullable(),
+  people_count: z.number().int().min(1).max(20).default(1),
+  status: z.enum(['pending', 'in_progress', 'delivered', 'cancelled']).default('pending'),
+  price: MoneySchema.optional().nullable(),
+  currency: z.string().trim().max(3).default('USD'),
+  notes: z.string().trim().max(2000).optional().nullable(),
+  reference: z.string().trim().max(100).optional().nullable(),
+});
+
+export const AdminOrderUpdateSchema = z.object({
+  id: IdSchema,
+  client_name: z.string().trim().min(1).max(200).optional(),
+  client_email: z.string().trim().email().max(255).optional().nullable(),
+  client_instagram: z.string().trim().max(100).optional().nullable(),
+  style: z.string().trim().max(100).optional().nullable(),
+  body_type: z.enum(['torso_only', 'full_body']).optional().nullable(),
+  background_name: z.string().trim().max(200).optional().nullable(),
+  people_count: z.number().int().min(1).max(20).optional(),
+  status: z.enum(['pending', 'in_progress', 'delivered', 'cancelled']).optional(),
+  price: MoneySchema.optional().nullable(),
+  currency: z.string().trim().max(3).optional(),
+  notes: z.string().trim().max(2000).optional().nullable(),
+  reference: z.string().trim().max(100).optional().nullable(),
+  delivered_at: z.string().datetime({ offset: true }).optional().nullable(),
+});
+
+export const AdminStyleCreateSchema = z.object({
+  slug: z.string().trim().min(1).max(100).regex(/^[a-z0-9-]+$/, 'Only lowercase letters, numbers and hyphens'),
+  name: z.string().trim().min(1).max(100),
+  description: z.string().trim().max(2000).optional().nullable(),
+  example_image_url: SafeImageSchema.optional().nullable(),
+  is_active: z.boolean().default(true),
+});
+
+export const AdminStyleUpdateSchema = z.object({
+  id: IdSchema,
+  name: z.string().trim().min(1).max(100).optional(),
+  description: z.string().trim().max(2000).optional().nullable(),
+  example_image_url: SafeImageSchema.optional().nullable(),
+  is_active: z.boolean().optional(),
+});

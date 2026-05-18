@@ -50,10 +50,27 @@ export default function PricesPage() {
   return (
     <div>
       <h1 className="text-xl lg:text-2xl font-black text-secondary mb-1">Precios</h1>
-      <p className="text-sm text-secondary-lighter mb-6">Edita los precios base en USD. El frontend convierte según la divisa del usuario.</p>
+      <p className="text-sm text-secondary-lighter mb-6">
+        Edita los precios base en USD. El studio convierte automaticamente segun la divisa del usuario.
+      </p>
 
       {loading ? (
         <div className="text-center py-16 text-secondary-lighter text-sm">Cargando...</div>
+      ) : prices.length === 0 ? (
+        <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-6 text-sm">
+          <p className="font-bold text-yellow-800 mb-2">La tabla de precios esta vacia</p>
+          <p className="text-yellow-700 mb-3">
+            Ejecuta la migracion <code className="bg-yellow-100 px-1 rounded">008_orders_styles_prices.sql</code> en el
+            SQL Editor de Supabase. Esto cargara los precios base:
+          </p>
+          <ul className="text-yellow-700 space-y-1">
+            <li>Torso unicamente — $15 USD por persona</li>
+            <li>Cuerpo completo — $25 USD por persona</li>
+            <li>Fondo estandar — $15 USD</li>
+            <li>Fondo personalizado — $25 USD</li>
+            <li>Recargo entrega express — 30%</li>
+          </ul>
+        </div>
       ) : (
         <>
           {/* Desktop table */}

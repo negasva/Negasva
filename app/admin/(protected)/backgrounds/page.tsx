@@ -8,12 +8,12 @@ import type { Background } from '@/types/admin';
 const BUCKET = 'backgrounds';
 
 const STYLES = [
-  { id: 'all', label: 'Todos', emoji: '📁' },
-  { id: 'rick-morty', label: 'Rick & Morty', emoji: '🛸' },
-  { id: 'gravity-falls', label: 'Gravity Falls', emoji: '🌲' },
-  { id: 'simpsons', label: 'Simpsons', emoji: '🍩' },
-  { id: 'fairly-odd', label: 'Padrinos Mágicos', emoji: '⭐' },
-  { id: 'negasva', label: 'NEGASVA', emoji: '🎨' },
+  { id: 'all',          label: 'Todos'                 },
+  { id: 'rick-morty',   label: 'Rick & Morty'          },
+  { id: 'gravity-falls',label: 'Gravity Falls'          },
+  { id: 'simpsons',     label: 'Los Simpsons'           },
+  { id: 'fairly-odd',   label: 'Los Padrinos Magicos'  },
+  { id: 'negasva',      label: 'NEGASVA'                },
 ] as const;
 
 type StyleId = (typeof STYLES)[number]['id'];
@@ -141,10 +141,9 @@ export default function BackgroundsPage() {
         </div>
         <button
           onClick={() => setShowForm(!showForm)}
-          className="bg-primary hover:bg-primary-dark text-white font-bold px-4 py-2.5 rounded-xl text-sm transition-colors flex items-center gap-2"
+          className="bg-primary hover:bg-primary-dark text-white font-bold px-4 py-2.5 rounded-xl text-sm transition-colors"
         >
-          <span>+</span>
-          <span className="hidden sm:inline">Nuevo fondo</span>
+          + Nuevo fondo
         </button>
       </div>
 
@@ -168,13 +167,12 @@ export default function BackgroundsPage() {
             </div>
           </div>
 
-          {/* Upload mode toggle */}
           <div className="flex gap-2 mb-4">
             <button type="button" onClick={() => setUploadMode('file')} className={`text-xs font-bold px-3 py-1.5 rounded-lg transition-colors ${uploadMode === 'file' ? 'bg-primary text-white' : 'bg-gray-100 text-secondary-lighter hover:bg-gray-200'}`}>
-              📁 Subir archivo
+              Subir archivo
             </button>
             <button type="button" onClick={() => setUploadMode('url')} className={`text-xs font-bold px-3 py-1.5 rounded-lg transition-colors ${uploadMode === 'url' ? 'bg-primary text-white' : 'bg-gray-100 text-secondary-lighter hover:bg-gray-200'}`}>
-              🔗 URL o ruta
+              URL o ruta
             </button>
           </div>
 
@@ -216,10 +214,7 @@ export default function BackgroundsPage() {
                   : 'bg-white text-secondary-lighter border border-gray-100 hover:border-primary-lighter hover:text-secondary'
               }`}
             >
-              <span>{style.emoji}</span>
-              <span className="hidden sm:inline">{style.label}</span>
-              <span className="hidden sm:inline ml-0.5 opacity-70">({count})</span>
-              <span className="sm:hidden">{count}</span>
+              {style.label} ({count})
             </button>
           );
         })}
@@ -232,8 +227,7 @@ export default function BackgroundsPage() {
         <>
           {filtered.length === 0 ? (
             <div className="text-center py-16 text-secondary-lighter text-sm">
-              <p className="text-3xl mb-3">🖼️</p>
-              <p>No hay fondos en esta categoría.</p>
+              <p>No hay fondos en esta categoria.</p>
               <button onClick={() => setShowForm(true)} className="mt-3 text-primary font-bold text-sm hover:underline">
                 Añadir el primero
               </button>
@@ -249,11 +243,10 @@ export default function BackgroundsPage() {
                       alt={bg.name}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                     />
-                    {/* Style badge */}
                     {bg.style && (
                       <div className="absolute top-2 left-2">
                         <span className="text-[10px] font-bold bg-black/60 text-white px-2 py-0.5 rounded-full backdrop-blur-sm">
-                          {STYLES.find(s => s.id === bg.style)?.emoji} {STYLES.find(s => s.id === bg.style)?.label}
+                          {STYLES.find(s => s.id === bg.style)?.label}
                         </span>
                       </div>
                     )}

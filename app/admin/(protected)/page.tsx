@@ -1,34 +1,38 @@
+import Link from 'next/link';
 import { createServerClient } from '@/lib/supabase/server';
 
 async function getSummary() {
   const supabase = createServerClient();
-  const [prices, codes, packages, backgrounds] = await Promise.all([
+  const [prices, codes, packages, backgrounds, orders] = await Promise.all([
     supabase.from('prices').select('id', { count: 'exact', head: true }),
     supabase.from('discount_codes').select('id', { count: 'exact', head: true }),
     supabase.from('packages').select('id', { count: 'exact', head: true }),
     supabase.from('backgrounds').select('id', { count: 'exact', head: true }),
+    supabase.from('admin_orders').select('id', { count: 'exact', head: true }),
   ]);
   return {
     prices: prices.count ?? 0,
     codes: codes.count ?? 0,
     packages: packages.count ?? 0,
     backgrounds: backgrounds.count ?? 0,
+    orders: orders.count ?? 0,
   };
 }
 
 const CARDS = [
-  { key: 'prices' as const, label: 'Precios', href: '/admin/prices', icon: '€', color: 'bg-blue-50 text-blue-600' },
-  { key: 'codes' as const, label: 'Códigos de descuento', href: '/admin/discount-codes', icon: '%', color: 'bg-green-50 text-green-600' },
-  { key: 'packages' as const, label: 'Paquetes', href: '/admin/packages', icon: '◫', color: 'bg-purple-50 text-purple-600' },
-  { key: 'backgrounds' as const, label: 'Fondos', href: '/admin/backgrounds', icon: '🖼', color: 'bg-pink-50 text-pink-600' },
+  { key: 'orders'      as const, label: 'Pedidos',           href: '/admin/orders',         color: 'bg-orange-50 text-orange-600'  },
+  { key: 'prices'      as const, label: 'Precios',           href: '/admin/prices',          color: 'bg-blue-50 text-blue-600'      },
+  { key: 'codes'       as const, label: 'Descuentos',        href: '/admin/discount-codes',  color: 'bg-green-50 text-green-600'    },
+  { key: 'packages'    as const, label: 'Paquetes',          href: '/admin/packages',        color: 'bg-purple-50 text-purple-600'  },
+  { key: 'backgrounds' as const, label: 'Fondos',            href: '/admin/backgrounds',     color: 'bg-pink-50 text-pink-600'      },
 ];
 
 const STYLES = [
-  { id: 'rick-morty', label: 'Rick & Morty', emoji: '🛸' },
-  { id: 'gravity-falls', label: 'Gravity Falls', emoji: '🌲' },
-  { id: 'simpsons', label: 'Simpsons', emoji: '🍩' },
-  { id: 'fairly-odd', label: 'Padrinos Mágicos', emoji: '⭐' },
-  { id: 'negasva', label: 'Estilo NEGASVA', emoji: '🎨' },
+  { slug: 'rick-morty',    label: 'Rick & Morty'         },
+  { slug: 'gravity-falls', label: 'Gravity Falls'         },
+  { slug: 'simpsons',      label: 'Los Simpsons'          },
+  { slug: 'fairly-odd',    label: 'Los Padrinos Magicos'  },
+  { slug: 'negasva',       label: 'Estilo NEGASVA'        },
 ];
 
 export default async function AdminDashboard() {
@@ -36,46 +40,50 @@ export default async function AdminDashboard() {
 
   return (
     <div>
-      <h1 className="text-xl lg:text-2xl font-black text-secondary mb-1">Dashboard</h1>
-      <p className="text-sm text-secondary-lighter mb-6">Resumen del panel de administración.</p>
+      <h1 className="text-xl lg:text-2xl font-black text-secondary mb-0.5">Dashboard</h1>
+      <p className="text-sm text-secondary-lighter mb-6">Resumen del panel de administracion.</p>
 
-      {/* Summary cards */}
-      <div className="grid grid-cols-2 xl:grid-cols-4 gap-3 lg:gap-5 mb-8">
-        {CARDS.map(({ key, label, href, icon, color }) => (
-          <a
+      <div className="grid grid-cols-2 xl:grid-cols-5 gap-3 mb-8">
+        {CARDS.map(({ key, label, href, color }) => (
+          <Link
             key={key}
             href={href}
-            className="bg-white rounded-xl border border-gray-100 shadow-sm p-4 lg:p-6 flex items-start gap-3 hover:shadow-md transition-shadow group"
+            className="bg-white rounded-xl border border-gray-100 shadow-sm p-4 flex items-start gap-3 hover:shadow-md transition-shadow group"
           >
-            <div className={`w-10 h-10 lg:w-12 lg:h-12 rounded-xl flex items-center justify-center text-lg lg:text-xl font-black flex-shrink-0 ${color}`}>
-              {icon}
+            <div className={`w-10 h-10 rounded-xl flex items-center justify-center font-black flex-shrink-0 text-sm ${color}`}>
+              {String(summary[key]).padStart(2, '0')}
             </div>
             <div className="min-w-0">
-              <p className="text-xl lg:text-2xl font-black text-secondary group-hover:text-primary transition-colors">
+              <p className="text-xl font-black text-secondary group-hover:text-primary transition-colors leading-tight">
                 {summary[key]}
               </p>
               <p className="text-xs text-secondary-lighter mt-0.5 leading-tight">{label}</p>
             </div>
-          </a>
+          </Link>
         ))}
       </div>
 
-      {/* Drawing styles quick access */}
-      <h2 className="text-base font-black text-secondary mb-3">Estilos de dibujo</h2>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3">
+      <h2 className="text-sm font-bold text-secondary-lighter uppercase tracking-wide mb-3">Estilos de dibujo</h2>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3 mb-8">
         {STYLES.map((style) => (
-          <a
-            key={style.id}
-            href={`/admin/backgrounds?style=${style.id}`}
-            className="bg-white rounded-xl border border-gray-100 shadow-sm p-4 flex items-center gap-3 hover:shadow-md hover:border-primary-lighter transition-all group"
+          <Link
+            key={style.slug}
+            href={`/admin/backgrounds?style=${style.slug}`}
+            className="bg-white rounded-xl border border-gray-100 shadow-sm p-4 hover:shadow-md hover:border-primary-lighter transition-all group"
           >
-            <span className="text-2xl">{style.emoji}</span>
-            <div className="min-w-0">
-              <p className="text-sm font-bold text-secondary group-hover:text-primary transition-colors truncate">{style.label}</p>
-              <p className="text-xs text-secondary-lighter">Ver fondos</p>
-            </div>
-          </a>
+            <p className="text-sm font-bold text-secondary group-hover:text-primary transition-colors">{style.label}</p>
+            <p className="text-xs text-secondary-lighter mt-0.5">Ver fondos</p>
+          </Link>
         ))}
+      </div>
+
+      <div className="flex gap-3">
+        <Link href="/admin/estilos" className="text-sm font-bold text-primary hover:underline">
+          Gestionar estilos
+        </Link>
+        <Link href="/admin/orders" className="text-sm font-bold text-primary hover:underline">
+          Ver todos los pedidos
+        </Link>
       </div>
     </div>
   );
