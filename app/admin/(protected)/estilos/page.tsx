@@ -188,7 +188,7 @@ export default function EstilosAdminPage() {
                   value={form.slug}
                   onChange={(e) => setForm({ ...form, slug: e.target.value.toLowerCase().replace(/\s+/g, '-') })}
                   placeholder="rick-morty"
-                  pattern="[a-z0-9-]+"
+                  pattern="[a-z0-9\-]+"
                   title="Solo letras minusculas, numeros y guiones"
                 />
                 <p className="text-xs text-secondary-lighter mt-1">Ejemplo: rick-morty, gravity-falls</p>

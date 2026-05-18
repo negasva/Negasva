@@ -1,13 +1,14 @@
 import { NextResponse } from 'next/server';
-import { createRouteClient } from '@/lib/supabase/server';
+import { createRouteClient, createServiceClient } from '@/lib/supabase/server';
 import { AdminStyleCreateSchema, AdminStyleUpdateSchema, DeleteByIdSchema } from '@/lib/validation/schemas';
 import { errorResponse, pickFields, rateLimitByIp, readJson, validateSameOrigin } from '@/lib/security/apiHelpers';
 
-async function requireAdmin() {
+async function requireAdmin(request: Request) {
   const supabase = createRouteClient();
   const { data: { session } } = await supabase.auth.getSession();
   if (!session || session.user.user_metadata?.role !== 'admin') return null;
-  return supabase;
+  // Use service client for DB ops so RLS doesn't block writes
+  return createServiceClient();
 }
 
 function guard(request: Request, mutating: boolean) {
@@ -18,7 +19,7 @@ function guard(request: Request, mutating: boolean) {
 export async function GET(request: Request) {
   const blocked = guard(request, false);
   if (blocked) return blocked;
-  const supabase = await requireAdmin();
+  const supabase = await requireAdmin(request);
   if (!supabase) return errorResponse('Unauthorized', 401);
 
   const { data, error } = await supabase
@@ -34,7 +35,7 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
   const blocked = guard(request, true);
   if (blocked) return blocked;
-  const supabase = await requireAdmin();
+  const supabase = await requireAdmin(request);
   if (!supabase) return errorResponse('Unauthorized', 401);
 
   const body = await readJson(request);
@@ -51,7 +52,7 @@ export async function POST(request: Request) {
 export async function PUT(request: Request) {
   const blocked = guard(request, true);
   if (blocked) return blocked;
-  const supabase = await requireAdmin();
+  const supabase = await requireAdmin(request);
   if (!supabase) return errorResponse('Unauthorized', 401);
 
   const body = await readJson(request);
@@ -72,7 +73,7 @@ export async function PUT(request: Request) {
 export async function DELETE(request: Request) {
   const blocked = guard(request, true);
   if (blocked) return blocked;
-  const supabase = await requireAdmin();
+  const supabase = await requireAdmin(request);
   if (!supabase) return errorResponse('Unauthorized', 401);
 
   const body = await readJson(request);
