@@ -79,7 +79,11 @@ export default function BackgroundsPage() {
     const ext = file.name.split('.').pop();
     const fileName = `${style}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
     const { error: uploadError } = await supabase.storage.from(BUCKET).upload(fileName, file, { cacheControl: '3600', upsert: false });
-    if (uploadError) { showToast('Error al subir imagen'); return null; }
+    if (uploadError) {
+      console.error('Storage upload error:', uploadError);
+      showToast(`Error: ${uploadError.message}`);
+      return null;
+    }
     const { data: urlData } = supabase.storage.from(BUCKET).getPublicUrl(fileName);
     return urlData.publicUrl;
   }

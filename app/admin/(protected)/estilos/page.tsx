@@ -76,7 +76,8 @@ export default function EstilosAdminPage() {
           .from(BUCKET)
           .upload(fileName, file, { cacheControl: '3600', upsert: false });
         if (uploadError) {
-          showToast('Error al subir imagen');
+          console.error('Storage upload error:', uploadError);
+          showToast(`Error: ${uploadError.message}`);
           setSaving(false);
           return;
         }
