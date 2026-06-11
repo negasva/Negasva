@@ -3,8 +3,11 @@ import Stripe from 'stripe';
 import { createServiceClient } from '@/lib/supabase/server';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, { apiVersion: '2024-11-20.acacia' as any });
-const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET!;
+function getStripe() {
+  const key = process.env.STRIPE_SECRET_KEY;
+  if (!key) throw new Error('STRIPE_SECRET_KEY not configured');
+  return new Stripe(key, { apiVersion: '2024-11-20.acacia' as any });
+}
 
 function rowFromSession(session: Stripe.Checkout.Session, status: 'paid' | 'pending') {
   const meta = session.metadata ?? {};
@@ -28,6 +31,9 @@ function rowFromSession(session: Stripe.Checkout.Session, status: 'paid' | 'pend
 export async function POST(request: Request) {
   const sig = request.headers.get('stripe-signature');
   if (!sig) return NextResponse.json({ error: 'Missing signature' }, { status: 400 });
+
+  const stripe = getStripe();
+  const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET!;
 
   let event: Stripe.Event;
   try {
