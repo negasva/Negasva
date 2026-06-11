@@ -7,19 +7,22 @@ interface LogoProps {
   href?: string;
   className?: string;
   size?: 'sm' | 'md' | 'lg';
+  variant?: 'dark' | 'light';
 }
 
-function Logo({ href = '/', className = '', size = 'md' }: LogoProps) {
+function Logo({ href = '/', className = '', size = 'md', variant = 'dark' }: LogoProps) {
   const sizeClasses = {
     sm: 'text-xl',
     md: 'text-2xl',
     lg: 'text-4xl',
   };
 
+  const textClass = variant === 'light' ? 'text-cream' : 'text-secondary';
+
   const content = (
     <span className={`${sizeClasses[size]} tracking-tighter inline-block`}>
-      <span className="font-black text-secondary">NEGAS</span>
-      <span className="font-medium text-secondary">VA</span>
+      <span className={`font-black ${textClass}`}>NEGAS</span>
+      <span className={`font-normal ${textClass}`}>VA</span>
     </span>
   );
 
