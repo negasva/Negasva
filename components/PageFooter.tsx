@@ -25,11 +25,12 @@ function PageFooter({ minimal = false }: PageFooterProps) {
   return (
     <footer className="bg-secondary py-16 px-4">
       <div className="mx-auto max-w-7xl">
-        <div className="grid md:grid-cols-4 gap-12 mb-12">
-          <div>
+        <div className="grid md:grid-cols-4 gap-10 md:gap-12 mb-12">
+          {/* Brand + social */}
+          <div className="flex flex-col items-center md:items-start text-center md:text-left">
             <Logo size="lg" variant="light" className="mb-4 block" />
             <p className="text-sm mb-6 text-white/70">{t.footer.tagline}</p>
-            <div className="flex gap-4">
+            <div className="flex gap-4 justify-center md:justify-start">
               <a
                 href="https://instagram.com/negasva"
                 target="_blank"
@@ -48,7 +49,9 @@ function PageFooter({ minimal = false }: PageFooterProps) {
               </a>
             </div>
           </div>
-          <div>
+
+          {/* Product links */}
+          <div className="text-center md:text-left">
             <h4 className="font-bold text-white mb-4">{t.footer.product}</h4>
             <ul className="space-y-2 text-sm">
               <li><Link href="/estilos" className="text-white/70 hover:text-primary transition-colors">{t.footer.styles}</Link></li>
@@ -58,7 +61,9 @@ function PageFooter({ minimal = false }: PageFooterProps) {
               <li><Link href="/seguimiento" className="text-white/70 hover:text-primary transition-colors">Seguimiento</Link></li>
             </ul>
           </div>
-          <div>
+
+          {/* Company links */}
+          <div className="text-center md:text-left">
             <h4 className="font-bold text-white mb-4">{t.footer.company}</h4>
             <ul className="space-y-2 text-sm">
               <li><Link href="/sobre" className="text-white/70 hover:text-primary transition-colors">{t.footer.about}</Link></li>
@@ -67,7 +72,9 @@ function PageFooter({ minimal = false }: PageFooterProps) {
               <li><Link href="/faq" className="text-white/70 hover:text-primary transition-colors">FAQ</Link></li>
             </ul>
           </div>
-          <div>
+
+          {/* Legal links */}
+          <div className="text-center md:text-left">
             <h4 className="font-bold text-white mb-4">{t.footer.legal}</h4>
             <ul className="space-y-2 text-sm">
               <li><Link href="/privacidad" className="text-white/70 hover:text-primary transition-colors">{t.footer.privacy}</Link></li>

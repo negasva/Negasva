@@ -18,19 +18,38 @@ export default function Home() {
       <Navbar />
 
       {/* Hero Section */}
-      <section className="relative bg-white h-[calc(100vh-64px)] overflow-hidden flex">
-        {/* Left: Text — distributed top to bottom */}
-        <div className="flex flex-col justify-between px-8 sm:px-12 lg:px-20 xl:px-28 w-full md:w-1/2 flex-shrink-0 py-12 lg:py-16">
-          {/* Top: badge */}
-          <div>
-            <div className="inline-block px-4 py-2 bg-primary-lighter rounded-full">
-              <span className="text-xs font-black text-secondary tracking-widest">{t.home.hero_badge}</span>
-            </div>
+      {/*
+        Mobile: image on top (fixed height, no viewport dependency),
+        then text stacked naturally. No justify-between → no gap jumps
+        when the browser chrome shows/hides.
+        Desktop: classic side-by-side, viewport-height layout.
+      */}
+      <section className="relative bg-white md:h-[calc(100vh-64px)] md:overflow-hidden md:flex">
+
+        {/* Mobile-only hero image — shown above text */}
+        <div className="relative md:hidden w-full h-56 sm:h-72 flex-shrink-0">
+          <Image
+            src="/backgrounds/rm-1.jpg"
+            alt="Rick & Morty Style"
+            fill
+            className="object-cover"
+            priority
+          />
+          <div className="absolute bottom-0 left-0 right-0 px-4 py-3 bg-black/40">
+            <span className="text-white font-bold text-sm">Rick &amp; Morty Style</span>
+          </div>
+        </div>
+
+        {/* Text column */}
+        <div className="flex flex-col md:justify-between px-6 sm:px-12 lg:px-20 xl:px-28 w-full md:w-1/2 flex-shrink-0 py-8 md:py-16 gap-8 md:gap-0">
+          {/* Badge */}
+          <div className="inline-block px-4 py-2 bg-primary-lighter rounded-full self-start">
+            <span className="text-xs font-black text-secondary tracking-widest">{t.home.hero_badge}</span>
           </div>
 
-          {/* Middle: heading + description */}
+          {/* Heading + description */}
           <div>
-            <h1 className="font-black text-6xl sm:text-7xl lg:text-8xl xl:text-9xl tracking-tighter mb-6 leading-none">
+            <h1 className="font-black text-5xl sm:text-7xl lg:text-8xl xl:text-9xl tracking-tighter mb-4 leading-none">
               <span className="text-secondary block">{t.home.title_part1}</span>
               <span className="text-primary block">{t.home.title_part2}</span>
             </h1>
@@ -39,13 +58,13 @@ export default function Home() {
             </p>
           </div>
 
-          {/* Bottom: buttons + social proof */}
+          {/* Buttons + social proof */}
           <div>
-            <div className="flex flex-wrap gap-4 mb-6">
-              <Link href="/studio" className="inline-flex items-center gap-2 rounded-lg bg-secondary px-8 py-4 font-black text-white hover:bg-secondary-light transition-all hover:shadow-lg text-lg">
+            <div className="flex flex-wrap gap-3 mb-5">
+              <Link href="/studio" className="inline-flex items-center gap-2 rounded-lg bg-secondary px-6 py-3 md:px-8 md:py-4 font-black text-white hover:bg-secondary-light transition-all hover:shadow-lg text-base md:text-lg">
                 {t.home.cta_primary}
               </Link>
-              <Link href="/galeria" className="inline-flex items-center gap-2 rounded-lg border-2 border-secondary px-8 py-4 font-bold text-secondary hover:bg-secondary hover:text-white transition-colors text-lg">
+              <Link href="/galeria" className="inline-flex items-center gap-2 rounded-lg border-2 border-secondary px-6 py-3 md:px-8 md:py-4 font-bold text-secondary hover:bg-secondary hover:text-white transition-colors text-base md:text-lg">
                 {t.home.cta_secondary}
               </Link>
             </div>
@@ -62,9 +81,8 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Right: full-bleed image */}
+        {/* Right: full-bleed image — desktop only */}
         <div className="hidden md:block flex-1 relative">
-          {/* Pig icon floating top-left */}
           <div className="absolute top-8 left-8 z-10 w-14 h-14 bg-primary-lighter rounded-2xl shadow-lg overflow-hidden">
             <Image
               src="/pig-icon.png"
@@ -74,8 +92,6 @@ export default function Home() {
               className="w-full h-full object-cover"
             />
           </div>
-
-          {/* Full-height image */}
           <Image
             src="/backgrounds/rm-1.jpg"
             alt="Rick & Morty Style"
@@ -83,13 +99,9 @@ export default function Home() {
             className="object-cover"
             priority
           />
-
-          {/* Label overlay */}
           <div className="absolute bottom-0 left-0 right-0 px-6 py-5 bg-black/40 z-10">
             <span className="text-white font-bold text-base">Rick &amp; Morty Style</span>
           </div>
-
-          {/* +1000 clientes badge */}
           <div className="absolute bottom-10 right-10 z-10 bg-primary rounded-2xl px-6 py-5 shadow-xl">
             <p className="font-black text-3xl text-secondary leading-none">+1000</p>
             <p className="text-sm text-secondary font-bold mt-1">clientes</p>
