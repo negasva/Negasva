@@ -5,8 +5,12 @@ import { errorResponse, rateLimitByIp, readJson } from '@/lib/security/apiHelper
 import { buildWompiCheckoutUrl, newWompiReference } from '@/lib/payments/wompi';
 import { createServiceClient } from '@/lib/supabase/server';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, { apiVersion: '2024-11-20.acacia' as any });
+function getStripe() {
+  const key = process.env.STRIPE_SECRET_KEY;
+  if (!key) throw new Error('STRIPE_SECRET_KEY not configured');
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  return new Stripe(key, { apiVersion: '2024-11-20.acacia' as any });
+}
 
 const FAMILY_DISCOUNT = (n: number) => (n >= 5 ? 0.25 : n >= 3 ? 0.15 : 0);
 
@@ -101,6 +105,7 @@ export async function POST(request: Request) {
   }
 
   // ── Stripe embedded checkout ──────────────────────────────────────────
+  const stripe = getStripe();
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const session = await (stripe.checkout.sessions.create as any)({
     mode: 'payment',

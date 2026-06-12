@@ -59,7 +59,7 @@ export default function RootLayout({
           />
         )}
       </head>
-      <body className={`${montserrat.className} min-h-screen flex flex-col bg-white`}>
+      <body className={`${montserrat.className} min-h-screen flex flex-col bg-cream`}>
         <LanguageProvider>
           <CurrencyProvider>
             {children}

@@ -7,8 +7,8 @@ html {
 }
 
 body {
-  background-color: white;
-  color: #1A1A1A;
+  background-color: #f7f4dd;
+  color: #0a1133;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -19,24 +19,18 @@ body {
   }
 
   .btn-primary {
-    @apply inline-flex items-center gap-2 rounded-lg bg-primary px-8 py-4 font-bold text-white hover:bg-primary-dark transition-all hover:shadow-lg;
+    @apply inline-flex items-center gap-2 bg-secondary px-8 py-4 font-bold text-white hover:bg-secondary-light transition-all;
   }
 
   .btn-secondary {
-    @apply inline-flex items-center gap-2 rounded-lg border-2 border-secondary px-8 py-4 font-bold text-secondary hover:bg-secondary hover:text-white transition-colors;
+    @apply inline-flex items-center gap-2 border-2 border-secondary px-8 py-4 font-bold text-secondary hover:bg-secondary hover:text-white transition-colors;
   }
 
   .card-feature {
-    @apply p-8 bg-gradient-to-br from-primary-lighter to-white rounded-2xl border-2 border-primary-lighter hover:border-primary hover:shadow-xl transition-all;
-  }
-
-  .text-gradient {
-    @apply bg-gradient-to-r from-primary to-primary-dark bg-clip-text text-transparent;
+    @apply p-8 bg-cream border border-secondary/20 hover:border-secondary/50 transition-all;
   }
 }
 
-
-/* Improve link colors */
 a {
   @apply transition-colors;
 }
@@ -55,12 +49,4 @@ a {
 }
 .animate-marquee-right {
   animation: marquee-right 40s linear infinite;
-}
-
-@keyframes glow-pulse {
-  0%, 100% { box-shadow: 0 0 6px 1px rgba(255, 158, 197, 0.35); }
-  50%       { box-shadow: 0 0 18px 5px rgba(255, 158, 197, 0.7); }
-}
-.animate-glow-pulse {
-  animation: glow-pulse 2.5s ease-in-out infinite;
 }

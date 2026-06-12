@@ -11,16 +11,16 @@ function Navbar() {
   const { t } = useLanguage();
 
   return (
-    <nav className="sticky top-0 z-50 bg-white border-b border-primary-lighter">
+    <nav className="sticky top-0 z-50 bg-cream border-b-2 border-secondary">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          <Logo href="/" size="md" />
+          <Logo href="/" size="md" variant="dark" />
           <div className="flex items-center gap-4">
             <CurrencySwitcher />
             <LanguageSwitcher />
             <Link
               href="/studio"
-              className="rounded-lg bg-primary px-5 py-2.5 text-sm font-bold text-white hover:bg-primary-dark transition-colors"
+              className="bg-secondary px-5 py-2.5 text-sm font-bold text-white hover:bg-secondary-light transition-colors"
             >
               {t.nav.create}
             </Link>
