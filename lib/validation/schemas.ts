@@ -138,13 +138,11 @@ const SafeImageSchema = z.string().trim().max(2048).refine((s) => {
 const IdSchema = z.string().trim().min(1).max(64);
 const MoneySchema = z.number().finite().min(0).max(100_000);
 
-const DrawingStyleSchema = z.enum([
-  'rick-morty',
-  'gravity-falls',
-  'simpsons',
-  'fairly-odd',
-  'negasva',
-]).nullable().optional();
+// Any portrait_styles slug — existence is checked in the admin API so
+// backgrounds can be assigned to styles created from the admin panel.
+const DrawingStyleSchema = z.string().trim().min(1).max(100)
+  .regex(/^[a-z0-9-]+$/, 'Only lowercase letters, numbers and hyphens')
+  .nullable().optional();
 
 export const AdminBackgroundCreateSchema = z.object({
   name: z.string().trim().min(1).max(120),
@@ -204,6 +202,21 @@ export const AdminDiscountCodeUpdateSchema = z.object({
 export const AdminPriceUpdateSchema = z.object({
   id: IdSchema,
   amount: MoneySchema,
+});
+
+export const AdminFaqCreateSchema = z.object({
+  question: z.string().trim().min(1).max(300),
+  answer: z.string().trim().min(1).max(3000),
+  sort_order: z.number().int().min(0).max(10_000).optional(),
+  is_active: z.boolean().optional(),
+});
+
+export const AdminFaqUpdateSchema = z.object({
+  id: IdSchema,
+  question: z.string().trim().min(1).max(300).optional(),
+  answer: z.string().trim().min(1).max(3000).optional(),
+  sort_order: z.number().int().min(0).max(10_000).optional(),
+  is_active: z.boolean().optional(),
 });
 
 export const DeleteByIdSchema = z.object({ id: IdSchema });

@@ -7,16 +7,17 @@ import type { Background } from '@/types/admin';
 
 const BUCKET = 'backgrounds';
 
-const STYLES = [
+// Fallback while /api/admin/styles loads — the real list is admin-managed
+const DEFAULT_STYLES: { id: string; label: string }[] = [
   { id: 'all',          label: 'Todos'                },
   { id: 'rick-morty',   label: 'Rick & Morty'         },
   { id: 'gravity-falls',label: 'Gravity Falls'         },
   { id: 'simpsons',     label: 'Los Simpsons'          },
   { id: 'fairly-odd',   label: 'Los Padrinos Magicos' },
   { id: 'negasva',      label: 'NEGASVA'               },
-] as const;
+];
 
-type StyleId = (typeof STYLES)[number]['id'];
+type StyleId = string;
 
 const EMPTY_EDIT = { name: '', style: 'rick-morty', urlInput: '', uploadMode: 'url' as 'file' | 'url' };
 
@@ -31,6 +32,18 @@ export default function BackgroundsPage() {
   const [uploading, setUploading] = useState(false);
   const [toast, setToast] = useState('');
   const [activeStyle, setActiveStyle] = useState<StyleId>(initialStyle);
+  const [STYLES, setStyles] = useState<{ id: string; label: string }[]>(DEFAULT_STYLES);
+
+  useEffect(() => {
+    fetch('/api/admin/styles')
+      .then((res) => res.json())
+      .then((data: Array<{ slug: string; name: string }>) => {
+        if (Array.isArray(data) && data.length > 0) {
+          setStyles([{ id: 'all', label: 'Todos' }, ...data.map((s) => ({ id: s.slug, label: s.name }))]);
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   // Add form
   const [showForm, setShowForm] = useState(false);

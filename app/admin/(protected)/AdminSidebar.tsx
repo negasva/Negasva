@@ -14,6 +14,7 @@ const NAV = [
   { href: '/admin/prices',        label: 'Precios'         },
   { href: '/admin/discount-codes',label: 'Descuentos'      },
   { href: '/admin/packages',      label: 'Paquetes'        },
+  { href: '/admin/faqs',          label: 'FAQ'             },
 ];
 
 function Brand() {

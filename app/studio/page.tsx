@@ -65,6 +65,30 @@ const FALLBACK_BACKGROUNDS: Record<string, { id: string; url: string; name: stri
 
 interface BgItem { id: string; url: string; name: string; price?: number; }
 
+interface BodyTypeItem {
+  slug: string;
+  name: string;
+  description: string | null;
+  price_usd: number;
+  original_price_usd: number | null;
+  is_best_value: boolean;
+}
+
+// Fallback if /api/body-types is unavailable — admin manages the real values
+const FALLBACK_BODY_TYPES: BodyTypeItem[] = [
+  { slug: 'torso_only', name: 'Torso Only', description: null, price_usd: 25,    original_price_usd: null,  is_best_value: false },
+  { slug: 'full_body',  name: 'Full Body',  description: null, price_usd: 29.99, original_price_usd: 39.99, is_best_value: true  },
+];
+
+// Fallback if /api/prices is unavailable — admin manages the real values
+const FALLBACK_PRICES: Record<string, number> = {
+  background_standard: 15,
+  background_custom: 25,
+  express_surcharge_pct: 30,
+};
+
+interface AppliedCode { code: string; type: 'percentage' | 'fixed'; value: number; amount: number; }
+
 export default function StudioPage() {
   const router = useRouter();
   const { t } = useLanguage();
@@ -83,12 +107,35 @@ export default function StudioPage() {
   });
   const [dynamicBgs, setDynamicBgs] = useState<Record<string, BgItem[]>>({});
   const [styles, setStyles] = useState<{ id: string; name: string }[]>(FALLBACK_STYLES);
+  const [bodyTypes, setBodyTypes] = useState<BodyTypeItem[]>(FALLBACK_BODY_TYPES);
+  const [priceMap, setPriceMap] = useState<Record<string, number>>(FALLBACK_PRICES);
+  const [discountCodeInput, setDiscountCodeInput] = useState('');
+  const [appliedCode, setAppliedCode] = useState<AppliedCode | null>(null);
+  const [codeStatus, setCodeStatus] = useState<'idle' | 'checking' | 'invalid'>('idle');
 
   useEffect(() => {
     cachedFetchJSON<Array<{ slug: string; name: string }>>('/api/styles')
       .then((data) => {
         if (data && data.length > 0) {
           setStyles(data.map(s => ({ id: s.slug, name: s.name })));
+        }
+      })
+      .catch(() => null);
+    cachedFetchJSON<BodyTypeItem[]>('/api/body-types')
+      .then((data) => {
+        if (data && data.length > 0) {
+          setBodyTypes(data.map(b => ({ ...b, price_usd: Number(b.price_usd), original_price_usd: b.original_price_usd != null ? Number(b.original_price_usd) : null })));
+        }
+      })
+      .catch(() => null);
+    cachedFetchJSON<Array<{ key: string; amount: number }>>('/api/prices')
+      .then((data) => {
+        if (data && data.length > 0) {
+          setPriceMap(prev => {
+            const next = { ...prev };
+            for (const p of data) next[p.key] = Number(p.amount);
+            return next;
+          });
         }
       })
       .catch(() => null);
@@ -136,6 +183,7 @@ export default function StudioPage() {
       specialRequests: selected.specialRequests,
       currency: currency.toLowerCase(),
       rate: rates[currency] ?? 1,
+      ...(appliedCode ? { discountCode: appliedCode.code } : {}),
     };
 
     // COP: Wompi redirect (unchanged)
@@ -188,14 +236,22 @@ export default function StudioPage() {
   };
 
   const priceBreakdown = () => {
-    const perPerson = selected.bodyType === 'full_body' ? 29.99 : 25;
+    const perPerson = bodyTypes.find(b => b.slug === selected.bodyType)?.price_usd
+      ?? (selected.bodyType === 'full_body' ? 29.99 : 25);
     const peopleSubtotal = selected.peopleCount * perPerson;
     const discountRate = familyDiscount(selected.peopleCount);
     const discount = peopleSubtotal * discountRate;
     const peopleAfterDiscount = peopleSubtotal - discount;
-    const bgCost = selected.background === 'custom' ? 25 : selected.background && selected.background !== 'none' ? 15 : 0;
+    const bgCost = selected.background === 'custom'
+      ? (priceMap.background_custom ?? 25)
+      : selected.background && selected.background !== 'none' ? (priceMap.background_standard ?? 15) : 0;
     const subtotal = peopleAfterDiscount + bgCost;
-    const expressSurcharge = selected.express ? subtotal * 0.30 : 0;
+    const expressPct = (priceMap.express_surcharge_pct ?? 30) / 100;
+    const expressSurcharge = selected.express ? subtotal * expressPct : 0;
+    const preCodeTotal = subtotal + expressSurcharge;
+    const codeDiscount = appliedCode
+      ? Math.min(appliedCode.type === 'percentage' ? preCodeTotal * (appliedCode.value / 100) : appliedCode.value, preCodeTotal)
+      : 0;
     return {
       perPerson,
       peopleSubtotal,
@@ -204,7 +260,8 @@ export default function StudioPage() {
       bgCost,
       subtotal,
       expressSurcharge,
-      total: subtotal + expressSurcharge,
+      codeDiscount,
+      total: preCodeTotal - codeDiscount,
     };
   };
 
@@ -219,7 +276,7 @@ export default function StudioPage() {
     const base = fromApi && fromApi.length > 0 ? fromApi : fallback;
     return [
       ...base,
-      { id: 'custom', url: '', name: getBgName('custom'), price: 25 },
+      { id: 'custom', url: '', name: getBgName('custom'), price: priceMap.background_custom ?? 25 },
       { id: 'none', url: '', name: getBgName('none') },
     ];
   };
@@ -287,6 +344,12 @@ export default function StudioPage() {
             <div className="flex justify-between">
               <span className="text-secondary-lighter">{t.studio.summary.express}</span>
               <span className="font-bold text-secondary">+{fmt(b.expressSurcharge)}</span>
+            </div>
+          )}
+          {appliedCode && b.codeDiscount > 0 && (
+            <div className="flex justify-between bg-white rounded-xl px-3 py-1.5">
+              <span className="text-primary font-bold">{appliedCode.code}</span>
+              <span className="font-bold text-primary">−{fmt(b.codeDiscount)}</span>
             </div>
           )}
         </div>
@@ -393,24 +456,20 @@ export default function StudioPage() {
 
                 {/* Body Type selector */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-2xl mx-auto mb-10">
-                  {[
-                    {
-                      id: 'torso_only',
-                      name: t.studio.body_types.torso_name,
-                      desc: t.studio.body_types.torso_desc,
-                      price: 25,
-                      original: null as null,
-                      bestValue: false,
-                    },
-                    {
-                      id: 'full_body',
-                      name: t.studio.body_types.full_name,
-                      desc: t.studio.body_types.full_desc,
-                      price: 29.99,
-                      original: 39.99,
-                      bestValue: true,
-                    },
-                  ].map((b) => (
+                  {bodyTypes.map((bt) => ({
+                    id: bt.slug,
+                    // The two default slugs keep their translated copy; admin-created
+                    // body types use the DB name/description directly.
+                    name: bt.slug === 'torso_only' ? t.studio.body_types.torso_name
+                        : bt.slug === 'full_body' ? t.studio.body_types.full_name
+                        : bt.name,
+                    desc: bt.slug === 'torso_only' ? t.studio.body_types.torso_desc
+                        : bt.slug === 'full_body' ? t.studio.body_types.full_desc
+                        : (bt.description ?? ''),
+                    price: bt.price_usd,
+                    original: bt.original_price_usd,
+                    bestValue: bt.is_best_value,
+                  })).map((b) => (
                     <button
                       key={b.id}
                       onClick={() => setSelected({ ...selected, bodyType: b.id })}
@@ -568,7 +627,7 @@ export default function StudioPage() {
                             <p className="text-sm font-black text-secondary leading-tight uppercase tracking-tight">
                               {bg.name}
                             </p>
-                            <p className="text-xs text-primary mt-1 font-bold">+{fmt(bg.price ?? 25)}</p>
+                            <p className="text-xs text-primary mt-1 font-bold">+{fmt(bg.price ?? priceMap.background_custom ?? 25)}</p>
                           </div>
                         </button>
                       );
@@ -600,7 +659,7 @@ export default function StudioPage() {
                         </div>
                         <div className="p-3">
                           <p className="text-sm font-bold text-secondary leading-tight">{bg.name}</p>
-                          <p className="text-xs text-primary mt-1 font-bold">+{fmt(bg.price ?? 15)}</p>
+                          <p className="text-xs text-primary mt-1 font-bold">+{fmt(bg.price ?? priceMap.background_standard ?? 15)}</p>
                         </div>
                       </button>
                     );
@@ -648,9 +707,67 @@ export default function StudioPage() {
                         <p className="font-black text-secondary text-lg tracking-tighter">{t.studio.step4.express_title}</p>
                         <p className="text-sm text-secondary-lighter mt-1">{t.studio.step4.express_desc}</p>
                       </div>
-                      <span className="font-black text-secondary text-xl whitespace-nowrap">{t.studio.step4.express_surcharge}</span>
+                      <span className="font-black text-secondary text-xl whitespace-nowrap">+{Math.round(priceMap.express_surcharge_pct ?? 30)}%</span>
                     </div>
                   </button>
+
+                  {/* Código de descuento */}
+                  <div className="mt-6">
+                    <label className="block font-bold text-secondary mb-3">Código de descuento <span className="font-normal text-secondary-lighter">(opcional)</span></label>
+                    {appliedCode ? (
+                      <div className="flex items-center justify-between rounded-2xl border-2 border-primary bg-primary-lighter px-4 py-3">
+                        <span className="font-bold text-secondary text-sm">
+                          {appliedCode.code} · −{appliedCode.type === 'percentage' ? `${appliedCode.value}%` : fmt(appliedCode.value)}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => { setAppliedCode(null); setDiscountCodeInput(''); setCodeStatus('idle'); }}
+                          className="text-xs font-bold text-secondary-lighter hover:text-primary transition-colors"
+                        >
+                          Quitar
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="flex gap-2">
+                        <input
+                          value={discountCodeInput}
+                          onChange={(e) => { setDiscountCodeInput(e.target.value.toUpperCase()); setCodeStatus('idle'); }}
+                          placeholder="MICODIGO"
+                          maxLength={40}
+                          className="flex-1 rounded-lg border-2 border-primary-lighter px-4 py-3 text-sm font-bold text-secondary uppercase focus:border-primary focus:outline-none"
+                        />
+                        <button
+                          type="button"
+                          disabled={discountCodeInput.trim().length < 2 || codeStatus === 'checking'}
+                          onClick={async () => {
+                            setCodeStatus('checking');
+                            try {
+                              const res = await fetch('/api/discount-codes/validate', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ code: discountCodeInput.trim(), subtotal: priceBreakdown().subtotal + priceBreakdown().expressSurcharge }),
+                              });
+                              const data = await res.json();
+                              if (data.valid) {
+                                setAppliedCode({ code: data.code, type: data.type, value: data.value, amount: data.amount });
+                                setCodeStatus('idle');
+                              } else {
+                                setCodeStatus('invalid');
+                              }
+                            } catch {
+                              setCodeStatus('invalid');
+                            }
+                          }}
+                          className="rounded-lg bg-secondary px-6 py-3 text-sm font-bold text-white hover:bg-secondary-light transition-colors disabled:opacity-40"
+                        >
+                          {codeStatus === 'checking' ? '...' : 'Aplicar'}
+                        </button>
+                      </div>
+                    )}
+                    {codeStatus === 'invalid' && (
+                      <p className="text-xs text-red-500 font-bold mt-2">Código inválido o expirado.</p>
+                    )}
+                  </div>
                 </div>
               </div>
             )}
