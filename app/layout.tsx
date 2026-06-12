@@ -60,10 +60,16 @@ export const metadata: Metadata = {
 
 const ORGANIZATION_SCHEMA = {
   '@context': 'https://schema.org',
-  '@type': 'Organization',
+  // OnlineStore es subtipo de Organization/LocalBusiness pensado para
+  // negocios 100% online — activa señales regionales sin dirección física.
+  '@type': 'OnlineStore',
   name: 'NEGASVA',
   url: 'https://negasva.shop',
   logo: 'https://negasva.shop/favicon.png',
+  description:
+    'Retratos animados personalizados dibujados a mano: Rick & Morty, Los Simpsons, Gravity Falls y Padrinos Mágicos. Entrega digital en 48 horas.',
+  areaServed: ['Colombia', 'España', 'México', 'Estados Unidos'],
+  priceRange: '$20-$160',
   sameAs: ['https://instagram.com/negasva', 'https://tiktok.com/@negasva'],
 };
 

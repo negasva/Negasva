@@ -1,22 +1,17 @@
-'use client';
-
+import Link from 'next/link';
+import Image from 'next/image';
+import { ChevronRight } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import PageFooter from '@/components/PageFooter';
-import { ChevronRight } from 'lucide-react';
-import Link from 'next/link';
+import BreadcrumbSchema from '@/components/BreadcrumbSchema';
+import { BLOG_POSTS } from '@/lib/content/blogPosts';
 
-const POSTS = [
-  { id: 1, title: '¿Cuál es el mejor estilo para ti?', excerpt: 'Descubre cuál de nuestros 4 estilos se adapta mejor a tu personalidad y el uso que le darás a tu retrato.', date: '15 de Abril, 2026', category: 'Guías' },
-  { id: 2, title: 'Consejos para fotos perfectas', excerpt: 'Aprende cómo tomar la foto perfecta para que tu retrato quede igual de bien que en los ejemplos.', date: '10 de Abril, 2026', category: 'Tips' },
-  { id: 3, title: 'Las mejores formas de regalar un retrato', excerpt: 'Ideas creativas para sorprender a tus seres queridos con un retrato animado personalizado.', date: '5 de Abril, 2026', category: 'Inspiración' },
-  { id: 4, title: 'El proceso detrás de cada retrato', excerpt: 'Conoce cómo nuestro equipo crea cada ilustración, desde la foto hasta el archivo final.', date: '1 de Abril, 2026', category: 'Behind the Scenes' },
-  { id: 5, title: 'Retratos familiares personalizados', excerpt: 'Por qué un retrato familiar es el regalo perfecto para cualquier ocasión especial.', date: '25 de Marzo, 2026', category: 'Historias' },
-  { id: 6, title: 'Nuestros retratos en redes sociales', excerpt: 'Mira cómo nuestros clientes comparten sus retratos en Instagram y TikTok con miles de reacciones.', date: '20 de Marzo, 2026', category: 'Comunidad' },
-];
+// Server component: la lista de artículos llega en el HTML para SEO.
 
 export default function BlogPage() {
   return (
     <div className="min-h-screen bg-white">
+      <BreadcrumbSchema name="Blog" path="/blog" />
       <Navbar />
 
       <section className="bg-primary-lighter/30 py-20 px-4">
@@ -33,11 +28,21 @@ export default function BlogPage() {
 
       <section className="py-16 px-4">
         <div className="mx-auto max-w-4xl space-y-6">
-          {POSTS.map((post) => (
-            <article
-              key={post.id}
-              className="group rounded-2xl border-2 border-primary-lighter hover:border-primary hover:shadow-lg transition-all p-8 bg-white flex items-start justify-between gap-4"
+          {BLOG_POSTS.map((post) => (
+            <Link
+              key={post.slug}
+              href={`/blog/${post.slug}`}
+              className="group rounded-2xl border-2 border-primary-lighter hover:border-primary hover:shadow-lg transition-all p-6 md:p-8 bg-white flex items-start gap-6"
             >
+              <div className="relative hidden sm:block w-36 h-24 flex-shrink-0 rounded-xl overflow-hidden border border-primary-lighter">
+                <Image
+                  src={post.image}
+                  alt={post.imageAlt}
+                  fill
+                  className="object-cover group-hover:scale-105 transition-transform"
+                  sizes="144px"
+                />
+              </div>
               <div className="flex-1">
                 <span className="inline-block bg-primary-lighter px-3 py-1 rounded-full text-xs font-bold text-primary mb-3">
                   {post.category}
@@ -46,10 +51,12 @@ export default function BlogPage() {
                   {post.title}
                 </h2>
                 <p className="text-secondary-lighter mb-3 leading-relaxed">{post.excerpt}</p>
-                <p className="text-xs text-secondary-lighter">{post.date}</p>
+                <p className="text-xs text-secondary-lighter">
+                  <time dateTime={post.date}>{post.dateLabel}</time>
+                </p>
               </div>
               <ChevronRight className="w-5 h-5 text-primary-lighter group-hover:text-primary flex-shrink-0 mt-1 transition-colors" />
-            </article>
+            </Link>
           ))}
         </div>
       </section>

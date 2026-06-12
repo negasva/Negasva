@@ -46,11 +46,11 @@ const DEFAULT_CONFIG: LandingConfig = {
     { step: 5, icon: 'sparkles', title_es: 'Recibe tu retrato', title_en: 'Receive your portrait', desc_es: 'En 48 horas recibes tu ilustración digital lista para imprimir y compartir', desc_en: 'In 48 hours you get your digital illustration, ready to print and share' },
   ],
   gallery_images: [
-    { url: '/backgrounds/rm-1.jpg', caption: 'Rick & Morty' },
-    { url: '/backgrounds/rm-3.jpg', caption: 'Rick & Morty — Garage' },
-    { url: '/backgrounds/rm-4.jpg', caption: 'Rick & Morty — Espacio' },
-    { url: '/backgrounds/rm-5.jpg', caption: 'Rick & Morty — Planeta C-137' },
-    { url: '/backgrounds/rm-6.jpg', caption: 'Rick & Morty — Nave' },
+    { url: '/backgrounds/rm-1.webp', caption: 'Rick & Morty' },
+    { url: '/backgrounds/rm-3.webp', caption: 'Rick & Morty — Garage' },
+    { url: '/backgrounds/rm-4.webp', caption: 'Rick & Morty — Espacio' },
+    { url: '/backgrounds/rm-5.webp', caption: 'Rick & Morty — Planeta C-137' },
+    { url: '/backgrounds/rm-6.webp', caption: 'Rick & Morty — Nave' },
   ],
   stats: [
     { value: '1000+', label_es: 'clientes felices', label_en: 'happy clients' },
@@ -70,11 +70,11 @@ const STEP_ICONS: Record<string, typeof Palette> = {
 
 // Pasos visuales de "Así de fácil" — título corto + imagen de fondo.
 const HOW_STEPS = [
-  { step: 1, icon: 'palette',  img: '/backgrounds/rm-1.jpg', title_es: 'Elige tu estilo',        title_en: 'Choose your style' },
-  { step: 2, icon: 'users',    img: '/backgrounds/rm-3.jpg', title_es: '¿Cuántos personajes?',   title_en: 'How many characters?' },
-  { step: 3, icon: 'image',    img: '/backgrounds/rm-4.jpg', title_es: 'Elige el fondo',         title_en: 'Choose the background' },
-  { step: 4, icon: 'camera',   img: '/backgrounds/rm-5.jpg', title_es: 'Fotos e indicaciones',   title_en: 'Photos & instructions' },
-  { step: 5, icon: 'sparkles', img: '/backgrounds/rm-6.jpg', title_es: 'Recibe tu retrato ✨',    title_en: 'Receive your portrait ✨' },
+  { step: 1, icon: 'palette',  img: '/backgrounds/rm-1.webp', title_es: 'Elige tu estilo',        title_en: 'Choose your style' },
+  { step: 2, icon: 'users',    img: '/backgrounds/rm-3.webp', title_es: '¿Cuántos personajes?',   title_en: 'How many characters?' },
+  { step: 3, icon: 'image',    img: '/backgrounds/rm-4.webp', title_es: 'Elige el fondo',         title_en: 'Choose the background' },
+  { step: 4, icon: 'camera',   img: '/backgrounds/rm-5.webp', title_es: 'Fotos e indicaciones',   title_en: 'Photos & instructions' },
+  { step: 5, icon: 'sparkles', img: '/backgrounds/rm-6.webp', title_es: 'Recibe tu retrato ✨',    title_en: 'Receive your portrait ✨' },
 ];
 
 const fadeUp = {
@@ -123,7 +123,7 @@ export default function Home() {
 
   const orderHref = '/order';
   const hero = config.hero;
-  const heroImage = config.gallery_images[0]?.url ?? '/backgrounds/rm-1.jpg';
+  const heroImage = config.gallery_images[0]?.url ?? '/backgrounds/rm-1.webp';
   const pick = (esVal: string, enVal: string) => (es ? esVal : enVal);
 
   // Pasos visuales: títulos editables desde el admin (config.how_it_works) +
@@ -134,7 +134,7 @@ export default function Home() {
     icon: s.icon,
     title_es: s.title_es,
     title_en: s.title_en,
-    img: HOW_STEPS[i]?.img ?? '/backgrounds/rm-1.jpg',
+    img: HOW_STEPS[i]?.img ?? '/backgrounds/rm-1.webp',
   }));
 
   return (
