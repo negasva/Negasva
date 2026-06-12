@@ -1,9 +1,19 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  // Gzip/Brotli compression for HTML and API responses.
+  compress: true,
+  // Drop the `X-Powered-By: Next.js` header (smaller responses, less fingerprinting).
+  poweredByHeader: false,
   images: {
-    domains: [],
+    // Allow Next.js image optimization for background/style images served from
+    // Supabase Storage. Optimized variants are generated once and cached.
+    remotePatterns: [
+      { protocol: 'https', hostname: '**.supabase.co', pathname: '/storage/v1/object/public/**' },
+    ],
     formats: ['image/avif', 'image/webp'],
+    // Cache optimized images for 24h before re-validating with the source.
+    minimumCacheTTL: 60 * 60 * 24,
   },
   env: {
     NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
@@ -50,11 +60,26 @@ const nextConfig = {
         ],
       },
       {
-        // API responses are JSON and must never be cached or rendered by browsers.
+        // All API responses are JSON and must never be sniffed as another type.
         source: '/api/:path*',
+        headers: [{ key: 'X-Content-Type-Options', value: 'nosniff' }],
+      },
+      {
+        // Sensitive / mutating endpoints (auth, payments, order tracking,
+        // newsletter, webhooks) must NEVER be cached. Public read-only
+        // endpoints (styles, backgrounds, prices, packages, body-types, rates)
+        // are intentionally excluded so the per-route `Cache-Control` headers
+        // they set (s-maxage + stale-while-revalidate) survive and get cached
+        // by the CDN — fetched from the database once, then served from cache.
+        source: '/api/:path(admin|checkout|track|newsletter|webhooks)/:rest*',
+        headers: [{ key: 'Cache-Control', value: 'no-store, max-age=0' }],
+      },
+      {
+        // Static background images are content-addressed by filename and never
+        // change in place — cache them aggressively in the browser and CDN.
+        source: '/backgrounds/:path*',
         headers: [
-          { key: 'Cache-Control', value: 'no-store, max-age=0' },
-          { key: 'X-Content-Type-Options', value: 'nosniff' },
+          { key: 'Cache-Control', value: 'public, max-age=31536000, immutable' },
         ],
       },
     ];

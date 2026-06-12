@@ -9,6 +9,7 @@ import Logo from '@/components/Logo';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
 import { useLanguage } from '@/lib/i18n/LanguageContext';
 import { useCurrency } from '@/lib/currency/CurrencyContext';
+import { cachedFetchJSON } from '@/lib/cache/clientCache';
 import CurrencySwitcher from '@/components/CurrencySwitcher';
 import { loadStripe } from '@stripe/stripe-js';
 import { EmbeddedCheckout, EmbeddedCheckoutProvider } from '@stripe/react-stripe-js';
@@ -84,9 +85,8 @@ export default function StudioPage() {
   const [styles, setStyles] = useState<{ id: string; name: string }[]>(FALLBACK_STYLES);
 
   useEffect(() => {
-    fetch('/api/styles')
-      .then(r => r.ok ? r.json() : null)
-      .then((data: Array<{ slug: string; name: string }> | null) => {
+    cachedFetchJSON<Array<{ slug: string; name: string }>>('/api/styles')
+      .then((data) => {
         if (data && data.length > 0) {
           setStyles(data.map(s => ({ id: s.slug, name: s.name })));
         }
@@ -96,9 +96,12 @@ export default function StudioPage() {
 
   useEffect(() => {
     if (!selected.style || selected.style === 'negasva' || selected.style === 'custom') return;
-    fetch(`/api/backgrounds?style=${selected.style}`)
-      .then(r => r.ok ? r.json() : null)
-      .then((data: Array<{ id: string; name: string; image_url: string }> | null) => {
+    // Already cached locally for this style — skip the request entirely.
+    if (dynamicBgs[selected.style]) return;
+    cachedFetchJSON<Array<{ id: string; name: string; image_url: string }>>(
+      `/api/backgrounds?style=${selected.style}`,
+    )
+      .then((data) => {
         if (data && data.length > 0) {
           setDynamicBgs(prev => ({
             ...prev,
@@ -107,7 +110,7 @@ export default function StudioPage() {
         }
       })
       .catch(() => null);
-  }, [selected.style]);
+  }, [selected.style, dynamicBgs]);
 
   const [checkoutLoading, setCheckoutLoading] = useState(false);
   const [checkoutParams, setCheckoutParams] = useState<Record<string, unknown> | null>(null);

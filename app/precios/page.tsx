@@ -6,6 +6,7 @@ import { Check } from 'lucide-react';
 import { useLanguage } from '@/lib/i18n/LanguageContext';
 import Navbar from '@/components/Navbar';
 import PageFooter from '@/components/PageFooter';
+import { cachedFetchJSON } from '@/lib/cache/clientCache';
 
 interface PackageItem {
   id: string;
@@ -19,8 +20,7 @@ export default function PreciosPage() {
   const [packages, setPackages] = useState<PackageItem[]>([]);
 
   useEffect(() => {
-    fetch('/api/packages')
-      .then((r) => r.json())
+    cachedFetchJSON<PackageItem[]>('/api/packages')
       .then((data) => { if (Array.isArray(data)) setPackages(data); })
       .catch(() => {});
   }, []);
