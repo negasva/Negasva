@@ -25,12 +25,12 @@ const row1 = REVIEWS.slice(0, 9);
 const row2 = REVIEWS.slice(6, 15);
 
 const AVATAR_GRADIENTS = [
-  'from-pink-400 to-rose-500',
-  'from-violet-400 to-purple-600',
-  'from-sky-400 to-blue-600',
-  'from-emerald-400 to-teal-600',
-  'from-amber-400 to-orange-500',
-  'from-fuchsia-400 to-pink-600',
+  'from-primary to-primary-dark',
+  'from-primary-light to-primary',
+  'from-secondary-light to-secondary',
+  'from-primary-dark to-secondary',
+  'from-rose-400 to-primary-dark',
+  'from-primary to-rose-500',
 ];
 
 function initials(name: string) {

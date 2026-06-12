@@ -4,7 +4,11 @@ import PageFooter from '@/components/PageFooter';
 
 export const metadata: Metadata = {
   title: 'Términos de Servicio',
-  description: 'Condiciones de uso del servicio de retratos animados personalizados de NEGASVA.',
+  description: 'Condiciones de uso de NEGASVA: entrega en 48h, política de reembolsos, derechos de uso de tu retrato animado y tratamiento de tus fotos.',
+  openGraph: {
+    title: 'Términos de Servicio — NEGASVA',
+    description: 'Entrega, reembolsos y derechos de uso de tu retrato.',
+  },
 };
 
 export default function TerminosPage() {
@@ -12,7 +16,7 @@ export default function TerminosPage() {
     <div className="min-h-screen bg-white">
       <Navbar />
 
-      <section className="bg-gradient-to-br from-white via-primary-lighter to-white py-20 px-4">
+      <section className="bg-primary-lighter/30 py-20 px-4">
         <div className="mx-auto max-w-3xl">
           <p className="text-sm font-bold text-primary uppercase tracking-widest mb-3">Legal</p>
           <h1 className="font-black text-5xl md:text-6xl tracking-tighter text-secondary mb-4">
@@ -97,7 +101,7 @@ export default function TerminosPage() {
         </div>
       </section>
 
-      <PageFooter minimal />
+      <PageFooter />
     </div>
   );
 }

@@ -13,7 +13,7 @@ export default function ContactoPage() {
       <Navbar />
 
       {/* Hero */}
-      <section className="bg-gradient-to-br from-white via-primary-lighter to-white py-20 px-4">
+      <section className="bg-primary-lighter/30 py-20 px-4">
         <div className="mx-auto max-w-7xl">
           <h1 className="font-black text-5xl md:text-6xl tracking-tighter text-secondary mb-4">
             {t.contact.title}
@@ -28,7 +28,7 @@ export default function ContactoPage() {
       <section className="py-20 px-4">
         <div className="mx-auto max-w-3xl">
           <div className="grid md:grid-cols-2 gap-12 mb-12">
-            <div className="bg-gradient-to-br from-primary-lighter to-white rounded-2xl p-8 border-2 border-primary-lighter">
+            <div className="bg-primary-lighter/40 rounded-2xl p-8 border-2 border-primary-lighter">
               <div className="w-12 h-12 bg-primary rounded-xl flex items-center justify-center mb-6">
                 <Mail className="w-6 h-6 text-white" />
               </div>
@@ -39,7 +39,7 @@ export default function ContactoPage() {
               </a>
             </div>
 
-            <div className="bg-gradient-to-br from-primary-lighter to-white rounded-2xl p-8 border-2 border-primary-lighter">
+            <div className="bg-primary-lighter/40 rounded-2xl p-8 border-2 border-primary-lighter">
               <div className="w-12 h-12 bg-primary rounded-xl flex items-center justify-center mb-6">
                 <MessageSquare className="w-6 h-6 text-white" />
               </div>
@@ -76,7 +76,7 @@ export default function ContactoPage() {
         </div>
       </section>
 
-      <PageFooter minimal />
+      <PageFooter />
     </div>
   );
 }

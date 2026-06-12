@@ -71,7 +71,7 @@ export default function PreciosPage() {
       <Navbar />
 
       {/* Hero */}
-      <section className="bg-gradient-to-br from-white via-primary-lighter to-white py-20 px-4">
+      <section className="bg-primary-lighter/30 py-20 px-4">
         <div className="mx-auto max-w-7xl">
           <h1 className="font-black text-5xl md:text-6xl tracking-tighter text-secondary mb-4">
             {t.pricing.title}
@@ -162,7 +162,7 @@ export default function PreciosPage() {
               <p className="text-sm text-secondary-lighter mb-6">Combina opciones y ahorra con nuestros paquetes.</p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {packages.map((pkg) => (
-                  <div key={pkg.id} className="bg-gradient-to-br from-primary-lighter to-white rounded-xl p-6 border-2 border-primary-lighter hover:border-primary hover:shadow-lg transition-all">
+                  <div key={pkg.id} className="bg-primary-lighter/40 rounded-xl p-6 border-2 border-primary-lighter hover:border-primary hover:shadow-lg transition-all">
                     <div className="flex items-start justify-between gap-4 mb-3">
                       <h3 className="font-black text-lg text-secondary leading-tight">{pkg.name}</h3>
                       <span className="font-black text-2xl text-primary flex-shrink-0">${pkg.final_price}</span>
@@ -176,7 +176,7 @@ export default function PreciosPage() {
             </div>
           )}
 
-          <div className="bg-gradient-to-br from-primary to-primary-dark rounded-2xl p-12 text-white mb-12">
+          <div className="bg-secondary rounded-2xl p-12 text-white mb-12">
             <h3 className="font-black text-3xl mb-6 tracking-tighter">{t.pricing.examples_title}</h3>
             <div className="space-y-4">
               <div className="flex justify-between items-center pb-4 border-b border-primary-lighter">
@@ -209,7 +209,7 @@ export default function PreciosPage() {
         </div>
       </section>
 
-      <PageFooter minimal />
+      <PageFooter />
     </div>
   );
 }

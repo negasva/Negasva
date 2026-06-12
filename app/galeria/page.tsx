@@ -20,7 +20,7 @@ export default function GaleriaPage() {
       <Navbar />
 
       {/* Hero */}
-      <section className="bg-gradient-to-br from-white via-primary-lighter to-white py-20 px-4">
+      <section className="bg-primary-lighter/30 py-20 px-4">
         <div className="mx-auto max-w-7xl">
           <h1 className="font-black text-5xl md:text-6xl tracking-tighter text-secondary mb-4">
             {t.gallery.title}
@@ -58,7 +58,7 @@ export default function GaleriaPage() {
                 key={item.id}
                 className="group rounded-2xl overflow-hidden border-2 border-primary-lighter hover:border-primary hover:shadow-xl transition-all"
               >
-                <div className="aspect-square bg-gradient-to-br from-primary-lighter to-primary flex items-center justify-center group-hover:scale-110 transition-transform">
+                <div className="aspect-square bg-primary-lighter flex items-center justify-center group-hover:scale-110 transition-transform">
                   <div className="w-16 h-16 rounded-full bg-white/20" />
                 </div>
                 <div className="p-6 bg-white">
@@ -82,14 +82,14 @@ export default function GaleriaPage() {
           </p>
           <Link
             href="/order"
-            className="inline-block rounded-lg bg-primary px-10 py-4 font-bold text-white hover:bg-primary-dark transition-colors"
+            className="inline-block rounded-xl bg-primary px-10 py-4 font-black text-white hover:bg-primary-dark hover:shadow-xl transition-all"
           >
             {t.gallery.cta_btn}
           </Link>
         </div>
       </section>
 
-      <PageFooter minimal />
+      <PageFooter />
     </div>
   );
 }

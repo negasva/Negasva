@@ -386,7 +386,7 @@ export default function Home() {
           <p className="text-lg text-secondary-lighter mb-8">{t.home.cta_final.subtitle}</p>
           <Link
             href={orderHref}
-            className="inline-flex items-center gap-2 rounded-lg bg-primary px-10 py-5 font-black text-white hover:bg-primary-dark transition-all hover:shadow-2xl text-lg"
+            className="inline-flex items-center gap-2 rounded-xl bg-primary px-10 py-5 font-black text-white hover:bg-primary-dark transition-all hover:shadow-2xl text-lg"
           >
             {t.home.cta_final.cta}
             <ChevronRight className="w-5 h-5" />

@@ -1,6 +1,7 @@
 'use client';
 
 import { useRef, useState, useCallback, useEffect } from 'react';
+import Image from 'next/image';
 
 interface Props {
   beforeSrc: string;
@@ -53,17 +54,26 @@ export default function BeforeAfterSlider({
       }}
     >
       {/* After (full) */}
-      <img src={afterSrc} alt={alt} className="absolute inset-0 w-full h-full object-cover" draggable={false} />
+      <Image
+        src={afterSrc}
+        alt={`${alt} — retrato animado terminado`}
+        fill
+        className="object-cover"
+        sizes="(max-width: 768px) 100vw, 600px"
+        draggable={false}
+      />
 
       {/* Before (clipped) */}
       <div
         className="absolute inset-0 overflow-hidden"
         style={{ width: `${pos}%` }}
       >
-        <img
+        <Image
           src={beforeSrc}
-          alt={alt}
-          className="absolute inset-0 h-full w-auto max-w-none object-cover"
+          alt={`${alt} — foto original`}
+          className="absolute inset-0 h-full max-w-none object-cover"
+          width={600}
+          height={600}
           style={{ width: `${containerRef.current ? containerRef.current.clientWidth : 0}px` }}
           draggable={false}
         />

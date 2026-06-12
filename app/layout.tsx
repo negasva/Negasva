@@ -30,10 +30,14 @@ export const metadata: Metadata = {
   description:
     'Transforma tu foto en un personaje de caricatura: Rick & Morty, Los Simpsons, Gravity Falls, Padrinos Mágicos y más. Entrega en 48h, desde $20 USD.',
   keywords: [
-    'retrato animado', 'retrato personalizado', 'cartoon portrait', 'custom art',
-    'rick and morty', 'gravity falls', 'simpsons', 'regalo personalizado',
+    'retrato animado', 'retrato personalizado', 'ilustración personalizada',
+    'caricatura personalizada', 'regalo original', 'retrato rick y morty',
+    'retrato simpsons', 'cartoon portrait', 'custom art', 'gravity falls',
   ],
-  alternates: { canonical: '/' },
+  alternates: {
+    canonical: '/',
+    languages: { es: '/', en: '/', fr: '/', 'x-default': '/' },
+  },
   openGraph: {
     type: 'website',
     url: 'https://negasva.shop',
@@ -54,14 +58,50 @@ export const metadata: Metadata = {
   robots: { index: true, follow: true },
 };
 
+const ORGANIZATION_SCHEMA = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: 'NEGASVA',
+  url: 'https://negasva.shop',
+  logo: 'https://negasva.shop/favicon.png',
+  sameAs: ['https://instagram.com/negasva', 'https://tiktok.com/@negasva'],
+};
+
+const PRODUCT_SCHEMA = {
+  '@context': 'https://schema.org',
+  '@type': 'Product',
+  name: 'Retrato Animado Personalizado',
+  description:
+    'Retrato digital personalizado en estilo de caricatura: Rick & Morty, Los Simpsons, Gravity Falls y más. Entrega en 48 horas.',
+  brand: { '@type': 'Brand', name: 'NEGASVA' },
+  image: 'https://negasva.shop/backgrounds/rm-1.jpg',
+  offers: {
+    '@type': 'AggregateOffer',
+    url: 'https://negasva.shop/order',
+    priceCurrency: 'USD',
+    lowPrice: '20',
+    highPrice: '160',
+    availability: 'https://schema.org/InStock',
+  },
+  aggregateRating: { '@type': 'AggregateRating', ratingValue: '5.0', ratingCount: '1000' },
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="scroll-smooth">
+    <html lang="es" className="scroll-smooth">
       <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(ORGANIZATION_SCHEMA) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(PRODUCT_SCHEMA) }}
+        />
         {process.env.NEXT_PUBLIC_GA_ID && (
           <>
             <Script

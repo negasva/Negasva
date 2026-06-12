@@ -1,0 +1,29 @@
+import type { MetadataRoute } from 'next';
+
+const BASE = 'https://negasva.shop';
+
+export default function sitemap(): MetadataRoute.Sitemap {
+  const routes: Array<{ path: string; priority: number; changeFrequency: 'daily' | 'weekly' | 'monthly' }> = [
+    { path: '/', priority: 1.0, changeFrequency: 'weekly' },
+    { path: '/order', priority: 0.9, changeFrequency: 'weekly' },
+    { path: '/estilos', priority: 0.8, changeFrequency: 'weekly' },
+    { path: '/precios', priority: 0.8, changeFrequency: 'weekly' },
+    { path: '/galeria', priority: 0.7, changeFrequency: 'weekly' },
+    { path: '/sobre', priority: 0.5, changeFrequency: 'monthly' },
+    { path: '/blog', priority: 0.6, changeFrequency: 'weekly' },
+    { path: '/contacto', priority: 0.5, changeFrequency: 'monthly' },
+    { path: '/faq', priority: 0.7, changeFrequency: 'weekly' },
+    { path: '/productos', priority: 0.5, changeFrequency: 'monthly' },
+    { path: '/seguimiento', priority: 0.3, changeFrequency: 'monthly' },
+    { path: '/privacidad', priority: 0.2, changeFrequency: 'monthly' },
+    { path: '/terminos', priority: 0.2, changeFrequency: 'monthly' },
+    { path: '/cookies', priority: 0.2, changeFrequency: 'monthly' },
+  ];
+
+  return routes.map((r) => ({
+    url: `${BASE}${r.path}`,
+    lastModified: new Date(),
+    changeFrequency: r.changeFrequency,
+    priority: r.priority,
+  }));
+}

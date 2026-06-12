@@ -4,7 +4,11 @@ import PageFooter from '@/components/PageFooter';
 
 export const metadata: Metadata = {
   title: 'Política de Privacidad',
-  description: 'Cómo NEGASVA recopila, usa y protege tu información personal al pedir tu retrato animado.',
+  description: 'Cómo NEGASVA recopila, usa y protege tu información personal y tus fotos al pedir tu retrato animado. Tus datos nunca se venden a terceros.',
+  openGraph: {
+    title: 'Política de Privacidad — NEGASVA',
+    description: 'Cómo protegemos tus datos y tus fotos.',
+  },
 };
 
 export default function PrivacidadPage() {
@@ -12,7 +16,7 @@ export default function PrivacidadPage() {
     <div className="min-h-screen bg-white">
       <Navbar />
 
-      <section className="bg-gradient-to-br from-white via-primary-lighter to-white py-20 px-4">
+      <section className="bg-primary-lighter/30 py-20 px-4">
         <div className="mx-auto max-w-3xl">
           <p className="text-sm font-bold text-primary uppercase tracking-widest mb-3">Legal</p>
           <h1 className="font-black text-5xl md:text-6xl tracking-tighter text-secondary mb-4">
@@ -90,7 +94,7 @@ export default function PrivacidadPage() {
         </div>
       </section>
 
-      <PageFooter minimal />
+      <PageFooter />
     </div>
   );
 }

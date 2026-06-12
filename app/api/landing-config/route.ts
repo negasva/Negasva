@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { createServerClient, createRouteClient, createServiceClient } from '@/lib/supabase/server';
 import { errorResponse, rateLimitByIp, readJson, validateSameOrigin } from '@/lib/security/apiHelpers';
 
-const ALLOWED_KEYS = ['hero', 'how_it_works', 'gallery_images', 'stats'];
+const ALLOWED_KEYS = ['hero', 'how_it_works', 'gallery_images', 'stats', 'footer'];
 
 export async function GET(request: Request) {
   const rl = rateLimitByIp(request, { prefix: 'pub-landing', max: 60, windowMs: 60_000 });
