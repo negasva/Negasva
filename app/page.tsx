@@ -19,34 +19,45 @@ export default function Home() {
 
       {/* Hero Section */}
       <section className="relative bg-white h-[calc(100vh-64px)] overflow-hidden flex">
-        {/* Left: Text — full height, padded */}
-        <div className="flex flex-col justify-center px-8 sm:px-12 lg:px-20 xl:px-28 w-full md:w-1/2 flex-shrink-0 py-10">
-          <div className="inline-block mb-5 px-4 py-2 bg-primary-lighter rounded-full w-fit">
-            <span className="text-xs font-black text-secondary tracking-widest">{t.home.hero_badge}</span>
-          </div>
-          <h1 className="font-black text-6xl sm:text-7xl lg:text-8xl tracking-tighter mb-5 leading-none">
-            <span className="text-secondary block">{t.home.title_part1}</span>
-            <span className="text-primary block">{t.home.title_part2}</span>
-          </h1>
-          <p className="text-base sm:text-lg text-secondary-lighter mb-7 leading-relaxed max-w-md">
-            {t.home.subtitle}
-          </p>
-          <div className="flex flex-wrap gap-4 mb-7">
-            <Link href="/studio" className="inline-flex items-center gap-2 rounded-lg bg-secondary px-8 py-4 font-black text-white hover:bg-secondary-light transition-all hover:shadow-lg text-lg">
-              {t.home.cta_primary}
-            </Link>
-            <Link href="/galeria" className="inline-flex items-center gap-2 rounded-lg border-2 border-secondary px-8 py-4 font-bold text-secondary hover:bg-secondary hover:text-white transition-colors text-lg">
-              {t.home.cta_secondary}
-            </Link>
-          </div>
-          <div className="flex items-center gap-8">
-            <div>
-              <span className="font-black text-secondary text-2xl">1.8M</span>
-              <span className="text-secondary-lighter text-sm ml-2">{t.home.social_tiktok.replace('1.8M ', '').replace('1,8M ', '')}</span>
+        {/* Left: Text — distributed top to bottom */}
+        <div className="flex flex-col justify-between px-8 sm:px-12 lg:px-20 xl:px-28 w-full md:w-1/2 flex-shrink-0 py-12 lg:py-16">
+          {/* Top: badge */}
+          <div>
+            <div className="inline-block px-4 py-2 bg-primary-lighter rounded-full">
+              <span className="text-xs font-black text-secondary tracking-widest">{t.home.hero_badge}</span>
             </div>
-            <div>
-              <span className="font-black text-secondary text-2xl">50K</span>
-              <span className="text-secondary-lighter text-sm ml-2">{t.home.social_instagram.replace('50K ', '')}</span>
+          </div>
+
+          {/* Middle: heading + description */}
+          <div>
+            <h1 className="font-black text-6xl sm:text-7xl lg:text-8xl xl:text-9xl tracking-tighter mb-6 leading-none">
+              <span className="text-secondary block">{t.home.title_part1}</span>
+              <span className="text-primary block">{t.home.title_part2}</span>
+            </h1>
+            <p className="text-base sm:text-lg lg:text-xl text-secondary-lighter leading-relaxed max-w-md">
+              {t.home.subtitle}
+            </p>
+          </div>
+
+          {/* Bottom: buttons + social proof */}
+          <div>
+            <div className="flex flex-wrap gap-4 mb-6">
+              <Link href="/studio" className="inline-flex items-center gap-2 rounded-lg bg-secondary px-8 py-4 font-black text-white hover:bg-secondary-light transition-all hover:shadow-lg text-lg">
+                {t.home.cta_primary}
+              </Link>
+              <Link href="/galeria" className="inline-flex items-center gap-2 rounded-lg border-2 border-secondary px-8 py-4 font-bold text-secondary hover:bg-secondary hover:text-white transition-colors text-lg">
+                {t.home.cta_secondary}
+              </Link>
+            </div>
+            <div className="flex items-center gap-8">
+              <div>
+                <span className="font-black text-secondary text-2xl">1.8M</span>
+                <span className="text-secondary-lighter text-sm ml-2">{t.home.social_tiktok.replace('1.8M ', '').replace('1,8M ', '')}</span>
+              </div>
+              <div>
+                <span className="font-black text-secondary text-2xl">50K</span>
+                <span className="text-secondary-lighter text-sm ml-2">{t.home.social_instagram.replace('50K ', '')}</span>
+              </div>
             </div>
           </div>
         </div>
