@@ -33,9 +33,11 @@ INSERT INTO public.landing_config (key, value) VALUES
   "cta_secondary_en": "See how it works"
 }'::jsonb),
 ('how_it_works', '[
-  {"step":1,"icon":"palette","title_es":"Elige tu estilo","title_en":"Choose your style","desc_es":"Rick y Morty, Simpsons, Gravity Falls y más","desc_en":"Rick and Morty, Simpsons, Gravity Falls and more"},
-  {"step":2,"icon":"upload","title_es":"Sube tu foto","title_en":"Upload your photo","desc_es":"Una foto clara de frente es todo lo que necesitas","desc_en":"A clear front-facing photo is all you need"},
-  {"step":3,"icon":"sparkles","title_es":"Recibe tu retrato","title_en":"Receive your portrait","desc_es":"En 48 horas en tu correo, listo para imprimir","desc_en":"In 48 hours to your email, print-ready"}
+  {"step":1,"icon":"palette","title_es":"Elige tu estilo","title_en":"Choose your style","desc_es":"Rick & Morty, Simpsons, Gravity Falls, Padrinos Mágicos y más","desc_en":"Rick & Morty, Simpsons, Gravity Falls, Fairly OddParents and more"},
+  {"step":2,"icon":"users","title_es":"Elige tus personajes","title_en":"Choose your characters","desc_es":"Selecciona cuántas personas y si quieres retrato de torso o cuerpo completo","desc_en":"Select how many people and whether you want a torso or full-body portrait"},
+  {"step":3,"icon":"image","title_es":"Elige el fondo","title_en":"Choose the background","desc_es":"Fondos temáticos del estilo elegido, fondo personalizado o sin fondo","desc_en":"Themed backgrounds from your chosen style, a custom background, or none"},
+  {"step":4,"icon":"camera","title_es":"Sube tus fotos e indicaciones","title_en":"Upload your photos & instructions","desc_es":"Cuéntanos poses, orden y detalles. Sube una foto clara de cada persona","desc_en":"Tell us poses, order and details. Upload a clear photo of each person"},
+  {"step":5,"icon":"sparkles","title_es":"Recibe tu retrato","title_en":"Receive your portrait","desc_es":"En 48 horas recibes tu ilustración digital lista para imprimir y compartir","desc_en":"In 48 hours you get your digital illustration, ready to print and share"}
 ]'::jsonb),
 ('gallery_images', '[
   {"url":"/backgrounds/rm-1.jpg","caption":"Rick & Morty"},
@@ -51,3 +53,13 @@ INSERT INTO public.landing_config (key, value) VALUES
   {"value":"4+","label_es":"estilos","label_en":"styles"}
 ]'::jsonb)
 ON CONFLICT (key) DO NOTHING;
+
+-- Si la fila ya existía con los 3 pasos antiguos, actualízala a los 5 pasos.
+UPDATE public.landing_config SET value = '[
+  {"step":1,"icon":"palette","title_es":"Elige tu estilo","title_en":"Choose your style","desc_es":"Rick & Morty, Simpsons, Gravity Falls, Padrinos Mágicos y más","desc_en":"Rick & Morty, Simpsons, Gravity Falls, Fairly OddParents and more"},
+  {"step":2,"icon":"users","title_es":"Elige tus personajes","title_en":"Choose your characters","desc_es":"Selecciona cuántas personas y si quieres retrato de torso o cuerpo completo","desc_en":"Select how many people and whether you want a torso or full-body portrait"},
+  {"step":3,"icon":"image","title_es":"Elige el fondo","title_en":"Choose the background","desc_es":"Fondos temáticos del estilo elegido, fondo personalizado o sin fondo","desc_en":"Themed backgrounds from your chosen style, a custom background, or none"},
+  {"step":4,"icon":"camera","title_es":"Sube tus fotos e indicaciones","title_en":"Upload your photos & instructions","desc_es":"Cuéntanos poses, orden y detalles. Sube una foto clara de cada persona","desc_en":"Tell us poses, order and details. Upload a clear photo of each person"},
+  {"step":5,"icon":"sparkles","title_es":"Recibe tu retrato","title_en":"Receive your portrait","desc_es":"En 48 horas recibes tu ilustración digital lista para imprimir y compartir","desc_en":"In 48 hours you get your digital illustration, ready to print and share"}
+]'::jsonb, updated_at = now()
+WHERE key = 'how_it_works' AND jsonb_array_length(value) = 3;
