@@ -34,7 +34,7 @@ export default function ProductosPage() {
     <div className="min-h-screen bg-white">
       <Navbar />
 
-      <section className="bg-gradient-to-br from-white via-primary-lighter to-white py-20 px-4">
+      <section className="bg-primary-lighter/30 py-20 px-4">
         <div className="mx-auto max-w-4xl text-center">
           <span className="inline-block mb-4 px-3 py-1 bg-secondary text-white text-xs font-black rounded-full tracking-widest">
             PRÓXIMAMENTE
@@ -91,7 +91,7 @@ export default function ProductosPage() {
               />
               <button
                 type="submit"
-                className="rounded-lg bg-primary px-6 py-3 font-black text-white hover:bg-primary-dark transition-colors whitespace-nowrap"
+                className="rounded-xl bg-primary px-6 py-3 font-black text-white hover:bg-primary-dark hover:shadow-xl transition-all whitespace-nowrap"
               >
                 Avísame
               </button>
@@ -100,7 +100,7 @@ export default function ProductosPage() {
         </div>
       </section>
 
-      <PageFooter minimal />
+      <PageFooter />
     </div>
   );
 }

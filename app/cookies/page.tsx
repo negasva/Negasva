@@ -4,7 +4,11 @@ import PageFooter from '@/components/PageFooter';
 
 export const metadata: Metadata = {
   title: 'Política de Cookies',
-  description: 'Información sobre las cookies que utiliza NEGASVA y cómo puedes controlarlas.',
+  description: 'Conoce qué cookies utiliza NEGASVA (esenciales, analíticas y funcionales), para qué sirven y cómo puedes controlarlas desde tu navegador.',
+  openGraph: {
+    title: 'Política de Cookies — NEGASVA',
+    description: 'Qué cookies usamos y cómo controlarlas.',
+  },
 };
 
 export default function CookiesPage() {
@@ -12,7 +16,7 @@ export default function CookiesPage() {
     <div className="min-h-screen bg-white">
       <Navbar />
 
-      <section className="bg-gradient-to-br from-white via-primary-lighter to-white py-20 px-4">
+      <section className="bg-primary-lighter/30 py-20 px-4">
         <div className="mx-auto max-w-3xl">
           <p className="text-sm font-bold text-primary uppercase tracking-widest mb-3">Legal</p>
           <h1 className="font-black text-5xl md:text-6xl tracking-tighter text-secondary mb-4">
@@ -78,7 +82,7 @@ export default function CookiesPage() {
         </div>
       </section>
 
-      <PageFooter minimal />
+      <PageFooter />
     </div>
   );
 }

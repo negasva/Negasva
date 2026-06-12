@@ -57,7 +57,7 @@ export default function SeguimientoPage() {
     <div className="min-h-screen bg-white">
       <Navbar />
 
-      <section className="bg-gradient-to-br from-white via-primary-lighter to-white py-20 px-4">
+      <section className="bg-primary-lighter/30 py-20 px-4">
         <div className="mx-auto max-w-3xl text-center">
           <h1 className="font-black text-5xl md:text-6xl tracking-tighter text-secondary mb-4">
             Seguimiento de pedido
@@ -133,7 +133,7 @@ export default function SeguimientoPage() {
         </div>
       </section>
 
-      <PageFooter minimal />
+      <PageFooter />
     </div>
   );
 }

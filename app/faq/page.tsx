@@ -105,7 +105,7 @@ export default function FaqPage() {
     <div className="min-h-screen bg-white">
       <Navbar />
 
-      <section className="bg-gradient-to-br from-white via-primary-lighter to-white py-20 px-4">
+      <section className="bg-primary-lighter/30 py-20 px-4">
         <div className="mx-auto max-w-3xl text-center">
           <h1 className="font-black text-5xl md:text-6xl tracking-tighter text-secondary mb-4">
             Preguntas frecuentes
@@ -160,14 +160,14 @@ export default function FaqPage() {
             href="https://instagram.com/negasva"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-block rounded-lg bg-primary px-8 py-4 font-bold text-white hover:bg-primary-dark transition-colors"
+            className="inline-block rounded-xl bg-primary px-8 py-4 font-black text-white hover:bg-primary-dark hover:shadow-xl transition-all"
           >
             @negasva en Instagram
           </a>
         </div>
       </section>
 
-      <PageFooter minimal />
+      <PageFooter />
     </div>
   );
 }

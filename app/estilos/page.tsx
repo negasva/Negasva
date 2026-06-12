@@ -54,7 +54,7 @@ export default function EstilosPage() {
       <Navbar />
 
       {/* Hero */}
-      <section className="bg-gradient-to-br from-white via-primary-lighter to-white py-20 px-4">
+      <section className="bg-primary-lighter/30 py-20 px-4">
         <div className="mx-auto max-w-7xl">
           <h1 className="font-black text-5xl md:text-6xl tracking-tighter text-secondary mb-4">
             {t.styles.title}
@@ -71,7 +71,7 @@ export default function EstilosPage() {
           <div className="grid md:grid-cols-2 gap-12">
             {styles.map((style) => (
               <div key={style.name} className="group rounded-2xl overflow-hidden border-2 border-primary-lighter hover:border-primary hover:shadow-xl transition-all">
-                <div className="bg-gradient-to-br from-primary-light to-primary p-12 text-center relative overflow-hidden">
+                <div className="bg-primary p-12 text-center relative overflow-hidden">
                   <div className="absolute inset-0 opacity-0 group-hover:opacity-20 bg-white transition-opacity"></div>
                   <div className="relative">
                     <h3 className="font-black text-3xl text-white mb-2">{style.name}</h3>
@@ -94,7 +94,7 @@ export default function EstilosPage() {
                   )}
                   <Link
                     href="/order"
-                    className="w-full inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-6 py-3 font-bold text-white hover:bg-primary-dark transition-colors"
+                    className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-6 py-3 font-black text-white hover:bg-primary-dark hover:shadow-xl transition-all"
                   >
                     {t.styles.cta_btn}
                     <ChevronRight className="w-5 h-5" />
@@ -117,7 +117,7 @@ export default function EstilosPage() {
           </p>
           <Link
             href="/order"
-            className="inline-flex items-center gap-2 rounded-lg bg-primary px-10 py-4 font-bold text-white hover:bg-primary-dark transition-colors"
+            className="inline-flex items-center gap-2 rounded-xl bg-primary px-10 py-4 font-black text-white hover:bg-primary-dark hover:shadow-xl transition-all"
           >
             {t.styles.explore}
             <ChevronRight className="w-5 h-5" />
@@ -125,7 +125,7 @@ export default function EstilosPage() {
         </div>
       </section>
 
-      <PageFooter minimal />
+      <PageFooter />
     </div>
   );
 }

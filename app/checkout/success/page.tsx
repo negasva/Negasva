@@ -55,14 +55,14 @@ function SuccessContent() {
         {isFailure ? (
           <Link
             href="/order"
-            className="block w-full rounded-lg bg-primary px-6 py-3 font-bold text-white hover:bg-primary-dark transition-colors"
+            className="block w-full rounded-xl bg-primary px-6 py-3 font-black text-white hover:bg-primary-dark hover:shadow-xl transition-all"
           >
             Volver al estudio
           </Link>
         ) : (
           <Link
             href={ref ? `/track?ref=${encodeURIComponent(ref)}` : '/track'}
-            className="block w-full rounded-lg bg-primary px-6 py-3 font-bold text-white hover:bg-primary-dark transition-colors"
+            className="block w-full rounded-xl bg-primary px-6 py-3 font-black text-white hover:bg-primary-dark hover:shadow-xl transition-all"
           >
             Seguir mi pedido
           </Link>

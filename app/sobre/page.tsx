@@ -14,7 +14,7 @@ export default function SobrePage() {
       <Navbar />
 
       {/* Hero */}
-      <section className="bg-gradient-to-br from-white via-primary-lighter to-white py-20 px-4">
+      <section className="bg-primary-lighter/30 py-20 px-4">
         <div className="mx-auto max-w-7xl">
           <h1 className="font-black text-5xl md:text-6xl tracking-tighter text-secondary mb-4">
             {t.about.title}
@@ -39,17 +39,17 @@ export default function SobrePage() {
 
             <h2 className="font-black text-3xl text-secondary mb-6 tracking-tighter mt-12">{t.about.values_title}</h2>
             <div className="grid md:grid-cols-3 gap-8 mt-8 mb-12">
-              <div className="bg-gradient-to-br from-primary-lighter to-white rounded-2xl p-8 border-2 border-primary-lighter">
+              <div className="bg-primary-lighter/40 rounded-2xl p-8 border-2 border-primary-lighter">
                 <Heart className="w-8 h-8 text-primary mb-4" />
                 <h3 className="font-bold text-secondary mb-3">{t.about.passion}</h3>
                 <p className="text-sm text-secondary-lighter">{t.about.passion_desc}</p>
               </div>
-              <div className="bg-gradient-to-br from-primary-lighter to-white rounded-2xl p-8 border-2 border-primary-lighter">
+              <div className="bg-primary-lighter/40 rounded-2xl p-8 border-2 border-primary-lighter">
                 <Zap className="w-8 h-8 text-primary mb-4" />
                 <h3 className="font-bold text-secondary mb-3">{t.about.speed}</h3>
                 <p className="text-sm text-secondary-lighter">{t.about.speed_desc}</p>
               </div>
-              <div className="bg-gradient-to-br from-primary-lighter to-white rounded-2xl p-8 border-2 border-primary-lighter">
+              <div className="bg-primary-lighter/40 rounded-2xl p-8 border-2 border-primary-lighter">
                 <Star className="w-8 h-8 text-primary mb-4" />
                 <h3 className="font-bold text-secondary mb-3">{t.about.excellence}</h3>
                 <p className="text-sm text-secondary-lighter">{t.about.excellence_desc}</p>
@@ -72,14 +72,14 @@ export default function SobrePage() {
           </h2>
           <Link
             href="/order"
-            className="inline-block rounded-lg bg-primary px-10 py-4 font-bold text-white hover:bg-primary-dark transition-colors"
+            className="inline-block rounded-xl bg-primary px-10 py-4 font-black text-white hover:bg-primary-dark hover:shadow-xl transition-all"
           >
             {t.about.cta_btn}
           </Link>
         </div>
       </section>
 
-      <PageFooter minimal />
+      <PageFooter />
     </div>
   );
 }
