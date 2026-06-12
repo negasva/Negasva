@@ -81,7 +81,7 @@ export default function GaleriaPage() {
             {t.gallery.cta_subtitle}
           </p>
           <Link
-            href="/studio"
+            href="/order"
             className="inline-block rounded-lg bg-primary px-10 py-4 font-bold text-white hover:bg-primary-dark transition-colors"
           >
             {t.gallery.cta_btn}

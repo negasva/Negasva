@@ -52,7 +52,7 @@ export default function SignupPage() {
               />
             </div>
             <Link
-              href="/studio"
+              href="/order"
               className="block w-full rounded-lg bg-primary px-4 py-3 text-center font-bold text-white hover:bg-primary-dark transition-colors"
             >
               Crear Cuenta y Continuar →

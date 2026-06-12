@@ -54,7 +54,7 @@ function SuccessContent() {
       <div className="mt-8 space-y-3">
         {isFailure ? (
           <Link
-            href="/studio"
+            href="/order"
             className="block w-full rounded-lg bg-primary px-6 py-3 font-bold text-white hover:bg-primary-dark transition-colors"
           >
             Volver al estudio

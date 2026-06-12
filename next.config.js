@@ -21,6 +21,10 @@ const nextConfig = {
     NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY,
     NEXT_PUBLIC_RECAPTCHA_SITE_KEY: process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY,
   },
+  redirects: async () => [
+    // El wizard vivía en /studio; los links antiguos compartidos siguen funcionando.
+    { source: '/studio', destination: '/order', permanent: true },
+  ],
   headers: async () => {
     // Content Security Policy. Built to allow the third-parties this app
     // already uses (Google Analytics, reCAPTCHA, Stripe, Supabase) and

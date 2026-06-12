@@ -71,7 +71,7 @@ export default function SobrePage() {
             {t.about.cta_title}
           </h2>
           <Link
-            href="/studio"
+            href="/order"
             className="inline-block rounded-lg bg-primary px-10 py-4 font-bold text-white hover:bg-primary-dark transition-colors"
           >
             {t.about.cta_btn}
