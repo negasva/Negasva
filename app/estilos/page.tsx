@@ -6,7 +6,9 @@ import { ChevronRight } from 'lucide-react';
 import { useLanguage } from '@/lib/i18n/LanguageContext';
 import Navbar from '@/components/Navbar';
 import PageFooter from '@/components/PageFooter';
+import BreadcrumbSchema from '@/components/BreadcrumbSchema';
 import { cachedFetchJSON } from '@/lib/cache/clientCache';
+import { DB_SLUG_TO_URL } from '@/lib/content/styles';
 
 interface ApiStyle {
   slug: string;
@@ -35,10 +37,10 @@ export default function EstilosPage() {
 
   // Fallback list if the API is unavailable — admin manages the real catalog
   const fallbackStyles = [
-    { name: 'Rick & Morty', ...translated['rick-morty'] },
-    { name: 'Gravity Falls', ...translated['gravity-falls'] },
-    { name: 'The Simpsons', ...translated['simpsons'] },
-    { name: 'The Fairly OddParents', ...translated['fairly-odd'] },
+    { name: 'Rick & Morty', detailHref: `/estilos/${DB_SLUG_TO_URL['rick-morty']}`, ...translated['rick-morty'] },
+    { name: 'Gravity Falls', detailHref: `/estilos/${DB_SLUG_TO_URL['gravity-falls']}`, ...translated['gravity-falls'] },
+    { name: 'The Simpsons', detailHref: `/estilos/${DB_SLUG_TO_URL['simpsons']}`, ...translated['simpsons'] },
+    { name: 'The Fairly OddParents', detailHref: `/estilos/${DB_SLUG_TO_URL['fairly-odd']}`, ...translated['fairly-odd'] },
   ];
 
   const styles = apiStyles
@@ -46,11 +48,13 @@ export default function EstilosPage() {
         name: s.name,
         desc: translated[s.slug]?.desc ?? s.description ?? '',
         features: translated[s.slug]?.features ?? [],
+        detailHref: DB_SLUG_TO_URL[s.slug] ? `/estilos/${DB_SLUG_TO_URL[s.slug]}` : null,
       }))
     : fallbackStyles;
 
   return (
     <div className="min-h-screen bg-white">
+      <BreadcrumbSchema name="Estilos" path="/estilos" />
       <Navbar />
 
       {/* Hero */}
@@ -92,13 +96,23 @@ export default function EstilosPage() {
                       </ul>
                     </div>
                   )}
-                  <Link
-                    href="/order"
-                    className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-6 py-3 font-black text-white hover:bg-primary-dark hover:shadow-xl transition-all"
-                  >
-                    {t.styles.cta_btn}
-                    <ChevronRight className="w-5 h-5" />
-                  </Link>
+                  <div className="flex flex-col sm:flex-row gap-3">
+                    {style.detailHref && (
+                      <Link
+                        href={style.detailHref}
+                        className="flex-1 inline-flex items-center justify-center gap-2 rounded-xl border-2 border-primary px-6 py-3 font-black text-primary hover:bg-primary-lighter transition-all"
+                      >
+                        Ver estilo
+                      </Link>
+                    )}
+                    <Link
+                      href="/order"
+                      className="flex-1 inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-6 py-3 font-black text-white hover:bg-primary-dark hover:shadow-xl transition-all"
+                    >
+                      {t.styles.cta_btn}
+                      <ChevronRight className="w-5 h-5" />
+                    </Link>
+                  </div>
                 </div>
               </div>
             ))}
