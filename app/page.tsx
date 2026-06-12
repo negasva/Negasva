@@ -18,73 +18,73 @@ export default function Home() {
       <Navbar />
 
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-white min-h-[calc(100vh-64px)] flex items-center py-12 lg:py-20">
-        <div className="relative w-full px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-16 items-center">
+      <section className="relative overflow-hidden bg-white min-h-[calc(100vh-64px)] flex items-center py-12 lg:py-16">
+        <div className="relative mx-auto max-w-7xl w-full px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12 items-center">
             {/* Left: Text */}
             <div className="flex flex-col justify-center">
               <div className="inline-block mb-6 px-4 py-2 bg-primary-lighter rounded-full w-fit">
-                <span className="text-xs font-bold text-primary tracking-widest">{t.home.hero_badge}</span>
+                <span className="text-xs font-black text-secondary tracking-widest">{t.home.hero_badge}</span>
               </div>
-              <h1 className="font-black text-5xl sm:text-6xl lg:text-7xl xl:text-8xl tracking-tighter mb-6 leading-tight">
+              <h1 className="font-black text-5xl sm:text-6xl lg:text-7xl tracking-tighter mb-6 leading-tight">
                 <span className="text-secondary block">{t.home.title_part1}</span>
                 <span className="text-primary block">{t.home.title_part2}</span>
               </h1>
-              <p className="text-base sm:text-lg lg:text-xl text-secondary-lighter mb-8 leading-relaxed max-w-2xl">
+              <p className="text-base sm:text-lg text-secondary-lighter mb-8 leading-relaxed max-w-lg">
                 {t.home.subtitle}
               </p>
               <div className="flex flex-wrap gap-4 mb-8">
-                <Link href="/studio" className="inline-flex items-center gap-2 rounded-lg bg-secondary px-6 sm:px-8 py-3 sm:py-4 font-bold text-white hover:bg-secondary-light transition-all hover:shadow-lg text-sm sm:text-base">
+                <Link href="/studio" className="inline-flex items-center gap-2 rounded-lg bg-secondary px-8 py-4 font-black text-white hover:bg-secondary-light transition-all hover:shadow-lg">
                   {t.home.cta_primary}
                 </Link>
-                <Link href="/galeria" className="inline-flex items-center gap-2 rounded-lg border-2 border-secondary px-6 sm:px-8 py-3 sm:py-4 font-bold text-secondary hover:bg-secondary hover:text-white transition-colors text-sm sm:text-base">
+                <Link href="/galeria" className="inline-flex items-center gap-2 rounded-lg border-2 border-secondary px-8 py-4 font-bold text-secondary hover:bg-secondary hover:text-white transition-colors">
                   {t.home.cta_secondary}
                 </Link>
               </div>
               <div className="flex items-center gap-8">
                 <div>
-                  <span className="font-black text-secondary text-xl lg:text-2xl">1.8M</span>
+                  <span className="font-black text-secondary text-xl">1.8M</span>
                   <span className="text-secondary-lighter text-sm ml-2">{t.home.social_tiktok.replace('1.8M ', '').replace('1,8M ', '')}</span>
                 </div>
                 <div>
-                  <span className="font-black text-secondary text-xl lg:text-2xl">50K</span>
+                  <span className="font-black text-secondary text-xl">50K</span>
                   <span className="text-secondary-lighter text-sm ml-2">{t.home.social_instagram.replace('50K ', '')}</span>
                 </div>
               </div>
             </div>
 
             {/* Right: Image card */}
-            <div className="relative mt-8 md:mt-0 flex justify-center">
+            <div className="relative mt-8 md:mt-0 pb-6 pr-6">
               {/* Pig icon floating top-left */}
-              <div className="absolute -top-5 left-2 z-10 w-16 h-16 sm:w-20 sm:h-20 bg-primary-lighter rounded-2xl shadow-lg overflow-hidden">
+              <div className="absolute -top-5 left-2 z-10 w-14 h-14 bg-primary-lighter rounded-2xl shadow-lg overflow-hidden">
                 <Image
                   src="/pig-icon.png"
                   alt="Negasva"
-                  width={80}
-                  height={80}
+                  width={56}
+                  height={56}
                   className="w-full h-full object-cover"
                 />
               </div>
 
               {/* Main showcase image */}
-              <div className="relative rounded-3xl overflow-hidden shadow-2xl w-full max-w-md sm:max-w-lg lg:max-w-2xl">
+              <div className="relative rounded-3xl overflow-hidden shadow-2xl w-full">
                 <Image
                   src="/backgrounds/rm-1.jpg"
                   alt="Rick & Morty Style"
                   width={700}
-                  height={500}
-                  className="w-full object-cover aspect-video sm:aspect-auto"
+                  height={480}
+                  className="w-full object-cover"
                   priority
                 />
                 <div className="absolute bottom-0 left-0 right-0 px-5 py-4 bg-black/40">
-                  <span className="text-white font-bold text-sm sm:text-base">Rick &amp; Morty Style</span>
+                  <span className="text-white font-bold text-sm">Rick &amp; Morty Style</span>
                 </div>
               </div>
 
               {/* +1000 clientes badge */}
-              <div className="absolute -bottom-4 -right-4 sm:-bottom-6 sm:-right-6 bg-primary rounded-2xl px-5 py-4 shadow-xl">
-                <p className="font-black text-2xl sm:text-3xl text-secondary leading-none">+1000</p>
-                <p className="text-xs sm:text-sm text-secondary font-medium mt-1">clientes</p>
+              <div className="absolute bottom-0 right-0 bg-primary rounded-2xl px-5 py-4 shadow-xl">
+                <p className="font-black text-2xl text-secondary leading-none">+1000</p>
+                <p className="text-xs text-secondary font-bold mt-1">clientes</p>
               </div>
             </div>
           </div>

@@ -11,7 +11,7 @@ function Navbar() {
   const { t } = useLanguage();
 
   return (
-    <nav className="sticky top-0 z-50 bg-cream border-b-2 border-secondary">
+    <nav className="sticky top-0 z-50 bg-white border-b-2 border-secondary">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <Logo href="/" size="md" variant="dark" />
@@ -20,7 +20,7 @@ function Navbar() {
             <LanguageSwitcher />
             <Link
               href="/studio"
-              className="bg-secondary px-5 py-2.5 text-sm font-bold text-white hover:bg-secondary-light transition-colors"
+              className="bg-secondary rounded-lg px-5 py-2.5 text-sm font-black text-white hover:bg-secondary-light transition-colors shadow-sm"
             >
               {t.nav.create}
             </Link>
