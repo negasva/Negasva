@@ -18,8 +18,8 @@ export default function Home() {
       <Navbar />
 
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-white pt-16 pb-24">
-        <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <section className="relative overflow-hidden bg-white min-h-[calc(100vh-64px)] flex items-center">
+        <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 w-full">
           <div className="grid md:grid-cols-2 gap-12 items-center">
             {/* Left: Text */}
             <div>
