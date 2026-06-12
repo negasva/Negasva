@@ -180,13 +180,12 @@ export default function StudioPage() {
     if (step === 1) return !!selected.style;
     if (step === 2) return !!selected.bodyType;
     if (step === 3) return !!selected.background;
-    if (step === 4) return true;
-    if (step === 5) return selected.photos.length >= selected.peopleCount;
+    if (step === 4) return selected.photos.length >= selected.peopleCount;
     return true;
   };
 
   const nextStep = async () => {
-    if (step < 5) { setStep(step + 1); return; }
+    if (step < 4) { setStep(step + 1); return; }
 
     const params = {
       style: selected.style,
@@ -223,9 +222,9 @@ export default function StudioPage() {
       return;
     }
 
-    // Stripe: embedded checkout (step 6)
+    // Stripe: embedded checkout (paso 5)
     setCheckoutParams(params);
-    setStep(6);
+    setStep(5);
   };
 
   const fetchClientSecret = useCallback(async () => {
@@ -395,8 +394,8 @@ export default function StudioPage() {
         </div>
       </nav>
 
-      {/* Progress (hidden on payment step) */}
-      <div className={`bg-white border-b-2 border-primary-lighter w-full overflow-x-hidden ${step === 6 ? 'hidden' : ''}`}>
+      {/* Progress */}
+      <div className="bg-white border-b-2 border-primary-lighter w-full overflow-x-hidden">
         <div className="mx-auto max-w-6xl px-4 py-4 flex justify-center">
           <div className="flex items-center gap-1 sm:gap-3">
             {STEPS.map((label, i) => (
@@ -428,9 +427,9 @@ export default function StudioPage() {
 
       {/* Content */}
       <main className="mx-auto max-w-6xl px-4 py-8 w-full overflow-x-hidden">
-        <div className={`${step > 1 && step < 6 ? 'lg:grid lg:grid-cols-3 lg:gap-8' : ''}`}>
+        <div className={`${step > 1 && step < 5 ? 'lg:grid lg:grid-cols-3 lg:gap-8' : ''}`}>
           {/* Main step content */}
-          <div className={step > 1 && step < 6 ? 'lg:col-span-2' : ''}>
+          <div className={step > 1 && step < 5 ? 'lg:col-span-2' : ''}>
 
             {/* PASO 1: Estilo */}
             {step === 1 && (
@@ -782,18 +781,11 @@ export default function StudioPage() {
                       <p className="text-xs text-red-500 font-bold mt-2">Código inválido o expirado.</p>
                     )}
                   </div>
-                </div>
-              </div>
-            )}
 
-            {/* PASO 5: Fotos */}
-            {step === 5 && (
-              <div>
-                <div className="text-center mb-10">
-                  <h1 className="font-black text-4xl text-secondary mb-3 tracking-tighter">{t.studio.step5.title}</h1>
-                  <p className="text-lg text-secondary-lighter">{t.studio.step5.subtitle}</p>
-                </div>
-                <div className="max-w-2xl mx-auto">
+                  {/* Fotos — mismo paso que los detalles */}
+                  <hr className="my-8 border-primary-lighter border-t-2" />
+                  <h2 className="font-black text-2xl text-secondary mb-2 tracking-tighter">{t.studio.step5.title}</h2>
+                  <p className="text-secondary-lighter mb-5">{t.studio.step5.subtitle}</p>
                   <div className="rounded-2xl border-2 border-dashed border-primary-lighter bg-white p-12 text-center hover:border-primary hover:bg-primary-lighter transition-all cursor-pointer">
                     <p className="font-bold text-secondary mb-2">{t.studio.step5.drag}</p>
                     <p className="text-secondary-lighter mb-6">{t.studio.step5.or}</p>
@@ -814,8 +806,8 @@ export default function StudioPage() {
               </div>
             )}
 
-            {/* PASO 6: Embedded Checkout */}
-            {step === 6 && checkoutParams && (
+            {/* PASO 5: Embedded Checkout */}
+            {step === 5 && checkoutParams && (
               <div>
                 <div className="text-center mb-8">
                   <h1 className="font-black text-3xl text-secondary mb-2 tracking-tighter">Pago seguro</h1>
@@ -840,15 +832,15 @@ export default function StudioPage() {
                   </div>
                 </div>
                 <div className="mt-6 text-center">
-                  <button onClick={() => setStep(5)} className="text-secondary-lighter hover:text-primary text-sm font-bold transition-colors">
+                  <button onClick={() => setStep(4)} className="text-secondary-lighter hover:text-primary text-sm font-bold transition-colors">
                     Volver al paso anterior
                   </button>
                 </div>
               </div>
             )}
 
-            {/* Navigation (steps 1–5 only) */}
-            {step < 6 && (
+            {/* Navigation (pasos 1–4) */}
+            {step < 5 && (
               <>
                 <div className="flex justify-between items-center mt-14">
                   <button
@@ -870,7 +862,7 @@ export default function StudioPage() {
                       {checkoutLoading && (
                         <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
                       )}
-                      {step === 5 ? t.studio.nav.checkout : t.studio.nav.next}
+                      {step === 4 ? t.studio.nav.checkout : t.studio.nav.next}
                     </button>
                   )}
                 </div>
@@ -883,7 +875,7 @@ export default function StudioPage() {
           </div>
 
           {/* Sidebar: Order Summary */}
-          {step > 1 && step < 6 && (
+          {step > 1 && step < 5 && (
             <div className="hidden lg:block">
               <OrderSummary />
             </div>

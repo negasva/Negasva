@@ -4,7 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { ChevronRight, ChevronDown, Palette, Upload, Sparkles, Check } from 'lucide-react';
+import { ChevronRight, ChevronDown, Palette, Users, Image as ImageIcon, Camera, Sparkles } from 'lucide-react';
 import { useLanguage } from '@/lib/i18n/LanguageContext';
 import { useCurrency } from '@/lib/currency/CurrencyContext';
 import { cachedFetchJSON } from '@/lib/cache/clientCache';
@@ -38,9 +38,11 @@ const DEFAULT_CONFIG: LandingConfig = {
     cta_secondary_es: 'Ver cómo funciona', cta_secondary_en: 'See how it works',
   },
   how_it_works: [
-    { step: 1, icon: 'palette', title_es: 'Elige tu estilo', title_en: 'Choose your style', desc_es: 'Rick y Morty, Simpsons, Gravity Falls y más', desc_en: 'Rick and Morty, Simpsons, Gravity Falls and more' },
-    { step: 2, icon: 'upload', title_es: 'Sube tu foto', title_en: 'Upload your photo', desc_es: 'Una foto clara de frente es todo lo que necesitas', desc_en: 'A clear front-facing photo is all you need' },
-    { step: 3, icon: 'sparkles', title_es: 'Recibe tu retrato', title_en: 'Receive your portrait', desc_es: 'En 48 horas en tu correo, listo para imprimir', desc_en: 'In 48 hours to your email, print-ready' },
+    { step: 1, icon: 'palette', title_es: 'Elige tu estilo', title_en: 'Choose your style', desc_es: 'Rick & Morty, Simpsons, Gravity Falls, Padrinos Mágicos y más', desc_en: 'Rick & Morty, Simpsons, Gravity Falls, Fairly OddParents and more' },
+    { step: 2, icon: 'users', title_es: 'Elige tus personajes', title_en: 'Choose your characters', desc_es: 'Selecciona cuántas personas y si quieres retrato de torso o cuerpo completo', desc_en: 'Select how many people and whether you want a torso or full-body portrait' },
+    { step: 3, icon: 'image', title_es: 'Elige el fondo', title_en: 'Choose the background', desc_es: 'Fondos temáticos del estilo elegido, fondo personalizado o sin fondo', desc_en: 'Themed backgrounds from your chosen style, a custom background, or none' },
+    { step: 4, icon: 'camera', title_es: 'Sube tus fotos e indicaciones', title_en: 'Upload your photos & instructions', desc_es: 'Cuéntanos poses, orden y detalles. Sube una foto clara de cada persona', desc_en: 'Tell us poses, order and details. Upload a clear photo of each person' },
+    { step: 5, icon: 'sparkles', title_es: 'Recibe tu retrato', title_en: 'Receive your portrait', desc_es: 'En 48 horas recibes tu ilustración digital lista para imprimir y compartir', desc_en: 'In 48 hours you get your digital illustration, ready to print and share' },
   ],
   gallery_images: [
     { url: '/backgrounds/rm-1.jpg', caption: 'Rick & Morty' },
@@ -57,15 +59,13 @@ const DEFAULT_CONFIG: LandingConfig = {
   ],
 };
 
-const STYLE_CHIPS = [
-  { id: 'rick-morty', name: 'Rick & Morty' },
-  { id: 'simpsons', name: 'Los Simpsons' },
-  { id: 'gravity-falls', name: 'Gravity Falls' },
-  { id: 'fairly-odd', name: 'Padrinos Mágicos' },
-  { id: 'negasva', name: 'NEGASVA' },
-];
-
-const STEP_ICONS: Record<string, typeof Palette> = { palette: Palette, upload: Upload, sparkles: Sparkles };
+const STEP_ICONS: Record<string, typeof Palette> = {
+  palette: Palette,
+  users: Users,
+  image: ImageIcon,
+  camera: Camera,
+  sparkles: Sparkles,
+};
 
 const fadeUp = {
   hidden: { opacity: 0, y: 32 },
@@ -78,7 +78,6 @@ export default function Home() {
   const es = lang !== 'en';
 
   const [config, setConfig] = useState<LandingConfig>(DEFAULT_CONFIG);
-  const [selectedStyle, setSelectedStyle] = useState('');
 
   useEffect(() => {
     cachedFetchJSON<Partial<LandingConfig>>('/api/landing-config')
@@ -86,12 +85,7 @@ export default function Home() {
       .catch(() => null);
   }, []);
 
-  const selectStyle = (id: string) => {
-    setSelectedStyle(id);
-    try { sessionStorage.setItem('preselected_style', id); } catch { /* sessionStorage no disponible */ }
-  };
-
-  const orderHref = selectedStyle ? `/order?style=${selectedStyle}` : '/order';
+  const orderHref = '/order';
   const hero = config.hero;
   const heroImage = config.gallery_images[0]?.url ?? '/backgrounds/rm-1.jpg';
   const pick = (esVal: string, enVal: string) => (es ? esVal : enVal);
@@ -154,7 +148,7 @@ export default function Home() {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-5">
             {config.how_it_works.map((s, i) => {
               const Icon = STEP_ICONS[s.icon] ?? Sparkles;
               return (
@@ -165,62 +159,16 @@ export default function Home() {
                   whileInView="visible"
                   viewport={{ once: true, margin: '-80px' }}
                   variants={fadeUp}
-                  className="p-6 bg-white rounded-2xl border-2 border-primary-lighter hover:border-primary transition-colors flex flex-col"
+                  className="p-6 bg-white rounded-2xl border-2 border-primary-lighter hover:border-primary transition-colors"
                 >
                   <div className="flex items-center gap-3 mb-4">
-                    <div className="w-12 h-12 rounded-full bg-primary text-white font-black text-xl flex items-center justify-center shadow-lg flex-shrink-0">
+                    <div className="w-11 h-11 rounded-full bg-primary text-white font-black text-lg flex items-center justify-center shadow-lg flex-shrink-0">
                       {s.step}
                     </div>
                     <Icon className="w-6 h-6 text-primary" />
                   </div>
-                  <h3 className="font-black text-2xl text-secondary mb-2">{pick(s.title_es, s.title_en)}</h3>
-                  <p className="text-secondary-lighter mb-5">{pick(s.desc_es, s.desc_en)}</p>
-
-                  {/* Paso 1: selector de estilo en vivo */}
-                  {s.step === 1 && (
-                    <div className="flex flex-wrap gap-2 mt-auto">
-                      {STYLE_CHIPS.map((style) => (
-                        <button
-                          key={style.id}
-                          onClick={() => selectStyle(style.id)}
-                          className={`px-3 py-2 rounded-full text-sm font-bold border-2 transition-all ${
-                            selectedStyle === style.id
-                              ? 'border-primary bg-primary text-white'
-                              : 'border-primary-lighter text-secondary hover:border-primary'
-                          }`}
-                        >
-                          {selectedStyle === style.id && <Check className="w-3.5 h-3.5 inline mr-1 -mt-0.5" />}
-                          {style.name}
-                        </button>
-                      ))}
-                    </div>
-                  )}
-
-                  {/* Paso 2: zona de subida → lleva al wizard */}
-                  {s.step === 2 && (
-                    <Link
-                      href={orderHref}
-                      className="mt-auto flex flex-col items-center justify-center gap-2 border-2 border-dashed border-primary rounded-xl py-8 px-4 text-center hover:bg-primary-lighter/40 transition-colors"
-                    >
-                      <Upload className="w-8 h-8 text-primary" />
-                      <span className="font-bold text-secondary text-sm">
-                        {es ? 'Arrastra tu foto aquí' : 'Drag your photo here'}
-                      </span>
-                      <span className="text-xs text-secondary-lighter">
-                        {es ? 'o haz clic para empezar' : 'or click to start'}
-                      </span>
-                    </Link>
-                  )}
-
-                  {/* Paso 3: ejemplo de resultado */}
-                  {s.step === 3 && (
-                    <div className="mt-auto relative rounded-xl overflow-hidden h-40">
-                      <Image src={heroImage} alt={pick(s.title_es, s.title_en)} fill className="object-cover" />
-                      <span className="absolute bottom-2 left-2 bg-primary text-white text-xs font-black px-3 py-1.5 rounded-full">
-                        48h · {es ? 'Listo para imprimir' : 'Print-ready'}
-                      </span>
-                    </div>
-                  )}
+                  <h3 className="font-black text-lg text-secondary mb-2 leading-tight">{pick(s.title_es, s.title_en)}</h3>
+                  <p className="text-secondary-lighter text-sm leading-relaxed">{pick(s.desc_es, s.desc_en)}</p>
                 </motion.div>
               );
             })}
@@ -231,12 +179,6 @@ export default function Home() {
               {es ? 'Empezar ahora' : 'Start now'}
               <ChevronRight className="w-5 h-5" />
             </Link>
-            {selectedStyle && (
-              <p className="text-sm text-secondary-lighter mt-3">
-                {es ? 'Estilo seleccionado: ' : 'Selected style: '}
-                <span className="font-bold text-primary">{STYLE_CHIPS.find(c => c.id === selectedStyle)?.name}</span>
-              </p>
-            )}
           </div>
         </div>
       </section>

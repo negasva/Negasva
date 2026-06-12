@@ -90,7 +90,7 @@ export const translations = {
       },
     },
     studio: {
-      steps: ['Style', 'Body', 'Background', 'Details', 'Photos'],
+      steps: ['Style', 'Body', 'Background', 'Details & Photos', 'Payment'],
       step1: {
         title: 'Choose Your Style',
         subtitle: 'Which cartoon universe do you want to appear in',
@@ -110,8 +110,8 @@ export const translations = {
         subtitle: 'Select the scene for your portrait',
       },
       step4: {
-        title: 'Final Details',
-        subtitle: 'Add special notes for your portrait',
+        title: 'Details & Your Photos',
+        subtitle: 'Tell us how you want your portrait and upload your photos',
         notes_label: 'Special notes',
         notes_optional: '(optional)',
         notes_placeholder: 'E.g.: I want them wearing a hat, change hair color to blonde, include pet, special accessories...',
@@ -374,7 +374,7 @@ export const translations = {
       },
     },
     studio: {
-      steps: ['Estilo', 'Cuerpo', 'Fondo', 'Detalles', 'Fotos'],
+      steps: ['Estilo', 'Cuerpo', 'Fondo', 'Detalles y fotos', 'Pago'],
       step1: {
         title: 'Elige tu Estilo',
         subtitle: 'En qué universo de caricatura quieres verte',
@@ -394,8 +394,8 @@ export const translations = {
         subtitle: 'Selecciona el escenario para tu retrato',
       },
       step4: {
-        title: 'Detalles Finales',
-        subtitle: 'Agrega notas especiales para tu retrato',
+        title: 'Detalles y tus Fotos',
+        subtitle: 'Cuéntanos cómo quieres tu retrato y sube tus fotos',
         notes_label: 'Notas especiales',
         notes_optional: '(opcional)',
         notes_placeholder: 'Ej: Quiero que lleve sombrero, cambiar color de cabello a rubio, incluir mascota, accesorios especiales...',
@@ -658,7 +658,7 @@ export const translations = {
       },
     },
     studio: {
-      steps: ['Style', 'Corps', 'Fond', 'Détails', 'Photos'],
+      steps: ['Style', 'Corps', 'Fond', 'Détails et photos', 'Paiement'],
       step1: {
         title: 'Choisissez Votre Style',
         subtitle: 'Dans quel univers de dessin animé voulez-vous apparaître',
@@ -678,8 +678,8 @@ export const translations = {
         subtitle: 'Sélectionnez la scène pour votre portrait',
       },
       step4: {
-        title: 'Détails Finaux',
-        subtitle: 'Ajoutez des notes spéciales pour votre portrait',
+        title: 'Détails et vos Photos',
+        subtitle: 'Dites-nous comment vous voulez votre portrait et téléchargez vos photos',
         notes_label: 'Notes spéciales',
         notes_optional: '(optionnel)',
         notes_placeholder: 'Ex: Je veux qu\'il porte un chapeau, changer la couleur des cheveux en blond, inclure un animal, accessoires spéciaux...',
