@@ -6,13 +6,16 @@ export default function InstagramFloat() {
   const pathname = usePathname();
   if (pathname.startsWith('/admin')) return null;
 
+  // En la landing el sticky CTA ocupa la parte inferior en mobile.
+  const aboveStickyCta = pathname === '/' ? 'bottom-24 md:bottom-5' : 'bottom-5';
+
   return (
     <a
       href="https://instagram.com/negasva"
       target="_blank"
       rel="noopener noreferrer"
       aria-label="Escríbenos por Instagram @negasva"
-      className="fixed bottom-5 right-5 z-50 flex items-center gap-2 rounded-full bg-gradient-to-br from-[#feda75] via-[#d62976] to-[#4f5bd5] px-4 py-3 text-white shadow-xl hover:scale-105 active:scale-95 transition-transform"
+      className={`fixed ${aboveStickyCta} right-5 z-50 flex items-center gap-2 rounded-full bg-gradient-to-br from-[#feda75] via-[#d62976] to-[#4f5bd5] px-4 py-3 text-white shadow-xl hover:scale-105 active:scale-95 transition-transform`}
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"
