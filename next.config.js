@@ -71,7 +71,7 @@ const nextConfig = {
         // are intentionally excluded so the per-route `Cache-Control` headers
         // they set (s-maxage + stale-while-revalidate) survive and get cached
         // by the CDN — fetched from the database once, then served from cache.
-        source: '/api/:path(admin|checkout|track|newsletter|webhooks)/:rest*',
+        source: '/api/:path(admin|checkout|track|newsletter|webhooks|keepalive)/:rest*',
         headers: [{ key: 'Cache-Control', value: 'no-store, max-age=0' }],
       },
       {

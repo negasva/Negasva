@@ -29,6 +29,38 @@ To learn more about Next.js, take a look at the following resources:
 
 You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
+## Environment variables
+
+Copy `.env.example` to `.env.local` and fill in the values. Server-only
+secrets (no `NEXT_PUBLIC_` prefix) must never be exposed to the browser.
+
+## Keeping Supabase awake (free tier)
+
+Supabase pauses free projects after ~7 days of inactivity. To avoid that
+without upgrading to Pro, this app exposes a server-side keep-alive endpoint
+that runs a real read query against the database:
+
+```
+GET /api/keepalive
+```
+
+- It uses the **service role key** (server-only) to run an authentic
+  `SELECT` against the existing `prices` table — no inserts, no side effects.
+- It responds `200 { "ok": true, ... }` only if the Supabase query actually
+  succeeded; on failure it returns `503 { "ok": false }`.
+- Responses are `Cache-Control: no-store`, so every ping truly hits the DB.
+
+### Setup
+
+1. In your hosting provider (Vercel), set `SUPABASE_SERVICE_ROLE_KEY`
+   (and optionally `KEEPALIVE_SECRET`) as environment variables.
+2. Create an **UptimeRobot** HTTP(s) monitor:
+   - **URL:** `https://<your-domain>/api/keepalive`
+     (if you set `KEEPALIVE_SECRET`, append `?token=<your-secret>`)
+   - **Interval:** every 5–15 minutes (well within the free plan).
+   - UptimeRobot treats `200 OK` as "up", so it keeps pinging and the
+     project stays active.
+
 ## Deploy on Vercel
 
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
