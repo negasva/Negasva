@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Check } from 'lucide-react';
+import { cachedFetchJson, TTL } from '@/lib/cache/clientCache';
 import { useLanguage } from '@/lib/i18n/LanguageContext';
 import Navbar from '@/components/Navbar';
 import PageFooter from '@/components/PageFooter';
@@ -19,8 +20,7 @@ export default function PreciosPage() {
   const [packages, setPackages] = useState<PackageItem[]>([]);
 
   useEffect(() => {
-    fetch('/api/packages')
-      .then((r) => r.json())
+    cachedFetchJson<PackageItem[]>('/api/packages', { ttlMs: TTL.catalog })
       .then((data) => { if (Array.isArray(data)) setPackages(data); })
       .catch(() => {});
   }, []);

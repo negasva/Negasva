@@ -1,6 +1,9 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import { readCache, writeCache, TTL } from '@/lib/cache/clientCache';
+
+const RATES_CACHE_KEY = 'rates';
 
 export type Currency = 'USD' | 'EUR' | 'GBP' | 'MXN' | 'CAD' | 'COP';
 
@@ -63,9 +66,20 @@ export function CurrencyProvider({ children }: { children: React.ReactNode }) {
       if (geo && CURRENCIES.includes(geo)) setCurrencyState(geo);
     }
 
+    // Reuse rates stored on a previous page/visit; only hit the network
+    // once per hour. Falls through to a fresh fetch on a cache miss.
+    const cached = readCache<Record<string, number>>(RATES_CACHE_KEY);
+    if (cached) {
+      setRates((prev) => ({ ...prev, ...cached }));
+      return;
+    }
+
     fetch('/api/rates')
       .then((r) => r.json())
-      .then((data) => setRates((prev) => ({ ...prev, ...data })))
+      .then((data) => {
+        setRates((prev) => ({ ...prev, ...data }));
+        writeCache(RATES_CACHE_KEY, data, TTL.rates);
+      })
       .catch(() => {});
   }, []);
 

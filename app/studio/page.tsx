@@ -9,6 +9,7 @@ import Logo from '@/components/Logo';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
 import { useLanguage } from '@/lib/i18n/LanguageContext';
 import { useCurrency } from '@/lib/currency/CurrencyContext';
+import { cachedFetchJson, TTL } from '@/lib/cache/clientCache';
 import CurrencySwitcher from '@/components/CurrencySwitcher';
 import { loadStripe } from '@stripe/stripe-js';
 import { EmbeddedCheckout, EmbeddedCheckoutProvider } from '@stripe/react-stripe-js';
@@ -84,9 +85,8 @@ export default function StudioPage() {
   const [styles, setStyles] = useState<{ id: string; name: string }[]>(FALLBACK_STYLES);
 
   useEffect(() => {
-    fetch('/api/styles')
-      .then(r => r.ok ? r.json() : null)
-      .then((data: Array<{ slug: string; name: string }> | null) => {
+    cachedFetchJson<Array<{ slug: string; name: string }>>('/api/styles', { ttlMs: TTL.catalog })
+      .then((data) => {
         if (data && data.length > 0) {
           setStyles(data.map(s => ({ id: s.slug, name: s.name })));
         }
@@ -96,9 +96,11 @@ export default function StudioPage() {
 
   useEffect(() => {
     if (!selected.style || selected.style === 'negasva' || selected.style === 'custom') return;
-    fetch(`/api/backgrounds?style=${selected.style}`)
-      .then(r => r.ok ? r.json() : null)
-      .then((data: Array<{ id: string; name: string; image_url: string }> | null) => {
+    cachedFetchJson<Array<{ id: string; name: string; image_url: string }>>(
+      `/api/backgrounds?style=${selected.style}`,
+      { ttlMs: TTL.catalog },
+    )
+      .then((data) => {
         if (data && data.length > 0) {
           setDynamicBgs(prev => ({
             ...prev,
