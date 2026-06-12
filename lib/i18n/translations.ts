@@ -7,7 +7,7 @@ export const translations = {
       menu: 'Menu',
     },
     footer: {
-      rights: '© 2024 NEGASVA. All rights reserved.',
+      rights: '© 2026 NEGASVA. All rights reserved.',
       product: 'Product',
       company: 'Company',
       legal: 'Legal',
@@ -291,7 +291,7 @@ export const translations = {
       menu: 'Menú',
     },
     footer: {
-      rights: '© 2024 NEGASVA. Todos los derechos reservados.',
+      rights: '© 2026 NEGASVA. Todos los derechos reservados.',
       product: 'Producto',
       company: 'Empresa',
       legal: 'Legal',
@@ -575,7 +575,7 @@ export const translations = {
       menu: 'Menu',
     },
     footer: {
-      rights: '© 2024 NEGASVA. Tous droits réservés.',
+      rights: '© 2026 NEGASVA. Tous droits réservés.',
       product: 'Produit',
       company: 'Entreprise',
       legal: 'Légal',

@@ -16,7 +16,7 @@ function PageFooter({ minimal = false }: PageFooterProps) {
     return (
       <footer className="bg-secondary py-12 px-4">
         <div className="mx-auto max-w-7xl text-center">
-          <p className="text-sm text-cream/50">{t.footer.rights}</p>
+          <p className="text-sm text-white/50">{t.footer.rights}</p>
         </div>
       </footer>
     );
