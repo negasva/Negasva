@@ -30,12 +30,22 @@ export async function GET(request: Request) {
   const rl = rateLimitByIp(request, { prefix: 'keepalive', max: 30, windowMs: 60_000 });
   if (rl) return rl;
 
-  // Optional shared-secret gate.
+  // Optional shared-secret gate. A request is authorized if any of:
+  //  - no KEEPALIVE_SECRET is configured (endpoint open), or
+  //  - it carries the matching token (?token= or x-keepalive-token), or
+  //  - it is an authenticated Vercel Cron invocation. Vercel sends
+  //    `Authorization: Bearer <CRON_SECRET>` automatically when CRON_SECRET
+  //    is set, so the scheduled job works even with KEEPALIVE_SECRET on.
   const secret = process.env.KEEPALIVE_SECRET;
   if (secret) {
     const { searchParams } = new URL(request.url);
     const provided = searchParams.get('token') || request.headers.get('x-keepalive-token');
-    if (provided !== secret) {
+
+    const cronSecret = process.env.CRON_SECRET;
+    const isVercelCron =
+      !!cronSecret && request.headers.get('authorization') === `Bearer ${cronSecret}`;
+
+    if (provided !== secret && !isVercelCron) {
       return NextResponse.json(
         { ok: false, error: 'Unauthorized' },
         { status: 401, headers: { 'Cache-Control': 'no-store' } },

@@ -50,10 +50,26 @@ GET /api/keepalive
   succeeded; on failure it returns `503 { "ok": false }`.
 - Responses are `Cache-Control: no-store`, so every ping truly hits the DB.
 
-### Setup
+There are **two independent triggers** keeping the project awake, so it stays
+active even if one of them fails:
 
-1. In your hosting provider (Vercel), set `SUPABASE_SERVICE_ROLE_KEY`
-   (and optionally `KEEPALIVE_SECRET`) as environment variables.
+#### 1. Vercel Cron (self-contained, no third party)
+
+`vercel.json` defines a daily cron that calls `/api/keepalive` automatically:
+
+```json
+"crons": [{ "path": "/api/keepalive", "schedule": "0 6 * * *" }]
+```
+
+Once a day is well within Supabase's ~7-day window. Nothing to set up beyond
+deploying — Vercel runs it. If you set `KEEPALIVE_SECRET`, also set
+`CRON_SECRET` so Vercel's cron can authenticate (it sends
+`Authorization: Bearer <CRON_SECRET>` automatically).
+
+#### 2. UptimeRobot (external monitor — optional, extra safety)
+
+1. In Vercel, set `SUPABASE_SERVICE_ROLE_KEY`
+   (and optionally `KEEPALIVE_SECRET` / `CRON_SECRET`).
 2. Create an **UptimeRobot** HTTP(s) monitor:
    - **URL:** `https://<your-domain>/api/keepalive`
      (if you set `KEEPALIVE_SECRET`, append `?token=<your-secret>`)
