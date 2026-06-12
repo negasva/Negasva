@@ -4,7 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { ChevronRight, ChevronDown, Palette, Users, Image as ImageIcon, Camera, Sparkles } from 'lucide-react';
+import { ChevronRight, ChevronDown, Palette, Users, Image as ImageIcon, Camera, Sparkles, Tag } from 'lucide-react';
 import { useLanguage } from '@/lib/i18n/LanguageContext';
 import { useCurrency } from '@/lib/currency/CurrencyContext';
 import { cachedFetchJSON } from '@/lib/cache/clientCache';
@@ -34,7 +34,7 @@ const DEFAULT_CONFIG: LandingConfig = {
     headline_highlight_es: 'Animado', headline_highlight_en: 'Animated',
     subheadline_es: 'Transforma tu foto en un personaje de caricatura icónico. Rick y Morty, Gravity Falls, Los Simpsons y más.',
     subheadline_en: 'Turn your photo into an iconic cartoon character. Rick and Morty, Gravity Falls, The Simpsons and more.',
-    cta_primary_es: 'Crear mi retrato', cta_primary_en: 'Create my portrait',
+    cta_primary_es: 'Pedir mi retrato', cta_primary_en: 'Order my portrait',
     cta_secondary_es: 'Ver cómo funciona', cta_secondary_en: 'See how it works',
   },
   how_it_works: [
@@ -66,6 +66,15 @@ const STEP_ICONS: Record<string, typeof Palette> = {
   camera: Camera,
   sparkles: Sparkles,
 };
+
+// Pasos visuales de "Así de fácil" — título corto + imagen de fondo.
+const HOW_STEPS = [
+  { step: 1, icon: 'palette',  img: '/backgrounds/rm-1.jpg', title_es: 'Elige tu estilo',        title_en: 'Choose your style' },
+  { step: 2, icon: 'users',    img: '/backgrounds/rm-3.jpg', title_es: '¿Cuántos personajes?',   title_en: 'How many characters?' },
+  { step: 3, icon: 'image',    img: '/backgrounds/rm-4.jpg', title_es: 'Elige el fondo',         title_en: 'Choose the background' },
+  { step: 4, icon: 'camera',   img: '/backgrounds/rm-5.jpg', title_es: 'Fotos e indicaciones',   title_en: 'Photos & instructions' },
+  { step: 5, icon: 'sparkles', img: '/backgrounds/rm-6.jpg', title_es: 'Recibe tu retrato ✨',    title_en: 'Receive your portrait ✨' },
+];
 
 const fadeUp = {
   hidden: { opacity: 0, y: 32 },
@@ -100,9 +109,25 @@ export default function Home() {
         <div className="absolute inset-0 bg-black/65" />
 
         <div className="relative z-10 max-w-4xl mx-auto px-6 py-20 text-center">
-          <span className="inline-block px-4 py-2 bg-primary-lighter rounded-full text-xs font-black text-secondary tracking-widest mb-6">
+          <span className="inline-block px-4 py-2 bg-primary-lighter rounded-full text-xs font-black text-secondary tracking-widest mb-4">
             {pick(hero.badge_es, hero.badge_en)}
           </span>
+
+          {/* Strip de precio */}
+          <motion.div
+            animate={{ scale: [1, 1.03, 1] }}
+            transition={{ duration: 2.5, repeat: Infinity }}
+            className="flex justify-center mb-6"
+          >
+            <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 rounded-full px-5 py-2.5 backdrop-blur-sm">
+              <Tag className="w-4 h-4 text-primary" />
+              <span className="text-white font-black text-sm">
+                {es ? 'Retratos desde' : 'Portraits from'} {fmt(15)}
+              </span>
+              <span className="text-gray-300 text-xs font-semibold">USD · EUR · COP ✓</span>
+            </div>
+          </motion.div>
+
           <h1 className="font-black text-5xl sm:text-7xl lg:text-8xl tracking-tighter leading-none mb-6">
             <span className="text-white block">{pick(hero.headline_es, hero.headline_en)}</span>
             <span className="text-primary block">{pick(hero.headline_highlight_es, hero.headline_highlight_en)}</span>
@@ -112,7 +137,7 @@ export default function Home() {
           </p>
           <div className="flex flex-wrap justify-center gap-3 mb-10">
             <Link href={orderHref} className="inline-flex items-center gap-2 rounded-lg bg-primary px-8 py-4 font-black text-white hover:bg-primary-dark transition-all hover:shadow-2xl text-lg">
-              {pick(hero.cta_primary_es, hero.cta_primary_en)}
+              {es ? 'Pedir mi retrato' : 'Order my portrait'}
               <ChevronRight className="w-5 h-5" />
             </Link>
             <a href="#how-it-works" className="inline-flex items-center gap-2 rounded-lg border-2 border-white px-8 py-4 font-bold text-white hover:bg-white hover:text-secondary transition-colors text-lg">
@@ -148,28 +173,56 @@ export default function Home() {
             </p>
           </div>
 
-          <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-5">
-            {config.how_it_works.map((s, i) => {
+          {/* Desktop: fila de 5 pasos con flechas · Mobile: timeline vertical */}
+          <div className="flex flex-col md:flex-row md:items-stretch md:justify-center gap-6 md:gap-0">
+            {HOW_STEPS.map((s, i) => {
               const Icon = STEP_ICONS[s.icon] ?? Sparkles;
               return (
-                <motion.div
-                  key={s.step}
-                  custom={i}
-                  initial="hidden"
-                  whileInView="visible"
-                  viewport={{ once: true, margin: '-80px' }}
-                  variants={fadeUp}
-                  className="p-6 bg-white rounded-2xl border-2 border-primary-lighter hover:border-primary transition-colors"
-                >
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="w-11 h-11 rounded-full bg-primary text-white font-black text-lg flex items-center justify-center shadow-lg flex-shrink-0">
-                      {s.step}
+                <div key={s.step} className="flex md:items-center">
+                  {/* Conector vertical en mobile */}
+                  {i > 0 && (
+                    <div className="md:hidden w-1 bg-primary-lighter rounded-full mr-4 -mt-6 mb-2" />
+                  )}
+                  <motion.div
+                    custom={i}
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ once: true, margin: '-80px' }}
+                    variants={fadeUp}
+                    className="group flex-1 md:w-48 bg-white rounded-2xl border-2 border-primary-lighter hover:border-primary transition-colors overflow-hidden"
+                  >
+                    <div className="relative h-40 overflow-hidden">
+                      <Image
+                        src={s.img}
+                        alt={pick(s.title_es, s.title_en)}
+                        fill
+                        className="object-cover transition-transform duration-300 group-hover:scale-105"
+                        sizes="(max-width: 768px) 100vw, 200px"
+                      />
+                      <div className="absolute inset-0 bg-black/35 group-hover:bg-black/15 transition-colors" />
+                      <div className="absolute top-3 left-3 w-10 h-10 rounded-full bg-primary text-white font-black text-lg flex items-center justify-center shadow-lg">
+                        {s.step}
+                      </div>
                     </div>
-                    <Icon className="w-6 h-6 text-primary" />
-                  </div>
-                  <h3 className="font-black text-lg text-secondary mb-2 leading-tight">{pick(s.title_es, s.title_en)}</h3>
-                  <p className="text-secondary-lighter text-sm leading-relaxed">{pick(s.desc_es, s.desc_en)}</p>
-                </motion.div>
+                    <div className="flex items-center gap-2 p-4">
+                      <Icon className="w-5 h-5 text-primary flex-shrink-0" />
+                      <h3 className="font-black text-lg text-secondary leading-tight">{pick(s.title_es, s.title_en)}</h3>
+                    </div>
+                  </motion.div>
+
+                  {/* Flecha entre pasos — desktop */}
+                  {i < HOW_STEPS.length - 1 && (
+                    <motion.div
+                      initial={{ opacity: 0, x: -8 }}
+                      whileInView={{ opacity: 1, x: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ delay: 0.2 + i * 0.15, duration: 0.4 }}
+                      className="hidden md:flex items-center px-1"
+                    >
+                      <ChevronRight className="w-8 h-8 text-primary" />
+                    </motion.div>
+                  )}
+                </div>
               );
             })}
           </div>

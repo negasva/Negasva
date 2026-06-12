@@ -3,7 +3,7 @@ export type Lang = 'en' | 'es' | 'fr';
 export const translations = {
   en: {
     nav: {
-      create: 'Create',
+      create: 'Order portrait',
       menu: 'Menu',
     },
     footer: {
@@ -287,7 +287,7 @@ export const translations = {
   },
   es: {
     nav: {
-      create: 'Crear',
+      create: 'Pedir retrato',
       menu: 'Menú',
     },
     footer: {
@@ -571,7 +571,7 @@ export const translations = {
   },
   fr: {
     nav: {
-      create: 'Créer',
+      create: 'Commander portrait',
       menu: 'Menu',
     },
     footer: {
