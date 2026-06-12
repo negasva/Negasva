@@ -15,15 +15,56 @@ interface PackageItem {
   final_price: number;
 }
 
+interface BodyTypeItem {
+  slug: string;
+  price_usd: number;
+}
+
+// Fallbacks if the APIs are unavailable — admin manages the real values.
+// Must match the studio/checkout fallbacks so the displayed price is what gets charged.
+const FALLBACK_BODY_PRICES: Record<string, number> = { torso_only: 25, full_body: 29.99 };
+const FALLBACK_PRICES: Record<string, number> = { background_standard: 15, background_custom: 25 };
+
+const usd = (n: number) => `$${Number.isInteger(n) ? n : n.toFixed(2)}`;
+
 export default function PreciosPage() {
   const { t } = useLanguage();
   const [packages, setPackages] = useState<PackageItem[]>([]);
+  const [bodyPrices, setBodyPrices] = useState<Record<string, number>>(FALLBACK_BODY_PRICES);
+  const [priceMap, setPriceMap] = useState<Record<string, number>>(FALLBACK_PRICES);
 
   useEffect(() => {
     cachedFetchJSON<PackageItem[]>('/api/packages')
       .then((data) => { if (Array.isArray(data)) setPackages(data); })
       .catch(() => {});
+    cachedFetchJSON<BodyTypeItem[]>('/api/body-types')
+      .then((data) => {
+        if (Array.isArray(data) && data.length > 0) {
+          setBodyPrices((prev) => {
+            const next = { ...prev };
+            for (const b of data) next[b.slug] = Number(b.price_usd);
+            return next;
+          });
+        }
+      })
+      .catch(() => {});
+    cachedFetchJSON<Array<{ key: string; amount: number }>>('/api/prices')
+      .then((data) => {
+        if (Array.isArray(data) && data.length > 0) {
+          setPriceMap((prev) => {
+            const next = { ...prev };
+            for (const p of data) next[p.key] = Number(p.amount);
+            return next;
+          });
+        }
+      })
+      .catch(() => {});
   }, []);
+
+  const torso = bodyPrices.torso_only ?? 25;
+  const full = bodyPrices.full_body ?? 29.99;
+  const bgStandard = priceMap.background_standard ?? 15;
+  const bgCustom = priceMap.background_custom ?? 25;
 
   return (
     <div className="min-h-screen bg-white">
@@ -51,7 +92,7 @@ export default function PreciosPage() {
                   <h3 className="font-bold text-lg text-secondary">{t.pricing.one_torso}</h3>
                   <p className="text-sm text-secondary-lighter mt-1">{t.pricing.one_torso_desc}</p>
                 </div>
-                <span className="font-black text-3xl text-primary">$15</span>
+                <span className="font-black text-3xl text-primary">{usd(torso)}</span>
               </div>
               <ul className="space-y-2">
                 <li className="flex items-center gap-2 text-secondary-lighter text-sm">
@@ -75,7 +116,7 @@ export default function PreciosPage() {
                   <h3 className="font-bold text-lg text-secondary">{t.pricing.one_full}</h3>
                   <p className="text-sm text-secondary-lighter mt-1">{t.pricing.one_full_desc}</p>
                 </div>
-                <span className="font-black text-3xl text-primary">$25</span>
+                <span className="font-black text-3xl text-primary">{usd(full)}</span>
               </div>
               <ul className="space-y-2">
                 <li className="flex items-center gap-2 text-secondary-lighter text-sm">
@@ -99,7 +140,7 @@ export default function PreciosPage() {
                   <h3 className="font-bold text-lg text-secondary">{t.pricing.bg}</h3>
                   <p className="text-sm text-secondary-lighter mt-1">{t.pricing.bg_desc}</p>
                 </div>
-                <span className="font-black text-3xl text-primary">+$15</span>
+                <span className="font-black text-3xl text-primary">+{usd(bgStandard)}</span>
               </div>
               <ul className="space-y-2">
                 <li className="flex items-center gap-2 text-secondary-lighter text-sm">
@@ -140,19 +181,19 @@ export default function PreciosPage() {
             <div className="space-y-4">
               <div className="flex justify-between items-center pb-4 border-b border-primary-lighter">
                 <span>{t.pricing.ex1}</span>
-                <span className="font-bold">$25</span>
+                <span className="font-bold">{usd(full)}</span>
               </div>
               <div className="flex justify-between items-center pb-4 border-b border-primary-lighter">
                 <span>{t.pricing.ex2}</span>
-                <span className="font-bold">$50</span>
+                <span className="font-bold">{usd(2 * full)}</span>
               </div>
               <div className="flex justify-between items-center pb-4 border-b border-primary-lighter">
                 <span>{t.pricing.ex3}</span>
-                <span className="font-bold">$65</span>
+                <span className="font-bold">{usd(2 * full + bgCustom)}</span>
               </div>
               <div className="flex justify-between items-center pt-4">
                 <span className="font-bold">{t.pricing.ex4}</span>
-                <span className="font-black text-2xl">$115</span>
+                <span className="font-black text-2xl">{usd(4 * full * 0.85 + bgStandard)}</span>
               </div>
             </div>
           </div>

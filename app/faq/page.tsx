@@ -1,11 +1,41 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { ChevronDown } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import PageFooter from '@/components/PageFooter';
+import { cachedFetchJSON } from '@/lib/cache/clientCache';
 
+interface ApiFaq {
+  id: string;
+  question: string;
+  answer: string;
+}
+
+// Render admin-written answers, supporting [texto](/ruta) links.
+function renderAnswer(answer: string) {
+  const parts = answer.split(/(\[[^\]]+\]\([^)]+\))/g);
+  return parts.map((part, i) => {
+    const match = part.match(/^\[([^\]]+)\]\(([^)]+)\)$/);
+    if (!match) return <span key={i}>{part}</span>;
+    const [, label, href] = match;
+    if (href.startsWith('/')) {
+      return (
+        <Link key={i} href={href} className="text-primary font-bold underline">
+          {label}
+        </Link>
+      );
+    }
+    return (
+      <a key={i} href={href} target="_blank" rel="noopener noreferrer" className="text-primary font-bold underline">
+        {label}
+      </a>
+    );
+  });
+}
+
+// Fallback if /api/faqs is unavailable — admin manages the real content
 const FAQS = [
   {
     q: '¿Cuánto tarda mi retrato?',
@@ -59,6 +89,17 @@ const FAQS = [
 
 export default function FaqPage() {
   const [open, setOpen] = useState<number | null>(0);
+  const [apiFaqs, setApiFaqs] = useState<ApiFaq[] | null>(null);
+
+  useEffect(() => {
+    cachedFetchJSON<ApiFaq[]>('/api/faqs')
+      .then((data) => { if (Array.isArray(data) && data.length > 0) setApiFaqs(data); })
+      .catch(() => {});
+  }, []);
+
+  const faqs: { q: string; a: React.ReactNode }[] = apiFaqs
+    ? apiFaqs.map((f) => ({ q: f.question, a: renderAnswer(f.answer) }))
+    : FAQS;
 
   return (
     <div className="min-h-screen bg-white">
@@ -77,7 +118,7 @@ export default function FaqPage() {
 
       <section className="py-16 px-4">
         <div className="mx-auto max-w-3xl space-y-3">
-          {FAQS.map((item, i) => {
+          {faqs.map((item, i) => {
             const isOpen = open === i;
             return (
               <div

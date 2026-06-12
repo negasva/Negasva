@@ -1,36 +1,53 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { ChevronRight } from 'lucide-react';
 import { useLanguage } from '@/lib/i18n/LanguageContext';
 import Navbar from '@/components/Navbar';
 import PageFooter from '@/components/PageFooter';
+import { cachedFetchJSON } from '@/lib/cache/clientCache';
+
+interface ApiStyle {
+  slug: string;
+  name: string;
+  description: string | null;
+}
 
 export default function EstilosPage() {
   const { t } = useLanguage();
+  const [apiStyles, setApiStyles] = useState<ApiStyle[] | null>(null);
 
-  const styles = [
-    {
-      name: 'Rick & Morty',
-      desc: t.styles.rm_desc,
-      features: [t.styles.rm_f1, t.styles.rm_f2, t.styles.rm_f3],
-    },
-    {
-      name: 'Gravity Falls',
-      desc: t.styles.gf_desc,
-      features: [t.styles.gf_f1, t.styles.gf_f2, t.styles.gf_f3],
-    },
-    {
-      name: 'The Simpsons',
-      desc: t.styles.sp_desc,
-      features: [t.styles.sp_f1, t.styles.sp_f2, t.styles.sp_f3],
-    },
-    {
-      name: 'The Fairly OddParents',
-      desc: t.styles.fo_desc,
-      features: [t.styles.fo_f1, t.styles.fo_f2, t.styles.fo_f3],
-    },
+  useEffect(() => {
+    cachedFetchJSON<ApiStyle[]>('/api/styles')
+      .then((data) => { if (Array.isArray(data) && data.length > 0) setApiStyles(data); })
+      .catch(() => {});
+  }, []);
+
+  // Translated copy for the known styles; admin-created styles fall back to
+  // their DB description.
+  const translated: Record<string, { desc: string; features: string[] }> = {
+    'rick-morty':    { desc: t.styles.rm_desc, features: [t.styles.rm_f1, t.styles.rm_f2, t.styles.rm_f3] },
+    'gravity-falls': { desc: t.styles.gf_desc, features: [t.styles.gf_f1, t.styles.gf_f2, t.styles.gf_f3] },
+    'simpsons':      { desc: t.styles.sp_desc, features: [t.styles.sp_f1, t.styles.sp_f2, t.styles.sp_f3] },
+    'fairly-odd':    { desc: t.styles.fo_desc, features: [t.styles.fo_f1, t.styles.fo_f2, t.styles.fo_f3] },
+  };
+
+  // Fallback list if the API is unavailable — admin manages the real catalog
+  const fallbackStyles = [
+    { name: 'Rick & Morty', ...translated['rick-morty'] },
+    { name: 'Gravity Falls', ...translated['gravity-falls'] },
+    { name: 'The Simpsons', ...translated['simpsons'] },
+    { name: 'The Fairly OddParents', ...translated['fairly-odd'] },
   ];
+
+  const styles = apiStyles
+    ? apiStyles.map((s) => ({
+        name: s.name,
+        desc: translated[s.slug]?.desc ?? s.description ?? '',
+        features: translated[s.slug]?.features ?? [],
+      }))
+    : fallbackStyles;
 
   return (
     <div className="min-h-screen bg-white">
@@ -62,17 +79,19 @@ export default function EstilosPage() {
                 </div>
                 <div className="p-8 bg-white">
                   <p className="text-secondary-lighter mb-6">{style.desc}</p>
-                  <div className="mb-8">
-                    <h4 className="font-bold text-secondary mb-3">{t.styles.features}</h4>
-                    <ul className="space-y-2">
-                      {style.features.map((feature) => (
-                        <li key={feature} className="flex items-center gap-2 text-secondary-lighter">
-                          <span className="w-2 h-2 rounded-full bg-primary"></span>
-                          {feature}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
+                  {style.features.length > 0 && (
+                    <div className="mb-8">
+                      <h4 className="font-bold text-secondary mb-3">{t.styles.features}</h4>
+                      <ul className="space-y-2">
+                        {style.features.map((feature) => (
+                          <li key={feature} className="flex items-center gap-2 text-secondary-lighter">
+                            <span className="w-2 h-2 rounded-full bg-primary"></span>
+                            {feature}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
                   <Link
                     href="/studio"
                     className="w-full inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-6 py-3 font-bold text-white hover:bg-primary-dark transition-colors"

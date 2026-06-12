@@ -47,6 +47,16 @@ export interface DrawingStyle {
   created_at: string;
 }
 
+export interface Faq {
+  id: string;
+  question: string;
+  answer: string;
+  sort_order: number;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
 export type OrderStatus = 'pending' | 'in_progress' | 'delivered' | 'cancelled';
 
 export interface AdminOrder {

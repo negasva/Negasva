@@ -4,6 +4,7 @@ import { z } from 'zod';
 import { errorResponse, rateLimitByIp, readJson } from '@/lib/security/apiHelpers';
 import { buildWompiCheckoutUrl, newWompiReference } from '@/lib/payments/wompi';
 import { createServiceClient } from '@/lib/supabase/server';
+import { applyDiscountCode, loadPricingConfig, recordDiscountCodeUse } from '@/lib/pricing/server';
 
 function getStripe() {
   const key = process.env.STRIPE_SECRET_KEY;
@@ -49,15 +50,27 @@ export async function POST(request: Request) {
 
   const d = parsed.data;
 
+  // Pricing comes from the admin-managed tables (prices, body_types),
+  // with hardcoded fallback only if the DB is unreachable.
+  const pricing = await loadPricingConfig();
+
   // Total in USD, then convert to local currency
-  const perPersonUsd = d.bodyType === 'full_body' ? 29.99 : 25;
+  const perPersonUsd = pricing.perPersonUsd[d.bodyType] ?? 25;
   const subtotalPeopleUsd = d.peopleCount * perPersonUsd;
   const discountRate = FAMILY_DISCOUNT(d.peopleCount);
   const afterDiscountUsd = subtotalPeopleUsd * (1 - discountRate);
-  const bgUsd = d.background === 'custom' ? 25 : (d.background && d.background !== 'none') ? 15 : 0;
+  const bgUsd = d.background === 'custom'
+    ? pricing.backgroundCustomUsd
+    : (d.background && d.background !== 'none') ? pricing.backgroundStandardUsd : 0;
   const subtotalUsd = afterDiscountUsd + bgUsd;
-  const expressUsd = d.express ? subtotalUsd * 0.3 : 0;
-  const totalUsd = subtotalUsd + expressUsd;
+  const expressUsd = d.express ? subtotalUsd * pricing.expressSurchargePct : 0;
+  const preCodeTotalUsd = subtotalUsd + expressUsd;
+
+  // Admin-managed discount codes (discount_codes table)
+  const appliedCode = d.discountCode
+    ? await applyDiscountCode(d.discountCode, preCodeTotalUsd)
+    : null;
+  const totalUsd = preCodeTotalUsd - (appliedCode?.amountUsd ?? 0);
   const totalLocal = totalUsd * d.rate;
 
   // COP has no minor units; round up to nearest 1.000 for clean prices
@@ -101,6 +114,7 @@ export async function POST(request: Request) {
       reference,
       redirectUrl: `${origin}/checkout/success?provider=wompi&ref=${encodeURIComponent(reference)}`,
     });
+    if (appliedCode) await recordDiscountCodeUse(appliedCode.code);
     return NextResponse.json({ url });
   }
 
@@ -120,6 +134,7 @@ export async function POST(request: Request) {
             `${d.bodyType === 'full_body' ? 'Full Body' : 'Torso Only'} × ${d.peopleCount}`,
             d.background !== 'none' ? `Background: ${d.background}` : null,
             d.express ? 'Express 24h delivery' : null,
+            appliedCode ? `Code: ${appliedCode.code}` : null,
             d.specialRequests ? `Notes: ${d.specialRequests.slice(0, 80)}` : null,
           ].filter(Boolean).join(' · '),
         },
@@ -134,9 +149,11 @@ export async function POST(request: Request) {
       background: d.background,
       peopleCount: String(d.peopleCount),
       express: String(d.express),
+      discountCode: appliedCode?.code ?? '',
       specialRequests: d.specialRequests.slice(0, 200),
     },
   });
 
+  if (appliedCode) await recordDiscountCodeUse(appliedCode.code);
   return NextResponse.json({ client_secret: session.client_secret });
 }
