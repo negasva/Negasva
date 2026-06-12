@@ -23,7 +23,7 @@ function Navbar() {
             <CurrencySwitcher />
             <LanguageSwitcher />
             <Link
-              href="/studio"
+              href="/order"
               className="bg-secondary rounded-lg px-5 py-2.5 text-sm font-black text-white hover:bg-secondary-light transition-colors shadow-sm"
             >
               {t.nav.create}
@@ -33,7 +33,7 @@ function Navbar() {
           {/* Mobile: primary CTA stays visible, the rest collapses into a menu */}
           <div className="flex md:hidden items-center gap-2">
             <Link
-              href="/studio"
+              href="/order"
               className="bg-secondary rounded-lg px-4 py-2 text-sm font-black text-white hover:bg-secondary-light transition-colors shadow-sm"
             >
               {t.nav.create}

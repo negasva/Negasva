@@ -34,7 +34,7 @@ export default function LoginPage() {
               />
             </div>
             <Link
-              href="/studio"
+              href="/order"
               className="block w-full rounded-lg bg-primary px-4 py-3 text-center font-bold text-white hover:bg-primary-dark transition-colors"
             >
               Entrar
@@ -48,7 +48,7 @@ export default function LoginPage() {
           </p>
           <div className="mt-6 border-t-2 border-primary-lighter pt-6">
             <Link
-              href="/studio"
+              href="/order"
               className="block w-full rounded-lg border-2 border-secondary px-4 py-3 text-center font-bold text-secondary hover:bg-secondary hover:text-white transition-colors"
             >
               Continuar sin cuenta →

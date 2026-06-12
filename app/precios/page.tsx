@@ -200,7 +200,7 @@ export default function PreciosPage() {
 
           <div className="text-center">
             <Link
-              href="/studio"
+              href="/order"
               className="inline-block rounded-lg bg-secondary px-10 py-5 font-bold text-white hover:bg-secondary-light transition-colors text-lg"
             >
               {t.pricing.cta}

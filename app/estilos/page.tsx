@@ -93,7 +93,7 @@ export default function EstilosPage() {
                     </div>
                   )}
                   <Link
-                    href="/studio"
+                    href="/order"
                     className="w-full inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-6 py-3 font-bold text-white hover:bg-primary-dark transition-colors"
                   >
                     {t.styles.cta_btn}
@@ -116,7 +116,7 @@ export default function EstilosPage() {
             {t.styles.not_sure_desc}
           </p>
           <Link
-            href="/studio"
+            href="/order"
             className="inline-flex items-center gap-2 rounded-lg bg-primary px-10 py-4 font-bold text-white hover:bg-primary-dark transition-colors"
           >
             {t.styles.explore}

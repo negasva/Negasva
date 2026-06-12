@@ -113,6 +113,20 @@ export default function StudioPage() {
   const [appliedCode, setAppliedCode] = useState<AppliedCode | null>(null);
   const [codeStatus, setCodeStatus] = useState<'idle' | 'checking' | 'invalid'>('idle');
 
+  // Preselección de estilo desde la landing (?style= o sessionStorage).
+  useEffect(() => {
+    window.scrollTo(0, 0);
+    let preselected = '';
+    try {
+      preselected = new URLSearchParams(window.location.search).get('style')
+        ?? sessionStorage.getItem('preselected_style')
+        ?? '';
+    } catch { /* no-op */ }
+    if (preselected) {
+      setSelected(prev => (prev.style ? prev : { ...prev, style: preselected }));
+    }
+  }, []);
+
   useEffect(() => {
     cachedFetchJSON<Array<{ slug: string; name: string }>>('/api/styles')
       .then((data) => {
