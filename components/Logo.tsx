@@ -17,7 +17,7 @@ function Logo({ href = '/', className = '', size = 'md', variant = 'dark' }: Log
     lg: 'text-4xl',
   };
 
-  const textClass = variant === 'light' ? 'text-cream' : 'text-secondary';
+  const textClass = variant === 'light' ? 'text-white' : 'text-secondary';
 
   const content = (
     <span className={`${sizeClasses[size]} tracking-tighter inline-block`}>
