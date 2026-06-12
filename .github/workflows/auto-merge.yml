@@ -1,0 +1,34 @@
+name: Auto-merge to main
+
+# Habilita el auto-merge nativo de GitHub en los PRs hacia `main`.
+# Cuando los checks requeridos (el job "build" de Node.js CI) pasan en verde,
+# GitHub funde el PR automáticamente con squash.
+#
+# REQUISITOS (configurar una sola vez en el repo):
+#   1. Settings → General → "Allow auto-merge"  → activado.
+#   2. Settings → Branches → branch protection rule para `main` con
+#      "Require status checks to pass" → marcar el check "build".
+# Sin (2), el auto-merge fundiría de inmediato sin esperar a CI.
+#
+# Nota: los PRs en borrador (draft) no pueden auto-fundirse. El workflow solo
+# actúa sobre PRs marcados como "ready for review".
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize, ready_for_review]
+    branches: [ "main" ]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  auto-merge:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.pull_request.draft == false }}
+    steps:
+      - name: Enable auto-merge (squash)
+        run: gh pr merge --auto --squash "$PR_URL"
+        env:
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -4,6 +4,8 @@
 
 html {
   scroll-behavior: smooth;
+  /* Prevent any element from pushing the page wider than the viewport. */
+  overflow-x: hidden;
 }
 
 body {
@@ -11,6 +13,10 @@ body {
   color: #1A1A1A;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+  /* On mobile, keep the body exactly the visible viewport width so no
+     element can accidentally trigger horizontal scrolling. */
+  max-width: 100vw;
 }
 
 @layer components {
