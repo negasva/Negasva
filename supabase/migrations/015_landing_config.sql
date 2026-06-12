@@ -21,14 +21,14 @@ INSERT INTO public.landing_config (key, value) VALUES
 ('hero', '{
   "badge_es": "✦ Ilustración digital personalizada",
   "badge_en": "✦ Custom digital illustration",
-  "headline_es": "Tu Retrato",
-  "headline_en": "Your Portrait,",
-  "headline_highlight_es": "Animado",
-  "headline_highlight_en": "Animated",
+  "headline_es": "Tu Retrato Animado",
+  "headline_en": "Your Personalized",
+  "headline_highlight_es": "Personalizado",
+  "headline_highlight_en": "Animated Portrait",
   "subheadline_es": "Transforma tu foto en un personaje de caricatura icónico. Rick y Morty, Gravity Falls, Los Simpsons y más.",
   "subheadline_en": "Turn your photo into an iconic cartoon character. Rick and Morty, Gravity Falls, The Simpsons and more.",
-  "cta_primary_es": "Crear mi retrato",
-  "cta_primary_en": "Create my portrait",
+  "cta_primary_es": "Pedir mi retrato",
+  "cta_primary_en": "Order my portrait",
   "cta_secondary_es": "Ver cómo funciona",
   "cta_secondary_en": "See how it works"
 }'::jsonb),
@@ -63,3 +63,14 @@ UPDATE public.landing_config SET value = '[
   {"step":5,"icon":"sparkles","title_es":"Recibe tu retrato","title_en":"Receive your portrait","desc_es":"En 48 horas recibes tu ilustración digital lista para imprimir y compartir","desc_en":"In 48 hours you get your digital illustration, ready to print and share"}
 ]'::jsonb, updated_at = now()
 WHERE key = 'how_it_works' AND jsonb_array_length(value) = 3;
+
+-- Si la fila hero ya existía con el titular antiguo, actualiza al nuevo.
+UPDATE public.landing_config SET value = value || '{
+  "headline_es": "Tu Retrato Animado",
+  "headline_en": "Your Personalized",
+  "headline_highlight_es": "Personalizado",
+  "headline_highlight_en": "Animated Portrait",
+  "cta_primary_es": "Pedir mi retrato",
+  "cta_primary_en": "Order my portrait"
+}'::jsonb, updated_at = now()
+WHERE key = 'hero' AND value->>'headline_highlight_es' = 'Animado';

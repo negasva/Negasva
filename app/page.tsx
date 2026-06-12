@@ -30,8 +30,8 @@ interface LandingConfig { hero: HeroConfig; how_it_works: StepConfig[]; gallery_
 const DEFAULT_CONFIG: LandingConfig = {
   hero: {
     badge_es: '✦ Ilustración digital personalizada', badge_en: '✦ Custom digital illustration',
-    headline_es: 'Tu Retrato', headline_en: 'Your Portrait,',
-    headline_highlight_es: 'Animado', headline_highlight_en: 'Animated',
+    headline_es: 'Tu Retrato Animado', headline_en: 'Your Personalized',
+    headline_highlight_es: 'Personalizado', headline_highlight_en: 'Animated Portrait',
     subheadline_es: 'Transforma tu foto en un personaje de caricatura icónico. Rick y Morty, Gravity Falls, Los Simpsons y más.',
     subheadline_en: 'Turn your photo into an iconic cartoon character. Rick and Morty, Gravity Falls, The Simpsons and more.',
     cta_primary_es: 'Pedir mi retrato', cta_primary_en: 'Order my portrait',
@@ -109,38 +109,33 @@ export default function Home() {
         <div className="absolute inset-0 bg-black/65" />
 
         <div className="relative z-10 max-w-4xl mx-auto px-6 py-20 text-center">
-          <span className="inline-block px-4 py-2 bg-primary-lighter rounded-full text-xs font-black text-secondary tracking-widest mb-4">
-            {pick(hero.badge_es, hero.badge_en)}
-          </span>
-
-          {/* Strip de precio */}
+          {/* Parche de precio */}
           <motion.div
-            animate={{ scale: [1, 1.03, 1] }}
-            transition={{ duration: 2.5, repeat: Infinity }}
-            className="flex justify-center mb-6"
+            animate={{ scale: [1, 1.05, 1], rotate: [-2, -2, -2] }}
+            transition={{ duration: 2, repeat: Infinity }}
+            className="flex justify-center mb-8"
           >
-            <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 rounded-full px-5 py-2.5 backdrop-blur-sm">
-              <Tag className="w-4 h-4 text-primary" />
-              <span className="text-white font-black text-sm">
-                {es ? 'Retratos desde' : 'Portraits from'} {fmt(15)}
+            <div className="inline-flex items-center gap-2.5 bg-primary rounded-full px-7 py-3.5 shadow-2xl shadow-primary/50 ring-4 ring-white/20 -rotate-2">
+              <Tag className="w-5 h-5 text-white" />
+              <span className="text-white font-black text-lg sm:text-xl tracking-tight">
+                {es ? 'Retratos desde' : 'Portraits from'} {fmt(20)}
               </span>
-              <span className="text-gray-300 text-xs font-semibold">USD · EUR · COP ✓</span>
             </div>
           </motion.div>
 
-          <h1 className="font-black text-5xl sm:text-7xl lg:text-8xl tracking-tighter leading-none mb-6">
+          <h1 className="font-black text-5xl sm:text-6xl lg:text-7xl xl:text-8xl tracking-tighter leading-none mb-6">
             <span className="text-white block">{pick(hero.headline_es, hero.headline_en)}</span>
             <span className="text-primary block">{pick(hero.headline_highlight_es, hero.headline_highlight_en)}</span>
           </h1>
           <p className="text-base sm:text-lg lg:text-xl text-gray-200 leading-relaxed max-w-xl mx-auto mb-8">
             {pick(hero.subheadline_es, hero.subheadline_en)}
           </p>
-          <div className="flex flex-wrap justify-center gap-3 mb-10">
-            <Link href={orderHref} className="inline-flex items-center gap-2 rounded-lg bg-primary px-8 py-4 font-black text-white hover:bg-primary-dark transition-all hover:shadow-2xl text-lg">
+          <div className="flex flex-col items-center gap-4 mb-10">
+            <Link href={orderHref} className="inline-flex items-center gap-3 rounded-xl bg-primary px-12 py-5 font-black text-white hover:bg-primary-dark transition-all hover:shadow-2xl hover:scale-105 text-xl sm:text-2xl shadow-xl shadow-primary/40">
               {es ? 'Pedir mi retrato' : 'Order my portrait'}
-              <ChevronRight className="w-5 h-5" />
+              <ChevronRight className="w-6 h-6" />
             </Link>
-            <a href="#how-it-works" className="inline-flex items-center gap-2 rounded-lg border-2 border-white px-8 py-4 font-bold text-white hover:bg-white hover:text-secondary transition-colors text-lg">
+            <a href="#how-it-works" className="inline-flex items-center gap-2 rounded-lg border border-white/60 px-5 py-2.5 font-bold text-white/90 hover:bg-white hover:text-secondary transition-colors text-sm">
               {pick(hero.cta_secondary_es, hero.cta_secondary_en)}
             </a>
           </div>
