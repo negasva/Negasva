@@ -119,34 +119,130 @@ export async function POST(request: Request) {
   }
 
   // ── Stripe embedded checkout ──────────────────────────────────────────
+  // Resolve human-readable names + images so the customer sees exactly
+  // what they're buying instead of internal UUIDs.
+  let styleName = d.style;
+  let styleImage: string | null = null;
+  let bgName = d.background === 'custom' ? 'Fondo personalizado' : d.background;
+  let bgImage: string | null = null;
+  try {
+    const supabase = createServiceClient();
+    const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    const [styleRes, bgRes] = await Promise.all([
+      supabase
+        .from('portrait_styles')
+        .select('name, example_image_url')
+        .eq(isUuid.test(d.style) ? 'id' : 'slug', d.style)
+        .maybeSingle(),
+      isUuid.test(d.background)
+        ? supabase.from('backgrounds').select('name, image_url').eq('id', d.background).maybeSingle()
+        : Promise.resolve({ data: null }),
+    ]);
+    if (styleRes.data) {
+      styleName = styleRes.data.name;
+      styleImage = styleRes.data.example_image_url;
+    }
+    if (bgRes.data) {
+      bgName = bgRes.data.name;
+      bgImage = bgRes.data.image_url;
+    }
+  } catch (err) {
+    console.error('[checkout/stripe] failed to resolve names:', err);
+  }
+
+  // Stripe needs absolute, public image URLs
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://negasva.shop';
+  const absImage = (url: string | null) => {
+    if (!url) return undefined;
+    const abs = url.startsWith('http') ? url : `${siteUrl}${url}`;
+    return abs.startsWith('https://') ? [abs] : undefined;
+  };
+
+  const bodyLabel = d.bodyType === 'full_body' ? 'Cuerpo completo' : 'Solo torso';
+
+  // Itemized lines that mirror the order summary in the wizard.
+  // Family discount is baked into the per-person price (Stripe allows a
+  // single discount per session, reserved for the promo code below).
+  const perPersonMinor = Math.round(perPersonUsd * (1 - discountRate) * d.rate * 100);
+  const bgMinor = Math.round(bgUsd * d.rate * 100);
+  const expressMinor = Math.round(expressUsd * d.rate * 100);
+
+  const lineItems: Stripe.Checkout.SessionCreateParams.LineItem[] = [
+    {
+      price_data: {
+        currency: d.currency,
+        product_data: {
+          name: `Retrato ${styleName} — ${bodyLabel}`,
+          description: discountRate > 0
+            ? `${d.peopleCount} personas · Incluye ${Math.round(discountRate * 100)}% dcto. pack familia`
+            : `${d.peopleCount} ${d.peopleCount === 1 ? 'persona' : 'personas'}`,
+          images: absImage(styleImage),
+        },
+        unit_amount: perPersonMinor,
+      },
+      quantity: d.peopleCount,
+    },
+  ];
+  if (bgMinor > 0) {
+    lineItems.push({
+      price_data: {
+        currency: d.currency,
+        product_data: {
+          name: `Fondo: ${bgName}`,
+          description: d.background === 'custom' ? 'Fondo a tu medida, descríbenos tu idea' : `Fondo temático ${styleName}`,
+          images: absImage(bgImage),
+        },
+        unit_amount: bgMinor,
+      },
+      quantity: 1,
+    });
+  }
+  if (expressMinor > 0) {
+    lineItems.push({
+      price_data: {
+        currency: d.currency,
+        product_data: {
+          name: '⚡ Entrega exprés 24h',
+          description: 'Tu retrato salta la cola y llega en 24 horas',
+        },
+        unit_amount: expressMinor,
+      },
+      quantity: 1,
+    });
+  }
+
   const stripe = getStripe();
+
+  // Promo code shown as a real Stripe discount row instead of text
+  let couponId: string | undefined;
+  if (appliedCode) {
+    const lineTotal = perPersonMinor * d.peopleCount + bgMinor + expressMinor;
+    const amountOff = Math.min(Math.round(appliedCode.amountUsd * d.rate * 100), lineTotal - 50);
+    if (amountOff > 0) {
+      const coupon = await stripe.coupons.create({
+        amount_off: amountOff,
+        currency: d.currency,
+        duration: 'once',
+        name: `Código ${appliedCode.code}`,
+      });
+      couponId = coupon.id;
+    }
+  }
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const session = await (stripe.checkout.sessions.create as any)({
     mode: 'payment',
     ui_mode: 'embedded',
     return_url: `${origin}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
-    line_items: [{
-      price_data: {
-        currency: d.currency,
-        product_data: {
-          name: `NEGASVA Portrait — ${d.style}`,
-          description: [
-            `${d.bodyType === 'full_body' ? 'Full Body' : 'Torso Only'} × ${d.peopleCount}`,
-            d.background !== 'none' ? `Background: ${d.background}` : null,
-            d.express ? 'Express 24h delivery' : null,
-            appliedCode ? `Code: ${appliedCode.code}` : null,
-            d.specialRequests ? `Notes: ${d.specialRequests.slice(0, 80)}` : null,
-          ].filter(Boolean).join(' · '),
-        },
-        unit_amount: amountMinor,
-      },
-      quantity: 1,
-    }],
+    line_items: lineItems,
+    ...(couponId ? { discounts: [{ coupon: couponId }] } : {}),
     payment_method_types: STRIPE_PAYMENT_METHODS[d.currency] ?? ['card'],
     metadata: {
       style: d.style,
+      styleName,
       bodyType: d.bodyType,
       background: d.background,
+      backgroundName: bgName,
       peopleCount: String(d.peopleCount),
       express: String(d.express),
       discountCode: appliedCode?.code ?? '',
