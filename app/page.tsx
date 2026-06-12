@@ -186,24 +186,24 @@ export default function Home() {
               <Link
                 key={style.name}
                 href="/studio"
-                className="group relative rounded-2xl overflow-hidden bg-gradient-to-br from-primary-light to-primary p-8 text-center hover:shadow-2xl transition-all hover:-translate-y-2"
+                className="group relative rounded-2xl overflow-hidden bg-primary p-8 text-center hover:shadow-2xl transition-all hover:-translate-y-2"
               >
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-20 bg-white transition-opacity"></div>
                 <div className="relative">
-                  <h4 className="font-bold text-white text-lg mb-1">{style.name}</h4>
-                  <p className="text-sm text-primary-lighter">{style.desc}</p>
+                  <h4 className="font-black text-white text-lg mb-1">{style.name}</h4>
+                  <p className="text-sm text-white font-semibold">{style.desc}</p>
                 </div>
               </Link>
             ))}
             <Link
               href="/studio"
-              className="group relative rounded-2xl overflow-hidden bg-gradient-to-br from-secondary-lighter to-secondary p-8 text-center hover:shadow-2xl transition-all hover:-translate-y-2 border-2 border-primary border-dashed"
+              className="group relative rounded-2xl overflow-hidden bg-primary p-8 text-center hover:shadow-2xl transition-all hover:-translate-y-2 border-2 border-primary border-dashed"
             >
-              <div className="absolute inset-0 opacity-0 group-hover:opacity-10 bg-primary transition-opacity"></div>
+              <div className="absolute inset-0 opacity-0 group-hover:opacity-10 bg-white transition-opacity"></div>
               <div className="relative">
-                <Sparkles className="w-6 h-6 text-primary mx-auto mb-2" />
-                <h4 className="font-bold text-white text-lg mb-1">{t.home.styles.custom_name}</h4>
-                <p className="text-sm text-gray-300">{t.home.styles.custom_desc}</p>
+                <Sparkles className="w-6 h-6 text-white mx-auto mb-2" />
+                <h4 className="font-black text-white text-lg mb-1">{t.home.styles.custom_name}</h4>
+                <p className="text-sm text-white font-semibold">{t.home.styles.custom_desc}</p>
               </div>
             </Link>
           </div>
@@ -250,13 +250,13 @@ export default function Home() {
       </section>
 
       {/* Pricing */}
-      <section className="bg-gradient-to-br from-primary-lighter via-white to-primary-lighter py-20 px-4">
+      <section className="bg-primary-lighter py-20 px-4">
         <div className="mx-auto max-w-2xl">
           <div className="text-center mb-12">
             <h2 className="font-black text-4xl md:text-5xl tracking-tighter text-secondary mb-4">
               {t.home.pricing.title}
             </h2>
-            <p className="text-lg text-secondary-lighter">{t.home.pricing.subtitle}</p>
+            <p className="text-lg text-secondary font-semibold">{t.home.pricing.subtitle}</p>
           </div>
 
           <div className="space-y-4 mb-8">
