@@ -18,75 +18,70 @@ export default function Home() {
       <Navbar />
 
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-white h-[calc(100vh-64px)] flex items-center">
-        <div className="relative mx-auto max-w-7xl w-full px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12 items-center">
-            {/* Left: Text */}
-            <div className="flex flex-col justify-center">
-              <div className="inline-block mb-5 px-4 py-2 bg-primary-lighter rounded-full w-fit">
-                <span className="text-xs font-black text-secondary tracking-widest">{t.home.hero_badge}</span>
-              </div>
-              <h1 className="font-black text-6xl sm:text-7xl lg:text-8xl tracking-tighter mb-5 leading-none">
-                <span className="text-secondary block">{t.home.title_part1}</span>
-                <span className="text-primary block">{t.home.title_part2}</span>
-              </h1>
-              <p className="text-base sm:text-lg text-secondary-lighter mb-7 leading-relaxed max-w-lg">
-                {t.home.subtitle}
-              </p>
-              <div className="flex flex-wrap gap-4 mb-7">
-                <Link href="/studio" className="inline-flex items-center gap-2 rounded-lg bg-secondary px-8 py-4 font-black text-white hover:bg-secondary-light transition-all hover:shadow-lg text-lg">
-                  {t.home.cta_primary}
-                </Link>
-                <Link href="/galeria" className="inline-flex items-center gap-2 rounded-lg border-2 border-secondary px-8 py-4 font-bold text-secondary hover:bg-secondary hover:text-white transition-colors text-lg">
-                  {t.home.cta_secondary}
-                </Link>
-              </div>
-              <div className="flex items-center gap-8">
-                <div>
-                  <span className="font-black text-secondary text-2xl">1.8M</span>
-                  <span className="text-secondary-lighter text-sm ml-2">{t.home.social_tiktok.replace('1.8M ', '').replace('1,8M ', '')}</span>
-                </div>
-                <div>
-                  <span className="font-black text-secondary text-2xl">50K</span>
-                  <span className="text-secondary-lighter text-sm ml-2">{t.home.social_instagram.replace('50K ', '')}</span>
-                </div>
-              </div>
+      <section className="relative bg-white h-[calc(100vh-64px)] overflow-hidden flex">
+        {/* Left: Text — full height, padded */}
+        <div className="flex flex-col justify-center px-8 sm:px-12 lg:px-20 xl:px-28 w-full md:w-1/2 flex-shrink-0 py-10">
+          <div className="inline-block mb-5 px-4 py-2 bg-primary-lighter rounded-full w-fit">
+            <span className="text-xs font-black text-secondary tracking-widest">{t.home.hero_badge}</span>
+          </div>
+          <h1 className="font-black text-6xl sm:text-7xl lg:text-8xl tracking-tighter mb-5 leading-none">
+            <span className="text-secondary block">{t.home.title_part1}</span>
+            <span className="text-primary block">{t.home.title_part2}</span>
+          </h1>
+          <p className="text-base sm:text-lg text-secondary-lighter mb-7 leading-relaxed max-w-md">
+            {t.home.subtitle}
+          </p>
+          <div className="flex flex-wrap gap-4 mb-7">
+            <Link href="/studio" className="inline-flex items-center gap-2 rounded-lg bg-secondary px-8 py-4 font-black text-white hover:bg-secondary-light transition-all hover:shadow-lg text-lg">
+              {t.home.cta_primary}
+            </Link>
+            <Link href="/galeria" className="inline-flex items-center gap-2 rounded-lg border-2 border-secondary px-8 py-4 font-bold text-secondary hover:bg-secondary hover:text-white transition-colors text-lg">
+              {t.home.cta_secondary}
+            </Link>
+          </div>
+          <div className="flex items-center gap-8">
+            <div>
+              <span className="font-black text-secondary text-2xl">1.8M</span>
+              <span className="text-secondary-lighter text-sm ml-2">{t.home.social_tiktok.replace('1.8M ', '').replace('1,8M ', '')}</span>
             </div>
-
-            {/* Right: Image card */}
-            <div className="relative mt-8 md:mt-0 pb-8 pr-8">
-              {/* Pig icon floating top-left */}
-              <div className="absolute -top-5 left-2 z-10 w-14 h-14 bg-primary-lighter rounded-2xl shadow-lg overflow-hidden">
-                <Image
-                  src="/pig-icon.png"
-                  alt="Negasva"
-                  width={56}
-                  height={56}
-                  className="w-full h-full object-cover"
-                />
-              </div>
-
-              {/* Main showcase image */}
-              <div className="relative rounded-3xl overflow-hidden shadow-2xl w-full">
-                <Image
-                  src="/backgrounds/rm-1.jpg"
-                  alt="Rick & Morty Style"
-                  width={800}
-                  height={560}
-                  className="w-full object-cover"
-                  priority
-                />
-                <div className="absolute bottom-0 left-0 right-0 px-5 py-4 bg-black/40">
-                  <span className="text-white font-bold text-sm">Rick &amp; Morty Style</span>
-                </div>
-              </div>
-
-              {/* +1000 clientes badge */}
-              <div className="absolute bottom-0 right-0 bg-primary rounded-2xl px-6 py-5 shadow-xl">
-                <p className="font-black text-3xl text-secondary leading-none">+1000</p>
-                <p className="text-sm text-secondary font-bold mt-1">clientes</p>
-              </div>
+            <div>
+              <span className="font-black text-secondary text-2xl">50K</span>
+              <span className="text-secondary-lighter text-sm ml-2">{t.home.social_instagram.replace('50K ', '')}</span>
             </div>
+          </div>
+        </div>
+
+        {/* Right: full-bleed image */}
+        <div className="hidden md:block flex-1 relative">
+          {/* Pig icon floating top-left */}
+          <div className="absolute top-8 left-8 z-10 w-14 h-14 bg-primary-lighter rounded-2xl shadow-lg overflow-hidden">
+            <Image
+              src="/pig-icon.png"
+              alt="Negasva"
+              width={56}
+              height={56}
+              className="w-full h-full object-cover"
+            />
+          </div>
+
+          {/* Full-height image */}
+          <Image
+            src="/backgrounds/rm-1.jpg"
+            alt="Rick & Morty Style"
+            fill
+            className="object-cover"
+            priority
+          />
+
+          {/* Label overlay */}
+          <div className="absolute bottom-0 left-0 right-0 px-6 py-5 bg-black/40 z-10">
+            <span className="text-white font-bold text-base">Rick &amp; Morty Style</span>
+          </div>
+
+          {/* +1000 clientes badge */}
+          <div className="absolute bottom-10 right-10 z-10 bg-primary rounded-2xl px-6 py-5 shadow-xl">
+            <p className="font-black text-3xl text-secondary leading-none">+1000</p>
+            <p className="text-sm text-secondary font-bold mt-1">clientes</p>
           </div>
         </div>
       </section>
