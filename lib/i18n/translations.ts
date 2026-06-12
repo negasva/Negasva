@@ -4,6 +4,7 @@ export const translations = {
   en: {
     nav: {
       create: 'Create',
+      menu: 'Menu',
     },
     footer: {
       rights: '© 2024 NEGASVA. All rights reserved.',
@@ -287,6 +288,7 @@ export const translations = {
   es: {
     nav: {
       create: 'Crear',
+      menu: 'Menú',
     },
     footer: {
       rights: '© 2024 NEGASVA. Todos los derechos reservados.',
@@ -570,6 +572,7 @@ export const translations = {
   fr: {
     nav: {
       create: 'Créer',
+      menu: 'Menu',
     },
     footer: {
       rights: '© 2024 NEGASVA. Tous droits réservés.',
