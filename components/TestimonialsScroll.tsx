@@ -24,6 +24,30 @@ const REVIEWS = [
 const row1 = REVIEWS.slice(0, 9);
 const row2 = REVIEWS.slice(6, 15);
 
+const AVATAR_GRADIENTS = [
+  'from-pink-400 to-rose-500',
+  'from-violet-400 to-purple-600',
+  'from-sky-400 to-blue-600',
+  'from-emerald-400 to-teal-600',
+  'from-amber-400 to-orange-500',
+  'from-fuchsia-400 to-pink-600',
+];
+
+function initials(name: string) {
+  return name
+    .split(' ')
+    .map((w) => w[0])
+    .slice(0, 2)
+    .join('')
+    .toUpperCase();
+}
+
+function gradientFor(name: string) {
+  let hash = 0;
+  for (let i = 0; i < name.length; i++) hash = (hash * 31 + name.charCodeAt(i)) | 0;
+  return AVATAR_GRADIENTS[Math.abs(hash) % AVATAR_GRADIENTS.length];
+}
+
 const ReviewCard = memo(function ReviewCard({ name, comment, stars }: { name: string; comment: string; stars: number }) {
   return (
     <div className="w-72 flex-shrink-0 bg-white rounded-2xl border-2 border-primary-lighter p-6 mx-3 shadow-sm">
@@ -33,7 +57,18 @@ const ReviewCard = memo(function ReviewCard({ name, comment, stars }: { name: st
         ))}
       </div>
       <p className="text-secondary-lighter text-sm mb-4 leading-relaxed">"{comment}"</p>
-      <p className="font-bold text-secondary text-sm">{name}</p>
+      <div className="flex items-center gap-3">
+        <span
+          className={`w-9 h-9 rounded-full bg-gradient-to-br ${gradientFor(name)} flex items-center justify-center text-white text-xs font-black flex-shrink-0`}
+          aria-hidden
+        >
+          {initials(name)}
+        </span>
+        <div>
+          <p className="font-bold text-secondary text-sm leading-tight">{name}</p>
+          <p className="text-[11px] text-secondary-lighter">✓ Compra verificada</p>
+        </div>
+      </div>
     </div>
   );
 });

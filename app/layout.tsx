@@ -22,9 +22,36 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: "NEGASVA - Custom Cartoon Portraits",
-  description: "Get yourself drawn as your favorite cartoon character. Rick and Morty, Gravity Falls, Simpsons & more!",
-  keywords: ["cartoon portrait", "custom art", "rick and morty", "gravity falls", "simpsons"],
+  metadataBase: new URL('https://negasva.shop'),
+  title: {
+    default: 'NEGASVA — Tu Retrato Animado Personalizado desde $20',
+    template: '%s | NEGASVA',
+  },
+  description:
+    'Transforma tu foto en un personaje de caricatura: Rick & Morty, Los Simpsons, Gravity Falls, Padrinos Mágicos y más. Entrega en 48h, desde $20 USD.',
+  keywords: [
+    'retrato animado', 'retrato personalizado', 'cartoon portrait', 'custom art',
+    'rick and morty', 'gravity falls', 'simpsons', 'regalo personalizado',
+  ],
+  alternates: { canonical: '/' },
+  openGraph: {
+    type: 'website',
+    url: 'https://negasva.shop',
+    siteName: 'NEGASVA',
+    title: 'NEGASVA — Tu Retrato Animado Personalizado desde $20',
+    description:
+      'Transforma tu foto en un personaje de caricatura icónico. Rick & Morty, Simpsons, Gravity Falls y más. Entrega en 48 horas.',
+    images: [{ url: '/backgrounds/rm-1.jpg', width: 1200, height: 630, alt: 'NEGASVA — Retratos animados personalizados' }],
+    locale: 'es_CO',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'NEGASVA — Tu Retrato Animado Personalizado desde $20',
+    description:
+      'Transforma tu foto en un personaje de caricatura icónico. Entrega en 48 horas, desde $20 USD.',
+    images: ['/backgrounds/rm-1.jpg'],
+  },
+  robots: { index: true, follow: true },
 };
 
 export default function RootLayout({
