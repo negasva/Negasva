@@ -1,6 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import { cachedFetchJSON } from '@/lib/cache/clientCache';
 
 export type Currency = 'USD' | 'EUR' | 'GBP' | 'MXN' | 'CAD' | 'COP';
 
@@ -63,8 +64,9 @@ export function CurrencyProvider({ children }: { children: React.ReactNode }) {
       if (geo && CURRENCIES.includes(geo)) setCurrencyState(geo);
     }
 
-    fetch('/api/rates')
-      .then((r) => r.json())
+    // Exchange rates change slowly; cache for an hour to match the API's own
+    // revalidation window so we only fetch them once per session.
+    cachedFetchJSON<Record<string, number>>('/api/rates', { ttlMs: 60 * 60 * 1000 })
       .then((data) => setRates((prev) => ({ ...prev, ...data })))
       .catch(() => {});
   }, []);
