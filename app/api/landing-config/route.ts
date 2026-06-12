@@ -18,8 +18,10 @@ export async function GET(request: Request) {
   const config: Record<string, unknown> = {};
   for (const row of data ?? []) config[row.key] = row.value;
 
+  // Contenido editable por el admin: no cachear en el edge para que los
+  // cambios del panel se reflejen de inmediato en la web.
   return NextResponse.json(config, {
-    headers: { 'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=300' },
+    headers: { 'Cache-Control': 'no-store, must-revalidate' },
   });
 }
 

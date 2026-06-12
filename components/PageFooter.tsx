@@ -66,7 +66,7 @@ function PageFooter({ minimal = false }: PageFooterProps) {
 
   useEffect(() => {
     if (minimal) return;
-    cachedFetchJSON<{ footer?: FooterConfig }>('/api/landing-config')
+    cachedFetchJSON<{ footer?: FooterConfig }>('/api/landing-config', { ttlMs: 0, init: { cache: 'no-store' } })
       .then((data) => {
         if (data?.footer?.columns?.length) setFooter(data.footer);
       })

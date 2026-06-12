@@ -101,7 +101,8 @@ export default function Home() {
   const [showStickyCta, setShowStickyCta] = useState(false);
 
   useEffect(() => {
-    cachedFetchJSON<Partial<LandingConfig>>('/api/landing-config')
+    // ttlMs:0 + no-store → el contenido editable del admin se ve al instante
+    cachedFetchJSON<Partial<LandingConfig>>('/api/landing-config', { ttlMs: 0, init: { cache: 'no-store' } })
       .then((data) => { if (data) setConfig({ ...DEFAULT_CONFIG, ...data }); })
       .catch(() => null);
     cachedFetchJSON<ApiFaq[]>('/api/faqs')
@@ -124,6 +125,17 @@ export default function Home() {
   const hero = config.hero;
   const heroImage = config.gallery_images[0]?.url ?? '/backgrounds/rm-1.jpg';
   const pick = (esVal: string, enVal: string) => (es ? esVal : enVal);
+
+  // Pasos visuales: títulos editables desde el admin (config.how_it_works) +
+  // imagen estática por índice. Así "Paso a paso" del panel se refleja aquí.
+  const stepsSource = config.how_it_works?.length ? config.how_it_works : DEFAULT_CONFIG.how_it_works;
+  const howSteps = stepsSource.map((s, i) => ({
+    step: s.step,
+    icon: s.icon,
+    title_es: s.title_es,
+    title_en: s.title_en,
+    img: HOW_STEPS[i]?.img ?? '/backgrounds/rm-1.jpg',
+  }));
 
   return (
     <div className="min-h-screen bg-white">
@@ -201,7 +213,7 @@ export default function Home() {
 
           {/* Desktop: fila de 5 pasos con flechas · Mobile: timeline vertical */}
           <div className="flex flex-col md:flex-row md:items-stretch md:justify-center gap-6 md:gap-0">
-            {HOW_STEPS.map((s, i) => {
+            {howSteps.map((s, i) => {
               const Icon = STEP_ICONS[s.icon] ?? Sparkles;
               return (
                 <div key={s.step} className="flex md:items-center">
@@ -237,7 +249,7 @@ export default function Home() {
                   </motion.div>
 
                   {/* Flecha entre pasos — desktop */}
-                  {i < HOW_STEPS.length - 1 && (
+                  {i < howSteps.length - 1 && (
                     <motion.div
                       initial={{ opacity: 0, x: -8 }}
                       whileInView={{ opacity: 1, x: 0 }}
