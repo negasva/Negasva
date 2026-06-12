@@ -97,20 +97,20 @@ export default function Home() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
             <div>
               <p className="font-black text-4xl text-primary mb-2">1000+</p>
-              <p className="text-sm text-gray-300">{t.home.stats.clients}</p>
+              <p className="text-sm text-secondary-lighter">{t.home.stats.clients}</p>
             </div>
             <div>
               <p className="font-black text-4xl text-primary mb-2">48h</p>
-              <p className="text-sm text-gray-300">{t.home.stats.delivery}</p>
+              <p className="text-sm text-secondary-lighter">{t.home.stats.delivery}</p>
             </div>
             <div>
               <p className="font-black text-4xl text-primary mb-2">100%</p>
-              <p className="text-sm text-gray-300">{t.home.stats.satisfaction}</p>
-              <p className="text-xs text-gray-400 mt-1">{t.home.stats.satisfaction_note}</p>
+              <p className="text-sm text-secondary-lighter">{t.home.stats.satisfaction}</p>
+              <p className="text-xs text-secondary-lighter mt-1">{t.home.stats.satisfaction_note}</p>
             </div>
             <div>
               <p className="font-black text-4xl text-primary mb-2">4+</p>
-              <p className="text-sm text-gray-300">{t.home.stats.styles}</p>
+              <p className="text-sm text-secondary-lighter">{t.home.stats.styles}</p>
             </div>
           </div>
         </div>
@@ -129,32 +129,32 @@ export default function Home() {
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-            <div className="group p-8 bg-white rounded-2xl border-2 border-primary-lighter hover:border-primary hover:shadow-xl transition-all">
-              <div className="w-14 h-14 bg-primary rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+            <div className="group p-8 bg-white rounded-2xl border-2 border-primary-lighter hover:border-primary hover:shadow-xl transition-all text-center">
+              <div className="w-14 h-14 bg-primary rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform mx-auto">
                 <Zap className="w-7 h-7 text-white" />
               </div>
               <h3 className="font-bold text-xl text-secondary mb-3">{t.home.why.fast_title}</h3>
               <p className="text-secondary-lighter">{t.home.why.fast_desc}</p>
             </div>
 
-            <div className="group p-8 bg-white rounded-2xl border-2 border-primary-lighter hover:border-primary hover:shadow-xl transition-all">
-              <div className="w-14 h-14 bg-primary rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+            <div className="group p-8 bg-white rounded-2xl border-2 border-primary-lighter hover:border-primary hover:shadow-xl transition-all text-center">
+              <div className="w-14 h-14 bg-primary rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform mx-auto">
                 <Star className="w-7 h-7 text-white" />
               </div>
               <h3 className="font-bold text-xl text-secondary mb-3">{t.home.why.quality_title}</h3>
               <p className="text-secondary-lighter">{t.home.why.quality_desc}</p>
             </div>
 
-            <div className="group p-8 bg-white rounded-2xl border-2 border-primary-lighter hover:border-primary hover:shadow-xl transition-all">
-              <div className="w-14 h-14 bg-primary rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+            <div className="group p-8 bg-white rounded-2xl border-2 border-primary-lighter hover:border-primary hover:shadow-xl transition-all text-center">
+              <div className="w-14 h-14 bg-primary rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform mx-auto">
                 <Heart className="w-7 h-7 text-white" />
               </div>
               <h3 className="font-bold text-xl text-secondary mb-3">{t.home.why.personal_title}</h3>
               <p className="text-secondary-lighter">{t.home.why.personal_desc}</p>
             </div>
 
-            <div className="group p-8 bg-white rounded-2xl border-2 border-primary-lighter hover:border-primary hover:shadow-xl transition-all">
-              <div className="w-14 h-14 bg-primary rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+            <div className="group p-8 bg-white rounded-2xl border-2 border-primary-lighter hover:border-primary hover:shadow-xl transition-all text-center">
+              <div className="w-14 h-14 bg-primary rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform mx-auto">
                 <Share2 className="w-7 h-7 text-white" />
               </div>
               <h3 className="font-bold text-xl text-secondary mb-3">{t.home.why.social_title}</h3>
@@ -173,7 +173,7 @@ export default function Home() {
             <h2 className="font-black text-4xl md:text-5xl tracking-tighter text-white mb-4">
               {t.home.styles.title}
             </h2>
-            <p className="text-lg text-gray-300">{t.home.styles.subtitle}</p>
+            <p className="text-lg text-secondary-lighter">{t.home.styles.subtitle}</p>
           </div>
 
           <div className="grid md:grid-cols-5 gap-6">
@@ -316,7 +316,7 @@ export default function Home() {
           <h2 className="font-black text-4xl md:text-5xl tracking-tighter text-white mb-6">
             {t.home.cta_final.title}
           </h2>
-          <p className="text-lg text-gray-300 mb-8">
+          <p className="text-lg text-secondary-lighter mb-8">
             {t.home.cta_final.subtitle}
           </p>
           <Link

@@ -9,13 +9,13 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        primary: "#FF9EC5",
-        "primary-dark": "#FF85B7",
-        "primary-light": "#FFB6D9",
-        "primary-lighter": "#FFD6E8",
+        primary: "#FF7DB5",
+        "primary-dark": "#FF65A3",
+        "primary-light": "#FF9EC5",
+        "primary-lighter": "#FFB6D9",
         secondary: "#1A1A1A",
         "secondary-light": "#2D2D2D",
-        "secondary-lighter": "#3F3F3F",
+        "secondary-lighter": "#4A4A4A",
         accent: "#FFFFFF",
       },
       fontFamily: {
