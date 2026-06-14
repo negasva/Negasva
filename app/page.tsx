@@ -15,35 +15,36 @@ import TestimonialsScroll from '@/components/TestimonialsScroll';
 // ── Tipos y defaults (fallback si /api/landing-config no responde) ──────────
 
 interface HeroConfig {
-  badge_es: string; badge_en: string;
-  headline_es: string; headline_en: string;
-  headline_highlight_es: string; headline_highlight_en: string;
-  subheadline_es: string; subheadline_en: string;
-  cta_primary_es: string; cta_primary_en: string;
-  cta_secondary_es: string; cta_secondary_en: string;
+  badge_es: string; badge_en: string; badge_fr?: string;
+  headline_es: string; headline_en: string; headline_fr?: string;
+  headline_highlight_es: string; headline_highlight_en: string; headline_highlight_fr?: string;
+  subheadline_es: string; subheadline_en: string; subheadline_fr?: string;
+  cta_primary_es: string; cta_primary_en: string; cta_primary_fr?: string;
+  cta_secondary_es: string; cta_secondary_en: string; cta_secondary_fr?: string;
 }
-interface StepConfig { step: number; icon: string; title_es: string; title_en: string; desc_es: string; desc_en: string; }
+interface StepConfig { step: number; icon: string; title_es: string; title_en: string; title_fr?: string; desc_es: string; desc_en: string; desc_fr?: string; }
 interface GalleryImage { url: string; caption: string; }
-interface StatConfig { value: string; label_es: string; label_en: string; }
+interface StatConfig { value: string; label_es: string; label_en: string; label_fr?: string; }
 interface ApiFaq { id: string; question: string; answer: string; }
 interface LandingConfig { hero: HeroConfig; how_it_works: StepConfig[]; gallery_images: GalleryImage[]; stats: StatConfig[]; }
 
 const DEFAULT_CONFIG: LandingConfig = {
   hero: {
-    badge_es: '✦ Ilustración digital personalizada', badge_en: '✦ Custom digital illustration',
-    headline_es: 'Tu Retrato Animado', headline_en: 'Your Personalized',
-    headline_highlight_es: 'Personalizado', headline_highlight_en: 'Animated Portrait',
+    badge_es: '✦ Ilustración digital personalizada', badge_en: '✦ Custom digital illustration', badge_fr: '✦ Illustration numérique personnalisée',
+    headline_es: 'Tu Retrato Animado', headline_en: 'Your Personalized', headline_fr: 'Votre Portrait Animé',
+    headline_highlight_es: 'Personalizado', headline_highlight_en: 'Animated Portrait', headline_highlight_fr: 'Personnalisé',
     subheadline_es: 'Transforma tu foto en un personaje de caricatura icónico. Rick y Morty, Gravity Falls, Los Simpsons y más.',
     subheadline_en: 'Turn your photo into an iconic cartoon character. Rick and Morty, Gravity Falls, The Simpsons and more.',
-    cta_primary_es: 'Pedir mi retrato', cta_primary_en: 'Order my portrait',
-    cta_secondary_es: 'Ver cómo funciona', cta_secondary_en: 'See how it works',
+    subheadline_fr: 'Transformez votre photo en un personnage de dessin animé iconique. Rick et Morty, Gravity Falls, Les Simpson et plus encore.',
+    cta_primary_es: 'Pedir mi retrato', cta_primary_en: 'Order my portrait', cta_primary_fr: 'Commander mon portrait',
+    cta_secondary_es: 'Ver cómo funciona', cta_secondary_en: 'See how it works', cta_secondary_fr: 'Voir comment ça marche',
   },
   how_it_works: [
-    { step: 1, icon: 'palette', title_es: 'Elige tu estilo', title_en: 'Choose your style', desc_es: 'Rick & Morty, Simpsons, Gravity Falls, Padrinos Mágicos y más', desc_en: 'Rick & Morty, Simpsons, Gravity Falls, Fairly OddParents and more' },
-    { step: 2, icon: 'users', title_es: 'Elige tus personajes', title_en: 'Choose your characters', desc_es: 'Selecciona cuántas personas y si quieres retrato de torso o cuerpo completo', desc_en: 'Select how many people and whether you want a torso or full-body portrait' },
-    { step: 3, icon: 'image', title_es: 'Elige el fondo', title_en: 'Choose the background', desc_es: 'Fondos temáticos del estilo elegido, fondo personalizado o sin fondo', desc_en: 'Themed backgrounds from your chosen style, a custom background, or none' },
-    { step: 4, icon: 'camera', title_es: 'Sube tus fotos e indicaciones', title_en: 'Upload your photos & instructions', desc_es: 'Cuéntanos poses, orden y detalles. Sube una foto clara de cada persona', desc_en: 'Tell us poses, order and details. Upload a clear photo of each person' },
-    { step: 5, icon: 'sparkles', title_es: 'Recibe tu retrato', title_en: 'Receive your portrait', desc_es: 'En 48 horas recibes tu ilustración digital lista para imprimir y compartir', desc_en: 'In 48 hours you get your digital illustration, ready to print and share' },
+    { step: 1, icon: 'palette', title_es: 'Elige tu estilo', title_en: 'Choose your style', title_fr: 'Choisis ton style', desc_es: 'Rick & Morty, Simpsons, Gravity Falls, Padrinos Mágicos y más', desc_en: 'Rick & Morty, Simpsons, Gravity Falls, Fairly OddParents and more', desc_fr: 'Rick & Morty, Simpson, Gravity Falls, Mes Parrains sont magiques et plus' },
+    { step: 2, icon: 'users', title_es: 'Elige tus personajes', title_en: 'Choose your characters', title_fr: 'Choisis tes personnages', desc_es: 'Selecciona cuántas personas y si quieres retrato de torso o cuerpo completo', desc_en: 'Select how many people and whether you want a torso or full-body portrait', desc_fr: 'Choisis combien de personnes et si tu veux un portrait buste ou corps entier' },
+    { step: 3, icon: 'image', title_es: 'Elige el fondo', title_en: 'Choose the background', title_fr: 'Choisis le fond', desc_es: 'Fondos temáticos del estilo elegido, fondo personalizado o sin fondo', desc_en: 'Themed backgrounds from your chosen style, a custom background, or none', desc_fr: 'Fonds thématiques du style choisi, fond personnalisé ou sans fond' },
+    { step: 4, icon: 'camera', title_es: 'Sube tus fotos e indicaciones', title_en: 'Upload your photos & instructions', title_fr: 'Téléverse tes photos et consignes', desc_es: 'Cuéntanos poses, orden y detalles. Sube una foto clara de cada persona', desc_en: 'Tell us poses, order and details. Upload a clear photo of each person', desc_fr: 'Indique poses, ordre et détails. Téléverse une photo nette de chaque personne' },
+    { step: 5, icon: 'sparkles', title_es: 'Recibe tu retrato', title_en: 'Receive your portrait', title_fr: 'Reçois ton portrait', desc_es: 'En 48 horas recibes tu ilustración digital lista para imprimir y compartir', desc_en: 'In 48 hours you get your digital illustration, ready to print and share', desc_fr: 'En 48 heures, reçois ton illustration numérique prête à imprimer et partager' },
   ],
   gallery_images: [
     { url: '/backgrounds/rm-1.webp', caption: 'Rick & Morty' },
@@ -53,10 +54,10 @@ const DEFAULT_CONFIG: LandingConfig = {
     { url: '/backgrounds/rm-6.webp', caption: 'Rick & Morty — Nave' },
   ],
   stats: [
-    { value: '1000+', label_es: 'clientes felices', label_en: 'happy clients' },
-    { value: '48h', label_es: 'entrega', label_en: 'delivery' },
-    { value: '100%', label_es: 'satisfacción', label_en: 'satisfaction' },
-    { value: '4+', label_es: 'estilos', label_en: 'styles' },
+    { value: '1000+', label_es: 'clientes felices', label_en: 'happy clients', label_fr: 'clients satisfaits' },
+    { value: '48h', label_es: 'entrega', label_en: 'delivery', label_fr: 'livraison' },
+    { value: '100%', label_es: 'satisfacción', label_en: 'satisfaction', label_fr: 'satisfaction' },
+    { value: '4+', label_es: 'estilos', label_en: 'styles', label_fr: 'styles' },
   ],
 };
 
@@ -89,10 +90,28 @@ const heroItem = (delay: number) => ({
   transition: { delay, duration: 0.55, ease: 'easeOut' as const },
 });
 
+// Backfill del francés desde los defaults cuando la BD (es/en) no lo trae, para
+// que el contenido editable no caiga a inglés/español al elegir francés.
+function mergeWithFrench(data: Partial<LandingConfig>): LandingConfig {
+  const d = DEFAULT_CONFIG;
+  return {
+    hero: { ...d.hero, ...data.hero, badge_fr: data.hero?.badge_fr || d.hero.badge_fr, headline_fr: data.hero?.headline_fr || d.hero.headline_fr, headline_highlight_fr: data.hero?.headline_highlight_fr || d.hero.headline_highlight_fr, subheadline_fr: data.hero?.subheadline_fr || d.hero.subheadline_fr, cta_primary_fr: data.hero?.cta_primary_fr || d.hero.cta_primary_fr, cta_secondary_fr: data.hero?.cta_secondary_fr || d.hero.cta_secondary_fr },
+    how_it_works: (data.how_it_works?.length ? data.how_it_works : d.how_it_works).map((s, i) => ({
+      ...s,
+      title_fr: s.title_fr || d.how_it_works[i]?.title_fr,
+      desc_fr: s.desc_fr || d.how_it_works[i]?.desc_fr,
+    })),
+    gallery_images: data.gallery_images?.length ? data.gallery_images : d.gallery_images,
+    stats: (data.stats?.length ? data.stats : d.stats).map((s, i) => ({
+      ...s,
+      label_fr: s.label_fr || d.stats[i]?.label_fr,
+    })),
+  };
+}
+
 export default function Home() {
   const { t, lang } = useLanguage();
   const { fmt } = useCurrency();
-  const es = lang !== 'en';
 
   const [config, setConfig] = useState<LandingConfig>(DEFAULT_CONFIG);
   const [faqs, setFaqs] = useState<ApiFaq[]>([]);
@@ -103,7 +122,7 @@ export default function Home() {
   useEffect(() => {
     // ttlMs:0 + no-store → el contenido editable del admin se ve al instante
     cachedFetchJSON<Partial<LandingConfig>>('/api/landing-config', { ttlMs: 0, init: { cache: 'no-store' } })
-      .then((data) => { if (data) setConfig({ ...DEFAULT_CONFIG, ...data }); })
+      .then((data) => { if (data) setConfig(mergeWithFrench(data)); })
       .catch(() => null);
     cachedFetchJSON<ApiFaq[]>('/api/faqs')
       .then((data) => { if (Array.isArray(data)) setFaqs(data.slice(0, 5)); })
@@ -124,7 +143,12 @@ export default function Home() {
   const orderHref = '/order';
   const hero = config.hero;
   const heroImage = config.gallery_images[0]?.url ?? '/backgrounds/rm-1.webp';
-  const pick = (esVal: string, enVal: string) => (es ? esVal : enVal);
+  // Selección por idioma con fallback fr → en → es.
+  const pick = (esVal: string, enVal: string, frVal?: string) =>
+    lang === 'fr' ? (frVal || enVal || esVal) : lang === 'en' ? enVal : esVal;
+  // Atajo trilingüe para textos inline (los tres son obligatorios).
+  const tr = (esVal: string, enVal: string, frVal: string) =>
+    lang === 'fr' ? frVal : lang === 'en' ? enVal : esVal;
 
   // Pasos visuales: títulos editables desde el admin (config.how_it_works) +
   // imagen estática por índice. Así "Paso a paso" del panel se refleja aquí.
@@ -134,6 +158,7 @@ export default function Home() {
     icon: s.icon,
     title_es: s.title_es,
     title_en: s.title_en,
+    title_fr: s.title_fr || DEFAULT_CONFIG.how_it_works[i]?.title_fr,
     img: HOW_STEPS[i]?.img ?? '/backgrounds/rm-1.webp',
   }));
 
@@ -156,29 +181,29 @@ export default function Home() {
             >
               <Tag className="w-5 h-5 text-white" />
               <span className="text-white font-black text-lg sm:text-xl tracking-tight">
-                {es ? 'Retratos desde' : 'Portraits from'} {fmt(20)}
+                {tr('Retratos desde', 'Portraits from', 'Portraits dès')} {fmt(20)}
               </span>
             </motion.div>
           </motion.div>
 
           <motion.h1 {...heroItem(0.15)} className="font-black text-5xl sm:text-6xl lg:text-7xl xl:text-8xl tracking-tighter leading-none mb-6">
-            <span className="text-white block">{pick(hero.headline_es, hero.headline_en)}</span>
-            <span className="text-primary block">{pick(hero.headline_highlight_es, hero.headline_highlight_en)}</span>
+            <span className="text-white block">{pick(hero.headline_es, hero.headline_en, hero.headline_fr)}</span>
+            <span className="text-primary block">{pick(hero.headline_highlight_es, hero.headline_highlight_en, hero.headline_highlight_fr)}</span>
           </motion.h1>
           <motion.p {...heroItem(0.3)} className="text-base sm:text-lg lg:text-xl text-gray-200 leading-relaxed max-w-xl mx-auto mb-8">
-            {pick(hero.subheadline_es, hero.subheadline_en)}
+            {pick(hero.subheadline_es, hero.subheadline_en, hero.subheadline_fr)}
           </motion.p>
           <motion.div {...heroItem(0.45)} className="flex flex-col items-center gap-4 mb-10">
             <Link href={orderHref} className="inline-flex items-center gap-3 rounded-xl bg-primary px-12 py-5 font-black text-white hover:bg-primary-dark transition-all hover:shadow-2xl hover:scale-105 text-xl sm:text-2xl shadow-xl shadow-primary/40">
-              {es ? 'Pedir mi retrato' : 'Order my portrait'}
+              {pick(hero.cta_primary_es, hero.cta_primary_en, hero.cta_primary_fr)}
               <ChevronRight className="w-6 h-6" />
             </Link>
             <a href="#how-it-works" className="inline-flex items-center gap-2 rounded-lg border border-white/60 px-5 py-2.5 font-bold text-white/90 hover:bg-white hover:text-secondary transition-colors text-sm">
-              {pick(hero.cta_secondary_es, hero.cta_secondary_en)}
+              {pick(hero.cta_secondary_es, hero.cta_secondary_en, hero.cta_secondary_fr)}
             </a>
             {weeklyOrders >= 3 && (
               <span className="inline-flex items-center gap-1.5 text-sm font-bold text-white/90 bg-white/10 backdrop-blur-sm rounded-full px-4 py-1.5">
-                🔥 {weeklyOrders} {es ? 'retratos pedidos esta semana' : 'portraits ordered this week'}
+                🔥 {weeklyOrders} {tr('retratos pedidos esta semana', 'portraits ordered this week', 'portraits commandés cette semaine')}
               </span>
             )}
           </motion.div>
@@ -186,7 +211,7 @@ export default function Home() {
           <motion.div {...heroItem(0.6)} className="flex flex-wrap justify-center items-center gap-x-8 gap-y-2 text-white">
             <span><span className="font-black text-xl">1.8M</span> <span className="text-sm text-gray-300">TikTok</span></span>
             <span><span className="font-black text-xl">50K</span> <span className="text-sm text-gray-300">Instagram</span></span>
-            <span><span className="font-black text-xl">+1000</span> <span className="text-sm text-gray-300">{es ? 'clientes' : 'clients'}</span></span>
+            <span><span className="font-black text-xl">+1000</span> <span className="text-sm text-gray-300">{tr('clientes', 'clients', 'clients')}</span></span>
           </motion.div>
         </div>
 
@@ -204,10 +229,10 @@ export default function Home() {
         <div className="mx-auto max-w-7xl">
           <div className="text-center mb-14">
             <h2 className="font-black text-4xl md:text-5xl tracking-tighter text-secondary mb-4">
-              {es ? 'Así de fácil' : 'This easy'}
+              {tr('Así de fácil', 'This easy', 'Aussi simple que ça')}
             </h2>
             <p className="text-lg text-secondary-lighter">
-              {es ? 'Empieza tu pedido aquí mismo' : 'Start your order right here'}
+              {tr('Empieza tu pedido aquí mismo', 'Start your order right here', 'Commence ta commande ici même')}
             </p>
           </div>
 
@@ -232,7 +257,7 @@ export default function Home() {
                     <div className="relative h-40 overflow-hidden">
                       <Image
                         src={s.img}
-                        alt={pick(s.title_es, s.title_en)}
+                        alt={pick(s.title_es, s.title_en, s.title_fr)}
                         fill
                         className="object-cover transition-transform duration-300 group-hover:scale-105"
                         sizes="(max-width: 768px) 100vw, 200px"
@@ -244,7 +269,7 @@ export default function Home() {
                     </div>
                     <div className="flex items-center gap-2 p-4">
                       <Icon className="w-5 h-5 text-primary flex-shrink-0" />
-                      <h3 className="font-black text-lg text-secondary leading-tight">{pick(s.title_es, s.title_en)}</h3>
+                      <h3 className="font-black text-lg text-secondary leading-tight">{pick(s.title_es, s.title_en, s.title_fr)}</h3>
                     </div>
                   </motion.div>
 
@@ -267,7 +292,7 @@ export default function Home() {
 
           <div className="text-center mt-12">
             <Link href={orderHref} className="inline-flex items-center gap-2 rounded-lg bg-secondary px-10 py-5 font-black text-white hover:bg-secondary-light transition-all hover:shadow-xl text-lg">
-              {es ? 'Empezar ahora' : 'Start now'}
+              {tr('Empezar ahora', 'Start now', 'Commencer maintenant')}
               <ChevronRight className="w-5 h-5" />
             </Link>
           </div>
@@ -281,7 +306,7 @@ export default function Home() {
             {config.stats.map((stat, i) => (
               <div key={i}>
                 <p className="font-black text-4xl text-primary mb-2">{stat.value}</p>
-                <p className="text-sm text-secondary-lighter">{pick(stat.label_es, stat.label_en)}</p>
+                <p className="text-sm text-secondary-lighter">{pick(stat.label_es, stat.label_en, stat.label_fr)}</p>
               </div>
             ))}
           </div>
@@ -291,7 +316,7 @@ export default function Home() {
       {/* C — GALLERY marquee */}
       <section className="py-16 overflow-hidden bg-primary-lighter/30">
         <h2 className="font-black text-4xl md:text-5xl tracking-tighter text-secondary text-center mb-10">
-          {es ? 'Estilos que enamoran' : 'Styles you’ll love'}
+          {tr('Estilos que enamoran', 'Styles you’ll love', 'Des styles qu’on adore')}
         </h2>
         <div className="flex animate-marquee-left hover:[animation-play-state:paused]" style={{ width: 'max-content' }}>
           {[...config.gallery_images, ...config.gallery_images].map((img, i) => (
@@ -329,7 +354,7 @@ export default function Home() {
             </div>
             <div className="bg-white rounded-2xl p-8 border-2 border-primary hover:shadow-lg transition-all text-center relative">
               <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary text-white text-xs font-black px-4 py-1.5 rounded-full">
-                {es ? 'Más popular' : 'Most popular'}
+                {tr('Más popular', 'Most popular', 'Le plus populaire')}
               </span>
               <h4 className="font-black text-secondary text-xl mb-1">{t.home.pricing.one_full}</h4>
               <p className="text-sm text-secondary-lighter mb-4">{t.home.pricing.one_full_desc}</p>
@@ -350,7 +375,7 @@ export default function Home() {
         <section className="py-20 px-4 bg-white">
           <div className="mx-auto max-w-3xl">
             <h2 className="font-black text-4xl md:text-5xl tracking-tighter text-secondary text-center mb-10">
-              {es ? 'Preguntas frecuentes' : 'Frequently asked questions'}
+              {tr('Preguntas frecuentes', 'Frequently asked questions', 'Questions fréquentes')}
             </h2>
             <div className="space-y-3">
               {faqs.map((item, i) => {
@@ -381,7 +406,7 @@ export default function Home() {
             </div>
             <div className="text-center mt-8">
               <Link href="/faq" className="font-bold text-primary hover:text-primary-dark underline underline-offset-4">
-                {es ? 'Ver todas las preguntas' : 'See all questions'}
+                {tr('Ver todas las preguntas', 'See all questions', 'Voir toutes les questions')}
               </Link>
             </div>
           </div>
@@ -420,7 +445,7 @@ export default function Home() {
           href={orderHref}
           className="flex items-center justify-center gap-2 rounded-xl bg-primary py-4 font-black text-white text-lg shadow-lg shadow-primary/30 active:scale-[0.98] transition-transform"
         >
-          {es ? 'Pedir mi retrato' : 'Order my portrait'} · {es ? 'desde' : 'from'} {fmt(20)}
+          {tr('Pedir mi retrato', 'Order my portrait', 'Commander mon portrait')} · {tr('desde', 'from', 'dès')} {fmt(20)}
           <ChevronRight className="w-5 h-5" />
         </Link>
       </motion.div>
