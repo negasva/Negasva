@@ -1,0 +1,40 @@
+import type { PageDict } from '@/lib/i18n/pageContent';
+
+export const loginContent = {
+  es: {
+    title: 'Iniciar Sesión',
+    subtitle: 'Accede a tu cuenta para gestionar tus pedidos',
+    email_label: 'Email',
+    email_placeholder: 'tu@email.com',
+    password_label: 'Contraseña',
+    submit: 'Entrar',
+    no_account: '¿No tienes cuenta?',
+    signup_link: 'Regístrate gratis',
+    continue_without_account: 'Continuar sin cuenta →',
+    back_home: '← Volver al inicio',
+  },
+  en: {
+    title: 'Log In',
+    subtitle: 'Access your account to manage your orders',
+    email_label: 'Email',
+    email_placeholder: 'you@email.com',
+    password_label: 'Password',
+    submit: 'Sign in',
+    no_account: "Don't have an account?",
+    signup_link: 'Sign up free',
+    continue_without_account: 'Continue without an account →',
+    back_home: '← Back to home',
+  },
+  fr: {
+    title: 'Connexion',
+    subtitle: 'Accédez à votre compte pour gérer vos commandes',
+    email_label: 'E-mail',
+    email_placeholder: 'vous@email.com',
+    password_label: 'Mot de passe',
+    submit: 'Se connecter',
+    no_account: "Vous n'avez pas de compte ?",
+    signup_link: "S'inscrire gratuitement",
+    continue_without_account: 'Continuer sans compte →',
+    back_home: "← Retour à l'accueil",
+  },
+} satisfies PageDict<Record<string, string>>;

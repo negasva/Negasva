@@ -4,12 +4,14 @@ import { useState } from 'react';
 import { Check } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import PageFooter from '@/components/PageFooter';
+import { usePageText } from '@/lib/i18n/pageContent';
+import { seguimientoContent } from '@/lib/i18n/pages/seguimiento';
 
 const STAGES = [
-  { key: 'uploaded', label: 'Fotos recibidas', icon: '1' },
-  { key: 'drawing', label: 'Dibujando', icon: '2' },
-  { key: 'ready', label: 'Listo', icon: '3' },
-  { key: 'sent', label: 'Enviado', icon: '4' },
+  { key: 'uploaded', labelKey: 'stage_uploaded', icon: '1' },
+  { key: 'drawing', labelKey: 'stage_drawing', icon: '2' },
+  { key: 'ready', labelKey: 'stage_ready', icon: '3' },
+  { key: 'sent', labelKey: 'stage_sent', icon: '4' },
 ] as const;
 
 type StageKey = typeof STAGES[number]['key'];
@@ -22,6 +24,7 @@ interface TrackResult {
 }
 
 export default function SeguimientoPage() {
+  const tx = usePageText('seguimiento', seguimientoContent);
   const [orderId, setOrderId] = useState('');
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
@@ -43,7 +46,7 @@ export default function SeguimientoPage() {
       if (!res.ok) throw new Error(data?.error || 'Error');
       setResult(data);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'No pudimos consultar el pedido');
+      setError(err instanceof Error ? err.message : tx.error_generic);
     } finally {
       setLoading(false);
     }
@@ -60,10 +63,10 @@ export default function SeguimientoPage() {
       <section className="bg-primary-lighter/30 py-20 px-4">
         <div className="mx-auto max-w-3xl text-center">
           <h1 className="font-black text-5xl md:text-6xl tracking-tighter text-secondary mb-4">
-            Seguimiento de pedido
+            {tx.title}
           </h1>
           <p className="text-lg text-secondary-lighter">
-            Ingresa tu ID de pedido y el correo con el que pagaste.
+            {tx.subtitle}
           </p>
         </div>
       </section>
@@ -72,23 +75,23 @@ export default function SeguimientoPage() {
         <div className="mx-auto max-w-xl">
           <form onSubmit={lookup} className="bg-white rounded-2xl border-2 border-primary-lighter p-6 space-y-4">
             <div>
-              <label className="block text-xs font-bold text-secondary mb-2">ID de pedido</label>
+              <label className="block text-xs font-bold text-secondary mb-2">{tx.label_order_id}</label>
               <input
                 type="text"
                 value={orderId}
                 onChange={(e) => setOrderId(e.target.value)}
-                placeholder="Ej: 8f3c-…"
+                placeholder={tx.placeholder_order_id}
                 required
                 className="w-full rounded-lg border-2 border-primary-lighter px-4 py-3 text-sm text-secondary focus:border-primary focus:outline-none"
               />
             </div>
             <div>
-              <label className="block text-xs font-bold text-secondary mb-2">Correo</label>
+              <label className="block text-xs font-bold text-secondary mb-2">{tx.label_email}</label>
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="tu@correo.com"
+                placeholder={tx.placeholder_email}
                 required
                 className="w-full rounded-lg border-2 border-primary-lighter px-4 py-3 text-sm text-secondary focus:border-primary focus:outline-none"
               />
@@ -99,13 +102,13 @@ export default function SeguimientoPage() {
               disabled={loading}
               className="w-full rounded-lg bg-primary text-white font-black py-3 hover:bg-primary-dark transition-colors disabled:opacity-50"
             >
-              {loading ? 'Buscando…' : 'Ver estado'}
+              {loading ? tx.button_loading : tx.button_submit}
             </button>
           </form>
 
           {result && (
             <div className="mt-8 bg-white rounded-2xl border-2 border-primary p-6">
-              <p className="text-xs font-bold text-secondary-lighter uppercase tracking-widest mb-1">Estado actual</p>
+              <p className="text-xs font-bold text-secondary-lighter uppercase tracking-widest mb-1">{tx.current_status}</p>
               <p className="font-black text-2xl text-primary tracking-tighter mb-6">{result.statusLabel}</p>
 
               <ol className="space-y-3">
@@ -121,7 +124,7 @@ export default function SeguimientoPage() {
                       </div>
                       <div className="flex-1">
                         <p className={`font-bold ${done ? 'text-secondary' : 'text-secondary-lighter'}`}>
-                          {stage.label}
+                          {tx[stage.labelKey]}
                         </p>
                       </div>
                     </li>

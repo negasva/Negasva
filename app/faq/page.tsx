@@ -6,6 +6,8 @@ import { ChevronDown } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import PageFooter from '@/components/PageFooter';
 import { cachedFetchJSON } from '@/lib/cache/clientCache';
+import { usePageText } from '@/lib/i18n/pageContent';
+import { faqContent } from '@/lib/i18n/pages/faq';
 
 interface ApiFaq {
   id: string;
@@ -35,59 +37,8 @@ function renderAnswer(answer: string) {
   });
 }
 
-// Fallback if /api/faqs is unavailable — admin manages the real content
-const FAQS = [
-  {
-    q: '¿Cuánto tarda mi retrato?',
-    a: 'La entrega estándar es de 48 horas o menos. Con la opción exprés 24h (+30%), saltas la cola y lo recibes al día siguiente.',
-  },
-  {
-    q: '¿Qué formatos recibo?',
-    a: 'PNG y JPG en alta resolución, listos para imprimir o publicar en redes sociales. Si necesitas un tamaño específico, díganos en las notas.',
-  },
-  {
-    q: '¿Puedo pedir cambios después de recibirlo?',
-    a: 'Sí. Tienes 24 horas tras la entrega para solicitar ajustes. Los retoques menores (color de pelo, accesorio, expresión) están incluidos sin costo.',
-  },
-  {
-    q: '¿Cómo funciona el descuento por pack familia?',
-    a: 'Automático: 3 personas o más obtienen 15% off, 5 o más obtienen 25% off. Solo añade gente en el paso 2 y verás el descuento aplicado.',
-  },
-  {
-    q: '¿Qué pasa si la foto no es de buena calidad?',
-    a: 'Te contactamos antes de empezar. Si la foto no permite un buen resultado, te pedimos otra o devolvemos el pago completo. Sin compromiso.',
-  },
-  {
-    q: '¿Aceptan otras divisas?',
-    a: 'Sí: USD, EUR, GBP, MXN, CAD y COP. Detectamos tu país automáticamente y puedes cambiar la divisa con el selector arriba.',
-  },
-  {
-    q: '¿Puedo regalar un retrato?',
-    a: 'Sí. Compra normalmente y úsalo como regalo. Pronto vamos a tener tarjetas regalo con código por email.',
-  },
-  {
-    q: '¿Cómo pago? ¿Es seguro?',
-    a: 'Procesamos pagos con Stripe (tarjeta, Apple Pay, Google Pay). Nunca vemos los datos de tu tarjeta. Pago 100% seguro.',
-  },
-  {
-    q: '¿Puedo usar mi retrato comercialmente?',
-    a: 'Tu retrato es para uso personal (redes, regalos, decoración). Para uso comercial, escríbenos a hola@negasva.com y armamos una licencia.',
-  },
-  {
-    q: '¿Hago seguimiento de mi pedido?',
-    a: (
-      <>
-        Sí, en la página de{' '}
-        <Link href="/seguimiento" className="text-primary font-bold underline">
-          seguimiento
-        </Link>{' '}
-        con tu ID de pedido y email.
-      </>
-    ),
-  },
-];
-
 export default function FaqPage() {
+  const tx = usePageText('faq', faqContent);
   const [open, setOpen] = useState<number | null>(0);
   const [apiFaqs, setApiFaqs] = useState<ApiFaq[] | null>(null);
 
@@ -97,9 +48,34 @@ export default function FaqPage() {
       .catch(() => {});
   }, []);
 
+  // Fallback if /api/faqs is unavailable — admin manages the real content
+  const FALLBACK_FAQS: { q: string; a: React.ReactNode }[] = [
+    { q: tx.faq1_q, a: tx.faq1_a },
+    { q: tx.faq2_q, a: tx.faq2_a },
+    { q: tx.faq3_q, a: tx.faq3_a },
+    { q: tx.faq4_q, a: tx.faq4_a },
+    { q: tx.faq5_q, a: tx.faq5_a },
+    { q: tx.faq6_q, a: tx.faq6_a },
+    { q: tx.faq7_q, a: tx.faq7_a },
+    { q: tx.faq8_q, a: tx.faq8_a },
+    { q: tx.faq9_q, a: tx.faq9_a },
+    {
+      q: tx.faq10_q,
+      a: (
+        <>
+          {tx.faq10_a_before}{' '}
+          <Link href="/seguimiento" className="text-primary font-bold underline">
+            {tx.faq10_a_link_label}
+          </Link>{' '}
+          {tx.faq10_a_after}
+        </>
+      ),
+    },
+  ];
+
   const faqs: { q: string; a: React.ReactNode }[] = apiFaqs
     ? apiFaqs.map((f) => ({ q: f.question, a: renderAnswer(f.answer) }))
-    : FAQS;
+    : FALLBACK_FAQS;
 
   return (
     <div className="min-h-screen bg-white">
@@ -108,10 +84,10 @@ export default function FaqPage() {
       <section className="bg-primary-lighter/30 py-20 px-4">
         <div className="mx-auto max-w-3xl text-center">
           <h1 className="font-black text-5xl md:text-6xl tracking-tighter text-secondary mb-4">
-            Preguntas frecuentes
+            {tx.title}
           </h1>
           <p className="text-lg text-secondary-lighter">
-            Las respuestas que más nos piden, en un solo lugar.
+            {tx.subtitle}
           </p>
         </div>
       </section>
@@ -151,10 +127,10 @@ export default function FaqPage() {
       <section className="bg-secondary py-16 px-4">
         <div className="mx-auto max-w-2xl text-center">
           <h2 className="font-black text-3xl text-white tracking-tighter mb-4">
-            ¿No encuentras tu respuesta?
+            {tx.cta_title}
           </h2>
           <p className="text-gray-300 mb-6">
-            Escríbenos por Instagram, respondemos rápido.
+            {tx.cta_subtitle}
           </p>
           <a
             href="https://instagram.com/negasva"
@@ -162,7 +138,7 @@ export default function FaqPage() {
             rel="noopener noreferrer"
             className="inline-block rounded-xl bg-primary px-8 py-4 font-black text-white hover:bg-primary-dark hover:shadow-xl transition-all"
           >
-            @negasva en Instagram
+            {tx.cta_button}
           </a>
         </div>
       </section>
