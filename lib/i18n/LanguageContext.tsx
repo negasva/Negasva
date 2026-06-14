@@ -1,5 +1,5 @@
 'use client';
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { translations, type Lang } from './translations';
 
 type TranslationValues = typeof translations.en;
@@ -10,23 +10,60 @@ interface LanguageContextType {
   t: TranslationValues;
 }
 
+const SUPPORTED: Lang[] = ['en', 'es', 'fr'];
+const STORAGE_KEY = 'negasva-lang';
+
+function isLang(value: unknown): value is Lang {
+  return typeof value === 'string' && (SUPPORTED as string[]).includes(value);
+}
+
+// Idioma del navegador limitado a en/es/fr. Si no coincide, undefined.
+function detectBrowserLang(): Lang | undefined {
+  if (typeof navigator === 'undefined') return undefined;
+  const candidates = [navigator.language, ...(navigator.languages ?? [])];
+  for (const raw of candidates) {
+    const code = raw?.slice(0, 2).toLowerCase();
+    if (isLang(code)) return code;
+  }
+  return undefined;
+}
+
 const LanguageContext = createContext<LanguageContextType>({
-  lang: 'en',
+  lang: 'es',
   setLang: () => {},
-  t: translations.en,
+  t: translations.es as unknown as TranslationValues,
 });
 
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
-  const [lang, setLangState] = useState<Lang>('en');
+  // Default 'es' coincide con <html lang="es"> del layout para evitar
+  // mismatch de hidratación. El idioma real se resuelve en el efecto.
+  const [lang, setLangState] = useState<Lang>('es');
+
   useEffect(() => {
-    const saved = localStorage.getItem('negasva-lang') as Lang | null;
-    if (saved && ['en', 'es', 'fr'].includes(saved)) setLangState(saved);
+    const saved = localStorage.getItem(STORAGE_KEY);
+    const resolved: Lang = isLang(saved) ? saved : detectBrowserLang() ?? 'es';
+    setLangState(resolved);
   }, []);
-  const setLang = (l: Lang) => { setLangState(l); localStorage.setItem('negasva-lang', l); };
+
+  // Mantener <html lang> sincronizado con el idioma activo.
+  useEffect(() => {
+    if (typeof document !== 'undefined') {
+      document.documentElement.lang = lang;
+    }
+  }, [lang]);
+
+  const setLang = useCallback((l: Lang) => {
+    setLangState(l);
+    try { localStorage.setItem(STORAGE_KEY, l); } catch { /* ignore */ }
+  }, []);
+
   return (
-    <LanguageContext.Provider value={{ lang, setLang, t: translations[lang] as unknown as TranslationValues }}>
+    <LanguageContext.Provider
+      value={{ lang, setLang, t: translations[lang] as unknown as TranslationValues }}
+    >
       {children}
     </LanguageContext.Provider>
   );
 }
+
 export const useLanguage = () => useContext(LanguageContext);

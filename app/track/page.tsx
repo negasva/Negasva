@@ -5,12 +5,14 @@ import { useSearchParams } from 'next/navigation';
 import { Check, Package, Paintbrush, ImageIcon, Send } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import PageFooter from '@/components/PageFooter';
+import { usePageText } from '@/lib/i18n/pageContent';
+import { trackContent } from '@/lib/i18n/pages/track';
 
 const STAGES = [
-  { key: 'uploaded',  label: 'Fotos recibidas',    desc: 'Recibimos tus fotos de referencia.',         icon: ImageIcon },
-  { key: 'drawing',   label: 'Dibujando',           desc: 'Nuestro artista está trabajando en tu retrato.', icon: Paintbrush },
-  { key: 'ready',     label: 'Listo para enviar',   desc: 'Tu retrato está terminado y listo.',         icon: Package },
-  { key: 'sent',      label: 'Enviado',             desc: 'Tu retrato ya está en camino a tu correo.',  icon: Send },
+  { key: 'uploaded',  labelKey: 'stage_uploaded_label', descKey: 'stage_uploaded_desc', icon: ImageIcon },
+  { key: 'drawing',   labelKey: 'stage_drawing_label',  descKey: 'stage_drawing_desc',  icon: Paintbrush },
+  { key: 'ready',     labelKey: 'stage_ready_label',    descKey: 'stage_ready_desc',    icon: Package },
+  { key: 'sent',      labelKey: 'stage_sent_label',     descKey: 'stage_sent_desc',     icon: Send },
 ] as const;
 
 type StageKey = typeof STAGES[number]['key'];
@@ -25,6 +27,7 @@ interface TrackResult {
 }
 
 function TrackContent() {
+  const tx = usePageText('track', trackContent);
   const params = useSearchParams();
   const initialRef = params.get('ref') ?? '';
 
@@ -46,10 +49,10 @@ function TrackContent() {
         body: JSON.stringify({ orderId: orderId.trim(), email: email.trim() }),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data?.error || 'No encontrado');
+      if (!res.ok) throw new Error(data?.error || tx.error_not_found);
       setResult(data);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'No pudimos consultar el pedido');
+      setError(err instanceof Error ? err.message : tx.error_generic);
     } finally {
       setLoading(false);
     }
@@ -72,10 +75,10 @@ function TrackContent() {
       <section className="bg-primary-lighter/30 py-16 px-4">
         <div className="mx-auto max-w-3xl text-center">
           <h1 className="font-black text-5xl md:text-6xl tracking-tighter text-secondary mb-4">
-            Seguimiento de pedido
+            {tx.title}
           </h1>
           <p className="text-lg text-secondary-lighter">
-            Ingresa tu referencia y el correo con el que pagaste.
+            {tx.subtitle}
           </p>
         </div>
       </section>
@@ -90,29 +93,29 @@ function TrackContent() {
           >
             <div>
               <label className="block text-xs font-bold text-secondary mb-2 uppercase tracking-wider">
-                Referencia de compra
+                {tx.label_reference}
               </label>
               <input
                 type="text"
                 value={orderId}
                 onChange={(e) => setOrderId(e.target.value)}
-                placeholder="negasva-abc123… o cs_prod_…"
+                placeholder={tx.placeholder_reference}
                 required
                 className="w-full rounded-lg border-2 border-primary-lighter px-4 py-3 text-sm text-secondary font-mono focus:border-primary focus:outline-none"
               />
               <p className="text-xs text-secondary-lighter mt-1">
-                La encontrarás en tu correo de confirmación o en la página de pago exitoso.
+                {tx.reference_hint}
               </p>
             </div>
             <div>
               <label className="block text-xs font-bold text-secondary mb-2 uppercase tracking-wider">
-                Correo electrónico
+                {tx.label_email}
               </label>
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="tu@correo.com"
+                placeholder={tx.placeholder_email}
                 required
                 className="w-full rounded-lg border-2 border-primary-lighter px-4 py-3 text-sm text-secondary focus:border-primary focus:outline-none"
               />
@@ -125,7 +128,7 @@ function TrackContent() {
               disabled={loading}
               className="w-full rounded-lg bg-primary text-white font-black py-3 hover:bg-primary-dark transition-colors disabled:opacity-50"
             >
-              {loading ? 'Buscando…' : 'Ver estado'}
+              {loading ? tx.button_loading : tx.button_submit}
             </button>
           </form>
 
@@ -136,20 +139,20 @@ function TrackContent() {
               {/* Payment badge */}
               {!isPaid && (
                 <div className="bg-yellow-50 border border-yellow-200 rounded-lg px-4 py-3 text-sm text-yellow-700 font-medium">
-                  Pago pendiente de confirmación. Si realizaste el pago, espera unos minutos.
+                  {tx.payment_pending}
                 </div>
               )}
 
               {/* Status headline */}
               <div>
                 <p className="text-xs font-bold text-secondary-lighter uppercase tracking-widest mb-1">
-                  Estado actual
+                  {tx.current_status}
                 </p>
                 <p className="font-black text-2xl text-primary tracking-tighter">
                   {result.statusLabel}
                 </p>
                 <p className="text-xs text-secondary-lighter mt-1">
-                  Pedido creado el{' '}
+                  {tx.order_created_on}{' '}
                   {new Date(result.createdAt).toLocaleDateString('es-CO', {
                     day: 'numeric',
                     month: 'long',
@@ -188,11 +191,11 @@ function TrackContent() {
                             done ? 'text-secondary' : 'text-secondary-lighter'
                           }`}
                         >
-                          {stage.label}
+                          {tx[stage.labelKey]}
                         </p>
                         {active && (
                           <p className="text-xs text-secondary-lighter mt-0.5">
-                            {stage.desc}
+                            {tx[stage.descKey]}
                           </p>
                         )}
                       </div>
