@@ -36,10 +36,18 @@ const config: Config = {
           '0%, 100%': { opacity: '1', transform: 'scale(1)' },
           '50%': { opacity: '0.92', transform: 'scale(1.02)' },
         },
+        shake: {
+          '0%, 100%': { transform: 'translateX(0)' },
+          '20%': { transform: 'translateX(-8px)' },
+          '40%': { transform: 'translateX(8px)' },
+          '60%': { transform: 'translateX(-5px)' },
+          '80%': { transform: 'translateX(5px)' },
+        },
       },
       animation: {
         'wiggle-slow': 'wiggle 3s ease-in-out infinite',
         'pulse-slow': 'pulse-slow 2s ease-in-out infinite',
+        shake: 'shake 0.45s ease-in-out 1',
       },
     },
   },

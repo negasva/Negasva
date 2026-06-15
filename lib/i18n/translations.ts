@@ -152,6 +152,7 @@ export const translations = {
         next: 'Next',
         checkout: 'Go to checkout',
         secure: 'Secure payment with Stripe · Your information is protected',
+        missing: 'Complete the highlighted fields to continue.',
       },
       body_types: {
         torso_badge: 'Was',
@@ -436,6 +437,7 @@ export const translations = {
         next: 'Siguiente',
         checkout: 'Ir al pago',
         secure: 'Pago seguro con Stripe · Tu información está protegida',
+        missing: 'Completa los datos resaltados para continuar.',
       },
       body_types: {
         torso_badge: 'Antes',
@@ -720,6 +722,7 @@ export const translations = {
         next: 'Suivant',
         checkout: 'Aller au paiement',
         secure: 'Paiement sécurisé avec Stripe · Vos informations sont protégées',
+        missing: 'Complétez les champs en rouge pour continuer.',
       },
       body_types: {
         torso_badge: 'Avant',

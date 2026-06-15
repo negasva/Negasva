@@ -112,6 +112,9 @@ export default function StudioPage() {
   const [discountCodeInput, setDiscountCodeInput] = useState('');
   const [appliedCode, setAppliedCode] = useState<AppliedCode | null>(null);
   const [codeStatus, setCodeStatus] = useState<'idle' | 'checking' | 'invalid'>('idle');
+  // Validación: si faltan datos, el botón no avanza y resalta en rojo con shake.
+  const [showError, setShowError] = useState(false);
+  const [shaking, setShaking] = useState(false);
 
   // Preselección de estilo desde la landing (?style= o sessionStorage).
   useEffect(() => {
@@ -185,6 +188,13 @@ export default function StudioPage() {
   };
 
   const nextStep = async () => {
+    // Si faltan datos del paso, no avanza: resalta en rojo con shake (1 vez).
+    if (!canAdvance()) {
+      setShowError(true);
+      setShaking(true);
+      return;
+    }
+
     if (step < 4) { setStep(step + 1); return; }
 
     const params = {
@@ -241,6 +251,17 @@ export default function StudioPage() {
   const prevStep = () => {
     if (step > 1) setStep(step - 1);
   };
+
+  // En cuanto el dato requerido queda completo, quita el resaltado de error.
+  useEffect(() => {
+    if (showError && canAdvance()) setShowError(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selected, step, showError]);
+
+  // Clases de error reutilizables para el campo que falta en el paso actual.
+  const errorRing = showError ? 'ring-2 ring-red-500 ring-offset-2 rounded-2xl' : '';
+  const errorShake = showError && shaking ? 'animate-shake' : '';
+  const onShakeEnd = () => setShaking(false);
 
   const familyDiscount = (count: number) => {
     if (count >= 5) return 0.25;
@@ -468,7 +489,7 @@ export default function StudioPage() {
                 </div>
 
                 {/* Body Type selector */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-2xl mx-auto mb-10">
+                <div onAnimationEnd={onShakeEnd} className={`grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-2xl mx-auto mb-10 ${errorRing} ${errorShake}`}>
                   {bodyTypes.map((bt) => ({
                     id: bt.slug,
                     // The two default slugs keep their translated copy; admin-created
@@ -592,7 +613,7 @@ export default function StudioPage() {
                   <h1 className="font-black text-4xl text-secondary mb-3 tracking-tighter">{t.studio.step3.title}</h1>
                   <p className="text-lg text-secondary-lighter">{t.studio.step3.subtitle}</p>
                 </div>
-                <div className="grid grid-cols-2 gap-3">
+                <div onAnimationEnd={onShakeEnd} className={`grid grid-cols-2 gap-3 ${errorRing} ${errorShake}`}>
                   {getStyleBgs().map((bg) => {
                     const isSelected = selected.background === bg.id;
 
@@ -688,25 +709,12 @@ export default function StudioPage() {
                   <h1 className="font-black text-4xl text-secondary mb-3 tracking-tighter">{t.studio.step4.title}</h1>
                   <p className="text-lg text-secondary-lighter">{t.studio.step4.subtitle}</p>
                 </div>
-                <div className="max-w-2xl mx-auto">
-                  <label className="block font-bold text-secondary mb-3">
-                    {t.studio.step4.notes_label} <span className="font-normal text-secondary-lighter">{t.studio.step4.notes_optional}</span>
-                  </label>
-                  <textarea
-                    value={selected.specialRequests}
-                    onChange={(e) => setSelected({ ...selected, specialRequests: e.target.value })}
-                    placeholder={t.studio.step4.notes_placeholder}
-                    rows={6}
-                    maxLength={500}
-                    className="w-full rounded-lg border-2 border-primary-lighter px-4 py-3 text-sm text-secondary focus:border-primary focus:outline-none resize-none"
-                  />
-                  <p className="text-right text-xs text-secondary-lighter mt-2">{selected.specialRequests.length}/500</p>
-
-                  {/* Express 24h */}
+                <div className="max-w-2xl mx-auto space-y-8">
+                  {/* 1 · Entrega exprés 24h */}
                   <button
                     type="button"
                     onClick={() => setSelected({ ...selected, express: !selected.express })}
-                    className={`mt-6 w-full rounded-2xl border-2 p-5 text-left transition-all ${
+                    className={`w-full rounded-2xl border-2 p-5 text-left transition-all ${
                       selected.express
                         ? 'border-primary bg-primary-lighter ring-2 ring-primary'
                         : 'border-primary-lighter bg-white hover:border-primary'
@@ -724,8 +732,51 @@ export default function StudioPage() {
                     </div>
                   </button>
 
-                  {/* Código de descuento */}
-                  <div className="mt-6">
+                  {/* 2 · Sube tus fotos (compacto) */}
+                  <div>
+                    <h2 className="font-black text-xl text-secondary mb-1 tracking-tighter">{t.studio.step5.title}</h2>
+                    <p className="text-sm text-secondary-lighter mb-3">{t.studio.step5.subtitle}</p>
+                    <div
+                      onAnimationEnd={onShakeEnd}
+                      className={`rounded-2xl border-2 border-dashed bg-white p-6 text-center hover:border-primary hover:bg-primary-lighter transition-all cursor-pointer ${
+                        showError ? 'border-red-500' : 'border-primary-lighter'
+                      } ${errorRing} ${errorShake}`}
+                    >
+                      <p className="font-bold text-secondary text-sm mb-1">{t.studio.step5.drag}</p>
+                      <p className="text-xs text-secondary-lighter mb-4">{t.studio.step5.or}</p>
+                      <label className="inline-block cursor-pointer rounded-lg bg-primary px-5 py-2.5 text-sm font-bold text-white hover:bg-primary-dark transition-colors">
+                        {t.studio.step5.select_btn}
+                        <input type="file" multiple accept="image/*" onChange={handlePhotoUpload} className="hidden" />
+                      </label>
+                      {selected.photos.length > 0 && (
+                        <div className="mt-4 text-sm text-primary font-bold">
+                          {selected.photos.length} {selected.photos.length > 1 ? t.studio.step5.selected_plural : t.studio.step5.selected}
+                        </div>
+                      )}
+                      <p className="mt-4 text-xs text-secondary-lighter">
+                        {t.studio.step5.max_size} · {selected.peopleCount} {selected.peopleCount > 1 ? t.studio.step5.required_photos_plural : t.studio.step5.required_photos}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* 3 · Notas especiales */}
+                  <div>
+                    <label className="block font-bold text-secondary mb-3">
+                      {t.studio.step4.notes_label} <span className="font-normal text-secondary-lighter">{t.studio.step4.notes_optional}</span>
+                    </label>
+                    <textarea
+                      value={selected.specialRequests}
+                      onChange={(e) => setSelected({ ...selected, specialRequests: e.target.value })}
+                      placeholder={t.studio.step4.notes_placeholder}
+                      rows={5}
+                      maxLength={500}
+                      className="w-full rounded-lg border-2 border-primary-lighter px-4 py-3 text-sm text-secondary focus:border-primary focus:outline-none resize-none"
+                    />
+                    <p className="text-right text-xs text-secondary-lighter mt-2">{selected.specialRequests.length}/500</p>
+                  </div>
+
+                  {/* 4 · Código de descuento */}
+                  <div>
                     <label className="block font-bold text-secondary mb-3">Código de descuento <span className="font-normal text-secondary-lighter">(opcional)</span></label>
                     {appliedCode ? (
                       <div className="flex items-center justify-between rounded-2xl border-2 border-primary bg-primary-lighter px-4 py-3">
@@ -781,27 +832,6 @@ export default function StudioPage() {
                       <p className="text-xs text-red-500 font-bold mt-2">Código inválido o expirado.</p>
                     )}
                   </div>
-
-                  {/* Fotos — mismo paso que los detalles */}
-                  <hr className="my-8 border-primary-lighter border-t-2" />
-                  <h2 className="font-black text-2xl text-secondary mb-2 tracking-tighter">{t.studio.step5.title}</h2>
-                  <p className="text-secondary-lighter mb-5">{t.studio.step5.subtitle}</p>
-                  <div className="rounded-2xl border-2 border-dashed border-primary-lighter bg-white p-12 text-center hover:border-primary hover:bg-primary-lighter transition-all cursor-pointer">
-                    <p className="font-bold text-secondary mb-2">{t.studio.step5.drag}</p>
-                    <p className="text-secondary-lighter mb-6">{t.studio.step5.or}</p>
-                    <label className="inline-block cursor-pointer rounded-lg bg-primary px-6 py-3 text-sm font-bold text-white hover:bg-primary-dark transition-colors">
-                      {t.studio.step5.select_btn}
-                      <input type="file" multiple accept="image/*" onChange={handlePhotoUpload} className="hidden" />
-                    </label>
-                    {selected.photos.length > 0 && (
-                      <div className="mt-6 text-sm text-primary font-bold">
-                        {selected.photos.length} {selected.photos.length > 1 ? t.studio.step5.selected_plural : t.studio.step5.selected}
-                      </div>
-                    )}
-                    <p className="mt-6 text-xs text-secondary-lighter">
-                      {t.studio.step5.max_size} · {selected.peopleCount} {selected.peopleCount > 1 ? t.studio.step5.required_photos_plural : t.studio.step5.required_photos}
-                    </p>
-                  </div>
                 </div>
               </div>
             )}
@@ -852,12 +882,9 @@ export default function StudioPage() {
                   {step > 1 && (
                     <button
                       onClick={nextStep}
-                      disabled={!canAdvance() || checkoutLoading}
-                      className={`rounded-lg px-10 py-3 font-bold text-white transition-all flex items-center gap-2 ${
-                        canAdvance() && !checkoutLoading
-                          ? 'bg-primary hover:bg-primary-dark shadow-lg hover:shadow-xl'
-                          : 'bg-secondary-lighter text-gray-400 cursor-not-allowed'
-                      }`}
+                      disabled={checkoutLoading}
+                      aria-disabled={!canAdvance()}
+                      className="rounded-lg px-10 py-3 font-bold text-white transition-all flex items-center gap-2 bg-primary hover:bg-primary-dark shadow-lg hover:shadow-xl disabled:opacity-60"
                     >
                       {checkoutLoading && (
                         <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
@@ -866,6 +893,12 @@ export default function StudioPage() {
                     </button>
                   )}
                 </div>
+
+                {showError && !canAdvance() && (
+                  <p className="text-center text-sm text-red-500 font-bold mt-4">
+                    {t.studio.nav.missing}
+                  </p>
+                )}
 
                 <p className="text-center text-xs text-secondary-lighter mt-8">
                   {t.studio.nav.secure}
