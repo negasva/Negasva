@@ -7,6 +7,7 @@ import Navbar from '@/components/Navbar';
 import PageFooter from '@/components/PageFooter';
 import { cachedFetchJSON } from '@/lib/cache/clientCache';
 import { usePageText } from '@/lib/i18n/pageContent';
+import { useAutoTranslate } from '@/lib/i18n/useAutoTranslate';
 import { faqContent } from '@/lib/i18n/pages/faq';
 
 interface ApiFaq {
@@ -73,8 +74,15 @@ export default function FaqPage() {
     },
   ];
 
+  // Las FAQ del admin se escriben en español y se traducen solas al idioma activo.
+  const flatSrc = (apiFaqs ?? []).flatMap((f) => [f.question, f.answer]);
+  const { translated: flatTr } = useAutoTranslate(flatSrc);
+
   const faqs: { q: string; a: React.ReactNode }[] = apiFaqs
-    ? apiFaqs.map((f) => ({ q: f.question, a: renderAnswer(f.answer) }))
+    ? apiFaqs.map((f, i) => ({
+        q: flatTr[i * 2] ?? f.question,
+        a: renderAnswer(flatTr[i * 2 + 1] ?? f.answer),
+      }))
     : FALLBACK_FAQS;
 
   return (

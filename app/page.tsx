@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { ChevronRight, ChevronDown, Palette, Users, Image as ImageIcon, Camera, Sparkles, Tag } from 'lucide-react';
 import { useLanguage } from '@/lib/i18n/LanguageContext';
+import { useAutoTranslate } from '@/lib/i18n/useAutoTranslate';
 import { useCurrency } from '@/lib/currency/CurrencyContext';
 import { cachedFetchJSON } from '@/lib/cache/clientCache';
 import Navbar from '@/components/Navbar';
@@ -160,6 +161,15 @@ export default function Home() {
     title_en: s.title_en,
     title_fr: s.title_fr || DEFAULT_CONFIG.how_it_works[i]?.title_fr,
     img: HOW_STEPS[i]?.img ?? '/backgrounds/rm-1.webp',
+  }));
+
+  // FAQ del admin (español) traducida al idioma activo automáticamente.
+  const faqFlatSrc = faqs.flatMap((f) => [f.question, f.answer]);
+  const { translated: faqFlatTr } = useAutoTranslate(faqFlatSrc);
+  const faqsT = faqs.map((f, i) => ({
+    ...f,
+    question: faqFlatTr[i * 2] ?? f.question,
+    answer: faqFlatTr[i * 2 + 1] ?? f.answer,
   }));
 
   return (
@@ -378,7 +388,7 @@ export default function Home() {
               {tr('Preguntas frecuentes', 'Frequently asked questions', 'Questions fréquentes')}
             </h2>
             <div className="space-y-3">
-              {faqs.map((item, i) => {
+              {faqsT.map((item, i) => {
                 const isOpen = openFaq === i;
                 return (
                   <div
