@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
-import { createRouteClient, createServiceClient } from '@/lib/supabase/server';
+import { createServiceClient } from '@/lib/supabase/server';
+import { requireAdminRoute } from '@/lib/admin/auth';
 import { z } from 'zod';
 import {
   errorResponse,
@@ -7,13 +8,6 @@ import {
   readJson,
   validateSameOrigin,
 } from '@/lib/security/apiHelpers';
-
-async function requireAdmin() {
-  const supabase = createRouteClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user || user.user_metadata?.role !== 'admin') return null;
-  return supabase;
-}
 
 async function guard(request: Request, mutating: boolean) {
   if (mutating && !validateSameOrigin(request)) return errorResponse('Invalid origin', 403);
@@ -45,7 +39,7 @@ const UpdateSchema = z.object({
 export async function GET(request: Request) {
   const blocked = await guard(request, false);
   if (blocked) return blocked;
-  const supabase = await requireAdmin();
+  const supabase = await requireAdminRoute();
   if (!supabase) return errorResponse('Unauthorized', 401);
 
   const { data, error } = await supabase
@@ -60,7 +54,7 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
   const blocked = await guard(request, true);
   if (blocked) return blocked;
-  const supabase = await requireAdmin();
+  const supabase = await requireAdminRoute();
   if (!supabase) return errorResponse('Unauthorized', 401);
   const db = createServiceClient();
 
@@ -78,7 +72,7 @@ export async function POST(request: Request) {
 export async function PUT(request: Request) {
   const blocked = await guard(request, true);
   if (blocked) return blocked;
-  const supabase = await requireAdmin();
+  const supabase = await requireAdminRoute();
   if (!supabase) return errorResponse('Unauthorized', 401);
   const db = createServiceClient();
 
@@ -99,7 +93,7 @@ export async function PUT(request: Request) {
 export async function DELETE(request: Request) {
   const blocked = await guard(request, true);
   if (blocked) return blocked;
-  const supabase = await requireAdmin();
+  const supabase = await requireAdminRoute();
   if (!supabase) return errorResponse('Unauthorized', 401);
   const db = createServiceClient();
 

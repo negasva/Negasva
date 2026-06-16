@@ -1,4 +1,10 @@
 import { createServiceClient } from '@/lib/supabase/server';
+import {
+  FALLBACK_PER_PERSON_USD,
+  FALLBACK_BACKGROUND_STANDARD_USD,
+  FALLBACK_BACKGROUND_CUSTOM_USD,
+  FALLBACK_EXPRESS_SURCHARGE_PCT,
+} from './fallbacks';
 
 /**
  * Server-side pricing config, loaded from the DB tables the admin panel
@@ -15,10 +21,10 @@ export interface PricingConfig {
 }
 
 const FALLBACK: PricingConfig = {
-  perPersonUsd: { torso_only: 25, full_body: 29.99 },
-  backgroundStandardUsd: 15,
-  backgroundCustomUsd: 25,
-  expressSurchargePct: 0.3,
+  perPersonUsd: { ...FALLBACK_PER_PERSON_USD },
+  backgroundStandardUsd: FALLBACK_BACKGROUND_STANDARD_USD,
+  backgroundCustomUsd: FALLBACK_BACKGROUND_CUSTOM_USD,
+  expressSurchargePct: FALLBACK_EXPRESS_SURCHARGE_PCT / 100,
 };
 
 export async function loadPricingConfig(): Promise<PricingConfig> {
