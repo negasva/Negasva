@@ -242,7 +242,7 @@ export default function EstilosAdminPage() {
               {editId && form.example_image_url && imageMode === 'url' && (
                 <div className="mt-2 flex items-center gap-3">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={form.example_image_url} alt="" className="w-16 h-10 object-cover rounded border border-gray-100" />
+                  <img src={form.example_image_url} alt={form.name ? `Imagen actual de ${form.name}` : 'Imagen actual del estilo'} loading="lazy" className="w-16 h-10 object-cover rounded border border-gray-100" />
                   <p className="text-xs text-secondary-lighter">Imagen actual</p>
                 </div>
               )}
@@ -283,6 +283,7 @@ export default function EstilosAdminPage() {
                   <img
                     src={style.example_image_url}
                     alt={style.name}
+                    loading="lazy"
                     className="w-full h-full object-cover"
                   />
                 </div>

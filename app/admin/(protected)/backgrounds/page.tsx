@@ -323,7 +323,7 @@ export default function BackgroundsPage() {
           {editBg.image_url && (
             <div className="mt-3 flex items-center gap-3">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={editBg.image_url} alt="" className="w-16 h-16 object-cover rounded-lg border border-gray-100" />
+              <img src={editBg.image_url} alt={`Imagen actual de ${editBg.name}`} loading="lazy" className="w-16 h-16 object-cover rounded-lg border border-gray-100" />
               <p className="text-xs text-secondary-lighter">Imagen actual</p>
             </div>
           )}
@@ -380,6 +380,7 @@ export default function BackgroundsPage() {
                     <img
                       src={bg.image_url}
                       alt={bg.name}
+                      loading="lazy"
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                     />
                     {bg.style && (

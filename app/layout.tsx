@@ -87,7 +87,8 @@ const PRODUCT_SCHEMA = {
     highPrice: '160',
     availability: 'https://schema.org/InStock',
   },
-  aggregateRating: { '@type': 'AggregateRating', ratingValue: '5.0', ratingCount: '1000' },
+  // aggregateRating se omite a propósito: no hay reseñas verificadas y datos
+  // ficticios pueden provocar penalizaciones / acciones manuales de Google.
 };
 
 export default function RootLayout({
