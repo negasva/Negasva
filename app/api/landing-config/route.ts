@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
-import { createServerClient, createRouteClient, createServiceClient } from '@/lib/supabase/server';
+import { createServerClient, createServiceClient } from '@/lib/supabase/server';
+import { requireAdminRoute } from '@/lib/admin/auth';
 import { errorResponse, rateLimitByIp, readJson, validateSameOrigin } from '@/lib/security/apiHelpers';
 
 const ALLOWED_KEYS = ['hero', 'how_it_works', 'gallery_images', 'stats', 'footer'];
@@ -30,11 +31,7 @@ export async function PATCH(request: Request) {
   const rl = await rateLimitByIp(request, { prefix: 'admin-landing', max: 30, windowMs: 60_000 });
   if (rl) return rl;
 
-  const supabase = createRouteClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user || user.user_metadata?.role !== 'admin') {
-    return errorResponse('Unauthorized', 401);
-  }
+  if (!(await requireAdminRoute())) return errorResponse('Unauthorized', 401);
 
   const body = await readJson(request);
   if (!body || typeof body !== 'object') return errorResponse('Invalid body', 400);

@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
-import { createServerClient, createRouteClient, createServiceClient } from '@/lib/supabase/server';
+import { createServerClient, createServiceClient } from '@/lib/supabase/server';
+import { requireAdminRoute } from '@/lib/admin/auth';
 import { errorResponse, rateLimitByIp, readJson, validateSameOrigin } from '@/lib/security/apiHelpers';
 
 // Contenido editable de páginas (es/en/fr). Ver migración 017_page_content.
@@ -38,11 +39,7 @@ export async function PATCH(request: Request) {
   const rl = await rateLimitByIp(request, { prefix: 'admin-page-content', max: 60, windowMs: 60_000 });
   if (rl) return rl;
 
-  const supabase = createRouteClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user || user.user_metadata?.role !== 'admin') {
-    return errorResponse('Unauthorized', 401);
-  }
+  if (!(await requireAdminRoute())) return errorResponse('Unauthorized', 401);
 
   const body = await readJson(request);
   if (!body || typeof body !== 'object') return errorResponse('Invalid body', 400);
