@@ -13,6 +13,7 @@ import { cachedFetchJSON } from '@/lib/cache/clientCache';
 import CurrencySwitcher from '@/components/CurrencySwitcher';
 import { loadStripe } from '@stripe/stripe-js';
 import { EmbeddedCheckout, EmbeddedCheckoutProvider } from '@stripe/react-stripe-js';
+import RecaptchaScript from '@/components/RecaptchaScript';
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
 
@@ -399,6 +400,7 @@ export default function StudioPage() {
 
   return (
     <div className="min-h-screen bg-white">
+      <RecaptchaScript />
       {/* Nav */}
       <nav className="bg-white border-b border-primary-lighter sticky top-0 z-[60] w-full">
         <div className="mx-auto max-w-6xl px-4 py-4 flex items-center justify-between">

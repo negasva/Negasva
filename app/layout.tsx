@@ -9,15 +9,13 @@ import EmailCapturePopup from "@/components/EmailCapturePopup";
 
 const montserrat = Montserrat({
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "900"],
+  weight: ["400", "600", "900"],
   display: "swap",
 });
 
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
-  maximumScale: 1,
-  userScalable: false,
   themeColor: '#FF9EC5',
 };
 
@@ -125,12 +123,9 @@ export default function RootLayout({
             </Script>
           </>
         )}
-        {process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY && (
-          <Script
-            src={`https://www.recaptcha.net/recaptcha/api.js?render=${process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY}`}
-            strategy="afterInteractive"
-          />
-        )}
+        {/* reCAPTCHA ya NO se carga globalmente. Se inyecta solo en las rutas
+            que tienen formularios (/order y /contacto) vía <RecaptchaScript />
+            para no penalizar el INP del resto del sitio. */}
       </head>
       <body className={`${montserrat.className} min-h-screen flex flex-col bg-white`}>
         <LanguageProvider>
