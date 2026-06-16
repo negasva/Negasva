@@ -4,12 +4,14 @@ import { Mail, MessageSquare } from 'lucide-react';
 import { useLanguage } from '@/lib/i18n/LanguageContext';
 import Navbar from '@/components/Navbar';
 import PageFooter from '@/components/PageFooter';
+import RecaptchaScript from '@/components/RecaptchaScript';
 
 export default function ContactoPage() {
   const { t } = useLanguage();
 
   return (
     <div className="min-h-screen bg-white">
+      <RecaptchaScript />
       <Navbar />
 
       {/* Hero */}
