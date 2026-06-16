@@ -31,5 +31,8 @@ Thumbs.db
 .vercel
 tsconfig.tsbuildinfo
 
-# Tooling output
-graphify-out/
+# Tooling output — graphify
+# Commit only the concise context report; the full graph + AST cache are
+# heavy and regenerable with `graphify --update`.
+graphify-out/*
+!graphify-out/GRAPH_REPORT.md
