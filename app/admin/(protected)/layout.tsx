@@ -6,9 +6,9 @@ export const dynamic = 'force-dynamic';
 
 export default async function ProtectedAdminLayout({ children }: { children: React.ReactNode }) {
   const supabase = createServerClient();
-  const { data: { session } } = await supabase.auth.getSession();
+  const { data: { user } } = await supabase.auth.getUser();
 
-  if (!session || session.user.user_metadata?.role !== 'admin') {
+  if (!user || user.user_metadata?.role !== 'admin') {
     redirect('/admin/login');
   }
 

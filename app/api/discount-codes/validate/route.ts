@@ -9,7 +9,7 @@ const ValidateSchema = z.object({
 });
 
 export async function POST(request: Request) {
-  const rl = rateLimitByIp(request, { prefix: 'dc-validate', max: 15, windowMs: 60_000 });
+  const rl = await rateLimitByIp(request, { prefix: 'dc-validate', max: 15, windowMs: 60_000 });
   if (rl) return rl;
 
   const body = await readJson(request);

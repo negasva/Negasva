@@ -27,7 +27,7 @@ export const runtime = 'nodejs';
 export async function GET(request: Request) {
   // Modest rate limit. UptimeRobot pings every few minutes from rotating
   // IPs, so this never trips for legitimate use — it just blocks abuse.
-  const rl = rateLimitByIp(request, { prefix: 'keepalive', max: 30, windowMs: 60_000 });
+  const rl = await rateLimitByIp(request, { prefix: 'keepalive', max: 30, windowMs: 60_000 });
   if (rl) return rl;
 
   // Optional shared-secret gate. A request is authorized if any of:

@@ -11,21 +11,21 @@ import {
 
 async function requireAdmin() {
   const supabase = createRouteClient();
-  const { data: { session } } = await supabase.auth.getSession();
-  if (!session || session.user.user_metadata?.role !== 'admin') return null;
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user || user.user_metadata?.role !== 'admin') return null;
   return supabase;
 }
 
-function guard(request: Request, mutating: boolean) {
+async function guard(request: Request, mutating: boolean) {
   if (mutating && !validateSameOrigin(request)) {
     return errorResponse('Invalid origin', 403);
   }
-  const rl = rateLimitByIp(request, { prefix: 'admin-price', max: 60, windowMs: 60_000 });
+  const rl = await rateLimitByIp(request, { prefix: 'admin-price', max: 60, windowMs: 60_000 });
   return rl;
 }
 
 export async function GET(request: Request) {
-  const blocked = guard(request, false);
+  const blocked = await guard(request, false);
   if (blocked) return blocked;
 
   const supabase = await requireAdmin();
@@ -41,7 +41,7 @@ export async function GET(request: Request) {
 }
 
 export async function PUT(request: Request) {
-  const blocked = guard(request, true);
+  const blocked = await guard(request, true);
   if (blocked) return blocked;
 
   const supabase = await requireAdmin();

@@ -80,12 +80,12 @@ export function rateLimitResponse(result: RateLimitResult): NextResponse {
  * Convenience: rate-limit a request by IP and return the 429 response if
  * exceeded, otherwise null. Caller continues if it returns null.
  */
-export function rateLimitByIp(
+export async function rateLimitByIp(
   request: Request,
   opts: RateLimitOpts,
-): NextResponse | null {
+): Promise<NextResponse | null> {
   const ip = getClientIp(request);
-  const result = checkRateLimit(ip, opts);
+  const result = await checkRateLimit(ip, opts);
   if (!result.ok) return rateLimitResponse(result);
   return null;
 }

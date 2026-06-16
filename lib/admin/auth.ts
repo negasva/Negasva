@@ -3,16 +3,19 @@ import { createServerClient } from '@/lib/supabase/server';
 
 export async function requireAdmin() {
   const supabase = createServerClient();
-  const { data: { session } } = await supabase.auth.getSession();
+  // getUser() revalidates the JWT against the Supabase Auth server on every
+  // call; getSession() only reads the (spoofable) cookie. Server-side guards
+  // must use getUser().
+  const { data: { user } } = await supabase.auth.getUser();
 
-  if (!session) {
+  if (!user) {
     redirect('/admin/login');
   }
 
-  const role = session.user.user_metadata?.role;
+  const role = user.user_metadata?.role;
   if (role !== 'admin') {
     redirect('/admin/login');
   }
 
-  return session;
+  return user;
 }

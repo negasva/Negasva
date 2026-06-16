@@ -5,7 +5,7 @@ import { errorResponse, rateLimitByIp } from '@/lib/security/apiHelpers';
 // Conteo agregado de pedidos recientes para social proof en la landing.
 // Solo expone un número, nunca datos de pedidos.
 export async function GET(request: Request) {
-  const rl = rateLimitByIp(request, { prefix: 'pub-stats', max: 60, windowMs: 60_000 });
+  const rl = await rateLimitByIp(request, { prefix: 'pub-stats', max: 60, windowMs: 60_000 });
   if (rl) return rl;
 
   const since = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
