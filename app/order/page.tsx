@@ -486,7 +486,7 @@ export default function StudioPage() {
             {step === 2 && (
               <div>
                 <div className="text-center mb-10">
-                  <h1 className="font-black text-4xl text-secondary mb-3 tracking-tighter">{t.studio.step2.title}</h1>
+                  <h2 className="font-black text-4xl text-secondary mb-3 tracking-tighter">{t.studio.step2.title}</h2>
                   <p className="text-lg text-secondary-lighter">{t.studio.step2.subtitle}</p>
                 </div>
 
@@ -612,7 +612,7 @@ export default function StudioPage() {
             {step === 3 && (
               <div>
                 <div className="text-center mb-10">
-                  <h1 className="font-black text-4xl text-secondary mb-3 tracking-tighter">{t.studio.step3.title}</h1>
+                  <h2 className="font-black text-4xl text-secondary mb-3 tracking-tighter">{t.studio.step3.title}</h2>
                   <p className="text-lg text-secondary-lighter">{t.studio.step3.subtitle}</p>
                 </div>
                 <div onAnimationEnd={onShakeEnd} className={`grid grid-cols-2 gap-3 ${errorRing} ${errorShake}`}>
@@ -708,7 +708,7 @@ export default function StudioPage() {
             {step === 4 && (
               <div>
                 <div className="text-center mb-10">
-                  <h1 className="font-black text-4xl text-secondary mb-3 tracking-tighter">{t.studio.step4.title}</h1>
+                  <h2 className="font-black text-4xl text-secondary mb-3 tracking-tighter">{t.studio.step4.title}</h2>
                   <p className="text-lg text-secondary-lighter">{t.studio.step4.subtitle}</p>
                 </div>
                 <div className="max-w-2xl mx-auto space-y-8">
@@ -842,7 +842,7 @@ export default function StudioPage() {
             {step === 5 && checkoutParams && (
               <div>
                 <div className="text-center mb-8">
-                  <h1 className="font-black text-3xl text-secondary mb-2 tracking-tighter">Pago seguro</h1>
+                  <h2 className="font-black text-3xl text-secondary mb-2 tracking-tighter">Pago seguro</h2>
                   <div className="flex items-center justify-center gap-4 text-xs text-secondary-lighter flex-wrap">
                     <span className="flex items-center gap-1"><Lock className="w-3 h-3 text-primary" /> Cifrado SSL 256-bit</span>
                     <span className="flex items-center gap-1"><ShieldCheck className="w-3 h-3 text-primary" /> Procesado por Stripe</span>
