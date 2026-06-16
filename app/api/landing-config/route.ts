@@ -5,7 +5,7 @@ import { errorResponse, rateLimitByIp, readJson, validateSameOrigin } from '@/li
 const ALLOWED_KEYS = ['hero', 'how_it_works', 'gallery_images', 'stats', 'footer'];
 
 export async function GET(request: Request) {
-  const rl = rateLimitByIp(request, { prefix: 'pub-landing', max: 60, windowMs: 60_000 });
+  const rl = await rateLimitByIp(request, { prefix: 'pub-landing', max: 60, windowMs: 60_000 });
   if (rl) return rl;
 
   const supabase = createServerClient();
@@ -27,12 +27,12 @@ export async function GET(request: Request) {
 
 export async function PATCH(request: Request) {
   if (!validateSameOrigin(request)) return errorResponse('Invalid origin', 403);
-  const rl = rateLimitByIp(request, { prefix: 'admin-landing', max: 30, windowMs: 60_000 });
+  const rl = await rateLimitByIp(request, { prefix: 'admin-landing', max: 30, windowMs: 60_000 });
   if (rl) return rl;
 
   const supabase = createRouteClient();
-  const { data: { session } } = await supabase.auth.getSession();
-  if (!session || session.user.user_metadata?.role !== 'admin') {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user || user.user_metadata?.role !== 'admin') {
     return errorResponse('Unauthorized', 401);
   }
 

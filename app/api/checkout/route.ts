@@ -37,7 +37,7 @@ const STRIPE_PAYMENT_METHODS: Record<string, Stripe.Checkout.SessionCreateParams
 };
 
 export async function POST(request: Request) {
-  const rl = rateLimitByIp(request, { prefix: 'checkout', max: 20, windowMs: 60_000 });
+  const rl = await rateLimitByIp(request, { prefix: 'checkout', max: 20, windowMs: 60_000 });
   if (rl) return rl;
 
   const body = await readJson(request);

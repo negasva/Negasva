@@ -8,7 +8,7 @@ import { errorResponse, rateLimitByIp, readJson } from '@/lib/security/apiHelper
 export const runtime = 'nodejs';
 
 export async function POST(request: Request) {
-  const rl = rateLimitByIp(request, { prefix: 'translate', max: 120, windowMs: 60_000 });
+  const rl = await rateLimitByIp(request, { prefix: 'translate', max: 120, windowMs: 60_000 });
   if (rl) return rl;
 
   const body = await readJson(request);

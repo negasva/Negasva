@@ -3,7 +3,7 @@ import { createServerClient } from '@/lib/supabase/server';
 import { errorResponse, rateLimitByIp } from '@/lib/security/apiHelpers';
 
 export async function GET(request: Request) {
-  const rl = rateLimitByIp(request, { prefix: 'pub-faqs', max: 60, windowMs: 60_000 });
+  const rl = await rateLimitByIp(request, { prefix: 'pub-faqs', max: 60, windowMs: 60_000 });
   if (rl) return rl;
 
   const supabase = createServerClient();

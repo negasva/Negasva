@@ -20,7 +20,7 @@ const STATUS_LABEL: Record<string, string> = {
 const NOT_FOUND = 'Pedido no encontrado';
 
 export async function POST(request: Request) {
-  const rl = rateLimitByIp(request, { prefix: 'track', max: 10, windowMs: 60_000 });
+  const rl = await rateLimitByIp(request, { prefix: 'track', max: 10, windowMs: 60_000 });
   if (rl) return rl;
 
   const body = await readJson(request);

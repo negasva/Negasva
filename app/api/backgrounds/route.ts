@@ -5,7 +5,7 @@ import { errorResponse, rateLimitByIp } from '@/lib/security/apiHelpers';
 const VALID_STYLES = ['rick-morty', 'gravity-falls', 'simpsons', 'fairly-odd', 'negasva'] as const;
 
 export async function GET(request: Request) {
-  const rl = rateLimitByIp(request, { prefix: 'pub-bg', max: 60, windowMs: 60_000 });
+  const rl = await rateLimitByIp(request, { prefix: 'pub-bg', max: 60, windowMs: 60_000 });
   if (rl) return rl;
 
   const { searchParams } = new URL(request.url);
