@@ -45,8 +45,14 @@ export interface PriceBreakdown {
   subtotal: number;
   expressSurcharge: number;
   codeDiscount: number;
+  preCodeTotal: number;
   total: number;
 }
+
+const ZERO_QUOTE: PriceBreakdown = {
+  perPerson: 0, peopleSubtotal: 0, discountRate: 0, discount: 0, bgCost: 0,
+  subtotal: 0, expressSurcharge: 0, codeDiscount: 0, preCodeTotal: 0, total: 0,
+};
 
 const FALLBACK_STYLES = [
   { id: 'rick-morty',    name: 'Rick & Morty'          },
@@ -126,6 +132,9 @@ export function useCheckout() {
   const [shaking, setShaking] = useState(false);
   const [checkoutLoading, setCheckoutLoading] = useState(false);
   const [checkoutParams, setCheckoutParams] = useState<Record<string, unknown> | null>(null);
+  // Authoritative price breakdown comes from the server (/api/pricing/quote).
+  // The client never does pricing arithmetic — it only renders this.
+  const [quote, setQuote] = useState<PriceBreakdown>(ZERO_QUOTE);
 
   // Preselección de estilo desde la landing (?style= o sessionStorage).
   useEffect(() => {
@@ -187,12 +196,58 @@ export function useCheckout() {
       .catch(() => null);
   }, [selected.style, dynamicBgs]);
 
+  // Fetch the authoritative breakdown whenever a price input changes. Debounced
+  // so rapid +/- clicks don't spam the endpoint; the previous value stays on
+  // screen until the new one arrives (no flicker to zero).
+  useEffect(() => {
+    if (!selected.bodyType) { setQuote(ZERO_QUOTE); return; }
+    let cancelled = false;
+    const timer = setTimeout(async () => {
+      try {
+        const res = await fetch('/api/pricing/quote', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            bodyType: selected.bodyType,
+            peopleCount: selected.peopleCount,
+            background: selected.background || 'none',
+            express: selected.express,
+            ...(appliedCode ? { discountCode: appliedCode.code } : {}),
+          }),
+        });
+        if (!res.ok) return;
+        const data = await res.json();
+        if (!cancelled) setQuote(data as PriceBreakdown);
+      } catch { /* keep last known quote */ }
+    }, 200);
+    return () => { cancelled = true; clearTimeout(timer); };
+  }, [selected.bodyType, selected.peopleCount, selected.background, selected.express, appliedCode]);
+
   const canAdvance = () => {
     if (step === 1) return !!selected.style;
     if (step === 2) return !!selected.bodyType;
     if (step === 3) return !!selected.background;
     if (step === 4) return selected.photos.length >= selected.peopleCount;
     return true;
+  };
+
+  // Upload the customer's photos to the private bucket (compressed first) and
+  // return the storage paths so they travel with the order. Runs before any
+  // payment is created, so the illustrator always has the source photos.
+  const uploadPhotos = async (): Promise<{ uploadId?: string; paths: string[] }> => {
+    if (selected.photos.length === 0) return { paths: [] };
+    const { default: imageCompression } = await import('browser-image-compression');
+    const fd = new FormData();
+    for (const file of selected.photos) {
+      let out: File = file;
+      try {
+        out = await imageCompression(file, { maxSizeMB: 1.5, maxWidthOrHeight: 2200, useWebWorker: true });
+      } catch { /* fall back to the original file */ }
+      fd.append('photos', out, file.name);
+    }
+    const res = await fetch('/api/order/upload', { method: 'POST', body: fd });
+    if (!res.ok) throw new Error('upload failed');
+    return res.json();
   };
 
   const nextStep = async () => {
@@ -205,6 +260,17 @@ export function useCheckout() {
 
     if (step < 4) { setStep(step + 1); return; }
 
+    // Step 4 → checkout. Upload photos first (for both payment providers).
+    setCheckoutLoading(true);
+    let uploaded: { uploadId?: string; paths: string[] };
+    try {
+      uploaded = await uploadPhotos();
+    } catch {
+      alert('Error al subir las fotos. Intenta de nuevo.');
+      setCheckoutLoading(false);
+      return;
+    }
+
     const params = {
       style: selected.style,
       bodyType: selected.bodyType,
@@ -214,12 +280,13 @@ export function useCheckout() {
       specialRequests: selected.specialRequests,
       currency: currency.toLowerCase(),
       rate: rates[currency] ?? 1,
+      photoPaths: uploaded.paths,
+      ...(uploaded.uploadId ? { uploadId: uploaded.uploadId } : {}),
       ...(appliedCode ? { discountCode: appliedCode.code } : {}),
     };
 
-    // COP: Wompi redirect (unchanged)
+    // COP: Wompi redirect
     if (currency === 'COP') {
-      setCheckoutLoading(true);
       try {
         const res = await fetch('/api/checkout', {
           method: 'POST',
@@ -243,6 +310,7 @@ export function useCheckout() {
     // Stripe: embedded checkout (paso 5)
     setCheckoutParams(params);
     setStep(5);
+    setCheckoutLoading(false);
   };
 
   const fetchClientSecret = useCallback(async () => {
@@ -268,43 +336,9 @@ export function useCheckout() {
 
   const onShakeEnd = () => setShaking(false);
 
-  const familyDiscount = (count: number) => {
-    if (count >= 5) return 0.25;
-    if (count >= 3) return 0.15;
-    return 0;
-  };
-
-  const priceBreakdown = (): PriceBreakdown => {
-    const perPerson = bodyTypes.find(b => b.slug === selected.bodyType)?.price_usd
-      ?? (selected.bodyType === 'full_body' ? 29.99 : 25);
-    const peopleSubtotal = selected.peopleCount * perPerson;
-    const discountRate = familyDiscount(selected.peopleCount);
-    const discount = peopleSubtotal * discountRate;
-    const peopleAfterDiscount = peopleSubtotal - discount;
-    const bgCost = selected.background === 'custom'
-      ? (priceMap.background_custom ?? 25)
-      : selected.background && selected.background !== 'none' ? (priceMap.background_standard ?? 15) : 0;
-    const subtotal = peopleAfterDiscount + bgCost;
-    const expressPct = (priceMap.express_surcharge_pct ?? 30) / 100;
-    const expressSurcharge = selected.express ? subtotal * expressPct : 0;
-    const preCodeTotal = subtotal + expressSurcharge;
-    const codeDiscount = appliedCode
-      ? Math.min(appliedCode.type === 'percentage' ? preCodeTotal * (appliedCode.value / 100) : appliedCode.value, preCodeTotal)
-      : 0;
-    return {
-      perPerson,
-      peopleSubtotal,
-      discountRate,
-      discount,
-      bgCost,
-      subtotal,
-      expressSurcharge,
-      codeDiscount,
-      total: preCodeTotal - codeDiscount,
-    };
-  };
-
-  const totalPrice = () => priceBreakdown().total;
+  // The breakdown is whatever the server last quoted — no client-side math.
+  const priceBreakdown = (): PriceBreakdown => quote;
+  const totalPrice = () => quote.total;
 
   const getBgName = (id: string) =>
     (t.studio.backgrounds as Record<string, string>)[id] ?? id;
