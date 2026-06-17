@@ -269,3 +269,20 @@ export const AdminStyleUpdateSchema = z.object({
   is_active: z.boolean().optional(),
   sort_order: z.number().int().optional(),
 });
+
+export const AdminGalleryCreateSchema = z.object({
+  title: z.string().trim().min(1).max(120),
+  style: z.string().trim().max(100).optional().nullable(),
+  image_url: SafeImageSchema,
+  sort_order: z.number().int().min(0).max(10_000).optional(),
+  is_active: z.boolean().optional(),
+});
+
+export const AdminGalleryUpdateSchema = z.object({
+  id: IdSchema,
+  title: z.string().trim().min(1).max(120).optional(),
+  style: z.string().trim().max(100).optional().nullable(),
+  image_url: SafeImageSchema.optional(),
+  sort_order: z.number().int().min(0).max(10_000).optional(),
+  is_active: z.boolean().optional(),
+});
