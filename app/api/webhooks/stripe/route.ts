@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import Stripe from 'stripe';
 import { createServiceClient } from '@/lib/supabase/server';
+import { recordDiscountCodeUse } from '@/lib/pricing/server';
+import { listOrderPhotos } from '@/lib/payments/orderPhotos';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function getStripe() {
@@ -9,7 +11,11 @@ function getStripe() {
   return new Stripe(key, { apiVersion: '2024-11-20.acacia' as any });
 }
 
-function rowFromSession(session: Stripe.Checkout.Session, status: 'paid' | 'pending') {
+function rowFromSession(
+  session: Stripe.Checkout.Session,
+  status: 'paid' | 'pending',
+  photoPaths: string[],
+) {
   const meta = session.metadata ?? {};
   return {
     provider: 'stripe' as const,
@@ -23,6 +29,9 @@ function rowFromSession(session: Stripe.Checkout.Session, status: 'paid' | 'pend
     people_count: Number(meta.peopleCount),
     express: meta.express === 'true',
     special_requests: meta.specialRequests ?? null,
+    discount_code: meta.discountCode || null,
+    upload_id: meta.uploadId || null,
+    photo_paths: photoPaths,
     status,
     customer_email: session.customer_details?.email ?? null,
   };
@@ -52,9 +61,26 @@ export async function POST(request: Request) {
         // For card/Link/Apple Pay/etc: payment_status === 'paid' → mark paid.
         // For OXXO/SEPA/ACSS: payment_status === 'unpaid' → wait for async_payment_succeeded.
         const status: 'paid' | 'pending' = session.payment_status === 'paid' ? 'paid' : 'pending';
-        await supabase.from('orders').upsert(rowFromSession(session, status), {
+
+        // Was this reference already paid? Guards against double-crediting the
+        // coupon if Stripe retries the event.
+        const { data: existing } = await supabase
+          .from('orders')
+          .select('status')
+          .eq('provider_reference', session.id)
+          .maybeSingle();
+        const wasPaid = existing?.status === 'paid';
+
+        const photoPaths = await listOrderPhotos(supabase, session.metadata?.uploadId);
+        await supabase.from('orders').upsert(rowFromSession(session, status, photoPaths), {
           onConflict: 'provider_reference',
         });
+
+        // Credit the discount code only on the first transition to paid.
+        const code = session.metadata?.discountCode;
+        if (status === 'paid' && !wasPaid && code) {
+          await recordDiscountCodeUse(code);
+        }
         break;
       }
 

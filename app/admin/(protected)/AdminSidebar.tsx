@@ -7,6 +7,7 @@ import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 
 const NAV = [
   { href: '/admin',               label: 'Dashboard'      },
+  { href: '/admin/pedidos-pago',  label: 'Pedidos pagados' },
   { href: '/admin/orders',        label: 'Pedidos'         },
   { href: '/admin/estilos',       label: 'Estilos'         },
   { href: '/admin/body-types',    label: 'Tipos de cuerpo' },

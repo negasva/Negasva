@@ -4,7 +4,8 @@ import { z } from 'zod';
 import { errorResponse, rateLimitByIp, readJson } from '@/lib/security/apiHelpers';
 import { buildWompiCheckoutUrl, newWompiReference } from '@/lib/payments/wompi';
 import { createServiceClient } from '@/lib/supabase/server';
-import { applyDiscountCode, loadPricingConfig, recordDiscountCodeUse } from '@/lib/pricing/server';
+import { applyDiscountCode, loadPricingConfig } from '@/lib/pricing/server';
+import { computeQuoteUsd } from '@/lib/pricing/calc';
 
 function getStripe() {
   const key = process.env.STRIPE_SECRET_KEY;
@@ -12,8 +13,6 @@ function getStripe() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return new Stripe(key, { apiVersion: '2024-11-20.acacia' as any });
 }
-
-const FAMILY_DISCOUNT = (n: number) => (n >= 5 ? 0.25 : n >= 3 ? 0.15 : 0);
 
 const CheckoutSchema = z.object({
   style: z.string().min(1).max(60),
@@ -24,6 +23,9 @@ const CheckoutSchema = z.object({
   specialRequests: z.string().max(500).default(''),
   currency: z.enum(['usd', 'eur', 'gbp', 'mxn', 'cad', 'cop']),
   discountCode: z.string().max(40).optional(),
+  // Storage paths of the customer's uploaded photos (already in order-photos).
+  photoPaths: z.array(z.string().max(200)).max(8).optional(),
+  uploadId: z.string().max(80).optional(),
   // exchange rate from client (used only for display; charge is always in stated currency)
   rate: z.number().positive().finite().max(10_000),
 });
@@ -54,24 +56,19 @@ export async function POST(request: Request) {
   // with hardcoded fallback only if the DB is unreachable.
   const pricing = await loadPricingConfig();
 
-  // Total in USD, then convert to local currency
-  const perPersonUsd = pricing.perPersonUsd[d.bodyType] ?? 25;
-  const subtotalPeopleUsd = d.peopleCount * perPersonUsd;
-  const discountRate = FAMILY_DISCOUNT(d.peopleCount);
-  const afterDiscountUsd = subtotalPeopleUsd * (1 - discountRate);
-  const bgUsd = d.background === 'custom'
-    ? pricing.backgroundCustomUsd
-    : (d.background && d.background !== 'none') ? pricing.backgroundStandardUsd : 0;
-  const subtotalUsd = afterDiscountUsd + bgUsd;
-  const expressUsd = d.express ? subtotalUsd * pricing.expressSurchargePct : 0;
-  const preCodeTotalUsd = subtotalUsd + expressUsd;
-
-  // Admin-managed discount codes (discount_codes table)
+  // Same math as /api/pricing/quote (single source of truth in lib/pricing/calc).
+  // First pass without the code to know the base the discount applies to.
+  const base = computeQuoteUsd(d, pricing, 0);
   const appliedCode = d.discountCode
-    ? await applyDiscountCode(d.discountCode, preCodeTotalUsd)
+    ? await applyDiscountCode(d.discountCode, base.preCodeTotal)
     : null;
-  const totalUsd = preCodeTotalUsd - (appliedCode?.amountUsd ?? 0);
-  const totalLocal = totalUsd * d.rate;
+  const quote = computeQuoteUsd(d, pricing, appliedCode?.amountUsd ?? 0);
+
+  const perPersonUsd = quote.perPerson;
+  const discountRate = quote.discountRate;
+  const bgUsd = quote.bgCost;
+  const expressUsd = quote.expressSurcharge;
+  const totalLocal = quote.total * d.rate;
 
   // COP has no minor units; round up to nearest 1.000 for clean prices
   const isCop = d.currency === 'cop';
@@ -103,6 +100,10 @@ export async function POST(request: Request) {
         people_count: d.peopleCount,
         express: d.express,
         special_requests: d.specialRequests || null,
+        photo_paths: d.photoPaths ?? [],
+        upload_id: d.uploadId ?? null,
+        // Stored so the webhook can credit the code AFTER payment is approved.
+        discount_code: appliedCode?.code ?? null,
         status: 'pending',
       });
     } catch (err) {
@@ -114,7 +115,8 @@ export async function POST(request: Request) {
       reference,
       redirectUrl: `${origin}/checkout/success?provider=wompi&ref=${encodeURIComponent(reference)}`,
     });
-    if (appliedCode) await recordDiscountCodeUse(appliedCode.code);
+    // NOTE: discount usage is recorded by the Wompi webhook on APPROVED, never
+    // here — otherwise abandoned/declined payments would burn coupon uses.
     return NextResponse.json({ url });
   }
 
@@ -246,10 +248,12 @@ export async function POST(request: Request) {
       peopleCount: String(d.peopleCount),
       express: String(d.express),
       discountCode: appliedCode?.code ?? '',
+      uploadId: d.uploadId ?? '',
       specialRequests: d.specialRequests.slice(0, 200),
     },
   });
 
-  if (appliedCode) await recordDiscountCodeUse(appliedCode.code);
+  // NOTE: discount usage is recorded by the Stripe webhook on a paid session,
+  // never here — abandoned checkouts must not consume coupon uses.
   return NextResponse.json({ client_secret: session.client_secret });
 }
