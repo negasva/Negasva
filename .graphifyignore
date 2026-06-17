@@ -1,0 +1,12 @@
+docs/
+public/
+.github/
+node_modules/
+.next/
+*.md
+*.png
+*.jpg
+*.jpeg
+*.svg
+*.gif
+supabase/
