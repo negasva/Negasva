@@ -31,5 +31,4 @@ Thumbs.db
 .vercel
 tsconfig.tsbuildinfo
 
-# Tooling output
-graphify-out/
+
