@@ -9,10 +9,12 @@ CREATE TABLE IF NOT EXISTS public.landing_config (
 
 ALTER TABLE public.landing_config ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "public read landing config" ON public.landing_config;
 CREATE POLICY "public read landing config"
   ON public.landing_config FOR SELECT
   USING (true);
 
+DROP POLICY IF EXISTS "admin manage landing config" ON public.landing_config;
 CREATE POLICY "admin manage landing config"
   ON public.landing_config FOR ALL
   USING (is_admin());
