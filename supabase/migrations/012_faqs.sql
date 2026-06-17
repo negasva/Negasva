@@ -12,10 +12,12 @@ CREATE TABLE IF NOT EXISTS public.faqs (
 
 ALTER TABLE public.faqs ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "public read active faqs" ON public.faqs;
 CREATE POLICY "public read active faqs"
   ON public.faqs FOR SELECT
   USING (is_active = true);
 
+DROP POLICY IF EXISTS "admin manage faqs" ON public.faqs;
 CREATE POLICY "admin manage faqs"
   ON public.faqs FOR ALL
   USING (is_admin());

@@ -15,6 +15,7 @@ ALTER TABLE public.translation_cache ENABLE ROW LEVEL SECURITY;
 
 -- Lectura pública (los textos no son sensibles). La escritura se hace con el
 -- service client desde el endpoint /api/translate (bypassa RLS).
+DROP POLICY IF EXISTS "public read translation cache" ON public.translation_cache;
 CREATE POLICY "public read translation cache"
   ON public.translation_cache FOR SELECT
   USING (true);

@@ -10,12 +10,14 @@ CREATE TABLE IF NOT EXISTS public.newsletter_subscribers (
 ALTER TABLE public.newsletter_subscribers ENABLE ROW LEVEL SECURITY;
 
 -- Anyone can insert (anonymous signups from the popup)
+DROP POLICY IF EXISTS "Anyone can subscribe" ON public.newsletter_subscribers;
 CREATE POLICY "Anyone can subscribe"
   ON public.newsletter_subscribers
   FOR INSERT
   WITH CHECK (true);
 
 -- No public reads
+DROP POLICY IF EXISTS "No public reads" ON public.newsletter_subscribers;
 CREATE POLICY "No public reads"
   ON public.newsletter_subscribers
   FOR SELECT

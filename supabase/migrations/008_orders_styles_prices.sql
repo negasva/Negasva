@@ -23,6 +23,7 @@ CREATE TABLE IF NOT EXISTS public.admin_orders (
 );
 
 ALTER TABLE public.admin_orders ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "admin all admin_orders" ON public.admin_orders;
 CREATE POLICY "admin all admin_orders" ON public.admin_orders FOR ALL USING (is_admin());
 
 -- 2) Normalize portrait_styles slugs to match studio IDs
