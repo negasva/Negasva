@@ -16,6 +16,7 @@ export const seguimientoContent = {
     button_submit: 'Ver estado',
     error_generic: 'No pudimos consultar el pedido',
     current_status: 'Estado actual',
+    payment_pending: 'Tu pago aún no está confirmado. En cuanto se acredite, empezamos a dibujar.',
   },
   en: {
     stage_uploaded: 'Photos received',
@@ -32,6 +33,7 @@ export const seguimientoContent = {
     button_submit: 'View status',
     error_generic: 'We could not look up the order',
     current_status: 'Current status',
+    payment_pending: 'Your payment is not confirmed yet. As soon as it clears, we start drawing.',
   },
   fr: {
     stage_uploaded: 'Photos reçues',
@@ -48,5 +50,6 @@ export const seguimientoContent = {
     button_submit: 'Voir le statut',
     error_generic: 'Nous n’avons pas pu retrouver la commande',
     current_status: 'Statut actuel',
+    payment_pending: 'Votre paiement n’est pas encore confirmé. Dès qu’il est validé, nous commençons à dessiner.',
   },
 } satisfies PageDict<Record<string, string>>;

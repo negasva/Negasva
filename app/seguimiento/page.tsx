@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { Check } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import PageFooter from '@/components/PageFooter';
@@ -20,19 +21,23 @@ interface TrackResult {
   orderId: string;
   productionStatus: string;
   statusLabel: string;
+  paymentStatus: string;
   createdAt: string;
 }
 
-export default function SeguimientoPage() {
+function SeguimientoContent() {
   const tx = usePageText('seguimiento', seguimientoContent);
-  const [orderId, setOrderId] = useState('');
+  const params = useSearchParams();
+  const initialRef = params.get('ref') ?? '';
+
+  const [orderId, setOrderId] = useState(initialRef);
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [result, setResult] = useState<TrackResult | null>(null);
 
-  const lookup = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const lookup = async (e?: React.FormEvent) => {
+    e?.preventDefault();
     setError('');
     setResult(null);
     setLoading(true);
@@ -40,10 +45,10 @@ export default function SeguimientoPage() {
       const res = await fetch('/api/track', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ orderId, email }),
+        body: JSON.stringify({ orderId: orderId.trim(), email: email.trim() }),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data?.error || 'Error');
+      if (!res.ok) throw new Error(data?.error || tx.error_generic);
       setResult(data);
     } catch (err) {
       setError(err instanceof Error ? err.message : tx.error_generic);
@@ -52,14 +57,19 @@ export default function SeguimientoPage() {
     }
   };
 
+  // Auto-consulta una vez si llega ?ref= y el email ya está puesto.
+  useEffect(() => {
+    if (initialRef && email) lookup();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const currentIdx = result
     ? STAGES.findIndex((s) => s.key === (result.productionStatus as StageKey))
     : -1;
+  const isPaid = result?.paymentStatus === 'paid';
 
   return (
-    <div className="min-h-screen bg-white">
-      <Navbar />
-
+    <>
       <section className="bg-primary-lighter/30 py-20 px-4">
         <div className="mx-auto max-w-3xl text-center">
           <h1 className="font-black text-5xl md:text-6xl tracking-tighter text-secondary mb-4">
@@ -71,7 +81,7 @@ export default function SeguimientoPage() {
         </div>
       </section>
 
-      <section className="py-12 px-4">
+      <section className="py-12 px-4 pb-20">
         <div className="mx-auto max-w-xl">
           <form onSubmit={lookup} className="bg-white rounded-2xl border-2 border-primary-lighter p-6 space-y-4">
             <div>
@@ -82,7 +92,7 @@ export default function SeguimientoPage() {
                 onChange={(e) => setOrderId(e.target.value)}
                 placeholder={tx.placeholder_order_id}
                 required
-                className="w-full rounded-lg border-2 border-primary-lighter px-4 py-3 text-sm text-secondary focus:border-primary focus:outline-none"
+                className="w-full rounded-lg border-2 border-primary-lighter px-4 py-3 text-sm text-secondary font-mono focus:border-primary focus:outline-none"
               />
             </div>
             <div>
@@ -107,9 +117,17 @@ export default function SeguimientoPage() {
           </form>
 
           {result && (
-            <div className="mt-8 bg-white rounded-2xl border-2 border-primary p-6">
-              <p className="text-xs font-bold text-secondary-lighter uppercase tracking-widest mb-1">{tx.current_status}</p>
-              <p className="font-black text-2xl text-primary tracking-tighter mb-6">{result.statusLabel}</p>
+            <div className="mt-8 bg-white rounded-2xl border-2 border-primary p-6 space-y-6">
+              {!isPaid && (
+                <div className="bg-yellow-50 border border-yellow-200 rounded-lg px-4 py-3 text-sm text-yellow-700 font-medium">
+                  {tx.payment_pending}
+                </div>
+              )}
+
+              <div>
+                <p className="text-xs font-bold text-secondary-lighter uppercase tracking-widest mb-1">{tx.current_status}</p>
+                <p className="font-black text-2xl text-primary tracking-tighter">{result.statusLabel}</p>
+              </div>
 
               <ol className="space-y-3">
                 {STAGES.map((stage, i) => {
@@ -135,7 +153,23 @@ export default function SeguimientoPage() {
           )}
         </div>
       </section>
+    </>
+  );
+}
 
+export default function SeguimientoPage() {
+  return (
+    <div className="min-h-screen bg-white">
+      <Navbar />
+      <Suspense
+        fallback={
+          <div className="flex items-center justify-center py-32">
+            <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+          </div>
+        }
+      >
+        <SeguimientoContent />
+      </Suspense>
       <PageFooter />
     </div>
   );

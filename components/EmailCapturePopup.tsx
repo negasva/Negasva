@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { X, Sparkles } from 'lucide-react';
+import { getRecaptchaToken } from '@/lib/security/recaptchaClient';
 
 const STORAGE_KEY = 'negasva-newsletter';
 const COUPON_CODE = 'BIENVENIDA10';
@@ -34,10 +35,11 @@ export default function EmailCapturePopup() {
     }
     setLoading(true);
     try {
+      const recaptchaToken = await getRecaptchaToken('newsletter');
       await fetch('/api/newsletter', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email }),
+        body: JSON.stringify({ email, recaptchaToken }),
       });
     } catch {
       // non-blocking; coupon is still shown

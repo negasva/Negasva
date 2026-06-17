@@ -61,7 +61,7 @@ function SuccessContent() {
           </Link>
         ) : (
           <Link
-            href={ref ? `/track?ref=${encodeURIComponent(ref)}` : '/track'}
+            href={ref ? `/seguimiento?ref=${encodeURIComponent(ref)}` : '/seguimiento'}
             className="block w-full rounded-xl bg-primary px-6 py-3 font-black text-white hover:bg-primary-dark hover:shadow-xl transition-all"
           >
             Seguir mi pedido

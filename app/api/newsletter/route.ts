@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getSupabase } from '@/lib/supabase/client';
 import { NewsletterSchema } from '@/lib/validation/schemas';
+import { verifyRecaptcha } from '@/lib/security/recaptcha';
 import {
   errorResponse,
   rateLimitByIp,
@@ -13,6 +14,12 @@ export async function POST(request: Request) {
 
   const body = await readJson(request);
   if (!body) return errorResponse('Invalid body', 400);
+
+  // Newsletter es un imán de spam y de bajo riesgo para el usuario legítimo:
+  // exigimos token reCAPTCHA válido cuando hay secret configurado.
+  const token = (body as { recaptchaToken?: string }).recaptchaToken;
+  const human = await verifyRecaptcha(token, { action: 'newsletter', required: true });
+  if (!human) return errorResponse('Verificación de seguridad fallida', 400);
 
   const parsed = NewsletterSchema.safeParse(body);
   if (!parsed.success) return errorResponse('Invalid email', 400);

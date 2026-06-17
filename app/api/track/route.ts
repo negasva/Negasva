@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getSupabase } from '@/lib/supabase/client';
-import { TrackOrderSchema } from '@/lib/validation/schemas';
+import { TrackOrderSchema } from '@/lib/validation/order';
 import {
   errorResponse,
   rateLimitByIp,

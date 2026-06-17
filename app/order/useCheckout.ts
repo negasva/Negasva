@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useLanguage } from '@/lib/i18n/LanguageContext';
 import { useCurrency } from '@/lib/currency/CurrencyContext';
 import { cachedFetchJSON } from '@/lib/cache/clientCache';
+import { getRecaptchaToken } from '@/lib/security/recaptchaClient';
 import {
   FALLBACK_BODY_TYPES,
   FALLBACK_PRICES,
@@ -288,10 +289,11 @@ export function useCheckout() {
     // COP: Wompi redirect
     if (currency === 'COP') {
       try {
+        const recaptchaToken = await getRecaptchaToken('checkout');
         const res = await fetch('/api/checkout', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(params),
+          body: JSON.stringify({ ...params, recaptchaToken }),
         });
         const data = await res.json();
         if (data.url) {
@@ -315,10 +317,12 @@ export function useCheckout() {
 
   const fetchClientSecret = useCallback(async () => {
     if (!checkoutParams) return '';
+    // Token reCAPTCHA fresco por request (son de un solo uso y expiran).
+    const recaptchaToken = await getRecaptchaToken('checkout');
     const res = await fetch('/api/checkout', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(checkoutParams),
+      body: JSON.stringify({ ...checkoutParams, recaptchaToken }),
     });
     const data = await res.json();
     return data.client_secret ?? '';
