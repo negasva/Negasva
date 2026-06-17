@@ -12,6 +12,7 @@ const NAV = [
   { href: '/admin/estilos',       label: 'Estilos'         },
   { href: '/admin/body-types',    label: 'Tipos de cuerpo' },
   { href: '/admin/backgrounds',   label: 'Fondos'          },
+  { href: '/admin/galeria',       label: 'Galería'         },
   { href: '/admin/prices',        label: 'Precios'         },
   { href: '/admin/discount-codes',label: 'Descuentos'      },
   { href: '/admin/packages',      label: 'Paquetes'        },

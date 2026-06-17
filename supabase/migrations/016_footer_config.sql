@@ -13,7 +13,6 @@ INSERT INTO public.landing_config (key, value) VALUES
       {"label_es": "Estilos", "label_en": "Styles", "href": "/estilos"},
       {"label_es": "Precios", "label_en": "Pricing", "href": "/precios"},
       {"label_es": "Galería", "label_en": "Gallery", "href": "/galeria"},
-      {"label_es": "Productos", "label_en": "Products", "href": "/productos"},
       {"label_es": "Seguimiento", "label_en": "Tracking", "href": "/seguimiento"}
     ]},
     {"title_es": "Empresa", "title_en": "Company", "links": [
