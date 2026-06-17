@@ -41,10 +41,12 @@ ON CONFLICT (slug) DO NOTHING;
 -- RLS
 ALTER TABLE public.body_types ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "public read active body_types" ON public.body_types;
 CREATE POLICY "public read active body_types"
   ON public.body_types FOR SELECT
   USING (is_active = true);
 
+DROP POLICY IF EXISTS "admin manage body_types" ON public.body_types;
 CREATE POLICY "admin manage body_types"
   ON public.body_types FOR ALL
   USING (is_admin());

@@ -11,10 +11,12 @@ CREATE TABLE IF NOT EXISTS public.page_content (
 
 ALTER TABLE public.page_content ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "public read page content" ON public.page_content;
 CREATE POLICY "public read page content"
   ON public.page_content FOR SELECT
   USING (true);
 
+DROP POLICY IF EXISTS "admin manage page content" ON public.page_content;
 CREATE POLICY "admin manage page content"
   ON public.page_content FOR ALL
   USING (is_admin());

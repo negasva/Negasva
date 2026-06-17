@@ -61,22 +61,31 @@ AS $$
 $$;
 
 -- Prices policies
+DROP POLICY IF EXISTS "admin read prices"  ON public.prices;
 CREATE POLICY "admin read prices"   ON public.prices FOR SELECT USING (is_admin());
+DROP POLICY IF EXISTS "admin write prices" ON public.prices;
 CREATE POLICY "admin write prices"  ON public.prices FOR ALL    USING (is_admin());
 
 -- Discount codes policies
+DROP POLICY IF EXISTS "admin read discounts"  ON public.discount_codes;
 CREATE POLICY "admin read discounts"  ON public.discount_codes FOR SELECT USING (is_admin());
+DROP POLICY IF EXISTS "admin write discounts" ON public.discount_codes;
 CREATE POLICY "admin write discounts" ON public.discount_codes FOR ALL    USING (is_admin());
 
 -- Packages policies
+DROP POLICY IF EXISTS "admin read packages"  ON public.packages;
 CREATE POLICY "admin read packages"  ON public.packages FOR SELECT USING (is_admin());
+DROP POLICY IF EXISTS "admin write packages" ON public.packages;
 CREATE POLICY "admin write packages" ON public.packages FOR ALL    USING (is_admin());
 
 -- Backgrounds policies
+DROP POLICY IF EXISTS "admin read backgrounds"  ON public.backgrounds;
 CREATE POLICY "admin read backgrounds"  ON public.backgrounds FOR SELECT USING (is_admin());
+DROP POLICY IF EXISTS "admin write backgrounds" ON public.backgrounds;
 CREATE POLICY "admin write backgrounds" ON public.backgrounds FOR ALL    USING (is_admin());
 
 -- Public can read active backgrounds (needed by the frontend gallery)
+DROP POLICY IF EXISTS "public read active backgrounds" ON public.backgrounds;
 CREATE POLICY "public read active backgrounds"
   ON public.backgrounds FOR SELECT
   USING (is_active = true);
