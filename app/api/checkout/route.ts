@@ -1,11 +1,12 @@
 import { NextResponse } from 'next/server';
 import Stripe from 'stripe';
-import { z } from 'zod';
 import { errorResponse, rateLimitByIp, readJson } from '@/lib/security/apiHelpers';
 import { buildWompiCheckoutUrl, newWompiReference } from '@/lib/payments/wompi';
 import { createServiceClient } from '@/lib/supabase/server';
 import { applyDiscountCode, loadPricingConfig } from '@/lib/pricing/server';
 import { computeQuoteUsd } from '@/lib/pricing/calc';
+import { CheckoutSchema } from '@/lib/validation/order';
+import { verifyRecaptcha } from '@/lib/security/recaptcha';
 
 function getStripe() {
   const key = process.env.STRIPE_SECRET_KEY;
@@ -13,22 +14,6 @@ function getStripe() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return new Stripe(key, { apiVersion: '2024-11-20.acacia' as any });
 }
-
-const CheckoutSchema = z.object({
-  style: z.string().min(1).max(60),
-  bodyType: z.enum(['torso_only', 'full_body']),
-  background: z.string().max(60).default('none'),
-  peopleCount: z.number().int().min(1).max(8),
-  express: z.boolean().default(false),
-  specialRequests: z.string().max(500).default(''),
-  currency: z.enum(['usd', 'eur', 'gbp', 'mxn', 'cad', 'cop']),
-  discountCode: z.string().max(40).optional(),
-  // Storage paths of the customer's uploaded photos (already in order-photos).
-  photoPaths: z.array(z.string().max(200)).max(8).optional(),
-  uploadId: z.string().max(80).optional(),
-  // exchange rate from client (used only for display; charge is always in stated currency)
-  rate: z.number().positive().finite().max(10_000),
-});
 
 const STRIPE_PAYMENT_METHODS: Record<string, Stripe.Checkout.SessionCreateParams.PaymentMethodType[]> = {
   usd: ['card', 'link'],
@@ -44,6 +29,13 @@ export async function POST(request: Request) {
 
   const body = await readJson(request);
   if (!body) return errorResponse('Invalid body', 400);
+
+  // Anti-spam: verifica el token reCAPTCHA si llega. Best-effort en checkout —
+  // un token presente con score bajo se bloquea, pero un token ausente (adblock,
+  // fallo de red) NO bloquea para no perder ventas; el rate-limit cubre el resto.
+  const recaptchaToken = (body as { recaptchaToken?: string }).recaptchaToken;
+  const human = await verifyRecaptcha(recaptchaToken, { action: 'checkout' });
+  if (!human) return errorResponse('Verificación de seguridad fallida', 400);
 
   const parsed = CheckoutSchema.safeParse(body);
   if (!parsed.success) {
