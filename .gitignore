@@ -31,4 +31,6 @@ Thumbs.db
 .vercel
 tsconfig.tsbuildinfo
 
+# Graphify
+graphify-out/
 
