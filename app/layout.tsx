@@ -127,6 +127,7 @@ export default function RootLayout({
         {/* reCAPTCHA ya NO se carga globalmente. Se inyecta solo en las rutas
             que tienen formularios (/order y /contacto) vía <RecaptchaScript />
             para no penalizar el INP del resto del sitio. */}
+        <script src="https://analytics.ahrefs.com/analytics.js" data-key="zAkVF4nhVT9cGpq+Y87ZNw" async></script>
       </head>
       <body className={`${montserrat.className} min-h-screen flex flex-col bg-white`}>
         <LanguageProvider>
