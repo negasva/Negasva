@@ -104,7 +104,6 @@ export const translations = {
         role_label: 'Role',
         roles: ['Me', 'Partner', 'Son/Daughter', 'Father/Mother', 'Friend', 'Pet', 'Other'],
         next_tier: 'Add {n} more and get {pct}% OFF!',
-        discount_unlocked: 'Quantity discount unlocked! −{pct}%',
       },
       step3: {
         title: 'Choose Background',
@@ -390,7 +389,6 @@ export const translations = {
         role_label: 'Relación',
         roles: ['Yo', 'Pareja', 'Hijo/a', 'Padre/Madre', 'Amigo/a', 'Mascota', 'Otro'],
         next_tier: '¡Añade {n} más y obtén {pct}% DESCUENTO!',
-        discount_unlocked: '¡Descuento por cantidad desbloqueado! −{pct}%',
       },
       step3: {
         title: 'Elige el Fondo',
@@ -676,7 +674,6 @@ export const translations = {
         role_label: 'Rôle',
         roles: ['Moi', 'Partenaire', 'Fils/Fille', 'Père/Mère', 'Ami/e', 'Animal', 'Autre'],
         next_tier: 'Ajoutez {n} de plus et obtenez {pct}% DE RÉDUCTION!',
-        discount_unlocked: 'Réduction quantité débloquée ! −{pct}%',
       },
       step3: {
         title: 'Choisir l\'Arrière-plan',

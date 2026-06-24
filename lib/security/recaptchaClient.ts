@@ -20,6 +20,16 @@ declare global {
 
 let scriptPromise: Promise<void> | null = null;
 
+// Si reCAPTCHA no responde a tiempo (script bloqueado, `ready`/`execute` que no
+// resuelven en algunos móviles), no dejamos colgado el checkout: la promesa
+// rechaza y getRecaptchaToken devuelve undefined (el backend decide).
+function withTimeout<T>(p: Promise<T>, ms: number): Promise<T> {
+  return Promise.race([
+    p,
+    new Promise<T>((_, reject) => setTimeout(() => reject(new Error('recaptcha timeout')), ms)),
+  ]);
+}
+
 function loadScript(siteKey: string): Promise<void> {
   if (typeof window === 'undefined') return Promise.reject(new Error('no window'));
   if (window.grecaptcha) return Promise.resolve();
@@ -40,11 +50,11 @@ export async function getRecaptchaToken(action: string): Promise<string | undefi
   const siteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY;
   if (!siteKey) return undefined;
   try {
-    await loadScript(siteKey);
+    await withTimeout(loadScript(siteKey), 6000);
     const grecaptcha = window.grecaptcha;
     if (!grecaptcha) return undefined;
-    await new Promise<void>((resolve) => grecaptcha.ready(resolve));
-    return await grecaptcha.execute(siteKey, { action });
+    await withTimeout(new Promise<void>((resolve) => grecaptcha.ready(resolve)), 6000);
+    return await withTimeout(grecaptcha.execute(siteKey, { action }), 6000);
   } catch {
     return undefined;
   }
