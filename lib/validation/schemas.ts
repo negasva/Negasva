@@ -171,6 +171,7 @@ export const AdminGalleryCreateSchema = z.object({
   title: z.string().trim().min(1).max(120),
   style: z.string().trim().max(100).optional().nullable(),
   image_url: SafeImageSchema,
+  before_url: SafeImageSchema.optional().nullable(),
   sort_order: z.number().int().min(0).max(10_000).optional(),
   is_active: z.boolean().optional(),
 });
@@ -180,6 +181,7 @@ export const AdminGalleryUpdateSchema = z.object({
   title: z.string().trim().min(1).max(120).optional(),
   style: z.string().trim().max(100).optional().nullable(),
   image_url: SafeImageSchema.optional(),
+  before_url: SafeImageSchema.optional().nullable(),
   sort_order: z.number().int().min(0).max(10_000).optional(),
   is_active: z.boolean().optional(),
 });

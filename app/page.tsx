@@ -12,6 +12,7 @@ import { cachedFetchJSON } from '@/lib/cache/clientCache';
 import Navbar from '@/components/Navbar';
 import PageFooter from '@/components/PageFooter';
 import TestimonialsScroll from '@/components/TestimonialsScroll';
+import BeforeAfterSlider from '@/components/BeforeAfterSlider';
 
 // ── Tipos y defaults (fallback si /api/landing-config no responde) ──────────
 
@@ -28,6 +29,14 @@ interface GalleryImage { url: string; caption: string; }
 interface StatConfig { value: string; label_es: string; label_en: string; label_fr?: string; }
 interface ApiFaq { id: string; question: string; answer: string; }
 interface LandingConfig { hero: HeroConfig; how_it_works: StepConfig[]; gallery_images: GalleryImage[]; stats: StatConfig[]; }
+interface BeforeAfterPair { id: string; title: string; style: string | null; image_url: string; before_url: string | null; }
+
+// Par de ejemplo: se usa solo mientras no haya obras reales con foto "antes",
+// para que la sección de transformación nunca quede vacía en la landing.
+const SAMPLE_PAIR: BeforeAfterPair = {
+  id: 'sample', title: '', style: null,
+  before_url: '/samples/before-1.svg', image_url: '/samples/after-1.svg',
+};
 
 const DEFAULT_CONFIG: LandingConfig = {
   hero: {
@@ -119,6 +128,8 @@ export default function Home() {
   const [openFaq, setOpenFaq] = useState<number | null>(0);
   const [weeklyOrders, setWeeklyOrders] = useState(0);
   const [showStickyCta, setShowStickyCta] = useState(false);
+  const [pairs, setPairs] = useState<BeforeAfterPair[]>([]);
+  const [activePair, setActivePair] = useState(0);
 
   useEffect(() => {
     // ttlMs:0 + no-store → el contenido editable del admin se ve al instante
@@ -131,6 +142,10 @@ export default function Home() {
     cachedFetchJSON<{ weekly_orders: number }>('/api/public-stats')
       .then((data) => { if (data) setWeeklyOrders(data.weekly_orders); })
       .catch(() => null);
+    // Pares antes/después: solo obras con ambas imágenes alimentan el slider.
+    cachedFetchJSON<BeforeAfterPair[]>('/api/gallery')
+      .then((data) => { if (Array.isArray(data)) setPairs(data.filter((g) => g.before_url && g.image_url)); })
+      .catch(() => null);
   }, []);
 
   // Sticky CTA en mobile: aparece cuando el hero ya salió de pantalla.
@@ -142,6 +157,9 @@ export default function Home() {
   }, []);
 
   const orderHref = '/order';
+  // Pares reales si existen; si no, el de ejemplo para que la sección no quede vacía.
+  const displayPairs = pairs.length > 0 ? pairs : [SAMPLE_PAIR];
+  const currentPair = displayPairs[Math.min(activePair, displayPairs.length - 1)];
   const hero = config.hero;
   const heroImage = config.gallery_images[0]?.url ?? '/backgrounds/rm-1.webp';
   // Selección por idioma con fallback fr → en → es.
@@ -319,6 +337,57 @@ export default function Home() {
                 <p className="text-sm text-secondary-lighter">{pick(stat.label_es, stat.label_en, stat.label_fr)}</p>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* B2 — Antes y después: slider a la izquierda, texto + CTA a la derecha */}
+      <section className="py-20 px-4 bg-white">
+        <div className="mx-auto max-w-6xl grid md:grid-cols-2 gap-10 md:gap-14 items-center">
+          {/* Izquierda: slider arrastrable + miniaturas para cambiar de par */}
+          <div>
+            <BeforeAfterSlider
+              key={currentPair.id}
+              beforeSrc={currentPair.before_url ?? SAMPLE_PAIR.before_url!}
+              afterSrc={currentPair.image_url}
+              beforeLabel={tr('Antes', 'Before', 'Avant')}
+              afterLabel={tr('Después', 'After', 'Après')}
+            />
+            {displayPairs.length > 1 && (
+              <div className="flex flex-wrap justify-center gap-2 mt-4">
+                {displayPairs.map((p, i) => (
+                  <button
+                    key={p.id}
+                    onClick={() => setActivePair(i)}
+                    aria-label={tr('Ver transformación', 'View transformation', 'Voir la transformation') + (p.title ? ` — ${p.title}` : ` ${i + 1}`)}
+                    className={`relative h-14 w-14 rounded-lg overflow-hidden border-2 transition-all ${i === activePair ? 'border-primary scale-105' : 'border-transparent opacity-70 hover:opacity-100'}`}
+                  >
+                    <Image src={p.image_url} alt={p.title || `Antes y después ${i + 1}`} fill className="object-cover" sizes="56px" />
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Derecha: titular + texto + CTA al pedido */}
+          <div className="text-center md:text-left">
+            <h2 className="font-black text-4xl md:text-5xl tracking-tighter text-secondary mb-4">
+              {tr('Mira la transformación', 'See the transformation', 'Vois la transformation')}
+            </h2>
+            <p className="text-lg text-secondary-lighter leading-relaxed mb-8 max-w-md mx-auto md:mx-0">
+              {tr(
+                'Arrastra el control para ver cómo tu foto se convierte en un retrato animado dibujado a mano.',
+                'Drag the slider to see your photo become a hand-drawn animated portrait.',
+                'Glisse le curseur pour voir ta photo devenir un portrait animé dessiné à la main.',
+              )}
+            </p>
+            <Link
+              href={orderHref}
+              className="inline-flex items-center gap-3 rounded-xl bg-primary px-10 py-5 font-black text-white hover:bg-primary-dark transition-all hover:shadow-2xl hover:scale-105 text-xl shadow-xl shadow-primary/40"
+            >
+              {tr('Pedir mi retrato', 'Order my portrait', 'Commander mon portrait')}
+              <ChevronRight className="w-6 h-6" />
+            </Link>
           </div>
         </div>
       </section>
