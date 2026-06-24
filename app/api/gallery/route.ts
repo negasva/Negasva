@@ -9,7 +9,7 @@ export async function GET(request: Request) {
   const supabase = createServerClient();
   const { data, error } = await supabase
     .from('gallery_items')
-    .select('id, title, style, image_url')
+    .select('id, title, style, image_url, before_url')
     .eq('is_active', true)
     .order('sort_order', { ascending: true })
     .order('created_at', { ascending: true });

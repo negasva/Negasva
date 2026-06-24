@@ -59,6 +59,7 @@ export async function POST(request: Request) {
       title: d.title,
       style: d.style ?? null,
       image_url: d.image_url,
+      before_url: d.before_url ?? null,
       sort_order: d.sort_order ?? 0,
       is_active: d.is_active ?? true,
     })
@@ -84,7 +85,7 @@ export async function PUT(request: Request) {
   if (!parsed.success) return errorResponse(parsed.error.issues[0]?.message ?? 'Invalid input', 400);
 
   const { id } = parsed.data;
-  const fields = pickFields(parsed.data, ['title', 'style', 'image_url', 'sort_order', 'is_active']);
+  const fields = pickFields(parsed.data, ['title', 'style', 'image_url', 'before_url', 'sort_order', 'is_active']);
   if (Object.keys(fields).length === 0) return errorResponse('No fields to update', 400);
 
   const { error } = await db

@@ -10,6 +10,7 @@ interface GalleryItem {
   title: string;
   style: string | null;
   image_url: string;
+  before_url: string | null;
   sort_order: number;
   is_active: boolean;
 }
@@ -30,6 +31,7 @@ export default function AdminGaleriaPage() {
   const [urlInput, setUrlInput] = useState('');
   const [mode, setMode] = useState<'file' | 'url'>('file');
   const fileRef = useRef<HTMLInputElement>(null);
+  const beforeRef = useRef<HTMLInputElement>(null);
 
   function showToast(msg: string) {
     setToast(msg);
@@ -70,15 +72,25 @@ export default function AdminGaleriaPage() {
       imageUrl = urlInput.trim();
     }
 
+    // Foto "antes" opcional: si se sube, habilita el slider antes/después.
+    let beforeUrl: string | null = null;
+    const beforeFile = beforeRef.current?.files?.[0];
+    if (beforeFile) {
+      const url = await uploadFile(beforeFile);
+      if (!url) { setSaving(false); return; }
+      beforeUrl = url;
+    }
+
     const res = await fetch('/api/admin/gallery', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ title: title.trim(), style: style.trim() || null, image_url: imageUrl }),
+      body: JSON.stringify({ title: title.trim(), style: style.trim() || null, image_url: imageUrl, before_url: beforeUrl }),
     });
 
     if (res.ok) {
       setTitle(''); setStyle(''); setUrlInput('');
       if (fileRef.current) fileRef.current.value = '';
+      if (beforeRef.current) beforeRef.current.value = '';
       setShowForm(false);
       await load();
       showToast('Obra añadida');
@@ -152,6 +164,13 @@ export default function AdminGaleriaPage() {
             <input required className={inputCls} value={urlInput} onChange={(e) => setUrlInput(e.target.value)} placeholder="https://... o /samples/after-1.svg" />
           )}
 
+          <div className="mt-4">
+            <label className={labelCls}>Foto antes (opcional)</label>
+            <p className="text-[11px] text-secondary-lighter mb-1.5">Sube la foto original para activar el slider antes/después en la landing.</p>
+            <input ref={beforeRef} type="file" accept="image/jpeg,image/png,image/webp"
+              className="w-full text-sm text-secondary-lighter file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-primary-lighter file:text-secondary file:font-bold file:text-xs file:cursor-pointer cursor-pointer" />
+          </div>
+
           <div className="flex gap-3 mt-4">
             <button type="submit" disabled={saving} className="bg-primary hover:bg-primary-dark text-white font-bold px-5 py-2.5 rounded-lg text-sm transition-colors disabled:opacity-60">
               {saving ? 'Guardando...' : 'Añadir obra'}
@@ -187,6 +206,11 @@ export default function AdminGaleriaPage() {
                     {item.is_active ? 'Desactivar' : 'Activar'}
                   </button>
                 </div>
+                {item.before_url && (
+                  <span className="absolute top-2 left-2 text-[10px] font-bold px-2 py-0.5 rounded-full bg-primary text-white shadow">
+                    antes ✓
+                  </span>
+                )}
               </div>
               <div className="p-3 flex items-center justify-between gap-2">
                 <div className="min-w-0 flex-1">
