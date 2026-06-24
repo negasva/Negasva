@@ -43,11 +43,16 @@ const config: Config = {
           '60%': { transform: 'translateX(-5px)' },
           '80%': { transform: 'translateX(5px)' },
         },
+        'pop-in': {
+          '0%': { opacity: '0', transform: 'translateY(6px) scale(0.96)' },
+          '100%': { opacity: '1', transform: 'translateY(0) scale(1)' },
+        },
       },
       animation: {
         'wiggle-slow': 'wiggle 3s ease-in-out infinite',
         'pulse-slow': 'pulse-slow 2s ease-in-out infinite',
         shake: 'shake 0.45s ease-in-out 1',
+        'pop-in': 'pop-in 0.35s ease-out',
       },
     },
   },
