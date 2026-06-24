@@ -199,48 +199,76 @@ export default function Home() {
         <Image src={heroImage} alt={config.gallery_images[0]?.caption ?? 'Negasva'} fill className="object-cover" priority sizes="100vw" />
         <div className="absolute inset-0 bg-black/65" />
 
-        <div className="relative z-10 max-w-4xl mx-auto px-6 py-20 text-center">
-          {/* Parche de precio */}
-          <motion.div {...heroItem(0)} className="flex justify-center mb-8">
-            <motion.div
-              animate={{ scale: [1, 1.05, 1] }}
-              transition={{ duration: 2, repeat: Infinity, delay: 0.6 }}
-              className="inline-flex items-center gap-2.5 bg-primary rounded-full px-7 py-3.5 shadow-2xl shadow-primary/50 ring-4 ring-white/20 -rotate-2"
-            >
-              <Tag className="w-5 h-5 text-white" />
-              <span className="text-white font-black text-lg sm:text-xl tracking-tight">
-                {tr('Retratos desde', 'Portraits from', 'Portraits dès')} {fmt(20)}
-              </span>
-            </motion.div>
-          </motion.div>
-
-          <motion.h1 {...heroItem(0.15)} className="font-black text-5xl sm:text-6xl lg:text-7xl xl:text-8xl tracking-tighter leading-none mb-6">
-            <span className="text-white block">{pick(hero.headline_es, hero.headline_en, hero.headline_fr)}</span>
-            <span className="text-primary block">{pick(hero.headline_highlight_es, hero.headline_highlight_en, hero.headline_highlight_fr)}</span>
-          </motion.h1>
-          <motion.p {...heroItem(0.3)} className="text-base sm:text-lg lg:text-xl text-gray-200 leading-relaxed max-w-xl mx-auto mb-8">
-            {pick(hero.subheadline_es, hero.subheadline_en, hero.subheadline_fr)}
-          </motion.p>
-          <motion.div {...heroItem(0.45)} className="flex flex-col items-center gap-4 mb-10">
-            <Link href={orderHref} className="inline-flex items-center gap-3 rounded-xl bg-primary px-12 py-5 font-black text-white hover:bg-primary-dark transition-all hover:shadow-2xl hover:scale-105 text-xl sm:text-2xl shadow-xl shadow-primary/40">
-              {pick(hero.cta_primary_es, hero.cta_primary_en, hero.cta_primary_fr)}
-              <ChevronRight className="w-6 h-6" />
-            </Link>
-            <a href="#how-it-works" className="inline-flex items-center gap-2 rounded-lg border border-white/60 px-5 py-2.5 font-bold text-white/90 hover:bg-white hover:text-secondary transition-colors text-sm">
-              {pick(hero.cta_secondary_es, hero.cta_secondary_en, hero.cta_secondary_fr)}
-            </a>
-            {weeklyOrders >= 3 && (
-              <span className="inline-flex items-center gap-1.5 text-sm font-bold text-white/90 bg-white/10 backdrop-blur-sm rounded-full px-4 py-1.5">
-                🔥 {weeklyOrders} {tr('retratos pedidos esta semana', 'portraits ordered this week', 'portraits commandés cette semaine')}
-              </span>
+        <div className="relative z-10 w-full max-w-6xl mx-auto px-6 py-16 grid md:grid-cols-2 gap-10 lg:gap-14 items-center">
+          {/* Izquierda: antes y después arrastrable + miniaturas */}
+          <motion.div {...heroItem(0)}>
+            <BeforeAfterSlider
+              key={currentPair.id}
+              beforeSrc={currentPair.before_url ?? SAMPLE_PAIR.before_url!}
+              afterSrc={currentPair.image_url}
+              beforeLabel={tr('Antes', 'Before', 'Avant')}
+              afterLabel={tr('Después', 'After', 'Après')}
+            />
+            {displayPairs.length > 1 && (
+              <div className="flex flex-wrap justify-center gap-2 mt-4">
+                {displayPairs.map((p, i) => (
+                  <button
+                    key={p.id}
+                    onClick={() => setActivePair(i)}
+                    aria-label={tr('Ver transformación', 'View transformation', 'Voir la transformation') + (p.title ? ` — ${p.title}` : ` ${i + 1}`)}
+                    className={`relative h-14 w-14 rounded-lg overflow-hidden border-2 transition-all ${i === activePair ? 'border-primary scale-105' : 'border-white/40 opacity-70 hover:opacity-100'}`}
+                  >
+                    <Image src={p.image_url} alt={p.title || `Antes y después ${i + 1}`} fill className="object-cover" sizes="56px" />
+                  </button>
+                ))}
+              </div>
             )}
           </motion.div>
 
-          <motion.div {...heroItem(0.6)} className="flex flex-wrap justify-center items-center gap-x-8 gap-y-2 text-white">
-            <span><span className="font-black text-xl">1.8M</span> <span className="text-sm text-gray-300">TikTok</span></span>
-            <span><span className="font-black text-xl">50K</span> <span className="text-sm text-gray-300">Instagram</span></span>
-            <span><span className="font-black text-xl">+1000</span> <span className="text-sm text-gray-300">{tr('clientes', 'clients', 'clients')}</span></span>
-          </motion.div>
+          {/* Derecha: todo el texto del hero + CTA */}
+          <div className="text-center md:text-left">
+            {/* Parche de precio */}
+            <motion.div {...heroItem(0.1)} className="flex justify-center md:justify-start mb-6">
+              <motion.div
+                animate={{ scale: [1, 1.05, 1] }}
+                transition={{ duration: 2, repeat: Infinity, delay: 0.6 }}
+                className="inline-flex items-center gap-2.5 bg-primary rounded-full px-7 py-3.5 shadow-2xl shadow-primary/50 ring-4 ring-white/20 -rotate-2"
+              >
+                <Tag className="w-5 h-5 text-white" />
+                <span className="text-white font-black text-lg sm:text-xl tracking-tight">
+                  {tr('Retratos desde', 'Portraits from', 'Portraits dès')} {fmt(20)}
+                </span>
+              </motion.div>
+            </motion.div>
+
+            <motion.h1 {...heroItem(0.2)} className="font-black text-4xl sm:text-5xl lg:text-6xl tracking-tighter leading-none mb-5">
+              <span className="text-white block">{pick(hero.headline_es, hero.headline_en, hero.headline_fr)}</span>
+              <span className="text-primary block">{pick(hero.headline_highlight_es, hero.headline_highlight_en, hero.headline_highlight_fr)}</span>
+            </motion.h1>
+            <motion.p {...heroItem(0.3)} className="text-base sm:text-lg text-gray-200 leading-relaxed max-w-xl mx-auto md:mx-0 mb-8">
+              {pick(hero.subheadline_es, hero.subheadline_en, hero.subheadline_fr)}
+            </motion.p>
+            <motion.div {...heroItem(0.4)} className="flex flex-col items-center md:items-start gap-4 mb-8">
+              <Link href={orderHref} className="inline-flex items-center gap-3 rounded-xl bg-primary px-12 py-5 font-black text-white hover:bg-primary-dark transition-all hover:shadow-2xl hover:scale-105 text-xl sm:text-2xl shadow-xl shadow-primary/40">
+                {pick(hero.cta_primary_es, hero.cta_primary_en, hero.cta_primary_fr)}
+                <ChevronRight className="w-6 h-6" />
+              </Link>
+              <a href="#how-it-works" className="inline-flex items-center gap-2 rounded-lg border border-white/60 px-5 py-2.5 font-bold text-white/90 hover:bg-white hover:text-secondary transition-colors text-sm">
+                {pick(hero.cta_secondary_es, hero.cta_secondary_en, hero.cta_secondary_fr)}
+              </a>
+              {weeklyOrders >= 3 && (
+                <span className="inline-flex items-center gap-1.5 text-sm font-bold text-white/90 bg-white/10 backdrop-blur-sm rounded-full px-4 py-1.5">
+                  🔥 {weeklyOrders} {tr('retratos pedidos esta semana', 'portraits ordered this week', 'portraits commandés cette semaine')}
+                </span>
+              )}
+            </motion.div>
+
+            <motion.div {...heroItem(0.5)} className="flex flex-wrap justify-center md:justify-start items-center gap-x-8 gap-y-2 text-white">
+              <span><span className="font-black text-xl">1.8M</span> <span className="text-sm text-gray-300">TikTok</span></span>
+              <span><span className="font-black text-xl">50K</span> <span className="text-sm text-gray-300">Instagram</span></span>
+              <span><span className="font-black text-xl">+1000</span> <span className="text-sm text-gray-300">{tr('clientes', 'clients', 'clients')}</span></span>
+            </motion.div>
+          </div>
         </div>
 
         <motion.div
@@ -337,57 +365,6 @@ export default function Home() {
                 <p className="text-sm text-secondary-lighter">{pick(stat.label_es, stat.label_en, stat.label_fr)}</p>
               </div>
             ))}
-          </div>
-        </div>
-      </section>
-
-      {/* B2 — Antes y después: slider a la izquierda, texto + CTA a la derecha */}
-      <section className="py-20 px-4 bg-white">
-        <div className="mx-auto max-w-6xl grid md:grid-cols-2 gap-10 md:gap-14 items-center">
-          {/* Izquierda: slider arrastrable + miniaturas para cambiar de par */}
-          <div>
-            <BeforeAfterSlider
-              key={currentPair.id}
-              beforeSrc={currentPair.before_url ?? SAMPLE_PAIR.before_url!}
-              afterSrc={currentPair.image_url}
-              beforeLabel={tr('Antes', 'Before', 'Avant')}
-              afterLabel={tr('Después', 'After', 'Après')}
-            />
-            {displayPairs.length > 1 && (
-              <div className="flex flex-wrap justify-center gap-2 mt-4">
-                {displayPairs.map((p, i) => (
-                  <button
-                    key={p.id}
-                    onClick={() => setActivePair(i)}
-                    aria-label={tr('Ver transformación', 'View transformation', 'Voir la transformation') + (p.title ? ` — ${p.title}` : ` ${i + 1}`)}
-                    className={`relative h-14 w-14 rounded-lg overflow-hidden border-2 transition-all ${i === activePair ? 'border-primary scale-105' : 'border-transparent opacity-70 hover:opacity-100'}`}
-                  >
-                    <Image src={p.image_url} alt={p.title || `Antes y después ${i + 1}`} fill className="object-cover" sizes="56px" />
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
-
-          {/* Derecha: titular + texto + CTA al pedido */}
-          <div className="text-center md:text-left">
-            <h2 className="font-black text-4xl md:text-5xl tracking-tighter text-secondary mb-4">
-              {tr('Mira la transformación', 'See the transformation', 'Vois la transformation')}
-            </h2>
-            <p className="text-lg text-secondary-lighter leading-relaxed mb-8 max-w-md mx-auto md:mx-0">
-              {tr(
-                'Arrastra el control para ver cómo tu foto se convierte en un retrato animado dibujado a mano.',
-                'Drag the slider to see your photo become a hand-drawn animated portrait.',
-                'Glisse le curseur pour voir ta photo devenir un portrait animé dessiné à la main.',
-              )}
-            </p>
-            <Link
-              href={orderHref}
-              className="inline-flex items-center gap-3 rounded-xl bg-primary px-10 py-5 font-black text-white hover:bg-primary-dark transition-all hover:shadow-2xl hover:scale-105 text-xl shadow-xl shadow-primary/40"
-            >
-              {tr('Pedir mi retrato', 'Order my portrait', 'Commander mon portrait')}
-              <ChevronRight className="w-6 h-6" />
-            </Link>
           </div>
         </div>
       </section>
