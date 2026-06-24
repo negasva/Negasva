@@ -10,10 +10,10 @@ const BUCKET = 'backgrounds';
 // Fallback while /api/admin/styles loads — the real list is admin-managed
 const DEFAULT_STYLES: { id: string; label: string }[] = [
   { id: 'all',          label: 'Todos'                },
-  { id: 'rick-morty',   label: 'Rick & Morty'         },
-  { id: 'gravity-falls',label: 'Gravity Falls'         },
-  { id: 'simpsons',     label: 'Los Simpsons'          },
-  { id: 'fairly-odd',   label: 'Los Padrinos Magicos' },
+  { id: 'rick-morty',   label: 'Cartoon sci-fi'         },
+  { id: 'gravity-falls',label: 'Misterio del bosque'         },
+  { id: 'simpsons',     label: 'Familia amarilla clasica'          },
+  { id: 'fairly-odd',   label: 'Fantasia brillante' },
   { id: 'negasva',      label: 'NEGASVA'               },
 ];
 
@@ -237,7 +237,7 @@ export default function BackgroundsPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
             <div>
               <label className={labelCls}>Nombre del fondo</label>
-              <input required className={inputCls} value={nameInput} onChange={(e) => setNameInput(e.target.value)} placeholder="Fondo Portal Rick" />
+              <input required className={inputCls} value={nameInput} onChange={(e) => setNameInput(e.target.value)} placeholder="Fondo portal sci-fi" />
             </div>
             <div>
               <label className={labelCls}>Estilo de dibujo</label>

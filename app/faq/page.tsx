@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { ChevronDown } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import PageFooter from '@/components/PageFooter';
 import { cachedFetchJSON } from '@/lib/cache/clientCache';
@@ -40,7 +39,6 @@ function renderAnswer(answer: string) {
 
 export default function FaqPage() {
   const tx = usePageText('faq', faqContent);
-  const [open, setOpen] = useState<number | null>(0);
   const [apiFaqs, setApiFaqs] = useState<ApiFaq[] | null>(null);
 
   useEffect(() => {
@@ -102,33 +100,17 @@ export default function FaqPage() {
 
       <section className="py-16 px-4">
         <div className="mx-auto max-w-3xl space-y-3">
-          {faqs.map((item, i) => {
-            const isOpen = open === i;
-            return (
-              <div
-                key={i}
-                className={`rounded-2xl border-2 transition-all ${
-                  isOpen ? 'border-primary bg-primary-lighter shadow-md' : 'border-primary-lighter bg-white'
-                }`}
-              >
-                <button
-                  onClick={() => setOpen(isOpen ? null : i)}
-                  className="w-full flex items-center justify-between gap-4 p-5 text-left"
-                  aria-expanded={isOpen}
-                >
-                  <span className="font-bold text-secondary">{item.q}</span>
-                  <ChevronDown
-                    className={`w-5 h-5 text-secondary-lighter flex-shrink-0 transition-transform ${isOpen ? 'rotate-180 text-primary' : ''}`}
-                  />
-                </button>
-                {isOpen && (
-                  <div className="px-5 pb-5 text-secondary-lighter leading-relaxed">
-                    {item.a}
-                  </div>
-                )}
+          {faqs.map((item, i) => (
+            <div
+              key={i}
+              className="rounded-2xl border-2 border-primary-lighter bg-white p-5 shadow-sm"
+            >
+              <h2 className="font-bold text-secondary">{item.q}</h2>
+              <div className="mt-3 text-secondary-lighter leading-relaxed">
+                {item.a}
               </div>
-            );
-          })}
+            </div>
+          ))}
         </div>
       </section>
 

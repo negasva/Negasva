@@ -132,7 +132,7 @@ export default function AdminGaleriaPage() {
             </div>
             <div>
               <label className={labelCls}>Estilo (opcional)</label>
-              <input className={inputCls} value={style} onChange={(e) => setStyle(e.target.value)} placeholder="Rick & Morty" />
+              <input className={inputCls} value={style} onChange={(e) => setStyle(e.target.value)} placeholder="Cartoon sci-fi" />
             </div>
           </div>
 

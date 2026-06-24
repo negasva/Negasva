@@ -28,10 +28,10 @@ const CARDS = [
 ];
 
 const STYLES = [
-  { slug: 'rick-morty',    label: 'Rick & Morty'         },
-  { slug: 'gravity-falls', label: 'Gravity Falls'         },
-  { slug: 'simpsons',      label: 'Los Simpsons'          },
-  { slug: 'fairly-odd',    label: 'Los Padrinos Magicos'  },
+  { slug: 'rick-morty',    label: 'Cartoon sci-fi'         },
+  { slug: 'gravity-falls', label: 'Misterio del bosque'         },
+  { slug: 'simpsons',      label: 'Familia amarilla clasica'          },
+  { slug: 'fairly-odd',    label: 'Fantasia brillante'  },
   { slug: 'negasva',       label: 'Estilo NEGASVA'        },
 ];
 

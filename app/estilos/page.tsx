@@ -29,18 +29,30 @@ export default function EstilosPage() {
   // Translated copy for the known styles; admin-created styles fall back to
   // their DB description.
   const translated: Record<string, { desc: string; features: string[] }> = {
-    'rick-morty':    { desc: t.styles.rm_desc, features: [t.styles.rm_f1, t.styles.rm_f2, t.styles.rm_f3] },
-    'gravity-falls': { desc: t.styles.gf_desc, features: [t.styles.gf_f1, t.styles.gf_f2, t.styles.gf_f3] },
-    'simpsons':      { desc: t.styles.sp_desc, features: [t.styles.sp_f1, t.styles.sp_f2, t.styles.sp_f3] },
-    'fairly-odd':    { desc: t.styles.fo_desc, features: [t.styles.fo_f1, t.styles.fo_f2, t.styles.fo_f3] },
+    'rick-morty': {
+      desc: 'Trazos expresivos, colores acidos y fondos espaciales para un retrato con humor y energia sci-fi.',
+      features: ['Expresiones exageradas', 'Fondos futuristas', 'Ideal para parejas y amigos'],
+    },
+    'gravity-falls': {
+      desc: 'Ojos grandes, colores calidos y vibra de aventura misteriosa para un retrato tierno y memorable.',
+      features: ['Atmosfera de bosque', 'Rostros tiernos', 'Ideal para avatares'],
+    },
+    'simpsons': {
+      desc: 'Piel amarilla, contornos limpios y humor familiar para regalos que todos entienden al instante.',
+      features: ['Retratos familiares', 'Colores planos', 'Perfecto para imprimir'],
+    },
+    'fairly-odd': {
+      desc: 'Formas geometricas, colores brillantes y detalles magicos para retratos alegres y llamativos.',
+      features: ['Alto contraste', 'Accesorios de fantasia', 'Ideal para parejas'],
+    },
   };
 
   // Fallback list if the API is unavailable — admin manages the real catalog
   const fallbackStyles = [
-    { name: 'Rick & Morty', detailHref: `/estilos/${DB_SLUG_TO_URL['rick-morty']}`, ...translated['rick-morty'] },
-    { name: 'Gravity Falls', detailHref: `/estilos/${DB_SLUG_TO_URL['gravity-falls']}`, ...translated['gravity-falls'] },
-    { name: 'The Simpsons', detailHref: `/estilos/${DB_SLUG_TO_URL['simpsons']}`, ...translated['simpsons'] },
-    { name: 'The Fairly OddParents', detailHref: `/estilos/${DB_SLUG_TO_URL['fairly-odd']}`, ...translated['fairly-odd'] },
+    { name: 'Cartoon sci-fi', detailHref: `/estilos/${DB_SLUG_TO_URL['rick-morty']}`, ...translated['rick-morty'] },
+    { name: 'Misterio del bosque', detailHref: `/estilos/${DB_SLUG_TO_URL['gravity-falls']}`, ...translated['gravity-falls'] },
+    { name: 'Familia amarilla clasica', detailHref: `/estilos/${DB_SLUG_TO_URL['simpsons']}`, ...translated['simpsons'] },
+    { name: 'Fantasia brillante', detailHref: `/estilos/${DB_SLUG_TO_URL['fairly-odd']}`, ...translated['fairly-odd'] },
   ];
 
   const styles = apiStyles

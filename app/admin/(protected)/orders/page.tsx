@@ -194,10 +194,10 @@ export default function OrdersPage() {
               <label className={lbl}>Estilo</label>
               <select className={inp} value={form.style} onChange={(e) => setForm({ ...form, style: e.target.value })}>
                 <option value="">Seleccionar...</option>
-                <option value="rick-morty">Rick & Morty</option>
-                <option value="gravity-falls">Gravity Falls</option>
-                <option value="simpsons">Los Simpsons</option>
-                <option value="fairly-odd">Los Padrinos Magicos</option>
+                <option value="rick-morty">Cartoon sci-fi</option>
+                <option value="gravity-falls">Misterio del bosque</option>
+                <option value="simpsons">Familia amarilla clasica</option>
+                <option value="fairly-odd">Fantasia brillante</option>
                 <option value="negasva">Estilo NEGASVA</option>
               </select>
             </div>
@@ -215,7 +215,7 @@ export default function OrdersPage() {
             </div>
             <div>
               <label className={lbl}>Fondo elegido</label>
-              <input className={inp} value={form.background_name} onChange={(e) => setForm({ ...form, background_name: e.target.value })} placeholder="Rick & Morty - Portal" />
+              <input className={inp} value={form.background_name} onChange={(e) => setForm({ ...form, background_name: e.target.value })} placeholder="Cartoon sci-fi - Portal" />
             </div>
             <div>
               <label className={lbl}>Precio</label>

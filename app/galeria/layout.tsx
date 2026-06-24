@@ -7,30 +7,31 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: 'Galería de Retratos',
-  description: 'Explora ejemplos reales de retratos animados en estilos Rick & Morty, Simpsons y Gravity Falls. Mira el antes y después y pide el tuyo hoy.',
+  title: 'Galeria de Retratos',
+  description: 'Explora ejemplos reales de retratos personalizados en estilos cartoon, familiares y de fantasia. Mira ideas y pide el tuyo en 48h.',
+  alternates: { canonical: '/galeria' },
   openGraph: {
-    title: 'Galería de Retratos — NEGASVA',
-    description: 'Ejemplos reales de retratos animados personalizados, antes y después.',
+    title: 'Galeria de Retratos - NEGASVA',
+    description: 'Ejemplos reales de retratos animados personalizados, antes y despues.',
   },
 };
 
 const GALLERY_SCHEMA = {
   '@context': 'https://schema.org',
   '@type': 'ImageGallery',
-  name: 'Galería de retratos animados personalizados — NEGASVA',
+  name: 'Galeria de retratos animados personalizados - NEGASVA',
   url: 'https://negasva.shop/galeria',
   image: [
     {
       '@type': 'ImageObject',
-      name: 'Retrato estilo Rick & Morty con portal interdimensional',
-      description: 'Retrato animado personalizado dibujado a mano en estilo Rick & Morty con el portal verde de fondo.',
+      name: 'Retrato cartoon sci-fi con portal verde',
+      description: 'Retrato animado personalizado dibujado a mano con colores intensos y fondo de portal.',
       contentUrl: 'https://negasva.shop/backgrounds/rm-1.jpg',
     },
     {
       '@type': 'ImageObject',
-      name: 'Retrato estilo Rick & Morty en el garage de Rick',
-      description: 'Retrato animado personalizado con el garage lleno de inventos como escenario.',
+      name: 'Retrato cartoon sci-fi con fondo de laboratorio',
+      description: 'Retrato animado personalizado con escenario de laboratorio futurista.',
       contentUrl: 'https://negasva.shop/backgrounds/rm-3.jpg',
     },
     {
@@ -45,7 +46,7 @@ const GALLERY_SCHEMA = {
 export default function GaleriaLayout({ children }: { children: React.ReactNode }) {
   return (
     <>
-      <BreadcrumbSchema name="Galería" path="/galeria" />
+      <BreadcrumbSchema name="Galeria" path="/galeria" />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(GALLERY_SCHEMA) }} />
       {children}
     </>
