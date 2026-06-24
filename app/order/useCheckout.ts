@@ -137,6 +137,12 @@ export function useCheckout() {
   // The client never does pricing arithmetic — it only renders this.
   const [quote, setQuote] = useState<PriceBreakdown>(ZERO_QUOTE);
 
+  // Al cambiar de paso, la página vuelve siempre al inicio para que el usuario
+  // vea el contenido del nuevo paso desde arriba.
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [step]);
+
   // Preselección de estilo desde la landing (?style= o sessionStorage).
   useEffect(() => {
     window.scrollTo(0, 0);

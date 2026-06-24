@@ -31,15 +31,17 @@ export default function StudioPage() {
 
   const STEPS = t.studio.steps as unknown as string[];
 
-  // Order summary sidebar — shown from step 2 onward
-  const OrderSummary = () => {
+  // Order summary — shown as a sticky sidebar from step 2 onward, and as a
+  // static, always-visible card on the checkout step so the customer sees
+  // exactly what they're paying for (in the site's own style).
+  const OrderSummary = ({ sticky = true }: { sticky?: boolean }) => {
     const b = priceBreakdown();
     const styleName = styles.find(s => s.id === selected.style)?.name;
     const hasAnyContent = !!selected.style;
     if (!hasAnyContent) return null;
 
     return (
-      <div className="rounded-2xl bg-primary-lighter border-2 border-primary p-5 sticky top-24 space-y-3 text-sm">
+      <div className={`rounded-2xl bg-primary-lighter border-2 border-primary p-5 space-y-3 text-sm ${sticky ? 'sticky top-24' : ''}`}>
         <p className="font-black text-secondary text-base tracking-tighter">{t.studio.summary.title}</p>
         <div className="space-y-2">
           {selected.style && (
@@ -95,6 +97,12 @@ export default function StudioPage() {
             <div className="flex justify-between bg-white rounded-xl px-3 py-1.5">
               <span className="text-primary font-bold">{appliedCode.code}</span>
               <span className="font-bold text-primary">−{fmt(b.codeDiscount)}</span>
+            </div>
+          )}
+          {selected.specialRequests.trim() && (
+            <div className="bg-white rounded-xl px-3 py-2">
+              <span className="block text-secondary-lighter text-xs mb-0.5">{t.studio.step4.notes_label}</span>
+              <span className="block text-secondary text-xs font-medium break-words">{selected.specialRequests}</span>
             </div>
           )}
         </div>
@@ -313,6 +321,11 @@ export default function StudioPage() {
                     <span className="flex items-center gap-1"><ShieldCheck className="w-3 h-3 text-primary" /> Nunca guardamos tu tarjeta</span>
                   </div>
                 </div>
+                {/* Resumen detallado del pedido (estilo de la web), siempre visible */}
+                <div className="max-w-xl mx-auto mb-6">
+                  <OrderSummary sticky={false} />
+                </div>
+
                 <div className="max-w-xl mx-auto bg-white rounded-2xl border-2 border-primary-lighter shadow-lg overflow-hidden">
                   <div className="bg-primary-lighter px-6 py-4 flex items-center justify-between">
                     <span className="font-black text-secondary text-sm">Total: {fmt(totalPrice())}</span>
