@@ -4,21 +4,21 @@ import { memo } from 'react';
 import { useLanguage } from '@/lib/i18n/LanguageContext';
 
 const REVIEWS = [
-  { name: 'María González', comment: '¡Mi retrato quedó increíble! La calidad es asombrosa.', stars: 5 },
-  { name: 'Emma Thompson', comment: 'Absolutely stunning! Got my Rick & Morty portrait in under 24 hours.', stars: 5 },
-  { name: 'Lucas Müller', comment: 'Incredible quality! My Gravity Falls portrait looks exactly like the show.', stars: 5 },
-  { name: 'Carlos Reyes', comment: 'Perfecto para regalo. Mi hermano quedó sin palabras al verlo.', stars: 5 },
-  { name: 'Camille Dubois', comment: 'Portrait magnifique! La ressemblance est frappante. Je recommande à tous!', stars: 5 },
-  { name: 'Valentina Sánchez', comment: '¡Me quedé sin palabras! El nivel de detalle es increíble.', stars: 5 },
-  { name: "James O'Brien", comment: "Best gift I've ever given. My wife cried happy tears when she saw it!", stars: 5 },
-  { name: 'Alejandro García', comment: 'Excelente trabajo. Capturó perfectamente mi estilo. Lo recomiendo al 100%.', stars: 5 },
-  { name: 'Isabella Rossi', comment: 'Ho ordinato in stile Simpsons e sono rimasta senza parole. Eccellente!', stars: 5 },
-  { name: 'Noah Williams', comment: 'Ordered the Gravity Falls style for my kids. They absolutely love it!', stars: 5 },
-  { name: 'Sofía Lindström', comment: 'Fantastic quality! My Simpsons portrait is now framed on my wall.', stars: 5 },
-  { name: 'Pierre Laurent', comment: 'Très professionnel et rapide. Le résultat dépasse toutes mes attentes!', stars: 5 },
-  { name: 'Oliver Schneider', comment: 'Outstanding quality and super fast! Every single detail was perfect.', stars: 5 },
-  { name: 'Sofía Martínez', comment: 'Proceso muy fácil y entrega rápida. ¡Muy recomendado a todos!', stars: 5 },
-  { name: 'Catalina Herrera', comment: '¡El mejor regalo! El retrato de Rick & Morty le encantó a toda mi familia.', stars: 5 },
+  { name: 'Maria Gonzalez', comment: 'Mi retrato quedo increible. La calidad es asombrosa.', stars: 5 },
+  { name: 'Emma Thompson', comment: 'Absolutely stunning! Got my sci-fi cartoon portrait in under 24 hours.', stars: 5 },
+  { name: 'Lucas Muller', comment: 'Incredible quality! My forest mystery portrait has so much personality.', stars: 5 },
+  { name: 'Carlos Reyes', comment: 'Perfecto para regalo. Mi hermano quedo sin palabras al verlo.', stars: 5 },
+  { name: 'Camille Dubois', comment: 'Portrait magnifique. La ressemblance est frappante. Je recommande a tous.', stars: 5 },
+  { name: 'Valentina Sanchez', comment: 'Me quede sin palabras. El nivel de detalle es increible.', stars: 5 },
+  { name: "James O'Brien", comment: "Best gift I've ever given. My wife cried happy tears when she saw it.", stars: 5 },
+  { name: 'Alejandro Garcia', comment: 'Excelente trabajo. Capturo perfectamente mi estilo. Lo recomiendo al 100%.', stars: 5 },
+  { name: 'Isabella Rossi', comment: 'Ho ordinato un ritratto cartoon familiare e sono rimasta senza parole.', stars: 5 },
+  { name: 'Noah Williams', comment: 'Ordered the forest mystery style for my kids. They absolutely love it.', stars: 5 },
+  { name: 'Sofia Lindstrom', comment: 'Fantastic quality! My yellow family portrait is now framed on my wall.', stars: 5 },
+  { name: 'Pierre Laurent', comment: 'Tres professionnel et rapide. Le resultat depasse toutes mes attentes.', stars: 5 },
+  { name: 'Oliver Schneider', comment: 'Outstanding quality and super fast. Every single detail was perfect.', stars: 5 },
+  { name: 'Sofia Martinez', comment: 'Proceso muy facil y entrega rapida. Muy recomendado.', stars: 5 },
+  { name: 'Catalina Herrera', comment: 'El mejor regalo. El retrato cartoon sci-fi le encanto a toda mi familia.', stars: 5 },
 ];
 
 const row1 = REVIEWS.slice(0, 9);

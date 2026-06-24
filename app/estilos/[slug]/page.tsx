@@ -36,6 +36,12 @@ export default function StylePage({ params }: { params: { slug: string } }) {
 
   const others = STYLES_CONTENT.filter((s) => s.slug !== style.slug);
   const orderHref = `/order?style=${style.dbSlug}`;
+  const bestForMap: Record<string, string> = {
+    'rick-y-morty': 'Ideal para parejas, amigos y retratos con humor irreverente y fondos sci-fi espectaculares.',
+    'simpsons': 'Ideal para familias, regalos intergeneracionales y quienes quieren una referencia universal al instante.',
+    'gravity-falls': 'Ideal para avatares, hermanos, parejas tiernas y retratos con vibra misteriosa y adorable.',
+    'padrinos-magicos': 'Ideal para colores vibrantes, energia magica y retratos de pareja muy llamativos.',
+  };
 
   const productSchema = {
     '@context': 'https://schema.org',
@@ -96,11 +102,15 @@ export default function StylePage({ params }: { params: { slug: string } }) {
               <h1 className="font-black text-4xl md:text-5xl tracking-tighter text-secondary mb-4">
                 {style.h1}
               </h1>
-              <p className="text-lg text-secondary-lighter mb-8">{style.intro}</p>
-              <Link
-                href={orderHref}
-                className="inline-flex items-center gap-2 rounded-xl bg-primary px-8 py-4 font-black text-white hover:bg-primary-dark hover:shadow-xl transition-all"
-              >
+          <p className="text-lg text-secondary-lighter mb-8">{style.intro}</p>
+          <div className="mb-8 rounded-2xl border-2 border-primary bg-primary-lighter/50 p-5">
+            <p className="font-black text-secondary tracking-tighter mb-1">Ideal para</p>
+            <p className="text-secondary-lighter">{bestForMap[style.slug] ?? style.intro}</p>
+          </div>
+          <Link
+            href={orderHref}
+            className="inline-flex items-center gap-2 rounded-xl bg-primary px-8 py-4 font-black text-white hover:bg-primary-dark hover:shadow-xl transition-all"
+          >
                 Pedir mi retrato {style.name}
                 <ChevronRight className="w-5 h-5" />
               </Link>

@@ -1,9 +1,8 @@
-// Contenido SEO de cada estilo de retrato. Server-side: se renderiza en HTML
-// estático para que Google indexe el texto completo sin ejecutar JS.
+// SEO copy for each portrait style. Slugs stay stable to avoid breaking old URLs.
 
 export interface StyleContent {
-  slug: string;          // slug de la URL pública (/estilos/[slug])
-  dbSlug: string;        // slug en la tabla portrait_styles (para /order?style=)
+  slug: string;
+  dbSlug: string;
   name: string;
   h1: string;
   metaTitle: string;
@@ -23,188 +22,198 @@ export const STYLES_CONTENT: StyleContent[] = [
   {
     slug: 'rick-y-morty',
     dbSlug: 'rick-morty',
-    name: 'Rick & Morty',
-    h1: 'Retrato personalizado estilo Rick & Morty',
-    metaTitle: 'Retrato Rick y Morty Personalizado — Tu Foto Convertida en Caricatura',
+    name: 'Cartoon sci-fi',
+    h1: 'Retrato personalizado estilo cartoon sci-fi',
+    metaTitle: 'Retrato Cartoon Sci-Fi Personalizado | NEGASVA',
     metaDescription:
-      'Convierte tu foto en un personaje de Rick & Morty. Retrato digital personalizado dibujado a mano, entrega en 48h desde $20 USD. Pide el tuyo hoy.',
+      'Convierte tu foto en un retrato cartoon sci-fi con trazos expresivos, colores intensos y fondos espaciales. Dibujado a mano, desde $20 USD.',
     keywords: [
-      'retrato rick y morty personalizado', 'caricatura rick y morty',
-      'dibujo estilo rick y morty', 'convertir foto en rick y morty',
-      'retrato animado rick and morty',
+      'retrato personalizado sci fi',
+      'caricatura personalizada sci fi',
+      'dibujo personalizado futurista',
+      'retrato animado espacial',
+      'foto convertida en dibujo cartoon',
     ],
     intro:
-      'Transforma tu foto en un personaje del universo de Rick & Morty: ojos saltones, trazos irregulares y ese toque de ciencia ficción caótica que hizo icónica a la serie. Nuestro estilo más pedido, perfecto para fans de la serie y regalos con personalidad.',
+      'Un estilo de retrato personalizado con energia caotica, humor visual y estetica de aventura espacial. Usamos ojos grandes, expresiones exageradas, lineas nerviosas y fondos con portales, laboratorios, planetas y escenas futuristas para que tu foto se sienta como parte de una historia animada.',
     whatIs: {
-      title: '¿Qué es un retrato estilo Rick & Morty?',
+      title: 'Que es un retrato cartoon sci-fi?',
       body:
-        'Es una ilustración digital dibujada a mano en la que te convertimos a ti, a tu pareja, a tus amigos o a tu familia en personajes con la estética exacta de la serie de Adult Swim: pupilas pequeñas sobre ojos enormes, líneas de contorno finas, paleta de colores saturada y fondos interdimensionales con portales verdes, garajes llenos de inventos o paisajes alienígenas. No usamos filtros automáticos ni inteligencia artificial: cada retrato lo dibuja un ilustrador real partiendo de tu foto, cuidando que tu peinado, tu ropa y tus rasgos sean reconocibles al instante.',
+        'Es una ilustracion digital dibujada a mano donde convertimos tu foto en un personaje de animacion adulta con aire de ciencia ficcion: contornos finos, pupilas pequenas, gestos intensos, colores acidos y escenarios interdimensionales. El objetivo es que el resultado sea divertido, reconocible y con mucha personalidad, sin depender de plantillas ni filtros genericos.',
     },
     forWho: {
-      title: '¿Para quién es este estilo?',
+      title: 'Para quien funciona mejor?',
       body:
-        'Es el regalo perfecto para fans de Rick & Morty, parejas frikis, grupos de amigos que quieren un cuadro divertido para el apartamento, o cualquier persona que quiera una foto de perfil única para Instagram, TikTok o Discord. También funciona increíble como regalo de cumpleaños, aniversario o Navidad: imprimes el archivo digital en lienzo o lo enmarcas y tienes un regalo que nadie más puede repetir.',
+        'Es ideal para parejas, amigos, perfiles gamer, regalos con humor y retratos que necesitan un fondo llamativo. Si quieres una caricatura personalizada con actitud, energia y un toque de caos visual, este estilo suele ser la mejor eleccion.',
     },
     includes: {
-      title: '¿Qué incluye tu retrato?',
+      title: 'Que incluye tu retrato?',
       items: [
-        'Ilustración digital en alta resolución lista para imprimir',
-        'De 1 a 8 personas (también mascotas) en el mismo retrato',
-        'Fondo temático de la serie: portal, garage, espacio, dimensión C-137 y más',
-        'Revisión incluida para ajustar detalles antes de la entrega',
-        'Entrega estándar en 48 horas o exprés en 24h',
+        'Retrato digital en alta resolucion listo para imprimir',
+        'De 1 a 8 personas y mascotas en el mismo dibujo',
+        'Fondos sci-fi: portal, laboratorio, espacio, nave o planeta',
+        'Revision incluida para ajustar detalles menores',
+        'Entrega estandar en 48 horas o expres en 24h',
       ],
     },
     process: {
-      title: '¿Cómo se hace?',
+      title: 'Como se hace?',
       body:
-        'Subes una o varias fotos donde se vea bien tu cara, eliges cuántas personas aparecen, seleccionas el fondo y nos cuentas cualquier detalle especial (poses, accesorios, mascotas). Nuestro equipo dibuja el retrato desde cero y te lo envía por correo en alta resolución en un máximo de 48 horas. Si algo no te convence, lo ajustamos.',
+        'Subes fotos claras, eliges cantidad de personas, tipo de cuerpo y fondo. Luego nos cuentas detalles como pose, ropa, accesorios o mascotas. Un ilustrador toma esa informacion y crea el retrato desde cero, cuidando que el parecido sea claro y que el estilo visual se sienta consistente.',
     },
     faq: [
-      { q: '¿Puedo salir con el portal verde de fondo?', a: 'Sí, el portal interdimensional es nuestro fondo más pedido. También tenemos el garage de Rick, el espacio y varios planetas.' },
-      { q: '¿Pueden incluir a mi mascota?', a: 'Claro, dibujamos perros, gatos y cualquier mascota con el mismo estilo de la serie.' },
+      { q: 'Puedo pedir un fondo con portal o escena espacial?', a: 'Si. Puedes elegir un portal, laboratorio, nave, planeta o fondo personalizado segun la escena que quieras.' },
+      { q: 'Sirve como regalo de pareja o amigos?', a: 'Si. Es uno de los estilos mas fuertes para regalos divertidos, aniversarios informales y grupos de amigos.' },
     ],
     image: '/backgrounds/rm-1.webp',
-    imageAlt: 'Ejemplo de retrato personalizado estilo Rick & Morty con fondo de portal interdimensional',
+    imageAlt: 'Retrato personalizado estilo cartoon sci-fi con fondo de portal verde y colores intensos',
   },
   {
     slug: 'simpsons',
     dbSlug: 'simpsons',
-    name: 'Los Simpsons',
-    h1: 'Retrato personalizado estilo Los Simpsons',
-    metaTitle: 'Retrato Simpsons Personalizado — Conviértete en Personaje Amarillo',
+    name: 'Familia amarilla clasica',
+    h1: 'Retrato personalizado estilo familia amarilla clasica',
+    metaTitle: 'Retrato Familiar Amarillo Personalizado | NEGASVA',
     metaDescription:
-      'Tu foto convertida en personaje de Los Simpsons: piel amarilla, ojos redondos y el estilo de Springfield. Dibujado a mano, entrega en 48h desde $20.',
+      'Retrato personalizado con piel amarilla, contornos limpios y humor familiar. Ideal para parejas, familias y regalos. Dibujado a mano desde $20 USD.',
     keywords: [
-      'retrato simpsons personalizado', 'caricatura simpsons',
-      'convertir foto en simpson', 'dibujo estilo simpsons',
-      'retrato familia simpsons',
+      'retrato familiar personalizado',
+      'caricatura familiar personalizada',
+      'retrato amarillo personalizado',
+      'dibujo personalizado familiar',
+      'regalo personalizado familiar',
     ],
     intro:
-      'Piel amarilla, ojos redondos gigantes y el sobremordido más famoso de la televisión. Con este estilo te convertimos en un habitante más de Springfield, con el look exacto que Matt Groening hizo legendario durante más de 30 temporadas.',
+      'Un estilo de caricatura familiar, limpio y muy reconocible: piel amarilla, ojos redondos, contornos gruesos y colores planos. Es perfecto para transformar una foto familiar en un retrato digital divertido, calido y facil de regalar.',
     whatIs: {
-      title: '¿Qué es un retrato estilo Los Simpsons?',
+      title: 'Que es un retrato estilo familia amarilla?',
       body:
-        'Es una ilustración digital hecha a mano donde tú y los tuyos aparecen con la estética clásica de la serie: piel amarilla, contornos gruesos, cuatro dedos y esa expresividad inconfundible. Adaptamos tu peinado, tu ropa, tus gafas y tus rasgos al lenguaje visual de Springfield para que cualquiera te reconozca de inmediato, igual que reconocería a Homero o a Marge. Cada pieza se dibuja desde cero a partir de tu foto — nada de plantillas ni filtros automáticos.',
+        'Es una ilustracion digital hecha a mano donde tu familia, pareja, mascota o grupo aparece con una estetica de comedia animada clasica: siluetas simples, expresiones claras, piel amarilla y escenarios de hogar o ciudad. Adaptamos peinado, ropa, gafas, gestos y rasgos importantes para que cada persona sea reconocible.',
     },
     forWho: {
-      title: '¿Para quién es este estilo?',
+      title: 'Para quien funciona mejor?',
       body:
-        'Es el estilo favorito para retratos familiares: la familia amarilla en el sofá es un clásico que funciona como regalo para padres, abuelos y aniversarios. También es muy pedido por parejas y grupos de amigos que crecieron viendo la serie. Si buscas un regalo nostálgico que saque una sonrisa garantizada, este es tu estilo.',
+        'Es la opcion mas segura para regalos familiares, padres, abuelos, aniversarios y grupos grandes. Tiene una lectura inmediata, funciona muy bien impresa y suele emocionar porque convierte a todos en parte de una escena comun.',
     },
     includes: {
-      title: '¿Qué incluye tu retrato?',
+      title: 'Que incluye tu retrato?',
       items: [
-        'Ilustración digital en alta resolución lista para imprimir',
-        'De 1 a 8 personas y mascotas en el mismo retrato',
-        'Fondos temáticos: el sofá de la sala, Springfield y más escenarios',
-        'Revisión incluida antes de la entrega final',
-        'Entrega estándar en 48 horas o exprés en 24h',
+        'Ilustracion digital en alta resolucion',
+        'De 1 a 8 personas y mascotas',
+        'Fondos de sala, casa, calle o escena familiar personalizada',
+        'Revision incluida para detalles de parecido',
+        'Entrega en 48 horas o expres en 24h',
       ],
     },
     process: {
-      title: '¿Cómo se hace?',
+      title: 'Como se hace?',
       body:
-        'Eliges el estilo Simpsons en nuestro formulario, subes tus fotos, seleccionas fondo y número de personas, y añades indicaciones especiales si quieres (poses, objetos, la escena del sofá). Un ilustrador dibuja tu retrato a mano y lo recibes por correo en alta resolución en 48 horas o menos.',
+        'Nos envias las fotos, eliges torso o cuerpo completo, numero de personas y fondo. Si quieres una composicion familiar especial, la escribes en notas. Dibujamos cada personaje con rasgos reconocibles y entregamos el archivo digital listo para imprimir o compartir.',
     },
     faq: [
-      { q: '¿Pueden hacer la escena del sofá con mi familia?', a: 'Sí, la escena del sofá es uno de nuestros encargos más populares para familias. Indícalo en las instrucciones especiales.' },
-      { q: '¿Cuántas personas pueden salir?', a: 'Hasta 8 personas en el mismo retrato, además de mascotas.' },
+      { q: 'Pueden hacer un retrato familiar completo?', a: 'Si. Podemos dibujar hasta 8 personas y tambien mascotas en una sola escena.' },
+      { q: 'Es buena opcion para regalar a padres o abuelos?', a: 'Si. Es uno de los estilos mas claros y faciles de reconocer para regalos familiares.' },
     ],
     image: '/backgrounds/rm-3.webp',
-    imageAlt: 'Ejemplo de retrato familiar personalizado estilo Los Simpsons',
+    imageAlt: 'Retrato familiar personalizado estilo caricatura amarilla con contornos limpios',
   },
   {
     slug: 'gravity-falls',
     dbSlug: 'gravity-falls',
-    name: 'Gravity Falls',
-    h1: 'Retrato personalizado estilo Gravity Falls',
-    metaTitle: 'Retrato Gravity Falls Personalizado — Tu Foto al Estilo de la Serie',
+    name: 'Misterio del bosque',
+    h1: 'Retrato personalizado estilo misterio del bosque',
+    metaTitle: 'Retrato Estilo Misterio del Bosque | NEGASVA',
     metaDescription:
-      'Convierte tu foto en un personaje de Gravity Falls: estilo misterioso del bosque, dibujado a mano. Entrega en 48h desde $20 USD. Pide el tuyo.',
+      'Retrato personalizado con ojos grandes, colores calidos y vibra de aventura misteriosa. Ideal para hermanos, parejas y avatares.',
     keywords: [
-      'retrato gravity falls personalizado', 'caricatura gravity falls',
-      'dibujo estilo gravity falls', 'convertir foto en gravity falls',
+      'retrato personalizado bosque',
+      'caricatura personalizada tierna',
+      'dibujo personalizado misterioso',
+      'retrato animado para avatar',
+      'ilustracion personalizada cartoon',
     ],
     intro:
-      'Ojos grandes y expresivos, colores cálidos de bosque y ese aire de misterio del pueblo más extraño de Oregón. El estilo Gravity Falls convierte tu foto en un personaje digno de la Cabaña del Misterio.',
+      'Un estilo tierno, expresivo y aventurero: ojos grandes, proporciones suaves, colores de bosque y una atmosfera de misterio ligero. Funciona muy bien cuando quieres un retrato animado con encanto, detalle y una sensacion mas dulce.',
     whatIs: {
-      title: '¿Qué es un retrato estilo Gravity Falls?',
+      title: 'Que es un retrato estilo misterio del bosque?',
       body:
-        'Es una ilustración digital dibujada a mano con la estética de la serie de Alex Hirsch: proporciones caricaturescas adorables, ojos enormes con brillo, paleta de tonos tierra y bosque, y ese equilibrio único entre lo tierno y lo misterioso. Tomamos tu foto y te rediseñamos como si fueras un personaje del pueblo: mantenemos tu peinado, tus gafas, tu ropa y tus gestos característicos, pero con el encanto visual de Dipper, Mabel y compañía.',
+        'Es una caricatura personalizada dibujada a mano con rasgos grandes y expresivos, paleta calida, ropa simplificada y fondos naturales como bosque, cabana, lago o noche estrellada. El resultado se siente cercano, juvenil y muy usable como avatar o regalo emotivo.',
     },
     forWho: {
-      title: '¿Para quién es este estilo?',
+      title: 'Para quien funciona mejor?',
       body:
-        'Ideal para fans de la animación moderna, parejas que quieren algo tierno sin ser cursi, y hermanos — el dúo Dipper y Mabel es la referencia perfecta para retratos de hermanos o mejores amigos. También es muy elegido como avatar para redes sociales por su expresividad y por lo bien que funciona en tamaño pequeño.',
+        'Es ideal para hermanos, mejores amigos, parejas tiernas, ninos, mascotas y perfiles de redes. Si buscas algo menos sarcastico y mas emocional, este estilo equilibra aventura, ternura y personalidad.',
     },
     includes: {
-      title: '¿Qué incluye tu retrato?',
+      title: 'Que incluye tu retrato?',
       items: [
-        'Ilustración digital en alta resolución lista para imprimir',
-        'De 1 a 8 personas y mascotas en el mismo retrato',
-        'Fondos temáticos: el bosque, la Cabaña del Misterio y más',
-        'Revisión incluida antes de la entrega final',
-        'Entrega estándar en 48 horas o exprés en 24h',
+        'Retrato digital en alta resolucion',
+        'Personas y mascotas en estilo cartoon expresivo',
+        'Fondos de bosque, cabana, lago o escena personalizada',
+        'Revision incluida para detalles menores',
+        'Entrega en 48 horas o expres en 24h',
       ],
     },
     process: {
-      title: '¿Cómo se hace?',
+      title: 'Como se hace?',
       body:
-        'Subes tus fotos al formulario de pedido, eliges el estilo Gravity Falls, el fondo y el número de personas. Puedes pedir detalles especiales como el gorro de Dipper o el suéter de Mabel. Un ilustrador dibuja tu retrato desde cero y te lo entrega en alta resolución en máximo 48 horas.',
+        'Subes tus fotos y nos cuentas que vibra quieres: aventura, amistad, pareja, familia o avatar. El ilustrador traduce tus rasgos a un estilo de ojos grandes y formas suaves, manteniendo tu peinado, ropa y expresion principal.',
     },
     faq: [
-      { q: '¿Puedo pedir accesorios de la serie?', a: 'Sí: gorros, suéteres tejidos, el diario 3 y cualquier guiño a la serie que quieras incluir.' },
-      { q: '¿Sirve para foto de perfil?', a: 'Es uno de los estilos que mejor funciona como avatar por sus ojos grandes y alta expresividad.' },
+      { q: 'Sirve para foto de perfil?', a: 'Si. Sus ojos grandes y formas limpias se leen muy bien en tamano pequeno.' },
+      { q: 'Puedo pedir un fondo de bosque o cabana?', a: 'Si. Puedes elegir un fondo natural o describir una escena personalizada.' },
     ],
     image: '/backgrounds/rm-4.webp',
-    imageAlt: 'Ejemplo de retrato personalizado estilo Gravity Falls con fondo de bosque',
+    imageAlt: 'Retrato personalizado estilo misterio del bosque con ojos grandes y colores calidos',
   },
   {
     slug: 'padrinos-magicos',
     dbSlug: 'fairly-odd',
-    name: 'Los Padrinos Mágicos',
-    h1: 'Retrato personalizado estilo Los Padrinos Mágicos',
-    metaTitle: 'Retrato Padrinos Mágicos Personalizado — Tu Foto Hecha Caricatura',
+    name: 'Fantasia brillante',
+    h1: 'Retrato personalizado estilo fantasia brillante',
+    metaTitle: 'Retrato Fantasia Brillante Personalizado | NEGASVA',
     metaDescription:
-      'Tu foto convertida en personaje de Los Padrinos Mágicos: colores vibrantes y estilo noventero. Dibujado a mano, entrega en 48h desde $20 USD.',
+      'Retrato personalizado con formas geometricas, colores brillantes y energia magica. Ideal para parejas, amigos y regalos divertidos.',
     keywords: [
-      'retrato padrinos magicos personalizado', 'caricatura padrinos magicos',
-      'dibujo estilo fairly oddparents', 'convertir foto en caricatura nickelodeon',
+      'retrato fantasia personalizado',
+      'caricatura personalizada colorida',
+      'dibujo personalizado magico',
+      'retrato animado vibrante',
+      'regalo personalizado divertido',
     ],
     intro:
-      'Colores eléctricos, formas geométricas y la energía caótica de Cosmo y Wanda. El estilo Padrinos Mágicos es pura nostalgia noventera de Nickelodeon convertida en tu retrato personalizado.',
+      'Un estilo colorido, geometrico y lleno de energia. Usa siluetas angulosas, colores planos muy vivos, expresiones grandes y detalles magicos como coronas, brillos, varitas o fondos de fantasia. Es perfecto cuando quieres un retrato que se vea alegre desde lejos.',
     whatIs: {
-      title: '¿Qué es un retrato estilo Padrinos Mágicos?',
+      title: 'Que es un retrato estilo fantasia brillante?',
       body:
-        'Es una ilustración digital hecha a mano con la estética de la serie de Butch Hartman: siluetas angulosas, colores planos súper saturados, ojos expresivos y ese dinamismo que hace que cada escena parezca a punto de explotar de magia. Te dibujamos a ti y a quien quieras como personajes de Dimmsdale, respetando tu peinado, tu estilo de ropa y tus rasgos para que el parecido sea inmediato, con coronas flotantes y varitas mágicas opcionales.',
+        'Es una ilustracion digital dibujada a mano con formas simples, lineas limpias, colores electricos y una sensacion de comedia magica. Convertimos tu foto en un personaje expresivo, con accesorios y escena personalizada si quieres un resultado mas romantico, divertido o exagerado.',
     },
     forWho: {
-      title: '¿Para quién es este estilo?',
+      title: 'Para quien funciona mejor?',
       body:
-        'Perfecto para millennials y generación Z que crecieron con Nickelodeon, parejas que quieren retratarse como Cosmo y Wanda (nuestro encargo más romántico-friki), y cualquiera que busque un retrato con colores vibrantes que destaque impreso en una pared o como avatar. Es también una opción muy original para regalos de amistad.',
+        'Funciona muy bien para parejas, amigos, regalos de cumpleanos, perfiles llamativos y personas que quieren un retrato menos serio. Es el estilo con mas energia de color y una vibra nostalgica sin depender de una referencia concreta.',
     },
     includes: {
-      title: '¿Qué incluye tu retrato?',
+      title: 'Que incluye tu retrato?',
       items: [
-        'Ilustración digital en alta resolución lista para imprimir',
-        'De 1 a 8 personas y mascotas en el mismo retrato',
-        'Fondos temáticos vibrantes del universo de la serie',
-        'Coronas flotantes y varitas mágicas si las quieres',
-        'Entrega estándar en 48 horas o exprés en 24h',
+        'Ilustracion digital en alta resolucion',
+        'De 1 a 8 personas y mascotas',
+        'Fondos brillantes, magicos o personalizados',
+        'Accesorios como coronas, brillos y varitas si los pides',
+        'Entrega en 48 horas o expres en 24h',
       ],
     },
     process: {
-      title: '¿Cómo se hace?',
+      title: 'Como se hace?',
       body:
-        'Eliges el estilo en el formulario, subes tus fotos, seleccionas fondo y número de personas, y nos cuentas tus ideas: ¿quieres ser Cosmo y Wanda? ¿Con corona y varita? Un ilustrador real dibuja tu retrato desde cero y lo recibes en alta resolución en un máximo de 48 horas.',
+        'Eliges el estilo, subes fotos claras y escribes las ideas de escena. Podemos sumar colores de pelo exagerados, accesorios, objetos especiales o una composicion de pareja. Luego dibujamos todo a mano y enviamos el archivo final en alta resolucion.',
     },
     faq: [
-      { q: '¿Podemos salir como Cosmo y Wanda?', a: 'Sí, es nuestro encargo de pareja más popular en este estilo: pelo verde y rosa, coronas y varitas incluidas.' },
-      { q: '¿El archivo sirve para imprimir en grande?', a: 'Sí, entregamos en alta resolución apta para impresión en lienzo, póster o marco.' },
+      { q: 'Puedo pedir coronas, brillos o varitas?', a: 'Si. Puedes pedir detalles magicos o accesorios especiales en las notas del pedido.' },
+      { q: 'Se ve bien impreso?', a: 'Si. Por sus colores planos y alto contraste, funciona muy bien en poster, marco o lienzo.' },
     ],
     image: '/backgrounds/rm-5.webp',
-    imageAlt: 'Ejemplo de retrato personalizado estilo Los Padrinos Mágicos con colores vibrantes',
+    imageAlt: 'Retrato personalizado estilo fantasia brillante con colores electricos y formas geometricas',
   },
 ];
 
@@ -212,7 +221,6 @@ export function getStyleBySlug(slug: string): StyleContent | undefined {
   return STYLES_CONTENT.find((s) => s.slug === slug);
 }
 
-/** Mapea slug de la base de datos → slug de URL pública. */
 export const DB_SLUG_TO_URL: Record<string, string> = Object.fromEntries(
   STYLES_CONTENT.map((s) => [s.dbSlug, s.slug]),
 );

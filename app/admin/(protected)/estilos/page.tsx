@@ -201,7 +201,7 @@ export default function EstilosAdminPage() {
                 className={inputCls}
                 value={form.name}
                 onChange={(e) => setForm({ ...form, name: e.target.value })}
-                placeholder="Rick & Morty"
+                placeholder="Cartoon sci-fi"
               />
             </div>
             <div className="sm:col-span-2">

@@ -56,10 +56,10 @@ const ZERO_QUOTE: PriceBreakdown = {
 };
 
 const FALLBACK_STYLES = [
-  { id: 'rick-morty',    name: 'Rick & Morty'          },
-  { id: 'gravity-falls', name: 'Gravity Falls'          },
-  { id: 'simpsons',      name: 'Los Simpsons'           },
-  { id: 'fairly-odd',    name: 'Los Padrinos Magicos'   },
+  { id: 'rick-morty',    name: 'Cartoon sci-fi'         },
+  { id: 'gravity-falls', name: 'Misterio del bosque'    },
+  { id: 'simpsons',      name: 'Familia amarilla clasica' },
+  { id: 'fairly-odd',    name: 'Fantasia brillante'     },
   { id: 'negasva',       name: 'Estilo NEGASVA'         },
 ];
 
@@ -69,7 +69,7 @@ const FALLBACK_BACKGROUNDS: Record<string, BgItem[]> = {
     { id: 'rm-1', url: '/backgrounds/rm-1.jpg', name: 'Portal' },
     { id: 'rm-3', url: '/backgrounds/rm-3.jpg', name: 'Garage' },
     { id: 'rm-4', url: '/backgrounds/rm-4.jpg', name: 'Espacio' },
-    { id: 'rm-5', url: '/backgrounds/rm-5.jpg', name: 'Planeta C-137' },
+    { id: 'rm-5', url: '/backgrounds/rm-5.jpg', name: 'Planeta alienigena' },
     { id: 'rm-6', url: '/backgrounds/rm-6.jpg', name: 'Nave espacial' },
     { id: 'rm-10', url: '/backgrounds/rm-10.jpg', name: 'Dimensión' },
   ],
@@ -83,20 +83,20 @@ const FALLBACK_BACKGROUNDS: Record<string, BgItem[]> = {
     { id: 'gf-9', url: '/backgrounds/gf-9.jpg', name: 'Misterio' },
   ],
   'simpsons': [
-    { id: 'sp-1', url: '/backgrounds/sp-1.jpg', name: 'Springfield' },
+    { id: 'sp-1', url: '/backgrounds/sp-1.jpg', name: 'Ciudad familiar' },
     { id: 'sp-2', url: '/backgrounds/sp-2.jpg', name: 'Casa' },
-    { id: 'sp-3', url: '/backgrounds/sp-3.jpg', name: "Bar de Moe" },
+    { id: 'sp-3', url: '/backgrounds/sp-3.jpg', name: 'Bar clasico' },
     { id: 'sp-4', url: '/backgrounds/sp-4.jpg', name: 'Nuclear' },
     { id: 'sp-5', url: '/backgrounds/sp-5.jpg', name: 'Escuela' },
     { id: 'sp-6', url: '/backgrounds/sp-6.jpg', name: 'Calle' },
-    { id: 'sp-10', url: '/backgrounds/sp-10.jpg', name: 'Noche Springfield' },
+    { id: 'sp-10', url: '/backgrounds/sp-10.jpg', name: 'Ciudad de noche' },
   ],
   'fairly-odd': [
-    { id: 'fo-1', url: '/backgrounds/fo-1.jpg', name: 'Dimmsdale' },
+    { id: 'fo-1', url: '/backgrounds/fo-1.jpg', name: 'Ciudad brillante' },
     { id: 'fo-2', url: '/backgrounds/fo-2.jpg', name: 'Casa Turner' },
     { id: 'fo-3', url: '/backgrounds/fo-3.jpg', name: 'Hada World' },
     { id: 'fo-5', url: '/backgrounds/fo-5.jpg', name: 'Escuela' },
-    { id: 'fo-10', url: '/backgrounds/fo-10.jpg', name: 'Cosmos' },
+    { id: 'fo-10', url: '/backgrounds/fo-10.jpg', name: 'Cielo magico' },
   ],
   'negasva': [],
   'custom': [],

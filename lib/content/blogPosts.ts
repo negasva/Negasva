@@ -37,14 +37,14 @@ export const BLOG_POSTS: BlogPost[] = [
     excerpt: 'Cumpleaños, aniversarios, Navidad... ideas originales para sorprender con un retrato animado que nadie más puede repetir.',
     keywords: ['regalar retrato animado', 'regalo original personalizado', 'ideas de regalo caricatura', 'regalo aniversario original'],
     image: '/backgrounds/rm-1.webp',
-    imageAlt: 'Retrato animado personalizado estilo Rick & Morty como idea de regalo',
+    imageAlt: 'Retrato animado personalizado estilo cartoon sci-fi como idea de regalo',
     intro:
       'Encontrar un regalo que sea original, personal y que de verdad emocione es cada vez más difícil. Todo el mundo tiene de todo, y los regalos genéricos se olvidan en una semana. Un retrato animado personalizado resuelve exactamente ese problema: es único por definición — está dibujado a partir de la foto de la persona — y combina humor, nostalgia y cariño en una sola pieza. Aquí van 10 ideas concretas para regalarlo según la ocasión y la persona.',
     sections: [
       {
         h2: '1. Aniversario de pareja: ustedes dos como personajes de su serie favorita',
         paragraphs: [
-          'El clásico que nunca falla. Si ven Rick & Morty juntos, un retrato de los dos con el portal de fondo es el regalo de aniversario perfecto. Si su serie es de la infancia, el estilo Padrinos Mágicos como Cosmo y Wanda es el encargo romántico-friki más pedido que tenemos: pelo verde y rosa, coronas flotantes y varitas incluidas.',
+          'El clásico que nunca falla. Si ven cartoon sci-fi juntos, un retrato de los dos con el portal de fondo es el regalo de aniversario perfecto. Si su serie es de la infancia, el estilo fantasia brillante como personaje magico y personaje magico es el encargo romántico-friki más pedido que tenemos: pelo verde y rosa, coronas flotantes y varitas incluidas.',
         ],
       },
       {
@@ -54,9 +54,9 @@ export const BLOG_POSTS: BlogPost[] = [
         ],
       },
       {
-        h2: '3. Día de la madre o del padre: la familia completa estilo Simpsons',
+        h2: '3. Día de la madre o del padre: la familia completa estilo familia amarilla',
         paragraphs: [
-          'El retrato familiar amarillo en el sofá de Springfield es nuestro encargo más popular para padres y abuelos. Funciona porque mezcla la nostalgia de una serie que toda la familia conoce con la emoción de verse todos juntos en un cuadro. Impreso en lienzo y enmarcado, es de esos regalos que terminan presidiendo la sala.',
+          'El retrato familiar amarillo en el sofá de una ciudad animada es nuestro encargo más popular para padres y abuelos. Funciona porque mezcla la nostalgia de una serie que toda la familia conoce con la emoción de verse todos juntos en un cuadro. Impreso en lienzo y enmarcado, es de esos regalos que terminan presidiendo la sala.',
         ],
       },
       {
@@ -74,7 +74,7 @@ export const BLOG_POSTS: BlogPost[] = [
       {
         h2: '6. Para tu mejor amigo: el dúo dinámico',
         paragraphs: [
-          'Los retratos de mejores amigos al estilo Gravity Falls — la referencia de Dipper y Mabel es perfecta para hermanos o amigos inseparables — son un regalo de amistad que supera a cualquier objeto comprado en tienda.',
+          'Los retratos de mejores amigos al estilo misterio del bosque — la referencia de duo de hermanos aventureros es perfecta para hermanos o amigos inseparables — son un regalo de amistad que supera a cualquier objeto comprado en tienda.',
         ],
       },
       {
@@ -110,7 +110,7 @@ export const BLOG_POSTS: BlogPost[] = [
     title: 'Cómo elegir el estilo de tu retrato animado: guía completa',
     metaTitle: 'Cómo Elegir el Estilo de tu Retrato Animado — Guía Completa',
     metaDescription:
-      '¿Rick & Morty, Simpsons, Gravity Falls o Padrinos Mágicos? Guía completa para elegir el estilo de caricatura que mejor va contigo y con el uso que le darás.',
+      '¿cartoon sci-fi, familia amarilla, misterio del bosque o fantasia brillante? Guía completa para elegir el estilo de caricatura que mejor va contigo y con el uso que le darás.',
     category: 'Guías',
     date: '2026-06-05',
     dateLabel: '5 de Junio, 2026',
@@ -122,37 +122,37 @@ export const BLOG_POSTS: BlogPost[] = [
       'Elegir el estilo es la decisión más importante de tu pedido — y la más divertida. Cada uno de nuestros cuatro estilos tiene una personalidad visual propia, y el que mejor funciona depende de tres cosas: quién aparece en el retrato, qué uso le vas a dar y qué serie conecta más contigo. Esta guía te ayuda a decidir en cinco minutos.',
     sections: [
       {
-        h2: 'Rick & Morty: para los que quieren humor y ciencia ficción',
+        h2: 'cartoon sci-fi: para los que quieren humor y ciencia ficción',
         paragraphs: [
           'Es nuestro estilo más pedido. Trazos irregulares, ojos saltones con pupilas pequeñas y fondos interdimensionales: portales verdes, garajes llenos de inventos, planetas alienígenas. Funciona especialmente bien en retratos de parejas y grupos de amigos con humor ácido.',
           'Elígelo si: ves la serie, quieres un resultado divertido antes que tierno, o buscas un fondo espectacular (el portal verde es nuestro fondo estrella).',
         ],
       },
       {
-        h2: 'Los Simpsons: el clásico familiar',
+        h2: 'familia amarilla clasica: el clásico familiar',
         paragraphs: [
           'Piel amarilla, contornos gruesos y la estética más reconocible de la historia de la televisión. Es el estilo favorito para retratos familiares — la escena del sofá con tu familia es un encargo recurrente — y para regalos a padres y abuelos, porque absolutamente todo el mundo reconoce la referencia.',
           'Elígelo si: el retrato es de familia, el regalo es para alguien de otra generación, o quieres el efecto nostalgia más universal posible.',
         ],
       },
       {
-        h2: 'Gravity Falls: tierno con un toque de misterio',
+        h2: 'misterio del bosque: tierno con un toque de misterio',
         paragraphs: [
-          'Ojos grandes y brillantes, proporciones adorables y paleta de colores cálidos de bosque. Es el estilo más expresivo de los cuatro y el que mejor funciona en tamaño pequeño, lo que lo convierte en el favorito para avatares de redes sociales. La referencia de Dipper y Mabel lo hace ideal para retratos de hermanos.',
+          'Ojos grandes y brillantes, proporciones adorables y paleta de colores cálidos de bosque. Es el estilo más expresivo de los cuatro y el que mejor funciona en tamaño pequeño, lo que lo convierte en el favorito para avatares de redes sociales. La referencia de duo de hermanos aventureros lo hace ideal para retratos de hermanos.',
           'Elígelo si: quieres algo tierno sin ser cursi, el retrato será tu foto de perfil, o es un regalo entre hermanos o mejores amigos.',
         ],
       },
       {
-        h2: 'Los Padrinos Mágicos: nostalgia noventera en colores eléctricos',
+        h2: 'fantasia brillante: nostalgia noventera en colores eléctricos',
         paragraphs: [
-          'Siluetas angulosas, colores planos súper saturados y la energía caótica de Nickelodeon. Es el estilo que más destaca impreso en una pared por la intensidad de sus colores. Para parejas existe el encargo clásico: ustedes dos como Cosmo y Wanda, coronas y varitas incluidas.',
-          'Elígelo si: creciste con Nickelodeon, quieres los colores más vibrantes, o buscas el retrato de pareja más original.',
+          'Siluetas angulosas, colores planos súper saturados y la energía caótica de animacion noventera. Es el estilo que más destaca impreso en una pared por la intensidad de sus colores. Para parejas existe el encargo clásico: ustedes dos como personaje magico y personaje magico, coronas y varitas incluidas.',
+          'Elígelo si: creciste con animacion noventera, quieres los colores más vibrantes, o buscas el retrato de pareja más original.',
         ],
       },
       {
         h2: 'La pregunta clave: ¿dónde va a vivir tu retrato?',
         paragraphs: [
-          'Si va impreso en grande para una pared: Padrinos Mágicos y Rick & Morty lucen espectaculares por sus fondos y colores. Si es para foto de perfil: Gravity Falls gana por expresividad en tamaño pequeño. Si es un regalo familiar: Simpsons es apuesta segura por reconocimiento universal.',
+          'Si va impreso en grande para una pared: fantasia brillante y cartoon sci-fi lucen espectaculares por sus fondos y colores. Si es para foto de perfil: misterio del bosque gana por expresividad en tamaño pequeño. Si es un regalo familiar: familia amarilla es apuesta segura por reconocimiento universal.',
           'Y si sigues sin decidirte: en las indicaciones especiales del pedido puedes contarnos tu duda y te recomendamos el estilo según tus fotos. Sea cual sea tu elección, todos los estilos incluyen revisión, alta resolución y entrega en 48 horas.',
         ],
       },
@@ -161,51 +161,71 @@ export const BLOG_POSTS: BlogPost[] = [
   },
   {
     slug: 'rick-y-morty-vs-simpsons-que-estilo-elegir',
-    title: 'Rick & Morty vs Los Simpsons: ¿qué estilo de retrato elegir?',
-    metaTitle: 'Rick y Morty vs Simpsons — ¿Qué Estilo de Retrato Elegir?',
+    title: 'cartoon sci-fi vs familia amarilla clasica: ¿qué estilo de retrato elegir?',
+    metaTitle: 'cartoon sci-fi vs familia amarilla — ¿Qué Estilo de Retrato Elegir?',
     metaDescription:
-      'Comparamos los dos estilos de retrato animado más pedidos: Rick & Morty vs Los Simpsons. Diferencias, para quién es cada uno y cuál elegir según el uso.',
+      'Comparamos los dos estilos de retrato animado más pedidos: cartoon sci-fi vs familia amarilla clasica. Diferencias, para quién es cada uno y cuál elegir según el uso.',
     category: 'Comparativas',
     date: '2026-05-28',
     dateLabel: '28 de Mayo, 2026',
     excerpt: 'Los dos estilos más pedidos, frente a frente: diferencias visuales, usos ideales y cómo decidir entre ellos.',
-    keywords: ['rick y morty vs simpsons', 'comparacion estilos caricatura', 'retrato rick y morty o simpsons', 'que estilo de retrato elegir'],
+    keywords: ['comparacion estilos caricatura', 'retrato cartoon sci fi o familiar', 'que estilo de retrato elegir', 'retrato personalizado para regalo'],
     image: '/backgrounds/rm-6.webp',
-    imageAlt: 'Comparativa entre retrato estilo Rick & Morty y estilo Los Simpsons',
+    imageAlt: 'Comparativa entre retrato estilo cartoon sci-fi y estilo familia amarilla clasica',
     intro:
-      'Son nuestros dos estilos más pedidos y la duda más frecuente entre quienes hacen su primer pedido: ¿me dibujo como personaje de Rick & Morty o como habitante de Springfield? Los dos son icónicos, los dos quedan increíbles — pero son muy diferentes entre sí. Aquí va la comparativa honesta para que decidas en función de lo que de verdad importa.',
+      'Son nuestros dos estilos más pedidos y la duda más frecuente entre quienes hacen su primer pedido: ¿me dibujo como personaje de cartoon sci-fi o como habitante de una ciudad animada? Los dos son icónicos, los dos quedan increíbles — pero son muy diferentes entre sí. Aquí va la comparativa honesta para que decidas en función de lo que de verdad importa.',
     sections: [
       {
         h2: 'Diferencias visuales: caos interdimensional vs clásico atemporal',
         paragraphs: [
-          'Rick & Morty se caracteriza por trazos finos e irregulares, ojos enormes con pupilas diminutas y una paleta saturada con predominio de verdes y azules. El resultado transmite energía caótica y humor ácido. Los fondos son su gran fortaleza: portales, garajes de inventor, planetas alienígenas.',
-          'Los Simpsons, en cambio, usa contornos gruesos y limpios, la icónica piel amarilla y colores planos cálidos. Es un estilo más "ordenado" visualmente, con un reconocimiento instantáneo que ninguna otra serie puede igualar: más de 30 temporadas en pantalla lo convirtieron en lenguaje visual universal.',
+          'cartoon sci-fi se caracteriza por trazos finos e irregulares, ojos enormes con pupilas diminutas y una paleta saturada con predominio de verdes y azules. El resultado transmite energía caótica y humor ácido. Los fondos son su gran fortaleza: portales, garajes de inventor, planetas alienígenas.',
+          'familia amarilla clasica, en cambio, usa contornos gruesos y limpios, la icónica piel amarilla y colores planos cálidos. Es un estilo más "ordenado" visualmente, con un reconocimiento instantáneo que ninguna otra serie puede igualar: más de 30 temporadas en pantalla lo convirtieron en lenguaje visual universal.',
         ],
       },
       {
         h2: '¿Quién gana para retratos de pareja?',
         paragraphs: [
-          'Rick & Morty, en general. El estilo tiene un punto irreverente que funciona muy bien en parejas jóvenes, y el fondo del portal da un resultado espectacular para imprimir. Dicho esto, si su plan favorito es ver Los Simpsons en el sofá, la respuesta es obvia.',
+          'cartoon sci-fi, en general. El estilo tiene un punto irreverente que funciona muy bien en parejas jóvenes, y el fondo del portal da un resultado espectacular para imprimir. Dicho esto, si su plan favorito es ver familia amarilla clasica en el sofá, la respuesta es obvia.',
         ],
       },
       {
         h2: '¿Quién gana para retratos familiares?',
         paragraphs: [
-          'Los Simpsons, sin discusión. La familia amarilla es el arquetipo del retrato familiar animado, y la escena del sofá con tu propia familia es un regalo que emociona a tres generaciones a la vez. Los abuelos reconocen la referencia igual que los nietos — eso no pasa con ninguna otra serie.',
+          'familia amarilla clasica, sin discusión. La familia amarilla es el arquetipo del retrato familiar animado, y la escena del sofá con tu propia familia es un regalo que emociona a tres generaciones a la vez. Los abuelos reconocen la referencia igual que los nietos — eso no pasa con ninguna otra serie.',
         ],
       },
       {
         h2: '¿Quién gana como foto de perfil?',
         paragraphs: [
-          'Empate técnico, depende de tu comunidad. En Discord, Twitch y comunidades gamer, Rick & Morty encaja con el tono. En un perfil más general (Instagram, WhatsApp), el amarillo Simpson llama la atención al instante en una pantalla pequeña.',
+          'Empate técnico, depende de tu comunidad. En Discord, Twitch y comunidades gamer, cartoon sci-fi encaja con el tono. En un perfil más general (Instagram, WhatsApp), el amarillo familia amarilla llama la atención al instante en una pantalla pequeña.',
         ],
       },
       {
         h2: 'El veredicto',
         paragraphs: [
-          'Elige Rick & Morty si: el retrato es de pareja o amigos, quieres fondos espectaculares, y el humor ácido va contigo.',
-          'Elige Los Simpsons si: el retrato es familiar, es un regalo para alguien de otra generación, o quieres el estilo más reconocible que existe.',
+          'Elige cartoon sci-fi si: el retrato es de pareja o amigos, quieres fondos espectaculares, y el humor ácido va contigo.',
+          'Elige familia amarilla clasica si: el retrato es familiar, es un regalo para alguien de otra generación, o quieres el estilo más reconocible que existe.',
           'Y recuerda que no tienes que casarte con uno para siempre: muchos clientes piden su primer retrato en un estilo y vuelven por el otro. Ambos cuestan lo mismo, desde $20 USD con entrega en 48 horas.',
+        ],
+      },
+      {
+        h2: 'Cuando NO conviene cartoon sci-fi',
+        paragraphs: [
+          'Si la persona que recibirá el regalo no conoce la serie, puede perder parte del efecto. También puede quedarse corto si buscas algo tierno o familiar: cartoon sci-fi destaca por humor negro, caos visual y una vibra más adulta. Para abuelos, padres o un retrato multigeneracional, normalmente familia amarilla funciona mejor.',
+        ],
+      },
+      {
+        h2: 'Cuando NO conviene familia amarilla clasica',
+        paragraphs: [
+          'Si quieres algo más moderno, más rebelde o con un fondo espectacular, familia amarilla puede sentirse demasiado clásico. También pasa que, en perfiles gamer o de humor más irreverente, cartoon sci-fi conecta mejor con la estética del cliente. No es un problema del dibujo: es pura intención de uso.',
+        ],
+      },
+      {
+        h2: 'Resumen rápido para decidir en 30 segundos',
+        paragraphs: [
+          'Pareja friki, amigos, avatar con energía caótica: cartoon sci-fi.',
+          'Familia, generaciones mezcladas, regalo universal: familia amarilla clasica.',
+          'Si aún dudas, piensa en quién va a ver el retrato primero y dónde va a vivir: pared, escritorio, Instagram o WhatsApp. Ese contexto casi siempre te dice el estilo correcto.',
         ],
       },
     ],
@@ -286,13 +306,13 @@ export const BLOG_POSTS: BlogPost[] = [
       {
         h2: 'Paso 2: el boceto en el lenguaje del estilo',
         paragraphs: [
-          'Aquí está la verdadera dificultad del oficio: traducir tus rasgos reales al lenguaje visual de la serie. Cada estilo tiene reglas propias — los ojos de Rick & Morty no se construyen igual que los de Los Simpsons, y las proporciones de Gravity Falls no tienen nada que ver con las siluetas angulosas de Los Padrinos Mágicos. El reto es que el dibujo sea 100% fiel al estilo y que aun así cualquiera te reconozca al primer vistazo.',
+          'Aquí está la verdadera dificultad del oficio: traducir tus rasgos reales al lenguaje visual de la serie. Cada estilo tiene reglas propias — los ojos de cartoon sci-fi no se construyen igual que los de familia amarilla clasica, y las proporciones de misterio del bosque no tienen nada que ver con las siluetas angulosas de fantasia brillante. El reto es que el dibujo sea 100% fiel al estilo y que aun así cualquiera te reconozca al primer vistazo.',
         ],
       },
       {
         h2: 'Paso 3: línea, color y fondo',
         paragraphs: [
-          'Sobre el boceto aprobado internamente se trabaja la línea definitiva, el color plano característico de cada serie y la integración con el fondo: que la iluminación del portal verde se refleje en los personajes, que las sombras del sofá de Springfield caigan donde deben. Son los detalles que separan un retrato profesional de un "pegote" de personaje sobre fondo.',
+          'Sobre el boceto aprobado internamente se trabaja la línea definitiva, el color plano característico de cada serie y la integración con el fondo: que la iluminación del portal verde se refleje en los personajes, que las sombras del sofá de una ciudad animada caigan donde deben. Son los detalles que separan un retrato profesional de un "pegote" de personaje sobre fondo.',
         ],
       },
       {
@@ -310,12 +330,12 @@ export const BLOG_POSTS: BlogPost[] = [
     title: 'Retratos familiares personalizados: el regalo que une generaciones',
     metaTitle: 'Retratos Familiares Personalizados — El Regalo que Une Generaciones',
     metaDescription:
-      'Por qué un retrato familiar animado es el regalo perfecto: hasta 8 personas y mascotas, estilos Simpsons o Rick & Morty, entrega en 48h desde $20.',
+      'Por qué un retrato familiar animado es el regalo perfecto: hasta 8 personas y mascotas, estilos familia amarilla o cartoon sci-fi, entrega en 48h desde $20.',
     category: 'Historias',
     date: '2026-05-02',
     dateLabel: '2 de Mayo, 2026',
     excerpt: 'Por qué un retrato familiar animado es el regalo perfecto para cualquier ocasión especial, y cómo pedirlo bien.',
-    keywords: ['retrato familiar personalizado', 'retrato familia simpsons', 'regalo familiar original', 'caricatura familiar'],
+    keywords: ['retrato familiar personalizado', 'regalo familiar original', 'caricatura familiar personalizada', 'retrato para familia'],
     image: '/backgrounds/rm-10.webp',
     imageAlt: 'Retrato familiar animado personalizado con varias personas y mascota',
     intro:
@@ -324,7 +344,7 @@ export const BLOG_POSTS: BlogPost[] = [
       {
         h2: 'Por qué funciona tan bien como regalo',
         paragraphs: [
-          'Un retrato familiar resuelve el problema clásico de regalar a padres y abuelos: ya lo tienen todo, y lo que de verdad valoran es la familia. Cuando una madre recibe el cuadro de todos sus hijos y nietos en versión Simpsons, el regalo no es el dibujo — es la escena de la familia completa, junta, en un formato que mezcla humor y cariño.',
+          'Un retrato familiar resuelve el problema clásico de regalar a padres y abuelos: ya lo tienen todo, y lo que de verdad valoran es la familia. Cuando una madre recibe el cuadro de todos sus hijos y nietos en versión familia amarilla, el regalo no es el dibujo — es la escena de la familia completa, junta, en un formato que mezcla humor y cariño.',
           'Además es un regalo colectivo perfecto: los hermanos se dividen el costo, cada uno aporta una foto, y el resultado supera con creces lo que cualquiera hubiera comprado por separado.',
         ],
       },
@@ -335,16 +355,16 @@ export const BLOG_POSTS: BlogPost[] = [
         ],
       },
       {
-        h2: 'El estilo ideal para familias: Simpsons primero, pero no único',
+        h2: 'El estilo ideal para familias: familia amarilla primero, pero no único',
         paragraphs: [
-          'La escena del sofá de Springfield con tu propia familia es el retrato familiar por excelencia: tres generaciones reconocen la referencia al instante. Pero no es la única opción — las familias jóvenes piden cada vez más el estilo Rick & Morty con el portal de fondo, y Gravity Falls funciona precioso para familias con niños pequeños por su estética tierna.',
+          'La escena del sofá de una ciudad animada con tu propia familia es el retrato familiar por excelencia: tres generaciones reconocen la referencia al instante. Pero no es la única opción — las familias jóvenes piden cada vez más el estilo cartoon sci-fi con el portal de fondo, y misterio del bosque funciona precioso para familias con niños pequeños por su estética tierna.',
         ],
       },
       {
         h2: 'Del archivo digital al cuadro en la pared',
         paragraphs: [
           'Entregamos el retrato en alta resolución, apto para imprimir en el tamaño que quieras: lienzo, póster enmarcado, o incluso tazas y camisetas. Un truco que usan muchos clientes: imprimen una copia grande para la casa de los padres y copias pequeñas para cada hermano.',
-          'El pedido completo toma cinco minutos: eliges estilo, indicas cuántas personas, subes las fotos y nos das las indicaciones. En 48 horas, tu familia es oficialmente parte de Springfield. Desde $20 USD.',
+          'El pedido completo toma cinco minutos: eliges estilo, indicas cuántas personas, subes las fotos y nos das las indicaciones. En 48 horas, tu familia es oficialmente parte de una ciudad animada. Desde $20 USD.',
         ],
       },
     ],

@@ -48,6 +48,13 @@ function applyGeoCurrency(request: NextRequest, response: NextResponse) {
 }
 
 export function middleware(request: NextRequest) {
+  const host = request.headers.get('host') || '';
+  if (host.startsWith('www.')) {
+    const url = request.nextUrl.clone();
+    url.hostname = host.slice(4);
+    return NextResponse.redirect(url, 301);
+  }
+
   if (isProtectedRequest(request)) {
     const site = request.headers.get('sec-fetch-site');
     const dest = request.headers.get('sec-fetch-dest');
