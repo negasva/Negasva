@@ -55,6 +55,15 @@ const ZERO_QUOTE: PriceBreakdown = {
   subtotal: 0, expressSurcharge: 0, codeDiscount: 0, preCodeTotal: 0, total: 0,
 };
 
+// Carrera contra un tiempo límite: si la promesa no resuelve a tiempo, rechaza
+// para que el flujo de checkout nunca se quede colgado esperando.
+function withTimeout<T>(p: Promise<T>, ms: number): Promise<T> {
+  return Promise.race([
+    p,
+    new Promise<T>((_, reject) => setTimeout(() => reject(new Error('timeout')), ms)),
+  ]);
+}
+
 const FALLBACK_STYLES = [
   { id: 'rick-morty',    name: 'Cartoon sci-fi'         },
   { id: 'gravity-falls', name: 'Misterio del bosque'    },
@@ -241,20 +250,44 @@ export function useCheckout() {
   // Upload the customer's photos to the private bucket (compressed first) and
   // return the storage paths so they travel with the order. Runs before any
   // payment is created, so the illustrator always has the source photos.
+  //
+  // Cada paso lleva un tiempo límite: en algunos navegadores móviles el worker
+  // de compresión puede colgarse y dejaba el botón "Ir al pago" cargando para
+  // siempre. Con los timeouts el flujo siempre termina (éxito o error visible)
+  // y, si la compresión falla, se sube la foto original.
   const uploadPhotos = async (): Promise<{ uploadId?: string; paths: string[] }> => {
     if (selected.photos.length === 0) return { paths: [] };
-    const { default: imageCompression } = await import('browser-image-compression');
+
+    // La compresión es opcional. Si la librería no carga a tiempo, subimos los
+    // originales en lugar de bloquear el checkout.
+    let compress: ((f: File) => Promise<File>) | null = null;
+    try {
+      const { default: imageCompression } = await withTimeout(import('browser-image-compression'), 8000);
+      compress = (f: File) => imageCompression(f, { maxSizeMB: 1.5, maxWidthOrHeight: 2200, useWebWorker: true });
+    } catch { compress = null; }
+
     const fd = new FormData();
     for (const file of selected.photos) {
       let out: File = file;
-      try {
-        out = await imageCompression(file, { maxSizeMB: 1.5, maxWidthOrHeight: 2200, useWebWorker: true });
-      } catch { /* fall back to the original file */ }
+      if (compress) {
+        try {
+          out = await withTimeout(compress(file), 12000);
+        } catch { out = file; /* usa el original si la compresión se cuelga */ }
+      }
       fd.append('photos', out, file.name);
     }
-    const res = await fetch('/api/order/upload', { method: 'POST', body: fd });
-    if (!res.ok) throw new Error('upload failed');
-    return res.json();
+
+    // Abortamos la subida si el servidor no responde, para que el botón salga
+    // siempre del estado de carga.
+    const controller = new AbortController();
+    const abortTimer = setTimeout(() => controller.abort(), 60000);
+    try {
+      const res = await fetch('/api/order/upload', { method: 'POST', body: fd, signal: controller.signal });
+      if (!res.ok) throw new Error('upload failed');
+      return await res.json();
+    } finally {
+      clearTimeout(abortTimer);
+    }
   };
 
   const nextStep = async () => {

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Minus, Plus } from 'lucide-react';
 import type { CheckoutController } from './useCheckout';
 
@@ -12,34 +12,26 @@ export default function StepBody({ c }: { c: CheckoutController }) {
     selectBodyType, decPeople, incPeople,
   } = c;
 
-  // Descuento por cantidad: cuando se desbloquea un nuevo tramo de descuento,
-  // mostramos un pop-up informativo animado que desaparece tras unos segundos;
-  // sólo entonces aparece el indicador permanente debajo del contador.
-  const discountRate = priceBreakdown().discountRate;
-  const [popupRate, setPopupRate] = useState(0);
+  // Recordatorio del descuento por cantidad: mientras todavía no se ha
+  // desbloqueado ningún descuento (1–2 personas), mostramos un pop-up
+  // informativo y animado para que el cliente vea que el descuento existe.
+  // Una vez aplicado el descuento ya no hay pop-up: la información aparece de
+  // forma permanente debajo del contador de personas.
+  const FIRST_TIER_AT = 3;
+  const FIRST_TIER_PCT = 15;
+  const reminderActive = !!selected.bodyType && selected.peopleCount < FIRST_TIER_AT;
+  const [popupOpen, setPopupOpen] = useState(false);
   const [popupVisible, setPopupVisible] = useState(false);
-  const [showDiscountBadge, setShowDiscountBadge] = useState(discountRate > 0);
-  const prevRateRef = useRef(discountRate);
 
   useEffect(() => {
-    const prev = prevRateRef.current;
-    prevRateRef.current = discountRate;
-
-    if (discountRate > prev && discountRate > 0) {
-      // Nuevo descuento desbloqueado → pop-up celebratorio.
-      setShowDiscountBadge(false);
-      setPopupRate(discountRate);
-      setPopupVisible(false);
-      const enter = setTimeout(() => setPopupVisible(true), 30);
-      const leave = setTimeout(() => setPopupVisible(false), 3200);
-      const done = setTimeout(() => { setPopupRate(0); setShowDiscountBadge(true); }, 3600);
-      return () => { clearTimeout(enter); clearTimeout(leave); clearTimeout(done); };
-    }
-
-    // Sin pop-up: el badge permanente sigue el estado del descuento.
-    setShowDiscountBadge(discountRate > 0);
-    if (discountRate === 0) setPopupRate(0);
-  }, [discountRate]);
+    if (!reminderActive) { setPopupOpen(false); setPopupVisible(false); return; }
+    setPopupOpen(true);
+    setPopupVisible(false);
+    const enter = setTimeout(() => setPopupVisible(true), 30);
+    const leave = setTimeout(() => setPopupVisible(false), 3700);
+    const done = setTimeout(() => setPopupOpen(false), 4100);
+    return () => { clearTimeout(enter); clearTimeout(leave); clearTimeout(done); };
+  }, [reminderActive, selected.peopleCount]);
 
   return (
     <div>
@@ -97,19 +89,21 @@ export default function StepBody({ c }: { c: CheckoutController }) {
         ))}
       </div>
 
-      {/* Pop-up informativo del descuento por cantidad */}
-      {popupRate > 0 && (
+      {/* Pop-up recordatorio: avisa de que existe un descuento por cantidad */}
+      {popupOpen && (
         <div className="fixed top-24 left-1/2 -translate-x-1/2 z-[70] w-[90%] max-w-sm px-2 pointer-events-none">
           <div
             className={`flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-primary to-primary-dark px-5 py-4 text-center text-white shadow-2xl shadow-primary/50 ring-2 ring-primary-light transition-all duration-300 ease-out ${
               popupVisible ? 'opacity-100 scale-100 translate-y-0' : 'opacity-0 scale-90 -translate-y-2'
             }`}
           >
-            <span className="text-2xl">🎉</span>
+            <span className="text-2xl">🔥</span>
             <p className="font-black text-sm sm:text-base tracking-tight">
-              {t.studio.step2.discount_unlocked.replace('{pct}', String(Math.round(popupRate * 100)))}
+              {t.studio.step2.next_tier
+                .replace('{n}', String(FIRST_TIER_AT - selected.peopleCount))
+                .replace('{pct}', String(FIRST_TIER_PCT))}
             </p>
-            <span className="text-2xl">🎉</span>
+            <span className="text-2xl">🔥</span>
           </div>
         </div>
       )}
@@ -153,11 +147,11 @@ export default function StepBody({ c }: { c: CheckoutController }) {
                 <span className="text-secondary">
                   {selected.peopleCount} × {fmt(b.perPerson)}
                 </span>
-                <span className={`font-black text-xl ${b.discountRate && showDiscountBadge ? 'text-secondary-lighter line-through text-base' : 'text-primary'}`}>
+                <span className={`font-black text-xl ${b.discountRate ? 'text-secondary-lighter line-through text-base' : 'text-primary'}`}>
                   {fmt(b.peopleSubtotal)}
                 </span>
               </div>
-              {b.discountRate > 0 && showDiscountBadge && (
+              {b.discountRate > 0 && (
                 <div className="flex justify-between items-center bg-white rounded-xl px-3 py-2 animate-pop-in">
                   <span className="font-bold text-primary text-sm">
                     Pack familia −{Math.round(b.discountRate * 100)}%
