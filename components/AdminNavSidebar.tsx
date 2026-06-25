@@ -4,21 +4,7 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
-const NAV = [
-  { href: '/admin',               label: 'Dashboard'      },
-  { href: '/admin/pedidos-pago',  label: 'Pedidos pagados' },
-  { href: '/admin/orders',        label: 'Pedidos'         },
-  { href: '/admin/estilos',       label: 'Estilos'         },
-  { href: '/admin/body-types',    label: 'Tipos de cuerpo' },
-  { href: '/admin/backgrounds',   label: 'Fondos'          },
-  { href: '/admin/galeria',       label: 'Galería'         },
-  { href: '/admin/prices',        label: 'Precios'         },
-  { href: '/admin/discount-codes',label: 'Descuentos'      },
-  { href: '/admin/packages',      label: 'Paquetes'        },
-  { href: '/admin/faqs',          label: 'FAQ'             },
-  { href: '/admin/landing',       label: 'Landing Page'    },
-  { href: '/admin/contenido',     label: 'Contenido'       },
-];
+export interface NavItem { href: string; label: string }
 
 function Brand() {
   return (
@@ -29,7 +15,17 @@ function Brand() {
   );
 }
 
-export default function AdminSidebar() {
+// Shared admin sidebar for both panels (/admin operation, /adminlanding content).
+// The "new paid orders" badge is operation-only, gated by newOrdersHref.
+export default function AdminNavSidebar({
+  items,
+  subtitle,
+  newOrdersHref,
+}: {
+  items: NavItem[];
+  subtitle: string;
+  newOrdersHref?: string;
+}) {
   const pathname = usePathname();
   const router = useRouter();
   const [open, setOpen] = useState(false);
@@ -38,6 +34,7 @@ export default function AdminSidebar() {
   // Live "new paid orders" badge: poll the cheap count endpoint and subtract
   // the count last seen on the Pedidos pagados page (stored in localStorage).
   useEffect(() => {
+    if (!newOrdersHref) return;
     let alive = true;
     async function poll() {
       try {
@@ -51,7 +48,7 @@ export default function AdminSidebar() {
     poll();
     const id = setInterval(poll, 20000);
     return () => { alive = false; clearInterval(id); };
-  }, [pathname]);
+  }, [pathname, newOrdersHref]);
 
   async function handleLogout() {
     await fetch('/api/admin/login', { method: 'DELETE' });
@@ -61,9 +58,9 @@ export default function AdminSidebar() {
 
   const NavLinks = ({ onNav }: { onNav?: () => void }) => (
     <>
-      <nav className="flex-1 py-4 px-3 space-y-0.5">
-        {NAV.map(({ href, label }) => {
-          const active = href === '/admin' ? pathname === '/admin' : pathname.startsWith(href);
+      <nav className="flex-1 py-4 px-3 space-y-0.5 overflow-y-auto">
+        {items.map(({ href, label }) => {
+          const active = href === pathname || (href !== '/admin' && href !== '/adminlanding' && pathname.startsWith(href));
           return (
             <Link
               key={href}
@@ -76,7 +73,7 @@ export default function AdminSidebar() {
               }`}
             >
               <span>{label}</span>
-              {href === '/admin/pedidos-pago' && newOrders > 0 && (
+              {newOrdersHref && href === newOrdersHref && newOrders > 0 && (
                 <span className="ml-2 min-w-5 h-5 px-1.5 flex items-center justify-center rounded-full bg-red-500 text-white text-xs font-black">
                   {newOrders}
                 </span>
@@ -121,7 +118,7 @@ export default function AdminSidebar() {
         <div className="px-5 py-5 border-b border-white/10 flex items-center justify-between">
           <div>
             <Brand />
-            <span className="block text-primary text-xs font-semibold mt-0.5">Admin Panel</span>
+            <span className="block text-primary text-xs font-semibold mt-0.5">{subtitle}</span>
           </div>
           <button onClick={() => setOpen(false)} className="text-gray-400 hover:text-white text-lg leading-none">x</button>
         </div>
@@ -132,7 +129,7 @@ export default function AdminSidebar() {
       <aside className="hidden lg:flex fixed left-0 top-0 h-full w-56 bg-secondary flex-col z-40">
         <div className="px-5 py-6 border-b border-white/10">
           <Brand />
-          <span className="block text-primary text-xs font-semibold mt-0.5">Admin Panel</span>
+          <span className="block text-primary text-xs font-semibold mt-0.5">{subtitle}</span>
         </div>
         <NavLinks />
       </aside>
