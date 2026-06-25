@@ -1,0 +1,165 @@
+<!--
+  NEGASVA — Plantilla de email para Resend (confirmación de pedido).
+  Colores de marca: primary #FC90B6 / secondary #1A1A1A / primary-lighter #FFD0E5.
+  HTML "bulletproof": tablas + estilos inline para compatibilidad con Gmail/Outlook/Apple Mail.
+  Variables Resend (triple llave): CUSTOMER_NAME, STYLE, BODY_TYPE, BACKGROUND,
+  PEOPLE, REFERENCE, PRICE, DELIVERY, ORDER_URL.
+-->
+<!DOCTYPE html>
+<html lang="es" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="color-scheme" content="light">
+  <meta name="supported-color-schemes" content="light">
+  <title>Tu pedido NEGASVA</title>
+  <!--[if mso]>
+  <style>* { font-family: Arial, sans-serif !important; }</style>
+  <![endif]-->
+  <style>
+    @media only screen and (max-width:600px) {
+      .container { width:100% !important; }
+      .px { padding-left:24px !important; padding-right:24px !important; }
+      .stack { display:block !important; width:100% !important; }
+      .h1 { font-size:28px !important; }
+    }
+  </style>
+</head>
+<body style="margin:0; padding:0; background-color:#FFF5F9; -webkit-font-smoothing:antialiased;">
+  <!-- Preheader (oculto) -->
+  <div style="display:none; max-height:0; overflow:hidden; opacity:0;">
+    ¡Recibimos tu pedido! Tu retrato estará listo en {{{DELIVERY}}}.
+  </div>
+
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#FFF5F9;">
+    <tr>
+      <td align="center" style="padding:32px 16px;">
+
+        <!-- Card -->
+        <table role="presentation" class="container" width="600" cellpadding="0" cellspacing="0" border="0" style="width:600px; max-width:600px; background-color:#FFFFFF; border-radius:20px; overflow:hidden; border:1px solid #FFD0E5;">
+
+          <!-- Header negro con logo -->
+          <tr>
+            <td align="center" style="background-color:#1A1A1A; padding:28px 24px;">
+              <span style="font-family:'Montserrat',Arial,Helvetica,sans-serif; font-size:26px; font-weight:900; letter-spacing:-0.04em; color:#FFFFFF;">NEGAS</span><span style="font-family:'Montserrat',Arial,Helvetica,sans-serif; font-size:26px; font-weight:400; letter-spacing:-0.04em; color:#FFFFFF;">VA</span>
+            </td>
+          </tr>
+
+          <!-- Banda rosa -->
+          <tr><td style="height:6px; background-color:#FC90B6; line-height:6px; font-size:6px;">&nbsp;</td></tr>
+
+          <!-- Hero -->
+          <tr>
+            <td class="px" align="center" style="padding:40px 40px 8px 40px;">
+              <div style="font-size:44px; line-height:1;">🎨</div>
+              <h1 class="h1" style="margin:18px 0 8px 0; font-family:'Montserrat',Arial,Helvetica,sans-serif; font-size:32px; font-weight:900; letter-spacing:-0.04em; color:#1A1A1A;">
+                ¡Pedido confirmado!
+              </h1>
+              <p style="margin:0; font-family:Arial,Helvetica,sans-serif; font-size:16px; line-height:1.6; color:#4A4A4A;">
+                Hola {{{CUSTOMER_NAME}}}, ya tenemos tu pedido y nuestro equipo empezó a trabajar en tu retrato personalizado.
+              </p>
+            </td>
+          </tr>
+
+          <!-- Detalle del pedido -->
+          <tr>
+            <td class="px" style="padding:24px 40px 8px 40px;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#FFD0E5; border-radius:16px;">
+                <tr>
+                  <td style="padding:22px 24px;">
+                    <p style="margin:0 0 14px 0; font-family:'Montserrat',Arial,Helvetica,sans-serif; font-size:12px; font-weight:900; letter-spacing:0.08em; text-transform:uppercase; color:#1A1A1A;">Resumen del pedido</p>
+
+                    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="font-family:Arial,Helvetica,sans-serif; font-size:14px; color:#1A1A1A;">
+                      <tr>
+                        <td style="padding:6px 0; color:#4A4A4A;">Estilo</td>
+                        <td align="right" style="padding:6px 0; font-weight:bold;">{{{STYLE}}}</td>
+                      </tr>
+                      <tr>
+                        <td style="padding:6px 0; color:#4A4A4A;">Tipo de retrato</td>
+                        <td align="right" style="padding:6px 0; font-weight:bold;">{{{BODY_TYPE}}}</td>
+                      </tr>
+                      <tr>
+                        <td style="padding:6px 0; color:#4A4A4A;">Personas</td>
+                        <td align="right" style="padding:6px 0; font-weight:bold;">{{{PEOPLE}}}</td>
+                      </tr>
+                      <tr>
+                        <td style="padding:6px 0; color:#4A4A4A;">Fondo</td>
+                        <td align="right" style="padding:6px 0; font-weight:bold;">{{{BACKGROUND}}}</td>
+                      </tr>
+                      <tr>
+                        <td style="padding:6px 0; color:#4A4A4A;">Referencia</td>
+                        <td align="right" style="padding:6px 0; font-weight:bold;">{{{REFERENCE}}}</td>
+                      </tr>
+                      <tr><td colspan="2" style="padding:8px 0;"><div style="border-top:1px dashed #FC90B6; font-size:1px; line-height:1px;">&nbsp;</div></td></tr>
+                      <tr>
+                        <td style="padding:4px 0; font-family:'Montserrat',Arial,Helvetica,sans-serif; font-weight:900; font-size:16px;">Total</td>
+                        <td align="right" style="padding:4px 0; font-family:'Montserrat',Arial,Helvetica,sans-serif; font-weight:900; font-size:20px; color:#F870A0;">{{{PRICE}}}</td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- Entrega -->
+          <tr>
+            <td class="px" align="center" style="padding:18px 40px 4px 40px;">
+              <p style="margin:0; font-family:Arial,Helvetica,sans-serif; font-size:15px; line-height:1.6; color:#4A4A4A;">
+                ⏱️ Entrega estimada: <strong style="color:#1A1A1A;">{{{DELIVERY}}}</strong>.
+              </p>
+            </td>
+          </tr>
+
+          <!-- CTA -->
+          <tr>
+            <td align="center" style="padding:24px 40px 8px 40px;">
+              <!--[if mso]>
+              <v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="{{{ORDER_URL}}}" style="height:52px;v-text-anchor:middle;width:280px;" arcsize="24%" fillcolor="#FC90B6" stroke="f">
+                <w:anchorlock/>
+                <center style="color:#ffffff;font-family:Arial,sans-serif;font-size:16px;font-weight:bold;">Ver mi pedido</center>
+              </v:roundrect>
+              <![endif]-->
+              <!--[if !mso]><!-- -->
+              <a href="{{{ORDER_URL}}}" target="_blank" style="display:inline-block; background-color:#FC90B6; color:#FFFFFF; font-family:'Montserrat',Arial,Helvetica,sans-serif; font-size:16px; font-weight:900; letter-spacing:-0.01em; text-decoration:none; padding:16px 40px; border-radius:12px;">
+                Ver mi pedido &nbsp;›
+              </a>
+              <!--<![endif]-->
+            </td>
+          </tr>
+
+          <tr>
+            <td class="px" align="center" style="padding:16px 40px 40px 40px;">
+              <p style="margin:0; font-family:Arial,Helvetica,sans-serif; font-size:13px; line-height:1.6; color:#4A4A4A;">
+                ¿Dudas o cambios? Responde a este correo y te ayudamos.
+              </p>
+            </td>
+          </tr>
+
+          <!-- Footer -->
+          <tr>
+            <td align="center" style="background-color:#1A1A1A; padding:28px 40px;">
+              <p style="margin:0 0 6px 0; font-family:'Montserrat',Arial,Helvetica,sans-serif; font-size:18px; font-weight:900; letter-spacing:-0.04em; color:#FFFFFF;">NEGASVA</p>
+              <p style="margin:0 0 14px 0; font-family:Arial,Helvetica,sans-serif; font-size:13px; color:#FFD0E5;">Retratos personalizados estilo cartoon</p>
+              <p style="margin:0;">
+                <a href="https://www.instagram.com" target="_blank" style="font-family:Arial,Helvetica,sans-serif; font-size:13px; font-weight:bold; color:#FC90B6; text-decoration:none; padding:0 8px;">Instagram</a>
+                <span style="color:#4A4A4A;">·</span>
+                <a href="https://www.tiktok.com" target="_blank" style="font-family:Arial,Helvetica,sans-serif; font-size:13px; font-weight:bold; color:#FC90B6; text-decoration:none; padding:0 8px;">TikTok</a>
+                <span style="color:#4A4A4A;">·</span>
+                <a href="https://negasva.shop" target="_blank" style="font-family:Arial,Helvetica,sans-serif; font-size:13px; font-weight:bold; color:#FC90B6; text-decoration:none; padding:0 8px;">negasva.shop</a>
+              </p>
+              <p style="margin:16px 0 0 0; font-family:Arial,Helvetica,sans-serif; font-size:11px; line-height:1.5; color:#6b6b6b;">
+                © NEGASVA. Recibiste este correo porque hiciste un pedido en negasva.shop.
+              </p>
+            </td>
+          </tr>
+
+        </table>
+        <!-- /Card -->
+
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
