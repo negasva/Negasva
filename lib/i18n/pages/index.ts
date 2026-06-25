@@ -1,5 +1,5 @@
 // Registro central de contenido editable por página (es/en/fr).
-// Lo consume el editor del admin (/admin/contenido) para listar TODAS las
+// Lo consume el editor del admin (/adminlanding/contenido) para listar TODAS las
 // páginas y sus campos, y las páginas públicas vía usePageText().
 
 import type { PageDict } from '@/lib/i18n/pageContent';

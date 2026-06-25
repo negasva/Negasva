@@ -22,8 +22,8 @@ async function getSummary() {
 const CARDS = [
   { key: 'orders'      as const, label: 'Pedidos',           href: '/admin/orders',         color: 'bg-orange-50 text-orange-600'  },
   { key: 'prices'      as const, label: 'Precios',           href: '/admin/prices',          color: 'bg-blue-50 text-blue-600'      },
-  { key: 'codes'       as const, label: 'Descuentos',        href: '/admin/discount-codes',  color: 'bg-green-50 text-green-600'    },
-  { key: 'packages'    as const, label: 'Paquetes',          href: '/admin/packages',        color: 'bg-purple-50 text-purple-600'  },
+  { key: 'codes'       as const, label: 'Descuentos',        href: '/adminlanding/discount-codes',  color: 'bg-green-50 text-green-600'    },
+  { key: 'packages'    as const, label: 'Paquetes',          href: '/adminlanding/packages',        color: 'bg-purple-50 text-purple-600'  },
   { key: 'backgrounds' as const, label: 'Fondos',            href: '/admin/backgrounds',     color: 'bg-pink-50 text-pink-600'      },
 ];
 
