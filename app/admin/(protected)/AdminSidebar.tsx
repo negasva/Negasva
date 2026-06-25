@@ -2,8 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { useState } from 'react';
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { useEffect, useState } from 'react';
 
 const NAV = [
   { href: '/admin',               label: 'Dashboard'      },
@@ -33,11 +32,29 @@ function Brand() {
 export default function AdminSidebar() {
   const pathname = usePathname();
   const router = useRouter();
-  const supabase = createClientComponentClient();
   const [open, setOpen] = useState(false);
+  const [newOrders, setNewOrders] = useState(0);
+
+  // Live "new paid orders" badge: poll the cheap count endpoint and subtract
+  // the count last seen on the Pedidos pagados page (stored in localStorage).
+  useEffect(() => {
+    let alive = true;
+    async function poll() {
+      try {
+        const res = await fetch('/api/admin/orders/new-count');
+        if (!res.ok) return;
+        const { count } = await res.json();
+        const seen = Number(localStorage.getItem('adminOrdersSeen') || '0');
+        if (alive) setNewOrders(Math.max(0, count - seen));
+      } catch { /* ignore */ }
+    }
+    poll();
+    const id = setInterval(poll, 20000);
+    return () => { alive = false; clearInterval(id); };
+  }, [pathname]);
 
   async function handleLogout() {
-    await supabase.auth.signOut();
+    await fetch('/api/admin/login', { method: 'DELETE' });
     router.push('/admin/login');
     router.refresh();
   }
@@ -52,13 +69,18 @@ export default function AdminSidebar() {
               key={href}
               href={href}
               onClick={onNav}
-              className={`flex items-center px-3 py-2.5 rounded-lg text-sm font-semibold transition-colors ${
+              className={`flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-semibold transition-colors ${
                 active
                   ? 'bg-primary text-white'
                   : 'text-gray-400 hover:text-white hover:bg-white/10'
               }`}
             >
-              {label}
+              <span>{label}</span>
+              {href === '/admin/pedidos-pago' && newOrders > 0 && (
+                <span className="ml-2 min-w-5 h-5 px-1.5 flex items-center justify-center rounded-full bg-red-500 text-white text-xs font-black">
+                  {newOrders}
+                </span>
+              )}
             </Link>
           );
         })}

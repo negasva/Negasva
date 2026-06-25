@@ -1,16 +1,10 @@
-import { redirect } from 'next/navigation';
-import { createServerClient } from '@/lib/supabase/server';
+import { requireAdmin } from '@/lib/admin/auth';
 import AdminSidebar from './AdminSidebar';
 
 export const dynamic = 'force-dynamic';
 
 export default async function ProtectedAdminLayout({ children }: { children: React.ReactNode }) {
-  const supabase = createServerClient();
-  const { data: { user } } = await supabase.auth.getUser();
-
-  if (!user || user.user_metadata?.role !== 'admin') {
-    redirect('/admin/login');
-  }
+  await requireAdmin();
 
   return (
     <div className="min-h-screen bg-gray-50">

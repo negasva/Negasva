@@ -1,9 +1,7 @@
 'use client';
 
 import { useEffect, useState, useRef, useCallback } from 'react';
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
-
-const BUCKET = 'backgrounds';
+import { uploadAdminImage } from '@/lib/admin/uploadImage';
 
 interface GalleryItem {
   id: string;
@@ -19,7 +17,6 @@ const labelCls = 'block text-xs font-bold text-secondary-lighter mb-1.5 uppercas
 const inputCls = 'w-full border border-primary-lighter rounded-lg px-3 py-2 text-sm text-secondary focus:outline-none focus:border-primary transition-colors bg-white';
 
 export default function AdminGaleriaPage() {
-  const supabase = createClientComponentClient();
   const [items, setItems] = useState<GalleryItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -48,11 +45,12 @@ export default function AdminGaleriaPage() {
   useEffect(() => { load(); }, [load]);
 
   async function uploadFile(file: File): Promise<string | null> {
-    const ext = file.name.split('.').pop();
-    const name = `gallery/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
-    const { error } = await supabase.storage.from(BUCKET).upload(name, file, { cacheControl: '3600', upsert: false });
-    if (error) { showToast(`Error: ${error.message}`); return null; }
-    return supabase.storage.from(BUCKET).getPublicUrl(name).data.publicUrl;
+    try {
+      return await uploadAdminImage(file, 'gallery');
+    } catch (err) {
+      showToast(err instanceof Error ? err.message : 'Error al subir imagen');
+      return null;
+    }
   }
 
   async function handleAdd(e: React.FormEvent) {

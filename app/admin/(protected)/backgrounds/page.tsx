@@ -2,10 +2,8 @@
 
 import { useEffect, useState, useRef, useCallback } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { uploadAdminImage } from '@/lib/admin/uploadImage';
 import type { Background } from '@/types/admin';
-
-const BUCKET = 'backgrounds';
 
 // Fallback while /api/admin/styles loads — the real list is admin-managed
 const DEFAULT_STYLES: { id: string; label: string }[] = [
@@ -22,7 +20,6 @@ type StyleId = string;
 const EMPTY_EDIT = { name: '', style: 'rick-morty', urlInput: '', uploadMode: 'url' as 'file' | 'url' };
 
 export default function BackgroundsPage() {
-  const supabase = createClientComponentClient();
   const searchParams = useSearchParams();
   const router = useRouter();
   const initialStyle = (searchParams.get('style') ?? 'all') as StyleId;
@@ -89,16 +86,12 @@ export default function BackgroundsPage() {
     : backgrounds.filter((bg) => bg.style === activeStyle);
 
   async function uploadImageFile(file: File, style: string): Promise<string | null> {
-    const ext = file.name.split('.').pop();
-    const fileName = `${style}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
-    const { error: uploadError } = await supabase.storage.from(BUCKET).upload(fileName, file, { cacheControl: '3600', upsert: false });
-    if (uploadError) {
-      console.error('Storage upload error:', uploadError);
-      showToast(`Error: ${uploadError.message}`);
+    try {
+      return await uploadAdminImage(file, style);
+    } catch (err) {
+      showToast(err instanceof Error ? err.message : 'Error al subir imagen');
       return null;
     }
-    const { data: urlData } = supabase.storage.from(BUCKET).getPublicUrl(fileName);
-    return urlData.publicUrl;
   }
 
   async function handleUpload(e: React.FormEvent) {
@@ -199,11 +192,8 @@ export default function BackgroundsPage() {
 
   async function handleDelete(bg: Background) {
     if (!confirm('¿Eliminar este fondo?')) return;
-    const fileName = bg.image_url.includes('/storage/') ? bg.image_url.split('/').pop() : null;
-    if (fileName) {
-      const path = `${bg.style ?? ''}/${fileName}`.replace(/^\//, '');
-      await supabase.storage.from(BUCKET).remove([path, fileName]);
-    }
+    // ponytail: el row se borra vía API; el archivo en Storage queda huérfano
+    // (bajo costo). Limpieza server-side si algún día pesa el bucket.
     await fetch('/api/admin/backgrounds', {
       method: 'DELETE',
       headers: { 'Content-Type': 'application/json' },

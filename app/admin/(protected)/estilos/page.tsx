@@ -1,10 +1,8 @@
 'use client';
 
 import { useEffect, useState, useRef } from 'react';
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { uploadAdminImage } from '@/lib/admin/uploadImage';
 import type { DrawingStyle } from '@/types/admin';
-
-const BUCKET = 'backgrounds';
 
 const EMPTY_FORM = {
   slug: '',
@@ -15,7 +13,6 @@ const EMPTY_FORM = {
 };
 
 export default function EstilosAdminPage() {
-  const supabase = createClientComponentClient();
   const [styles, setStyles] = useState<DrawingStyle[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
@@ -71,19 +68,13 @@ export default function EstilosAdminPage() {
     if (imageMode === 'file') {
       const file = fileRef.current?.files?.[0];
       if (file) {
-        const ext = file.name.split('.').pop();
-        const fileName = `styles/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
-        const { error: uploadError } = await supabase.storage
-          .from(BUCKET)
-          .upload(fileName, file, { cacheControl: '3600', upsert: false });
-        if (uploadError) {
-          console.error('Storage upload error:', uploadError);
-          showToast(`Error: ${uploadError.message}`);
+        try {
+          imageUrl = await uploadAdminImage(file, 'styles');
+        } catch (err) {
+          showToast(err instanceof Error ? err.message : 'Error al subir imagen');
           setSaving(false);
           return;
         }
-        const { data: urlData } = supabase.storage.from(BUCKET).getPublicUrl(fileName);
-        imageUrl = urlData.publicUrl;
       }
     }
 

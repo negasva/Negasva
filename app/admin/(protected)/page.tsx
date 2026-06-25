@@ -1,8 +1,8 @@
 import Link from 'next/link';
-import { createServerClient } from '@/lib/supabase/server';
+import { createServiceClient } from '@/lib/supabase/server';
 
 async function getSummary() {
-  const supabase = createServerClient();
+  const supabase = createServiceClient();
   const [prices, codes, packages, backgrounds, orders] = await Promise.all([
     supabase.from('prices').select('id', { count: 'exact', head: true }),
     supabase.from('discount_codes').select('id', { count: 'exact', head: true }),
