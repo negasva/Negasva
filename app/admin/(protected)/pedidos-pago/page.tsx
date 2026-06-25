@@ -41,6 +41,19 @@ function money(amount: number | null, currency: string | null): string {
   }
 }
 
+// Max delivery time: 48h normal, 24h express, counted from created_at.
+function Deadline({ createdAt, express }: { createdAt: string; express: boolean | null }) {
+  const due = new Date(createdAt).getTime() + (express ? 24 : 48) * 3600 * 1000;
+  const hoursLeft = Math.round((due - Date.now()) / 3600_000);
+  const overdue = hoursLeft < 0;
+  const label = new Date(due).toLocaleString('es', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' });
+  return (
+    <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${overdue ? 'bg-red-100 text-red-700' : 'bg-blue-50 text-blue-700'}`}>
+      Entrega máx: {label} · {overdue ? `vencido ${-hoursLeft}h` : `${hoursLeft}h restantes`}
+    </span>
+  );
+}
+
 export default function CheckoutOrdersPage() {
   const [orders, setOrders] = useState<CheckoutOrder[]>([]);
   const [loading, setLoading] = useState(true);
@@ -49,7 +62,13 @@ export default function CheckoutOrdersPage() {
   useEffect(() => {
     fetch('/api/admin/checkout-orders')
       .then((r) => r.json())
-      .then((d) => setOrders(Array.isArray(d) ? d : []))
+      .then((d) => {
+        const list: CheckoutOrder[] = Array.isArray(d) ? d : [];
+        setOrders(list);
+        // Mark current paid count as seen so the sidebar "new orders" badge clears.
+        const paid = list.filter((o) => o.status === 'paid').length;
+        try { localStorage.setItem('adminOrdersSeen', String(paid)); } catch { /* ignore */ }
+      })
       .catch(() => setOrders([]))
       .finally(() => setLoading(false));
   }, []);
@@ -94,6 +113,7 @@ export default function CheckoutOrdersPage() {
                   </span>
                   <span className="font-black text-secondary">{money(o.amount_total, o.currency)}</span>
                   {o.express && <span className="text-xs font-bold text-primary">⚡ Exprés</span>}
+                  {o.status === 'paid' && <Deadline createdAt={o.created_at} express={o.express} />}
                 </div>
                 <span className="text-xs text-gray-400">
                   {new Date(o.created_at).toLocaleString('es')} · {o.provider}

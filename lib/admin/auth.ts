@@ -1,38 +1,28 @@
 import { redirect } from 'next/navigation';
+import { cookies } from 'next/headers';
 import type { SupabaseClient } from '@supabase/supabase-js';
-import { createServerClient, createRouteClient } from '@/lib/supabase/server';
+import { createServiceClient } from '@/lib/supabase/server';
+import { SESSION_COOKIE, verifySessionToken } from './session';
 
 /**
- * Server Component / page guard. Redirects to /admin/login when the caller is
- * not an authenticated admin. Uses getUser() (revalidates the JWT against the
- * Supabase Auth server) instead of getSession() (which only reads the
- * spoofable cookie).
+ * True when the caller carries a valid signed admin session cookie. Single
+ * shared password (ADMIN_PASSWORD), no Supabase Auth users.
  */
-export async function requireAdmin() {
-  const supabase = createServerClient();
-  const { data: { user } } = await supabase.auth.getUser();
+export function isAdminAuthed(): boolean {
+  return verifySessionToken(cookies().get(SESSION_COOKIE)?.value);
+}
 
-  if (!user) {
-    redirect('/admin/login');
-  }
-
-  const role = user.user_metadata?.role;
-  if (role !== 'admin') {
-    redirect('/admin/login');
-  }
-
-  return user;
+/** Server Component / page guard. Redirects to /admin/login when not authed. */
+export async function requireAdmin(): Promise<void> {
+  if (!isAdminAuthed()) redirect('/admin/login');
 }
 
 /**
- * Route Handler guard for /api/admin/*. Returns the authenticated route-scoped
- * Supabase client, or null when the caller is not an admin (so the route can
- * respond with 401). Centralizes the auth check that was duplicated in every
- * admin API route.
+ * Route Handler guard for /api/admin/*. Returns a service-role Supabase client
+ * (admin ops are trusted server-side once the cookie is verified) or null so
+ * the route can respond 401. Async signature kept for existing callers.
  */
 export async function requireAdminRoute(): Promise<SupabaseClient | null> {
-  const supabase = createRouteClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user || user.user_metadata?.role !== 'admin') return null;
-  return supabase;
+  if (!isAdminAuthed()) return null;
+  return createServiceClient();
 }

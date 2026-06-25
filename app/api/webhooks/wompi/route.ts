@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { verifyWompiEvent, type WompiEvent } from '@/lib/payments/wompi';
 import { createServiceClient } from '@/lib/supabase/server';
 import { recordDiscountCodeUse } from '@/lib/pricing/server';
+import { notifyNewOrder } from '@/lib/notify/newOrder';
 
 // Wompi event → our internal status
 function mapStatus(s: WompiEvent['data']['transaction']['status']): string {
@@ -41,7 +42,7 @@ export async function POST(request: Request) {
     // transition to paid (Wompi may deliver the event more than once).
     const { data: existing } = await supabase
       .from('orders')
-      .select('status, discount_code')
+      .select('status, discount_code, amount_total, currency, style, body_type, background, people_count, express')
       .eq('provider', 'wompi')
       .eq('provider_reference', tx.reference)
       .maybeSingle();
@@ -57,8 +58,20 @@ export async function POST(request: Request) {
       .eq('provider', 'wompi')
       .eq('provider_reference', tx.reference);
 
-    if (newStatus === 'paid' && !wasPaid && existing?.discount_code) {
-      await recordDiscountCodeUse(existing.discount_code);
+    if (newStatus === 'paid' && !wasPaid) {
+      if (existing?.discount_code) await recordDiscountCodeUse(existing.discount_code);
+      await notifyNewOrder({
+        provider: 'wompi',
+        reference: tx.reference,
+        amountTotal: existing?.amount_total ?? null,
+        currency: existing?.currency ?? null,
+        style: existing?.style,
+        bodyType: existing?.body_type,
+        background: existing?.background,
+        peopleCount: existing?.people_count ?? null,
+        express: existing?.express ?? null,
+        customerEmail: tx.customer_email ?? null,
+      });
     }
   } catch (err) {
     console.error('[webhook/wompi] update failed:', err);

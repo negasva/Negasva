@@ -3,6 +3,7 @@ import Stripe from 'stripe';
 import { createServiceClient } from '@/lib/supabase/server';
 import { recordDiscountCodeUse } from '@/lib/pricing/server';
 import { listOrderPhotos } from '@/lib/payments/orderPhotos';
+import { notifyNewOrder } from '@/lib/notify/newOrder';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function getStripe() {
@@ -76,10 +77,25 @@ export async function POST(request: Request) {
           onConflict: 'provider_reference',
         });
 
-        // Credit the discount code only on the first transition to paid.
+        // On the first transition to paid: credit the coupon and notify.
+        // (async OXXO/SEPA flows arrive here as pending and turn paid in
+        // async_payment_succeeded; those rarer cases skip the email.)
         const code = session.metadata?.discountCode;
-        if (status === 'paid' && !wasPaid && code) {
-          await recordDiscountCodeUse(code);
+        if (status === 'paid' && !wasPaid) {
+          if (code) await recordDiscountCodeUse(code);
+          const meta = session.metadata ?? {};
+          await notifyNewOrder({
+            provider: 'stripe',
+            reference: session.id,
+            amountTotal: session.amount_total,
+            currency: session.currency,
+            style: meta.style,
+            bodyType: meta.bodyType,
+            background: meta.background,
+            peopleCount: meta.peopleCount ? Number(meta.peopleCount) : null,
+            express: meta.express === 'true',
+            customerEmail: session.customer_details?.email ?? null,
+          });
         }
         break;
       }

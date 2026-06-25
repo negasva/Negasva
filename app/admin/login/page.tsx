@@ -2,12 +2,9 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 
 export default function AdminLoginPage() {
   const router = useRouter();
-  const supabase = createClientComponentClient();
-  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -17,18 +14,14 @@ export default function AdminLoginPage() {
     setError('');
     setLoading(true);
 
-    const { data, error: authError } = await supabase.auth.signInWithPassword({ email, password });
+    const res = await fetch('/api/admin/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password }),
+    });
 
-    if (authError || !data.session) {
+    if (!res.ok) {
       setError('Credenciales incorrectas.');
-      setLoading(false);
-      return;
-    }
-
-    const role = data.session.user.user_metadata?.role;
-    if (role !== 'admin') {
-      await supabase.auth.signOut();
-      setError('No tienes permisos de administrador.');
       setLoading(false);
       return;
     }
@@ -51,19 +44,6 @@ export default function AdminLoginPage() {
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-xs font-bold text-secondary-lighter mb-1.5 uppercase tracking-wide">
-              Email
-            </label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              className="w-full border border-primary-lighter rounded-lg px-3 py-2.5 text-sm text-secondary focus:outline-none focus:border-primary transition-colors"
-              placeholder="admin@negasva.shop"
-            />
-          </div>
           <div>
             <label className="block text-xs font-bold text-secondary-lighter mb-1.5 uppercase tracking-wide">
               Contraseña
