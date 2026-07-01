@@ -378,9 +378,6 @@ export default function Home() {
           {[...config.gallery_images, ...config.gallery_images].map((img, i) => (
             <div key={i} className={`${i % 2 === 0 ? 'forma-cuadro1' : 'forma-cuadro2'} relative h-[280px] w-[420px] mx-3 overflow-hidden flex-shrink-0`}>
               <Image src={img.url} alt={img.caption} fill className="object-cover" sizes="420px" />
-              <span className="absolute bottom-3 left-3 text-white font-bold text-sm bg-black/50 px-3 py-1.5 rounded-full">
-                {img.caption}
-              </span>
             </div>
           ))}
         </div>

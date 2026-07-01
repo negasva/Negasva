@@ -110,3 +110,10 @@ a {
 .caja-flotante-glow {
   filter: drop-shadow(0 10px 10px rgba(0,0,0,0.10)) drop-shadow(0 0 16px rgba(255,158,197,0.6));
 }
+/* Sombra de separación para las tarjetas de reseñas (van sobre fondo blanco).
+   El borde de color se logra con dos capas enmascaradas: una de fondo (color
+   del borde) y otra blanca ligeramente más pequeña encima; la franja que
+   asoma alrededor hace de borde siguiendo la silueta hecha a mano. */
+.caja-review {
+  filter: drop-shadow(0 8px 14px rgba(0,0,0,0.14));
+}
