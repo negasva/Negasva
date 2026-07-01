@@ -1,4 +1,5 @@
 import type { PricingConfig } from './server';
+import { sanitizeProductKeys } from './products';
 
 /**
  * Single source of truth for order math. Pure function, no I/O — used by both
@@ -14,6 +15,7 @@ export interface QuoteInputs {
   peopleCount: number;
   background: string;
   express: boolean;
+  products?: string[];    // print-on-demand physical add-ons (product keys)
 }
 
 export interface QuoteBreakdown {
@@ -24,8 +26,10 @@ export interface QuoteBreakdown {
   bgCost: number;
   subtotal: number;       // after family discount + background
   expressSurcharge: number;
+  productsCost: number;   // sum of physical POD add-ons (no family/express applied)
+  products: string[];     // sanitized product keys that were priced
   codeDiscount: number;   // promo code discount (already capped)
-  preCodeTotal: number;   // subtotal + express, before promo code
+  preCodeTotal: number;   // subtotal + express + products, before promo code
   total: number;
 }
 
@@ -59,7 +63,17 @@ export function computeQuoteUsd(
 
   const subtotal = peopleAfterDiscount + bgCost;
   const expressSurcharge = inputs.express ? subtotal * config.expressSurchargePct : 0;
-  const preCodeTotal = subtotal + expressSurcharge;
+
+  // Physical POD add-ons are priced flat (one printed item per order): the
+  // family-pack discount and the express surcharge apply only to the artwork,
+  // never to the physical products.
+  const products = sanitizeProductKeys(inputs.products);
+  const productsCost = products.reduce(
+    (sum, key) => sum + (config.podProductsUsd[key] ?? 0),
+    0,
+  );
+
+  const preCodeTotal = subtotal + expressSurcharge + productsCost;
   const codeDiscount = Math.min(Math.max(codeDiscountUsd, 0), preCodeTotal);
 
   return {
@@ -70,6 +84,8 @@ export function computeQuoteUsd(
     bgCost,
     subtotal,
     expressSurcharge,
+    productsCost,
+    products,
     codeDiscount,
     preCodeTotal,
     total: preCodeTotal - codeDiscount,

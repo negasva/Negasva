@@ -9,6 +9,7 @@ import { useLanguage } from '@/lib/i18n/LanguageContext';
 import { useAutoTranslate } from '@/lib/i18n/useAutoTranslate';
 import { useCurrency } from '@/lib/currency/CurrencyContext';
 import { cachedFetchJSON } from '@/lib/cache/clientCache';
+import { POD_PRODUCTS } from '@/lib/pricing/products';
 import Navbar from '@/components/Navbar';
 import PageFooter from '@/components/PageFooter';
 import TestimonialsScroll from '@/components/TestimonialsScroll';
@@ -380,6 +381,54 @@ export default function Home() {
               <Image src={img.url} alt={img.caption} fill className="object-cover" sizes="420px" />
             </div>
           ))}
+        </div>
+      </section>
+
+      {/* C2 — Print on demand: tu dibujo en productos físicos */}
+      <section className="py-20 px-4 bg-white">
+        <div className="mx-auto max-w-6xl">
+          <div className="text-center mb-4">
+            <span className="inline-block bg-primary-lighter text-primary font-black text-xs uppercase tracking-widest rounded-full px-4 py-1.5 mb-4">
+              {tr('Nuevo', 'New', 'Nouveau')}
+            </span>
+            <h2 className="font-black text-4xl md:text-5xl tracking-tighter text-secondary mb-4">
+              {tr('Tu dibujo, en lo que quieras', 'Your drawing, on anything', 'Ton dessin, sur ce que tu veux')}
+            </h2>
+            <p className="text-lg text-secondary-lighter max-w-2xl mx-auto">
+              {tr(
+                'Además del archivo digital, lleva tu retrato a tazas, camisetas, almohadas, cuadros y más. Impresos bajo demanda y enviados a tu casa.',
+                'Beyond the digital file, put your portrait on mugs, t-shirts, pillows, canvases and more. Printed on demand and shipped to your door.',
+                'Au-delà du fichier numérique, mets ton portrait sur des mugs, t-shirts, coussins, toiles et plus. Imprimé à la demande et livré chez toi.',
+              )}
+            </p>
+          </div>
+
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 mt-10">
+            {POD_PRODUCTS.map((p) => (
+              <div
+                key={p.key}
+                className="rounded-2xl border-2 border-primary-lighter bg-white p-5 text-center hover:border-primary hover:shadow-md transition-all"
+              >
+                <div className="text-4xl mb-2">{p.emoji}</div>
+                <p className="font-black text-secondary text-sm leading-tight">{p.name[lang]}</p>
+                <p className="text-xs text-primary font-bold mt-1">{tr('desde', 'from', 'dès')} {fmt(p.priceUsd)}</p>
+              </div>
+            ))}
+          </div>
+
+          <div className="text-center mt-10">
+            <Link href={`${orderHref}`} className="inline-flex items-center gap-2 rounded-xl bg-primary px-10 py-5 font-black text-white hover:bg-primary-dark transition-all hover:shadow-xl text-lg">
+              {tr('Pedir mi retrato', 'Order my portrait', 'Commander mon portrait')}
+              <ChevronRight className="w-5 h-5" />
+            </Link>
+            <p className="text-xs text-secondary-lighter mt-3">
+              {tr(
+                'El archivo digital siempre va incluido. Los productos físicos son opcionales.',
+                'The digital file is always included. Physical products are optional.',
+                'Le fichier numérique est toujours inclus. Les produits physiques sont optionnels.',
+              )}
+            </p>
+          </div>
         </div>
       </section>
 

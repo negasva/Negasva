@@ -18,15 +18,15 @@ const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!
 export default function StudioPage() {
   const c = useCheckout();
   const {
-    t, fmt,
+    t, lang, fmt,
     step, setStep, selected, styles, priceMap,
     discountCodeInput, setDiscountCodeInput,
     appliedCode, setAppliedCode, codeStatus, setCodeStatus,
     showError, errorRing, errorShake, onShakeEnd,
     checkoutLoading, checkoutParams,
-    canAdvance, priceBreakdown, totalPrice, getBgName, getStyleBgs,
+    canAdvance, priceBreakdown, totalPrice, getBgName, getStyleBgs, getProducts,
     nextStep, prevStep, fetchClientSecret, handlePhotoUpload,
-    toggleExpress, setSpecialRequests,
+    toggleExpress, toggleProduct, setSpecialRequests,
   } = c;
 
   const STEPS = t.studio.steps as unknown as string[];
@@ -92,6 +92,23 @@ export default function StudioPage() {
               <span className="text-secondary-lighter">{t.studio.summary.express}</span>
               <span className="font-bold text-secondary">+{fmt(b.expressSurcharge)}</span>
             </div>
+          )}
+          {selected.products.length > 0 && (
+            <>
+              <div className="flex justify-between">
+                <span className="text-secondary-lighter">{t.studio.summary.products}</span>
+                <span className="font-bold text-secondary">+{fmt(b.productsCost)}</span>
+              </div>
+              <div className="flex flex-wrap gap-1.5 pl-2">
+                {getProducts()
+                  .filter(p => selected.products.includes(p.key))
+                  .map(p => (
+                    <span key={p.key} className="text-xs bg-white rounded-full px-2.5 py-1 font-bold text-secondary">
+                      {p.emoji} {p.name[lang]}
+                    </span>
+                  ))}
+              </div>
+            </>
           )}
           {appliedCode && b.codeDiscount > 0 && (
             <div className="flex justify-between bg-white rounded-xl px-3 py-1.5">
@@ -206,7 +223,42 @@ export default function StudioPage() {
                     </div>
                   </button>
 
-                  {/* 2 · Sube tus fotos (compacto) */}
+                  {/* 2 · Imprime tu dibujo (print on demand) */}
+                  <div>
+                    <h2 className="font-black text-xl text-secondary mb-1 tracking-tighter">{t.studio.products.title}</h2>
+                    <p className="text-sm text-secondary-lighter mb-3">{t.studio.products.subtitle}</p>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                      {getProducts().map((p) => {
+                        const isSelected = selected.products.includes(p.key);
+                        return (
+                          <button
+                            key={p.key}
+                            type="button"
+                            onClick={() => toggleProduct(p.key)}
+                            aria-pressed={isSelected}
+                            className={`rounded-2xl border-2 p-4 text-left transition-all focus:outline-none flex flex-col ${
+                              isSelected
+                                ? 'border-primary bg-primary-lighter ring-2 ring-primary'
+                                : 'border-primary-lighter bg-white hover:border-primary'
+                            }`}
+                          >
+                            <div className="flex items-start justify-between">
+                              <span className="text-3xl leading-none">{p.emoji}</span>
+                              <span className={`w-5 h-5 rounded-md border-2 flex items-center justify-center flex-shrink-0 text-xs ${isSelected ? 'bg-primary border-primary text-white' : 'border-secondary-lighter'}`}>
+                                {isSelected && '✓'}
+                              </span>
+                            </div>
+                            <p className="font-black text-secondary text-sm mt-2 leading-tight">{p.name[lang]}</p>
+                            <p className="text-xs text-secondary-lighter mt-0.5 leading-snug">{p.desc[lang]}</p>
+                            <p className="text-sm text-primary font-black mt-2">+{fmt(p.priceUsd)}</p>
+                          </button>
+                        );
+                      })}
+                    </div>
+                    <p className="text-xs text-secondary-lighter mt-3">{t.studio.products.digital_note}</p>
+                  </div>
+
+                  {/* 3 · Sube tus fotos (compacto) */}
                   <div>
                     <h2 className="font-black text-xl text-secondary mb-1 tracking-tighter">{t.studio.step5.title}</h2>
                     <p className="text-sm text-secondary-lighter mb-3">{t.studio.step5.subtitle}</p>
@@ -233,7 +285,7 @@ export default function StudioPage() {
                     </div>
                   </div>
 
-                  {/* 3 · Notas especiales */}
+                  {/* 4 · Notas especiales */}
                   <div>
                     <label className="block font-bold text-secondary mb-3">
                       {t.studio.step4.notes_label} <span className="font-normal text-secondary-lighter">{t.studio.step4.notes_optional}</span>
@@ -249,7 +301,7 @@ export default function StudioPage() {
                     <p className="text-right text-xs text-secondary-lighter mt-2">{selected.specialRequests.length}/500</p>
                   </div>
 
-                  {/* 4 · Código de descuento */}
+                  {/* 5 · Código de descuento */}
                   <div>
                     <label className="block font-bold text-secondary mb-3">Código de descuento <span className="font-normal text-secondary-lighter">(opcional)</span></label>
                     {appliedCode ? (

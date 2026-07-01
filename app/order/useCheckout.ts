@@ -10,6 +10,7 @@ import {
   FALLBACK_PRICES,
   type BodyTypeItem,
 } from '@/lib/pricing/fallbacks';
+import { POD_PRODUCTS, podPriceUsd, type PodProduct } from '@/lib/pricing/products';
 
 export type { BodyTypeItem };
 
@@ -35,6 +36,7 @@ export interface CheckoutSelection {
   specialRequests: string;
   photos: File[];
   express: boolean;
+  products: string[]; // print-on-demand physical add-ons (product keys)
 }
 
 export interface PriceBreakdown {
@@ -45,6 +47,8 @@ export interface PriceBreakdown {
   bgCost: number;
   subtotal: number;
   expressSurcharge: number;
+  productsCost: number;
+  products: string[];
   codeDiscount: number;
   preCodeTotal: number;
   total: number;
@@ -52,7 +56,8 @@ export interface PriceBreakdown {
 
 const ZERO_QUOTE: PriceBreakdown = {
   perPerson: 0, peopleSubtotal: 0, discountRate: 0, discount: 0, bgCost: 0,
-  subtotal: 0, expressSurcharge: 0, codeDiscount: 0, preCodeTotal: 0, total: 0,
+  subtotal: 0, expressSurcharge: 0, productsCost: 0, products: [],
+  codeDiscount: 0, preCodeTotal: 0, total: 0,
 };
 
 // Carrera contra un tiempo límite: si la promesa no resuelve a tiempo, rechaza
@@ -117,7 +122,7 @@ const FALLBACK_BACKGROUNDS: Record<string, BgItem[]> = {
  * the previous inline implementation.
  */
 export function useCheckout() {
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
   const { fmt, currency, rates } = useCurrency();
 
   const [step, setStep] = useState(1);
@@ -129,6 +134,7 @@ export function useCheckout() {
     specialRequests: '',
     photos: [],
     express: false,
+    products: [],
   });
   const [dynamicBgs, setDynamicBgs] = useState<Record<string, BgItem[]>>({});
   const [styles, setStyles] = useState<{ id: string; name: string }[]>(FALLBACK_STYLES);
@@ -228,6 +234,7 @@ export function useCheckout() {
             peopleCount: selected.peopleCount,
             background: selected.background || 'none',
             express: selected.express,
+            products: selected.products,
             ...(appliedCode ? { discountCode: appliedCode.code } : {}),
           }),
         });
@@ -237,7 +244,7 @@ export function useCheckout() {
       } catch { /* keep last known quote */ }
     }, 200);
     return () => { cancelled = true; clearTimeout(timer); };
-  }, [selected.bodyType, selected.peopleCount, selected.background, selected.express, appliedCode]);
+  }, [selected.bodyType, selected.peopleCount, selected.background, selected.express, selected.products, appliedCode]);
 
   const canAdvance = () => {
     if (step === 1) return !!selected.style;
@@ -317,6 +324,7 @@ export function useCheckout() {
       background: selected.background,
       peopleCount: selected.peopleCount,
       express: selected.express,
+      products: selected.products,
       specialRequests: selected.specialRequests,
       currency: currency.toLowerCase(),
       rate: rates[currency] ?? 1,
@@ -417,8 +425,19 @@ export function useCheckout() {
     setSelected(prev => ({ ...prev, background: id }));
   const toggleExpress = () =>
     setSelected(prev => ({ ...prev, express: !prev.express }));
+  const toggleProduct = (key: string) =>
+    setSelected(prev => ({
+      ...prev,
+      products: prev.products.includes(key)
+        ? prev.products.filter(p => p !== key)
+        : [...prev.products, key],
+    }));
   const setSpecialRequests = (value: string) =>
     setSelected(prev => ({ ...prev, specialRequests: value }));
+
+  // POD products with their live USD price (admin `pod_<key>` override applied).
+  const getProducts = (): (PodProduct & { priceUsd: number })[] =>
+    POD_PRODUCTS.map(p => ({ ...p, priceUsd: podPriceUsd(p.key, priceMap) }));
 
   // Clases de error reutilizables para el campo que falta en el paso actual.
   const errorRing = showError ? 'ring-2 ring-red-500 ring-offset-2 rounded-2xl' : '';
@@ -426,7 +445,7 @@ export function useCheckout() {
 
   return {
     // i18n / currency helpers used by the UI
-    t, fmt, currency, rates,
+    t, lang, fmt, currency, rates,
     // state
     step, setStep,
     selected,
@@ -437,11 +456,11 @@ export function useCheckout() {
     showError, errorRing, errorShake, onShakeEnd,
     checkoutLoading, checkoutParams,
     // derived
-    canAdvance, priceBreakdown, totalPrice, getBgName, getStyleBgs,
+    canAdvance, priceBreakdown, totalPrice, getBgName, getStyleBgs, getProducts,
     // actions
     nextStep, prevStep, fetchClientSecret, handlePhotoUpload,
     selectStyle, selectBodyType, decPeople, incPeople,
-    selectBackground, toggleExpress, setSpecialRequests,
+    selectBackground, toggleExpress, toggleProduct, setSpecialRequests,
   };
 }
 

@@ -5,6 +5,7 @@ import {
   FALLBACK_BACKGROUND_CUSTOM_USD,
   FALLBACK_EXPRESS_SURCHARGE_PCT,
 } from './fallbacks';
+import { FALLBACK_POD_PRICE_USD } from './products';
 
 /**
  * Server-side pricing config, loaded from the DB tables the admin panel
@@ -18,6 +19,7 @@ export interface PricingConfig {
   backgroundStandardUsd: number;
   backgroundCustomUsd: number;
   expressSurchargePct: number; // 0.30 = 30%
+  podProductsUsd: Record<string, number>; // print-on-demand add-on price by product key
 }
 
 const FALLBACK: PricingConfig = {
@@ -25,12 +27,14 @@ const FALLBACK: PricingConfig = {
   backgroundStandardUsd: FALLBACK_BACKGROUND_STANDARD_USD,
   backgroundCustomUsd: FALLBACK_BACKGROUND_CUSTOM_USD,
   expressSurchargePct: FALLBACK_EXPRESS_SURCHARGE_PCT / 100,
+  podProductsUsd: { ...FALLBACK_POD_PRICE_USD },
 };
 
 export async function loadPricingConfig(): Promise<PricingConfig> {
   const config: PricingConfig = {
     ...FALLBACK,
     perPersonUsd: { ...FALLBACK.perPersonUsd },
+    podProductsUsd: { ...FALLBACK.podProductsUsd },
   };
 
   try {
@@ -59,6 +63,12 @@ export async function loadPricingConfig(): Promise<PricingConfig> {
           break;
         case 'express_surcharge_pct':
           config.expressSurchargePct = amount / 100;
+          break;
+        default:
+          // POD add-on prices live under `pod_<key>` (e.g. pod_mug).
+          if (row.key?.startsWith('pod_')) {
+            config.podProductsUsd[row.key.slice(4)] = amount;
+          }
           break;
       }
     }

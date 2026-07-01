@@ -14,6 +14,7 @@ interface NewOrderInfo {
   background?: string | null;
   peopleCount?: number | null;
   express?: boolean | null;
+  products?: string | null; // physical POD add-ons, human-readable
   customerEmail?: string | null;
 }
 
@@ -42,6 +43,7 @@ export async function notifyNewOrder(o: NewOrderInfo): Promise<void> {
     ['Fondo', o.background],
     ['Personas', o.peopleCount != null ? String(o.peopleCount) : null],
     ['Exprés (24h)', o.express ? 'Sí' : 'No'],
+    ['Productos físicos', o.products || null],
     ['Email cliente', o.customerEmail],
     ['Proveedor', o.provider],
     ['Referencia', o.reference],

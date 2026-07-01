@@ -5,6 +5,7 @@ import { buildWompiCheckoutUrl, newWompiReference } from '@/lib/payments/wompi';
 import { createServiceClient } from '@/lib/supabase/server';
 import { applyDiscountCode, loadPricingConfig } from '@/lib/pricing/server';
 import { computeQuoteUsd } from '@/lib/pricing/calc';
+import { getPodProduct, productsSummaryEs } from '@/lib/pricing/products';
 import { CheckoutSchema } from '@/lib/validation/order';
 import { verifyRecaptcha } from '@/lib/security/recaptcha';
 
@@ -60,7 +61,16 @@ export async function POST(request: Request) {
   const discountRate = quote.discountRate;
   const bgUsd = quote.bgCost;
   const expressUsd = quote.expressSurcharge;
+  // Physical POD add-ons that survived sanitizing/pricing.
+  const products = quote.products;
   const totalLocal = quote.total * d.rate;
+
+  // Note prepended to the order so the illustrator knows which physical
+  // products to fulfill via Printify (the finished art is the print file).
+  const productsNote = productsSummaryEs(products);
+  const composedRequests = productsNote
+    ? (d.specialRequests ? `${productsNote}\n${d.specialRequests}` : productsNote)
+    : d.specialRequests;
 
   // COP has no minor units; round up to nearest 1.000 for clean prices
   const isCop = d.currency === 'cop';
@@ -91,7 +101,7 @@ export async function POST(request: Request) {
         background: d.background,
         people_count: d.peopleCount,
         express: d.express,
-        special_requests: d.specialRequests || null,
+        special_requests: composedRequests || null,
         photo_paths: d.photoPaths ?? [],
         upload_id: d.uploadId ?? null,
         // Stored so the webhook can credit the code AFTER payment is approved.
@@ -204,13 +214,37 @@ export async function POST(request: Request) {
       quantity: 1,
     });
   }
+  // Physical print-on-demand add-ons (mug, t-shirt, pillow, …), one item each.
+  for (const key of products) {
+    const product = getPodProduct(key);
+    if (!product) continue;
+    const priceUsd = pricing.podProductsUsd[key] ?? product.priceUsd;
+    const unit = Math.round(priceUsd * d.rate * 100);
+    if (unit <= 0) continue;
+    lineItems.push({
+      price_data: {
+        currency: d.currency,
+        product_data: {
+          name: `${product.emoji} ${product.name.es} — tu dibujo impreso`,
+          description: product.desc.es,
+        },
+        unit_amount: unit,
+      },
+      quantity: 1,
+    });
+  }
 
   const stripe = getStripe();
 
   // Promo code shown as a real Stripe discount row instead of text
+  const productsMinor = products.reduce(
+    (sum, key) => sum + Math.round((pricing.podProductsUsd[key] ?? getPodProduct(key)?.priceUsd ?? 0) * d.rate * 100),
+    0,
+  );
+
   let couponId: string | undefined;
   if (appliedCode) {
-    const lineTotal = perPersonMinor * d.peopleCount + bgMinor + expressMinor;
+    const lineTotal = perPersonMinor * d.peopleCount + bgMinor + expressMinor + productsMinor;
     const amountOff = Math.min(Math.round(appliedCode.amountUsd * d.rate * 100), lineTotal - 50);
     if (amountOff > 0) {
       const coupon = await stripe.coupons.create({
@@ -239,9 +273,10 @@ export async function POST(request: Request) {
       backgroundName: bgName,
       peopleCount: String(d.peopleCount),
       express: String(d.express),
+      products: products.join(','),
       discountCode: appliedCode?.code ?? '',
       uploadId: d.uploadId ?? '',
-      specialRequests: d.specialRequests.slice(0, 200),
+      specialRequests: composedRequests.slice(0, 220),
     },
   });
 
