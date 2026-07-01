@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import Stripe from 'stripe';
 import { createServiceClient } from '@/lib/supabase/server';
 import { recordDiscountCodeUse } from '@/lib/pricing/server';
+import { getPodProduct } from '@/lib/pricing/products';
 import { listOrderPhotos } from '@/lib/payments/orderPhotos';
 import { notifyNewOrder } from '@/lib/notify/newOrder';
 
@@ -94,6 +95,11 @@ export async function POST(request: Request) {
             background: meta.background,
             peopleCount: meta.peopleCount ? Number(meta.peopleCount) : null,
             express: meta.express === 'true',
+            products: (meta.products || '')
+              .split(',')
+              .map((k) => getPodProduct(k.trim())?.name.es)
+              .filter(Boolean)
+              .join(', ') || null,
             customerEmail: session.customer_details?.email ?? null,
           });
         }

@@ -23,6 +23,9 @@ export const PricingSelectionSchema = z.object({
   peopleCount: z.number().int().min(1).max(8),
   background: z.string().max(60).default('none'),
   express: z.boolean().default(false),
+  // Print-on-demand physical add-ons (product keys); invalid keys are dropped
+  // by the pricing math, so this stays permissive on the wire.
+  products: z.array(z.string().max(30)).max(10).default([]),
 });
 
 export const QuoteSchema = PricingSelectionSchema.extend({
