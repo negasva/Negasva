@@ -16,6 +16,8 @@ const montserrat = Montserrat({
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
+  // Que el contenido use toda la pantalla incluida el área del notch en iPhone.
+  viewportFit: "cover",
   themeColor: "#FF9EC5",
 };
 
@@ -67,6 +69,17 @@ export const metadata: Metadata = {
     images: ["/backgrounds/rm-1.jpg"],
   },
   robots: { index: true, follow: true },
+  // PWA: iOS la abre en modo app (sin barra del navegador) desde "Añadir a
+  // pantalla de inicio". El apple-touch-icon lo aporta app/apple-icon.png.
+  appleWebApp: {
+    capable: true,
+    title: "NEGASVA",
+    statusBarStyle: "default",
+  },
+  // Equivalente estándar para Android/Chrome.
+  other: {
+    "mobile-web-app-capable": "yes",
+  },
 };
 
 const ORGANIZATION_SCHEMA = {
