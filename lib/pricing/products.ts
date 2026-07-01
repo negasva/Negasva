@@ -13,6 +13,22 @@
  * `pod_mug`) overrides the fallback USD price below, just like other prices.
  */
 
+/**
+ * A selectable option group for a product (e.g. t-shirt size, phone model).
+ * `values[].add` is the USD surcharge over the base price for that choice
+ * (0 for the default). The first value is the default selection.
+ */
+export interface PodOptionValue {
+  key: string;
+  label: { es: string; en: string; fr: string };
+  add?: number;
+}
+export interface PodOptionGroup {
+  key: string;
+  label: { es: string; en: string; fr: string };
+  values: PodOptionValue[];
+}
+
 export interface PodProduct {
   key: string;
   emoji: string;
@@ -20,7 +36,61 @@ export interface PodProduct {
   desc: { es: string; en: string; fr: string };
   /** Fallback retail price in USD (used when the DB has no `pod_<key>` row). */
   priceUsd: number;
+  /** Selectable variants (size, model, …). Absent = no choices needed. */
+  options?: PodOptionGroup[];
 }
+
+const SIZE = (es: string, en: string, fr: string) => ({ es, en, fr });
+
+const TSHIRT_SIZE: PodOptionGroup = {
+  key: 'size',
+  label: { es: 'Talla', en: 'Size', fr: 'Taille' },
+  values: [
+    { key: 'S', label: SIZE('S', 'S', 'S') },
+    { key: 'M', label: SIZE('M', 'M', 'M') },
+    { key: 'L', label: SIZE('L', 'L', 'L') },
+    { key: 'XL', label: SIZE('XL', 'XL', 'XL') },
+    { key: 'XXL', label: SIZE('XXL (+$3)', 'XXL (+$3)', 'XXL (+$3)'), add: 3 },
+  ],
+};
+
+const CANVAS_SIZE: PodOptionGroup = {
+  key: 'size',
+  label: { es: 'Tamaño', en: 'Size', fr: 'Taille' },
+  values: [
+    { key: '20x30', label: SIZE('20×30 cm', '8×12 in', '20×30 cm') },
+    { key: '30x40', label: SIZE('30×40 cm (+$8)', '12×16 in (+$8)', '30×40 cm (+$8)'), add: 8 },
+    { key: '40x50', label: SIZE('40×50 cm (+$16)', '16×20 in (+$16)', '40×50 cm (+$16)'), add: 16 },
+    { key: '50x70', label: SIZE('50×70 cm (+$28)', '20×28 in (+$28)', '50×70 cm (+$28)'), add: 28 },
+  ],
+};
+
+const PILLOW_SIZE: PodOptionGroup = {
+  key: 'size',
+  label: { es: 'Tamaño', en: 'Size', fr: 'Taille' },
+  values: [
+    { key: '40x40', label: SIZE('40×40 cm', '16×16 in', '40×40 cm') },
+    { key: '45x45', label: SIZE('45×45 cm (+$3)', '18×18 in (+$3)', '45×45 cm (+$3)'), add: 3 },
+    { key: '50x50', label: SIZE('50×50 cm (+$6)', '20×20 in (+$6)', '50×50 cm (+$6)'), add: 6 },
+  ],
+};
+
+const PHONE_MODEL: PodOptionGroup = {
+  key: 'model',
+  label: { es: 'Modelo', en: 'Model', fr: 'Modèle' },
+  values: [
+    { key: 'iphone-16-pro-max', label: SIZE('iPhone 16 Pro Max', 'iPhone 16 Pro Max', 'iPhone 16 Pro Max') },
+    { key: 'iphone-16-pro', label: SIZE('iPhone 16 / 16 Pro', 'iPhone 16 / 16 Pro', 'iPhone 16 / 16 Pro') },
+    { key: 'iphone-15', label: SIZE('iPhone 15 / 15 Pro', 'iPhone 15 / 15 Pro', 'iPhone 15 / 15 Pro') },
+    { key: 'iphone-14-13', label: SIZE('iPhone 14 / 13', 'iPhone 14 / 13', 'iPhone 14 / 13') },
+    { key: 'iphone-12-11', label: SIZE('iPhone 12 / 11', 'iPhone 12 / 11', 'iPhone 12 / 11') },
+    { key: 'samsung-s24', label: SIZE('Samsung Galaxy S24 / S23', 'Samsung Galaxy S24 / S23', 'Samsung Galaxy S24 / S23') },
+    { key: 'samsung-a', label: SIZE('Samsung Galaxy A (serie)', 'Samsung Galaxy A (series)', 'Samsung Galaxy A (série)') },
+    { key: 'xiaomi', label: SIZE('Xiaomi / Redmi', 'Xiaomi / Redmi', 'Xiaomi / Redmi') },
+    { key: 'motorola', label: SIZE('Motorola', 'Motorola', 'Motorola') },
+    { key: 'otro', label: SIZE('Otro (indícalo en notas)', 'Other (specify in notes)', 'Autre (préciser en notes)') },
+  ],
+};
 
 export const POD_PRODUCTS: PodProduct[] = [
   {
@@ -34,15 +104,17 @@ export const POD_PRODUCTS: PodProduct[] = [
     key: 'tshirt',
     emoji: '👕',
     name: { es: 'Camiseta', en: 'T-shirt', fr: 'T-shirt' },
-    desc: { es: 'Algodón premium, tallas S–XXL', en: 'Premium cotton, sizes S–XXL', fr: 'Coton premium, tailles S–XXL' },
+    desc: { es: 'Algodón premium', en: 'Premium cotton', fr: 'Coton premium' },
     priceUsd: 27,
+    options: [TSHIRT_SIZE],
   },
   {
     key: 'pillow',
     emoji: '🛋️',
     name: { es: 'Almohada / Cojín', en: 'Pillow', fr: 'Coussin' },
-    desc: { es: 'Cojín suave 45×45cm con relleno', en: 'Soft 45×45cm cushion, filled', fr: 'Coussin doux 45×45cm, rembourré' },
+    desc: { es: 'Cojín suave con relleno', en: 'Soft cushion, filled', fr: 'Coussin doux, rembourré' },
     priceUsd: 25,
+    options: [PILLOW_SIZE],
   },
   {
     key: 'canvas',
@@ -50,6 +122,7 @@ export const POD_PRODUCTS: PodProduct[] = [
     name: { es: 'Cuadro / Lienzo', en: 'Canvas', fr: 'Toile' },
     desc: { es: 'Lienzo montado listo para colgar', en: 'Mounted canvas, ready to hang', fr: 'Toile montée, prête à accrocher' },
     priceUsd: 32,
+    options: [CANVAS_SIZE],
   },
   {
     key: 'tote',
@@ -62,8 +135,9 @@ export const POD_PRODUCTS: PodProduct[] = [
     key: 'phonecase',
     emoji: '📱',
     name: { es: 'Funda de teléfono', en: 'Phone case', fr: 'Coque de téléphone' },
-    desc: { es: 'Funda rígida para modelos populares', en: 'Hard case for popular models', fr: 'Coque rigide pour modèles courants' },
+    desc: { es: 'Funda rígida', en: 'Hard case', fr: 'Coque rigide' },
     priceUsd: 22,
+    options: [PHONE_MODEL],
   },
 ];
 
@@ -78,14 +152,45 @@ export function getPodProduct(key: string): PodProduct | undefined {
   return POD_PRODUCTS.find((p) => p.key === key);
 }
 
+/** Chosen option values for a product: { optionGroupKey: valueKey }. */
+export type ProductOptionSelection = Record<string, string>;
+/** All product option selections keyed by product key. */
+export type ProductOptions = Record<string, ProductOptionSelection>;
+
+/** Default option selection for a product (first value of each group). */
+export function defaultProductOptions(key: string): ProductOptionSelection {
+  const product = getPodProduct(key);
+  const sel: ProductOptionSelection = {};
+  for (const g of product?.options ?? []) sel[g.key] = g.values[0]?.key ?? '';
+  return sel;
+}
+
+/** USD surcharge from the chosen option values of a product. */
+export function optionsSurchargeUsd(key: string, sel?: ProductOptionSelection): number {
+  const product = getPodProduct(key);
+  let extra = 0;
+  for (const g of product?.options ?? []) {
+    const chosen = sel?.[g.key];
+    const val = g.values.find((v) => v.key === chosen);
+    extra += val?.add ?? 0;
+  }
+  return extra;
+}
+
 /**
- * Resolve a product's USD price, preferring an admin override map
- * (`pod_<key>` → amount) and falling back to the catalog price.
+ * Resolve a product's total USD price (base + chosen option surcharges),
+ * preferring an admin base-price override (`pod_<key>` → amount).
  */
-export function podPriceUsd(key: string, overrides?: Record<string, number>): number {
+export function podPriceUsd(
+  key: string,
+  overrides?: Record<string, number>,
+  options?: ProductOptionSelection,
+): number {
   const override = overrides?.[`pod_${key}`];
-  if (override != null && Number.isFinite(override) && override >= 0) return override;
-  return FALLBACK_POD_PRICE_USD[key] ?? 0;
+  const base = override != null && Number.isFinite(override) && override >= 0
+    ? override
+    : FALLBACK_POD_PRICE_USD[key] ?? 0;
+  return base + optionsSurchargeUsd(key, options);
 }
 
 /** Keep only valid, de-duplicated product keys from arbitrary input. */
@@ -102,8 +207,23 @@ export function sanitizeProductKeys(keys: unknown): string[] {
   return out;
 }
 
-/** Spanish product names joined for the admin/order note (fulfillment side). */
-export function productsSummaryEs(keys: string[]): string {
-  const names = sanitizeProductKeys(keys).map((k) => getPodProduct(k)?.name.es ?? k);
-  return names.length ? `🖨️ Productos físicos: ${names.join(', ')}` : '';
+/** Human label of a product's chosen options, e.g. "Talla: L, Modelo: iPhone 15". */
+export function optionsLabelEs(key: string, sel?: ProductOptionSelection): string {
+  const product = getPodProduct(key);
+  const parts: string[] = [];
+  for (const g of product?.options ?? []) {
+    const val = g.values.find((v) => v.key === sel?.[g.key]);
+    if (val) parts.push(`${g.label.es}: ${val.label.es}`);
+  }
+  return parts.join(', ');
+}
+
+/** Spanish product list (with chosen variants) for the admin/order note. */
+export function productsSummaryEs(keys: string[], options?: ProductOptions): string {
+  const items = sanitizeProductKeys(keys).map((k) => {
+    const name = getPodProduct(k)?.name.es ?? k;
+    const spec = optionsLabelEs(k, options?.[k]);
+    return spec ? `${name} (${spec})` : name;
+  });
+  return items.length ? `🖨️ Productos físicos: ${items.join(' · ')}` : '';
 }

@@ -26,7 +26,7 @@ export default function StudioPage() {
     checkoutLoading, checkoutParams,
     canAdvance, priceBreakdown, totalPrice, getBgName, getStyleBgs, getProducts,
     nextStep, prevStep, fetchClientSecret, handlePhotoUpload,
-    toggleExpress, toggleProduct, setSpecialRequests,
+    toggleExpress, toggleProduct, setProductOption, setSpecialRequests,
   } = c;
 
   const STEPS = t.studio.steps as unknown as string[];
@@ -102,11 +102,18 @@ export default function StudioPage() {
               <div className="flex flex-wrap gap-1.5 pl-2">
                 {getProducts()
                   .filter(p => selected.products.includes(p.key))
-                  .map(p => (
-                    <span key={p.key} className="text-xs bg-white rounded-full px-2.5 py-1 font-bold text-secondary">
-                      {p.emoji} {p.name[lang]}
-                    </span>
-                  ))}
+                  .map(p => {
+                    const sel = selected.productOptions[p.key] ?? {};
+                    const variant = (p.options ?? [])
+                      .map(g => g.values.find(v => v.key === sel[g.key])?.label[lang])
+                      .filter(Boolean)
+                      .join(' · ');
+                    return (
+                      <span key={p.key} className="text-xs bg-white rounded-full px-2.5 py-1 font-bold text-secondary">
+                        {p.emoji} {p.name[lang]}{variant ? ` · ${variant}` : ''}
+                      </span>
+                    );
+                  })}
               </div>
             </>
           )}
@@ -184,7 +191,7 @@ export default function StudioPage() {
       </div>
 
       {/* Content */}
-      <main className="mx-auto max-w-6xl px-4 py-8 w-full overflow-x-hidden">
+      <main className="mx-auto max-w-6xl px-4 pt-8 pb-28 sm:pb-8 w-full overflow-x-hidden">
         <div className={`${step > 1 && step < 5 ? 'lg:grid lg:grid-cols-3 lg:gap-8' : ''}`}>
           {/* Main step content */}
           <div className={step > 1 && step < 5 ? 'lg:col-span-2' : ''}>
@@ -255,6 +262,36 @@ export default function StudioPage() {
                         );
                       })}
                     </div>
+
+                    {/* Variantes de los productos seleccionados (talla, modelo…) */}
+                    {getProducts().filter(p => selected.products.includes(p.key) && p.options?.length).length > 0 && (
+                      <div className="mt-4 space-y-3">
+                        {getProducts()
+                          .filter(p => selected.products.includes(p.key) && p.options?.length)
+                          .map(p => (
+                            <div key={p.key} className="rounded-2xl border-2 border-primary-lighter bg-white p-4">
+                              <p className="font-black text-secondary text-sm mb-3">{p.emoji} {p.name[lang]}</p>
+                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                {(p.options ?? []).map(g => (
+                                  <label key={g.key} className="block">
+                                    <span className="block text-xs font-bold text-secondary-lighter mb-1">{g.label[lang]}</span>
+                                    <select
+                                      value={selected.productOptions[p.key]?.[g.key] ?? g.values[0]?.key}
+                                      onChange={(e) => setProductOption(p.key, g.key, e.target.value)}
+                                      className="w-full rounded-lg border-2 border-primary-lighter px-3 py-2.5 text-sm font-bold text-secondary focus:border-primary focus:outline-none bg-white"
+                                    >
+                                      {g.values.map(v => (
+                                        <option key={v.key} value={v.key}>{v.label[lang]}</option>
+                                      ))}
+                                    </select>
+                                  </label>
+                                ))}
+                              </div>
+                            </div>
+                          ))}
+                      </div>
+                    )}
+
                     <p className="text-xs text-secondary-lighter mt-3">{t.studio.products.digital_note}</p>
                   </div>
 
@@ -400,40 +437,51 @@ export default function StudioPage() {
               </div>
             )}
 
-            {/* Navigation (pasos 1–4) */}
+            {/* Navigation (pasos 1–4).
+                Móvil: barra fija abajo, siempre accesible (sin scrollear).
+                Desktop: en el flujo normal, al final del paso. */}
             {step < 5 && (
               <>
-                <div className="flex justify-between items-center mt-14">
-                  <button
-                    onClick={prevStep}
-                    className="text-secondary-lighter hover:text-primary text-sm font-bold px-6 py-3 rounded-lg hover:bg-primary-lighter transition-colors"
-                  >
-                    {step === 1 ? <Link href="/">{t.studio.nav.back_home}</Link> : t.studio.nav.prev}
-                  </button>
-                  {step > 1 && (
-                    <button
-                      onClick={nextStep}
-                      disabled={checkoutLoading}
-                      aria-disabled={!canAdvance()}
-                      className="rounded-lg px-10 py-3 font-bold text-white transition-all flex items-center gap-2 bg-primary hover:bg-primary-dark shadow-lg hover:shadow-xl disabled:opacity-60"
-                    >
-                      {checkoutLoading && (
-                        <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                      )}
-                      {step === 4 ? t.studio.nav.checkout : t.studio.nav.next}
-                    </button>
+                <div className="hidden sm:block">
+                  {showError && !canAdvance() && (
+                    <p className="text-center text-sm text-red-500 font-bold mt-4 order-first">
+                      {t.studio.nav.missing}
+                    </p>
                   )}
+                  <p className="text-center text-xs text-secondary-lighter mt-8">
+                    {t.studio.nav.secure}
+                  </p>
                 </div>
 
-                {showError && !canAdvance() && (
-                  <p className="text-center text-sm text-red-500 font-bold mt-4">
-                    {t.studio.nav.missing}
-                  </p>
-                )}
-
-                <p className="text-center text-xs text-secondary-lighter mt-8">
-                  {t.studio.nav.secure}
-                </p>
+                <div className="fixed bottom-0 left-0 right-0 z-50 bg-white/95 backdrop-blur border-t border-primary-lighter shadow-[0_-4px_20px_rgba(0,0,0,0.12)] px-4 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] sm:static sm:bg-transparent sm:backdrop-blur-none sm:border-0 sm:shadow-none sm:p-0 sm:mt-14">
+                  {showError && !canAdvance() && (
+                    <p className="sm:hidden text-center text-xs text-red-500 font-bold mb-2">
+                      {t.studio.nav.missing}
+                    </p>
+                  )}
+                  <div className="flex justify-between items-center gap-3 mx-auto max-w-6xl">
+                    <button
+                      onClick={prevStep}
+                      className="text-secondary-lighter hover:text-primary text-sm font-bold px-4 sm:px-6 py-3 rounded-lg hover:bg-primary-lighter transition-colors flex-shrink-0"
+                    >
+                      {step === 1 ? <Link href="/">{t.studio.nav.back_home}</Link> : t.studio.nav.prev}
+                    </button>
+                    {step > 1 && (
+                      <button
+                        onClick={nextStep}
+                        disabled={checkoutLoading}
+                        aria-disabled={!canAdvance()}
+                        className="flex-1 sm:flex-none justify-center rounded-lg px-6 sm:px-10 py-4 sm:py-3 font-bold text-white transition-all flex items-center gap-2 bg-primary hover:bg-primary-dark shadow-lg hover:shadow-xl disabled:opacity-60"
+                      >
+                        {checkoutLoading && (
+                          <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                        )}
+                        {step === 4 ? t.studio.nav.checkout : t.studio.nav.next}
+                        {step > 1 && <span className="font-black">· {fmt(totalPrice())}</span>}
+                      </button>
+                    )}
+                  </div>
+                </div>
               </>
             )}
           </div>
