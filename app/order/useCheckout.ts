@@ -15,7 +15,7 @@ import {
   podPriceUsd,
   defaultProductOptions,
   type PodProduct,
-  type ProductOptions,
+  type ProductUnits,
 } from '@/lib/pricing/products';
 
 export type { BodyTypeItem };
@@ -42,8 +42,9 @@ export interface CheckoutSelection {
   specialRequests: string;
   photos: File[];
   express: boolean;
-  products: string[]; // print-on-demand physical add-ons (product keys)
-  productOptions: ProductOptions; // chosen variant per product (size, model…)
+  // Per-unit POD add-ons: { productKey: [ { optionGroup: valueKey }, … ] }.
+  // Array length is the quantity; each entry is that unit's chosen variant.
+  productUnits: ProductUnits;
 }
 
 export interface PriceBreakdown {
@@ -141,8 +142,7 @@ export function useCheckout() {
     specialRequests: '',
     photos: [],
     express: false,
-    products: [],
-    productOptions: {},
+    productUnits: {},
   });
   const [dynamicBgs, setDynamicBgs] = useState<Record<string, BgItem[]>>({});
   const [styles, setStyles] = useState<{ id: string; name: string }[]>(FALLBACK_STYLES);
@@ -242,8 +242,7 @@ export function useCheckout() {
             peopleCount: selected.peopleCount,
             background: selected.background || 'none',
             express: selected.express,
-            products: selected.products,
-            productOptions: selected.productOptions,
+            productUnits: selected.productUnits,
             ...(appliedCode ? { discountCode: appliedCode.code } : {}),
           }),
         });
@@ -253,13 +252,13 @@ export function useCheckout() {
       } catch { /* keep last known quote */ }
     }, 200);
     return () => { cancelled = true; clearTimeout(timer); };
-  }, [selected.bodyType, selected.peopleCount, selected.background, selected.express, selected.products, selected.productOptions, appliedCode]);
+  }, [selected.bodyType, selected.peopleCount, selected.background, selected.express, selected.productUnits, appliedCode]);
 
   const canAdvance = () => {
     if (step === 1) return !!selected.style;
     if (step === 2) return !!selected.bodyType;
     if (step === 3) return !!selected.background;
-    if (step === 4) return selected.photos.length >= selected.peopleCount;
+    // Step 4: las fotos son opcionales, el cliente puede enviarlas luego.
     return true;
   };
 
@@ -307,10 +306,16 @@ export function useCheckout() {
   };
 
   const nextStep = async () => {
-    // Si faltan datos del paso, no avanza: resalta en rojo con shake (1 vez).
+    // Si faltan datos del paso, no avanza: resalta en rojo con shake (1 vez) y
+    // hace scroll automático hasta el campo requerido que falta.
     if (!canAdvance()) {
       setShowError(true);
       setShaking(true);
+      requestAnimationFrame(() => {
+        document
+          .getElementById('required-field')
+          ?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      });
       return;
     }
 
@@ -333,8 +338,7 @@ export function useCheckout() {
       background: selected.background,
       peopleCount: selected.peopleCount,
       express: selected.express,
-      products: selected.products,
-      productOptions: selected.productOptions,
+      productUnits: selected.productUnits,
       specialRequests: selected.specialRequests,
       currency: currency.toLowerCase(),
       rate: rates[currency] ?? 1,
@@ -435,23 +439,47 @@ export function useCheckout() {
     setSelected(prev => ({ ...prev, background: id }));
   const toggleExpress = () =>
     setSelected(prev => ({ ...prev, express: !prev.express }));
-  const toggleProduct = (key: string) =>
+  // Cantidad seleccionada de un producto (número de unidades).
+  const productQty = (key: string) => selected.productUnits[key]?.length ?? 0;
+  // Añade una unidad (con su variante por defecto) del producto.
+  const addProductUnit = (key: string) =>
     setSelected(prev => {
-      const isOn = prev.products.includes(key);
-      const products = isOn ? prev.products.filter(p => p !== key) : [...prev.products, key];
-      const productOptions = { ...prev.productOptions };
-      if (isOn) delete productOptions[key];
-      else if (!productOptions[key]) productOptions[key] = defaultProductOptions(key);
-      return { ...prev, products, productOptions };
+      const list = prev.productUnits[key] ?? [];
+      if (list.length >= 10) return prev;
+      return {
+        ...prev,
+        productUnits: { ...prev.productUnits, [key]: [...list, defaultProductOptions(key)] },
+      };
     });
-  const setProductOption = (key: string, group: string, value: string) =>
-    setSelected(prev => ({
-      ...prev,
-      productOptions: {
-        ...prev.productOptions,
-        [key]: { ...(prev.productOptions[key] ?? {}), [group]: value },
-      },
-    }));
+  // Quita la última unidad del producto (o lo elimina si queda en 0).
+  const removeProductUnit = (key: string) =>
+    setSelected(prev => {
+      const list = prev.productUnits[key] ?? [];
+      if (list.length === 0) return prev;
+      const next = list.slice(0, -1);
+      const productUnits = { ...prev.productUnits };
+      if (next.length) productUnits[key] = next;
+      else delete productUnits[key];
+      return { ...prev, productUnits };
+    });
+  // Quita una unidad concreta (por índice) del producto.
+  const removeProductUnitAt = (key: string, index: number) =>
+    setSelected(prev => {
+      const list = prev.productUnits[key] ?? [];
+      const next = list.filter((_, i) => i !== index);
+      const productUnits = { ...prev.productUnits };
+      if (next.length) productUnits[key] = next;
+      else delete productUnits[key];
+      return { ...prev, productUnits };
+    });
+  // Cambia la variante (talla, modelo…) de una unidad concreta.
+  const setProductUnitOption = (key: string, index: number, group: string, value: string) =>
+    setSelected(prev => {
+      const list = prev.productUnits[key] ?? [];
+      if (!list[index]) return prev;
+      const nextList = list.map((u, i) => (i === index ? { ...u, [group]: value } : u));
+      return { ...prev, productUnits: { ...prev.productUnits, [key]: nextList } };
+    });
   const setSpecialRequests = (value: string) =>
     setSelected(prev => ({ ...prev, specialRequests: value }));
 
@@ -481,7 +509,8 @@ export function useCheckout() {
     // actions
     nextStep, prevStep, fetchClientSecret, handlePhotoUpload,
     selectStyle, selectBodyType, decPeople, incPeople,
-    selectBackground, toggleExpress, toggleProduct, setProductOption, setSpecialRequests,
+    selectBackground, toggleExpress, setSpecialRequests,
+    productQty, addProductUnit, removeProductUnit, removeProductUnitAt, setProductUnitOption,
   };
 }
 

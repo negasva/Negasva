@@ -4,7 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { ChevronRight, ChevronDown, Palette, Users, Image as ImageIcon, Camera, Sparkles, Tag } from 'lucide-react';
+import { ChevronRight, ChevronDown, Palette, Users, Image as ImageIcon, Camera, Sparkles, Tag, Flame } from 'lucide-react';
 import { useLanguage } from '@/lib/i18n/LanguageContext';
 import { useAutoTranslate } from '@/lib/i18n/useAutoTranslate';
 import { useCurrency } from '@/lib/currency/CurrencyContext';
@@ -42,7 +42,7 @@ const SAMPLE_PAIR: BeforeAfterPair = {
 
 const DEFAULT_CONFIG: LandingConfig = {
   hero: {
-    badge_es: '✦ Ilustración digital personalizada', badge_en: '✦ Custom digital illustration', badge_fr: '✦ Illustration numérique personnalisée',
+    badge_es: 'Ilustración digital personalizada', badge_en: 'Custom digital illustration', badge_fr: 'Illustration numérique personnalisée',
     headline_es: 'Tu Retrato Animado', headline_en: 'Your Personalized', headline_fr: 'Votre Portrait Animé',
     headline_highlight_es: 'Personalizado', headline_highlight_en: 'Animated Portrait', headline_highlight_fr: 'Personnalisé',
     subheadline_es: 'Convierte tu foto en un retrato personalizado dibujado a mano, con estilo cartoon y entrega digital en 48 horas.',
@@ -87,7 +87,7 @@ const HOW_STEPS = [
   { step: 2, icon: 'users',    img: '/backgrounds/rm-3.webp', title_es: '¿Cuántos personajes?',   title_en: 'How many characters?' },
   { step: 3, icon: 'image',    img: '/backgrounds/rm-4.webp', title_es: 'Elige el fondo',         title_en: 'Choose the background' },
   { step: 4, icon: 'camera',   img: '/backgrounds/rm-5.webp', title_es: 'Fotos e indicaciones',   title_en: 'Photos & instructions' },
-  { step: 5, icon: 'sparkles', img: '/backgrounds/rm-6.webp', title_es: 'Recibe tu retrato ✨',    title_en: 'Receive your portrait ✨' },
+  { step: 5, icon: 'sparkles', img: '/backgrounds/rm-6.webp', title_es: 'Recibe tu retrato',    title_en: 'Receive your portrait' },
 ];
 
 const fadeUp = {
@@ -260,7 +260,7 @@ export default function Home() {
               </a>
               {weeklyOrders >= 3 && (
                 <span className="inline-flex items-center gap-1.5 text-sm font-bold text-white/90 bg-white/10 backdrop-blur-sm rounded-full px-4 py-1.5">
-                  🔥 {weeklyOrders} {tr('retratos pedidos esta semana', 'portraits ordered this week', 'portraits commandés cette semaine')}
+                  <Flame className="w-4 h-4 shrink-0" /> {weeklyOrders} {tr('retratos pedidos esta semana', 'portraits ordered this week', 'portraits commandés cette semaine')}
                 </span>
               )}
             </motion.div>

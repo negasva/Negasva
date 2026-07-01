@@ -5,7 +5,7 @@ import { buildWompiCheckoutUrl, newWompiReference } from '@/lib/payments/wompi';
 import { createServiceClient } from '@/lib/supabase/server';
 import { applyDiscountCode, loadPricingConfig } from '@/lib/pricing/server';
 import { computeQuoteUsd } from '@/lib/pricing/calc';
-import { getPodProduct, productsSummaryEs, optionsSurchargeUsd, optionsLabelEs } from '@/lib/pricing/products';
+import { getPodProduct, productsSummaryEs, optionsSurchargeUsd, optionsLabelEs, sanitizeProductUnits } from '@/lib/pricing/products';
 import { CheckoutSchema } from '@/lib/validation/order';
 import { verifyRecaptcha } from '@/lib/security/recaptcha';
 
@@ -63,11 +63,12 @@ export async function POST(request: Request) {
   const expressUsd = quote.expressSurcharge;
   // Physical POD add-ons that survived sanitizing/pricing.
   const products = quote.products;
+  const productUnits = sanitizeProductUnits(d.productUnits);
   const totalLocal = quote.total * d.rate;
 
   // Note prepended to the order so the illustrator knows which physical
   // products to fulfill via Printify (the finished art is the print file).
-  const productsNote = productsSummaryEs(products, d.productOptions);
+  const productsNote = productsSummaryEs(productUnits);
   const composedRequests = productsNote
     ? (d.specialRequests ? `${productsNote}\n${d.specialRequests}` : productsNote)
     : d.specialRequests;
@@ -206,7 +207,7 @@ export async function POST(request: Request) {
       price_data: {
         currency: d.currency,
         product_data: {
-          name: '⚡ Entrega exprés 24h',
+          name: 'Entrega exprés 24h',
           description: 'Tu retrato salta la cola y llega en 24 horas',
         },
         unit_amount: expressMinor,
@@ -214,37 +215,49 @@ export async function POST(request: Request) {
       quantity: 1,
     });
   }
-  // Physical print-on-demand add-ons (mug, t-shirt, pillow, …), one item each.
-  for (const key of products) {
+  // Physical print-on-demand add-ons (mug, t-shirt, pillow, …). Each unit is a
+  // line item; identical units (same product + same variant) are grouped with a
+  // quantity so the customer sees "x2" instead of duplicate rows.
+  for (const [key, unitList] of Object.entries(productUnits)) {
     const product = getPodProduct(key);
     if (!product) continue;
-    const opts = d.productOptions?.[key];
-    const priceUsd = (pricing.podProductsUsd[key] ?? product.priceUsd) + optionsSurchargeUsd(key, opts);
-    const unit = Math.round(priceUsd * d.rate * 100);
-    if (unit <= 0) continue;
-    const spec = optionsLabelEs(key, opts);
-    lineItems.push({
-      price_data: {
-        currency: d.currency,
-        product_data: {
-          name: `${product.name.es} — tu dibujo impreso`,
-          description: spec ? `${product.desc.es} · ${spec}` : product.desc.es,
+    const grouped = new Map<string, { opts: typeof unitList[number]; qty: number }>();
+    for (const opts of unitList) {
+      const sig = JSON.stringify(opts ?? {});
+      const g = grouped.get(sig);
+      if (g) g.qty += 1;
+      else grouped.set(sig, { opts, qty: 1 });
+    }
+    for (const { opts, qty } of grouped.values()) {
+      const priceUsd = (pricing.podProductsUsd[key] ?? product.priceUsd) + optionsSurchargeUsd(key, opts);
+      const unit = Math.round(priceUsd * d.rate * 100);
+      if (unit <= 0) continue;
+      const spec = optionsLabelEs(key, opts);
+      lineItems.push({
+        price_data: {
+          currency: d.currency,
+          product_data: {
+            name: `${product.name.es} — tu dibujo impreso`,
+            description: spec ? `${product.desc.es} · ${spec}` : product.desc.es,
+          },
+          unit_amount: unit,
         },
-        unit_amount: unit,
-      },
-      quantity: 1,
-    });
+        quantity: qty,
+      });
+    }
   }
 
   const stripe = getStripe();
 
   // Promo code shown as a real Stripe discount row instead of text
-  const productsMinor = products.reduce(
-    (sum, key) => sum + Math.round(
-      ((pricing.podProductsUsd[key] ?? getPodProduct(key)?.priceUsd ?? 0) + optionsSurchargeUsd(key, d.productOptions?.[key])) * d.rate * 100,
-    ),
-    0,
-  );
+  let productsMinor = 0;
+  for (const [key, unitList] of Object.entries(productUnits)) {
+    for (const opts of unitList) {
+      productsMinor += Math.round(
+        ((pricing.podProductsUsd[key] ?? getPodProduct(key)?.priceUsd ?? 0) + optionsSurchargeUsd(key, opts)) * d.rate * 100,
+      );
+    }
+  }
 
   let couponId: string | undefined;
   if (appliedCode) {

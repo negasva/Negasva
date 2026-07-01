@@ -23,11 +23,18 @@ export const PricingSelectionSchema = z.object({
   peopleCount: z.number().int().min(1).max(8),
   background: z.string().max(60).default('none'),
   express: z.boolean().default(false),
-  // Print-on-demand physical add-ons (product keys); invalid keys are dropped
-  // by the pricing math, so this stays permissive on the wire.
-  products: z.array(z.string().max(30)).max(10).default([]),
-  // Chosen variant per product: { productKey: { optionGroup: valueKey } }.
-  productOptions: z.record(z.string().max(30), z.record(z.string().max(30), z.string().max(60))).default({}),
+  // Print-on-demand physical add-ons as a per-unit map:
+  //   { productKey: [ { optionGroup: valueKey }, … ] }
+  // The array length is the quantity of that product, and each entry holds the
+  // chosen variant (size, model…) of that individual unit — so the customer can
+  // add several of the same product each with its own size. Invalid keys/units
+  // are dropped by the pricing math, so this stays permissive on the wire.
+  productUnits: z
+    .record(
+      z.string().max(30),
+      z.array(z.record(z.string().max(30), z.string().max(60))).max(20),
+    )
+    .default({}),
 });
 
 export const QuoteSchema = PricingSelectionSchema.extend({

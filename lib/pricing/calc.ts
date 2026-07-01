@@ -1,5 +1,10 @@
 import type { PricingConfig } from './server';
-import { sanitizeProductKeys, optionsSurchargeUsd, type ProductOptions } from './products';
+import {
+  sanitizeProductUnits,
+  productKeysFromUnits,
+  optionsSurchargeUsd,
+  type ProductUnits,
+} from './products';
 
 /**
  * Single source of truth for order math. Pure function, no I/O — used by both
@@ -15,8 +20,9 @@ export interface QuoteInputs {
   peopleCount: number;
   background: string;
   express: boolean;
-  products?: string[];    // print-on-demand physical add-ons (product keys)
-  productOptions?: ProductOptions; // chosen variant per product (size, model…)
+  // Per-unit POD add-ons: { productKey: [ { optionGroup: valueKey }, … ] }.
+  // Array length is the quantity; each entry is that unit's chosen variant.
+  productUnits?: ProductUnits;
 }
 
 export interface QuoteBreakdown {
@@ -65,15 +71,17 @@ export function computeQuoteUsd(
   const subtotal = peopleAfterDiscount + bgCost;
   const expressSurcharge = inputs.express ? subtotal * config.expressSurchargePct : 0;
 
-  // Physical POD add-ons are priced flat (one printed item per order): the
-  // family-pack discount and the express surcharge apply only to the artwork,
-  // never to the physical products.
-  const products = sanitizeProductKeys(inputs.products);
-  const productsCost = products.reduce(
-    (sum, key) =>
-      sum + (config.podProductsUsd[key] ?? 0) + optionsSurchargeUsd(key, inputs.productOptions?.[key]),
-    0,
-  );
+  // Physical POD add-ons are priced flat per unit: the family-pack discount and
+  // the express surcharge apply only to the artwork, never to the physical
+  // products. Each unit can carry its own variant surcharge (e.g. shirt size).
+  const units = sanitizeProductUnits(inputs.productUnits);
+  const products = productKeysFromUnits(units);
+  let productsCost = 0;
+  for (const [key, list] of Object.entries(units)) {
+    for (const sel of list) {
+      productsCost += (config.podProductsUsd[key] ?? 0) + optionsSurchargeUsd(key, sel);
+    }
+  }
 
   const preCodeTotal = subtotal + expressSurcharge + productsCost;
   const codeDiscount = Math.min(Math.max(codeDiscountUsd, 0), preCodeTotal);

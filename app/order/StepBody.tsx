@@ -41,7 +41,7 @@ export default function StepBody({ c }: { c: CheckoutController }) {
       </div>
 
       {/* Body Type selector */}
-      <div onAnimationEnd={onShakeEnd} className={`grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-2xl mx-auto mb-10 ${errorRing} ${errorShake}`}>
+      <div id="required-field" onAnimationEnd={onShakeEnd} className={`grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-2xl mx-auto mb-10 ${errorRing} ${errorShake}`}>
         {bodyTypes.map((bt) => ({
           id: bt.slug,
           // The two default slugs keep their translated copy; admin-created
@@ -56,10 +56,9 @@ export default function StepBody({ c }: { c: CheckoutController }) {
           original: bt.original_price_usd,
           bestValue: bt.is_best_value,
         })).map((b) => (
-          <button
+          <div
             key={b.id}
-            onClick={() => selectBodyType(b.id)}
-            className={`rounded-2xl border-2 p-6 text-center transition-all focus:outline-none relative ${
+            className={`rounded-2xl border-2 p-6 text-center transition-all relative ${
               b.bestValue
                 ? selected.bodyType === b.id
                   ? 'border-primary bg-gradient-to-br from-primary-lighter via-white to-primary-light ring-4 ring-primary shadow-2xl shadow-primary/50 animate-wiggle-slow'
@@ -69,23 +68,62 @@ export default function StepBody({ c }: { c: CheckoutController }) {
                   : 'border-primary-lighter bg-white hover:border-primary hover:shadow-lg'
             }`}
           >
-            {b.bestValue && (
-              <div className="inline-flex items-center gap-1 bg-primary text-white px-3 py-1 rounded-full text-xs font-black mb-3 shadow-lg ring-2 ring-primary-light">
-                {t.studio.body_types.best_value}
+            <button
+              type="button"
+              onClick={() => selectBodyType(b.id)}
+              className="block w-full text-center focus:outline-none"
+            >
+              {b.bestValue && (
+                <div className="inline-flex items-center gap-1 bg-primary text-white px-3 py-1 rounded-full text-xs font-black mb-3 shadow-lg ring-2 ring-primary-light">
+                  {t.studio.body_types.best_value}
+                </div>
+              )}
+              {selected.bodyType === b.id && (
+                <span className="block text-primary font-bold text-xs mb-2">{t.studio.body_types.selected}</span>
+              )}
+              <p className="font-black text-xl sm:text-2xl text-secondary mb-2 tracking-tighter">{b.name}</p>
+              <p className="text-secondary-lighter text-sm mb-4">{b.desc}</p>
+              {b.original && (
+                <p className="text-xs text-secondary-lighter line-through mb-1">{fmt(b.original)}</p>
+              )}
+              <div className={`bg-gradient-to-r from-primary to-primary-dark text-white rounded-xl px-2 py-3 font-black text-base sm:text-lg whitespace-nowrap ${b.bestValue ? 'shadow-lg shadow-primary/40' : ''}`}>
+                <span className="block leading-tight">{fmt(b.price)}{t.studio.body_types.per_person}</span>
+              </div>
+            </button>
+
+            {/* Contador de personas: dentro de la tarjeta seleccionada. */}
+            {selected.bodyType === b.id && (
+              <div className="mt-5 pt-4 border-t-2 border-primary/30">
+                <p className="text-xs font-black text-secondary-lighter uppercase tracking-wide mb-2">
+                  {t.studio.step2.people_title}
+                </p>
+                <div className="flex items-center justify-center gap-3">
+                  <button
+                    type="button"
+                    onClick={decPeople}
+                    disabled={selected.peopleCount <= 1}
+                    aria-label="Quitar persona"
+                    className="w-9 h-9 rounded-full bg-white shadow flex items-center justify-center text-secondary hover:bg-primary hover:text-white transition-all disabled:opacity-30"
+                  >
+                    <Minus className="w-4 h-4" />
+                  </button>
+                  <span className="font-black text-2xl text-secondary w-9 text-center tabular-nums">{selected.peopleCount}</span>
+                  <button
+                    type="button"
+                    onClick={incPeople}
+                    disabled={selected.peopleCount >= 8}
+                    aria-label="Anadir persona"
+                    className="w-9 h-9 rounded-full bg-primary text-white shadow flex items-center justify-center hover:bg-primary-dark transition-all disabled:opacity-30 disabled:bg-primary-lighter disabled:text-secondary"
+                  >
+                    <Plus className="w-4 h-4" />
+                  </button>
+                </div>
+                <p className="text-xs text-secondary-lighter mt-2">
+                  {t.studio.step2.people_subtitle.replace('4', '8')}
+                </p>
               </div>
             )}
-            {selected.bodyType === b.id && (
-              <span className="block text-primary font-bold text-xs mb-2">{t.studio.body_types.selected}</span>
-            )}
-            <p className="font-black text-xl sm:text-2xl text-secondary mb-2 tracking-tighter">{b.name}</p>
-            <p className="text-secondary-lighter text-sm mb-4">{b.desc}</p>
-            {b.original && (
-              <p className="text-xs text-secondary-lighter line-through mb-1">{fmt(b.original)}</p>
-            )}
-            <div className={`bg-gradient-to-r from-primary to-primary-dark text-white rounded-xl px-2 py-3 font-black text-base sm:text-lg whitespace-nowrap ${b.bestValue ? 'shadow-lg shadow-primary/40' : ''}`}>
-              <span className="block leading-tight">{fmt(b.price)}{t.studio.body_types.per_person}</span>
-            </div>
-          </button>
+          </div>
         ))}
       </div>
 
@@ -108,35 +146,8 @@ export default function StepBody({ c }: { c: CheckoutController }) {
         </div>
       )}
 
-      {/* Personas counter */}
+      {/* Dynamic price breakdown */}
       <div className="max-w-2xl mx-auto">
-        <div className="flex items-center justify-between mb-4">
-          <div>
-            <h2 className="font-black text-2xl text-secondary tracking-tighter">{t.studio.step2.people_title}</h2>
-            <p className="text-secondary-lighter text-sm mt-1">
-              {t.studio.step2.people_subtitle.replace('4', '8')}
-            </p>
-          </div>
-          <div className="flex items-center gap-3 bg-primary-lighter rounded-2xl px-4 py-2">
-            <button
-              onClick={decPeople}
-              disabled={selected.peopleCount <= 1}
-              className="w-8 h-8 rounded-full bg-white shadow flex items-center justify-center text-secondary hover:bg-primary hover:text-white transition-all disabled:opacity-30"
-            >
-              <Minus className="w-4 h-4" />
-            </button>
-            <span className="font-black text-xl text-secondary w-6 text-center">{selected.peopleCount}</span>
-            <button
-              onClick={incPeople}
-              disabled={selected.peopleCount >= 8}
-              className="w-8 h-8 rounded-full bg-primary text-white shadow flex items-center justify-center hover:bg-primary-dark transition-all disabled:opacity-30 disabled:bg-primary-lighter disabled:text-secondary"
-            >
-              <Plus className="w-4 h-4" />
-            </button>
-          </div>
-        </div>
-
-        {/* Dynamic price breakdown */}
         {selected.bodyType && (() => {
           const b = priceBreakdown();
           const nextTierAt = selected.peopleCount < 3 ? 3 : selected.peopleCount < 5 ? 5 : null;
