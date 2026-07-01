@@ -408,7 +408,7 @@ export default function Home() {
                 {t.home.pricing.cta}
               </Link>
             </div>
-            <div className="caja-mano-2 group relative bg-white p-8 border-2 border-primary shadow-md hover:shadow-xl transition-shadow text-center">
+            <div className="forma-cuadro2 group relative bg-white px-8 pt-12 pb-10 text-center">
               <span className="absolute -top-3 left-1/2 -translate-x-1/2 z-10 bg-primary text-white text-xs font-black px-4 py-1.5 rounded-full shadow-md whitespace-nowrap">
                 {tr('Más popular', 'Most popular', 'Le plus populaire')}
               </span>
