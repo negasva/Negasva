@@ -5,7 +5,7 @@ import Script from "next/script";
 import "./globals.css";
 import { LanguageProvider } from "@/lib/i18n/LanguageContext";
 import { CurrencyProvider } from "@/lib/currency/CurrencyContext";
-import InstagramFloat from "@/components/InstagramFloat";
+import SocialFloats from "@/components/SocialFloats";
 import EmailCapturePopup from "@/components/EmailCapturePopup";
 
 const montserrat = Montserrat({
@@ -140,7 +140,7 @@ export default function RootLayout({
         <LanguageProvider>
           <CurrencyProvider>
             {children}
-            <InstagramFloat />
+            <SocialFloats />
             <EmailCapturePopup />
           </CurrencyProvider>
         </LanguageProvider>
