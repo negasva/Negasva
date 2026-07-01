@@ -17,7 +17,7 @@ export default function StepBackground({ c }: { c: CheckoutController }) {
         <h2 className="font-black text-4xl text-secondary mb-3 tracking-tighter">{t.studio.step3.title}</h2>
         <p className="text-lg text-secondary-lighter">{t.studio.step3.subtitle}</p>
       </div>
-      <div onAnimationEnd={onShakeEnd} className={`grid grid-cols-2 gap-3 ${errorRing} ${errorShake}`}>
+      <div id="required-field" onAnimationEnd={onShakeEnd} className={`grid grid-cols-2 gap-3 ${errorRing} ${errorShake}`}>
         {getStyleBgs().map((bg) => {
           const isSelected = selected.background === bg.id;
 

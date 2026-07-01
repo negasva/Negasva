@@ -7,6 +7,7 @@ import { LanguageProvider } from "@/lib/i18n/LanguageContext";
 import { CurrencyProvider } from "@/lib/currency/CurrencyContext";
 import SocialFloats from "@/components/SocialFloats";
 import EmailCapturePopup from "@/components/EmailCapturePopup";
+import TitleAccentStripper from "@/components/TitleAccentStripper";
 
 const montserrat = Montserrat({
   subsets: ["latin"],
@@ -142,6 +143,7 @@ export default function RootLayout({
             {children}
             <SocialFloats />
             <EmailCapturePopup />
+            <TitleAccentStripper />
           </CurrencyProvider>
         </LanguageProvider>
       </body>

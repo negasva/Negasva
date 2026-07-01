@@ -150,6 +150,45 @@ export type ProductOptionSelection = Record<string, string>;
 /** All product option selections keyed by product key. */
 export type ProductOptions = Record<string, ProductOptionSelection>;
 
+/**
+ * Per-unit product selection: each product key maps to an array of units, one
+ * entry per physical unit, each with its own chosen options (size, model…).
+ * The array length is the quantity of that product.
+ */
+export type ProductUnits = Record<string, ProductOptionSelection[]>;
+
+/** Keep only valid product keys and cap the quantity per product. */
+export function sanitizeProductUnits(input: unknown, maxPerProduct = 10): ProductUnits {
+  if (!input || typeof input !== 'object') return {};
+  const out: ProductUnits = {};
+  for (const key of POD_PRODUCT_KEYS) {
+    const units = (input as Record<string, unknown>)[key];
+    if (!Array.isArray(units) || units.length === 0) continue;
+    const clean = units
+      .slice(0, maxPerProduct)
+      .map((u) => (u && typeof u === 'object' ? (u as ProductOptionSelection) : {}));
+    if (clean.length) out[key] = clean;
+  }
+  return out;
+}
+
+/** Product keys that have at least one unit selected. */
+export function productKeysFromUnits(units: ProductUnits): string[] {
+  return Object.keys(units).filter((k) => (units[k]?.length ?? 0) > 0);
+}
+
+/** Total USD cost of every unit of every product (base + per-unit surcharges). */
+export function productUnitsCostUsd(
+  units: ProductUnits,
+  overrides?: Record<string, number>,
+): number {
+  let total = 0;
+  for (const [key, list] of Object.entries(sanitizeProductUnits(units))) {
+    for (const sel of list) total += podPriceUsd(key, overrides, sel);
+  }
+  return total;
+}
+
 /** Default option selection for a product (first value of each group). */
 export function defaultProductOptions(key: string): ProductOptionSelection {
   const product = getPodProduct(key);
@@ -211,12 +250,22 @@ export function optionsLabelEs(key: string, sel?: ProductOptionSelection): strin
   return parts.join(', ');
 }
 
-/** Spanish product list (with chosen variants) for the admin/order note. */
-export function productsSummaryEs(keys: string[], options?: ProductOptions): string {
-  const items = sanitizeProductKeys(keys).map((k) => {
-    const name = getPodProduct(k)?.name.es ?? k;
-    const spec = optionsLabelEs(k, options?.[k]);
-    return spec ? `${name} (${spec})` : name;
-  });
+/**
+ * Spanish product list (with chosen variants and quantities) for the
+ * admin/order note. Identical units are grouped as "name (spec) x N".
+ */
+export function productsSummaryEs(units: ProductUnits): string {
+  const clean = sanitizeProductUnits(units);
+  const items: string[] = [];
+  for (const [key, list] of Object.entries(clean)) {
+    const name = getPodProduct(key)?.name.es ?? key;
+    const counts = new Map<string, number>();
+    for (const sel of list) {
+      const spec = optionsLabelEs(key, sel);
+      const label = spec ? `${name} (${spec})` : name;
+      counts.set(label, (counts.get(label) ?? 0) + 1);
+    }
+    for (const [label, n] of counts) items.push(n > 1 ? `${label} x${n}` : label);
+  }
   return items.length ? `Productos físicos: ${items.join(' · ')}` : '';
 }

@@ -112,7 +112,7 @@ export default function CheckoutOrdersPage() {
                     {o.status ?? '—'}
                   </span>
                   <span className="font-black text-secondary">{money(o.amount_total, o.currency)}</span>
-                  {o.express && <span className="text-xs font-bold text-primary">⚡ Exprés</span>}
+                  {o.express && <span className="text-xs font-bold text-primary">Exprés</span>}
                   {o.status === 'paid' && <Deadline createdAt={o.created_at} express={o.express} />}
                 </div>
                 <span className="text-xs text-gray-400">

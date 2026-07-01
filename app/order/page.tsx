@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { Lock, ShieldCheck, Plus, Check } from 'lucide-react';
+import { Lock, ShieldCheck, Plus, Minus, Check, X } from 'lucide-react';
 import Logo from '@/components/Logo';
 import ProductIcon from '@/components/ProductIcon';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
@@ -23,11 +23,12 @@ export default function StudioPage() {
     step, setStep, selected, styles, priceMap,
     discountCodeInput, setDiscountCodeInput,
     appliedCode, setAppliedCode, codeStatus, setCodeStatus,
-    showError, errorRing, errorShake, onShakeEnd,
+    showError,
     checkoutLoading, checkoutParams,
     canAdvance, priceBreakdown, totalPrice, getBgName, getStyleBgs, getProducts,
     nextStep, prevStep, fetchClientSecret, handlePhotoUpload,
-    toggleExpress, toggleProduct, setProductOption, setSpecialRequests,
+    toggleExpress, setSpecialRequests,
+    productQty, addProductUnit, removeProductUnit, removeProductUnitAt, setProductUnitOption,
   } = c;
 
   const STEPS = t.studio.steps as unknown as string[];
@@ -94,7 +95,7 @@ export default function StudioPage() {
               <span className="font-bold text-secondary">+{fmt(b.expressSurcharge)}</span>
             </div>
           )}
-          {selected.products.length > 0 && (
+          {b.products.length > 0 && (
             <>
               <div className="flex justify-between">
                 <span className="text-secondary-lighter">{t.studio.summary.products}</span>
@@ -102,19 +103,20 @@ export default function StudioPage() {
               </div>
               <div className="flex flex-wrap gap-1.5 pl-2">
                 {getProducts()
-                  .filter(p => selected.products.includes(p.key))
-                  .map(p => {
-                    const sel = selected.productOptions[p.key] ?? {};
-                    const variant = (p.options ?? [])
-                      .map(g => g.values.find(v => v.key === sel[g.key])?.label[lang])
-                      .filter(Boolean)
-                      .join(' · ');
-                    return (
-                      <span key={p.key} className="text-xs bg-white rounded-full px-2.5 py-1 font-bold text-secondary">
-                        {p.name[lang]}{variant ? ` · ${variant}` : ''}
-                      </span>
-                    );
-                  })}
+                  .filter(p => (selected.productUnits[p.key]?.length ?? 0) > 0)
+                  .flatMap(p =>
+                    (selected.productUnits[p.key] ?? []).map((sel, i) => {
+                      const variant = (p.options ?? [])
+                        .map(g => g.values.find(v => v.key === sel[g.key])?.label[lang])
+                        .filter(Boolean)
+                        .join(' · ');
+                      return (
+                        <span key={`${p.key}-${i}`} className="text-xs bg-white rounded-full px-2.5 py-1 font-bold text-secondary">
+                          {p.name[lang]}{variant ? ` · ${variant}` : ''}
+                        </span>
+                      );
+                    }),
+                  )}
               </div>
             </>
           )}
@@ -237,67 +239,111 @@ export default function StudioPage() {
                     <p className="text-sm text-secondary-lighter mb-3">{t.studio.products.subtitle}</p>
                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                       {getProducts().map((p) => {
-                        const isSelected = selected.products.includes(p.key);
+                        const qty = productQty(p.key);
+                        const isSelected = qty > 0;
                         return (
-                          <button
+                          <div
                             key={p.key}
-                            type="button"
-                            onClick={() => toggleProduct(p.key)}
-                            aria-pressed={isSelected}
-                            className={`rounded-2xl border-2 p-3 text-left transition-all focus:outline-none bg-white ${
+                            className={`rounded-2xl border-2 p-3 transition-all bg-white ${
                               isSelected
                                 ? 'border-primary ring-2 ring-primary'
                                 : 'border-primary-lighter hover:border-primary'
                             }`}
                           >
-                            <div className="aspect-square w-full rounded-xl bg-primary-lighter/40 flex items-center justify-center">
-                              <ProductIcon productKey={p.key} className="w-10 h-10 text-primary" />
-                            </div>
+                            <button
+                              type="button"
+                              onClick={() => { if (qty === 0) addProductUnit(p.key); }}
+                              aria-pressed={isSelected}
+                              className="block w-full text-left focus:outline-none"
+                            >
+                              <div className="aspect-square w-full rounded-xl bg-primary-lighter/40 flex items-center justify-center">
+                                <ProductIcon productKey={p.key} className="w-10 h-10 text-primary" />
+                              </div>
+                            </button>
                             <div className="mt-3 flex items-end justify-between gap-2">
                               <div className="min-w-0">
                                 <p className="font-black text-secondary text-sm leading-tight">{p.name[lang]}</p>
                                 <p className="text-sm text-secondary-lighter mt-0.5">{fmt(p.priceUsd)}</p>
                               </div>
-                              <span
-                                className={`shrink-0 w-8 h-8 rounded-full flex items-center justify-center shadow-md transition-colors ${
-                                  isSelected
-                                    ? 'bg-primary text-white'
-                                    : 'bg-white border-2 border-primary text-primary'
-                                }`}
-                              >
-                                {isSelected ? <Check className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
-                              </span>
+                              {qty === 0 ? (
+                                <button
+                                  type="button"
+                                  onClick={() => addProductUnit(p.key)}
+                                  aria-label={`Añadir ${p.name[lang]}`}
+                                  className="shrink-0 w-8 h-8 rounded-full flex items-center justify-center shadow-md transition-colors bg-white border-2 border-primary text-primary hover:bg-primary hover:text-white"
+                                >
+                                  <Plus className="w-4 h-4" />
+                                </button>
+                              ) : (
+                                <div className="shrink-0 flex items-center gap-1.5 rounded-full bg-primary text-white px-1.5 py-1 shadow-md">
+                                  <button
+                                    type="button"
+                                    onClick={() => removeProductUnit(p.key)}
+                                    aria-label={`Quitar ${p.name[lang]}`}
+                                    className="w-6 h-6 rounded-full flex items-center justify-center hover:bg-white/20 transition-colors"
+                                  >
+                                    <Minus className="w-3.5 h-3.5" />
+                                  </button>
+                                  <span className="text-sm font-black w-4 text-center tabular-nums">{qty}</span>
+                                  <button
+                                    type="button"
+                                    onClick={() => addProductUnit(p.key)}
+                                    aria-label={`Añadir otro ${p.name[lang]}`}
+                                    className="w-6 h-6 rounded-full flex items-center justify-center hover:bg-white/20 transition-colors"
+                                  >
+                                    <Plus className="w-3.5 h-3.5" />
+                                  </button>
+                                </div>
+                              )}
                             </div>
-                          </button>
+                          </div>
                         );
                       })}
                     </div>
 
-                    {/* Variantes de los productos seleccionados (talla, modelo…) */}
-                    {getProducts().filter(p => selected.products.includes(p.key) && p.options?.length).length > 0 && (
+                    {/* Variantes por unidad (talla, modelo…): una fila por unidad,
+                        para elegir el tamaño de cada item por separado. */}
+                    {getProducts().filter(p => productQty(p.key) > 0 && p.options?.length).length > 0 && (
                       <div className="mt-4 space-y-3">
                         {getProducts()
-                          .filter(p => selected.products.includes(p.key) && p.options?.length)
+                          .filter(p => productQty(p.key) > 0 && p.options?.length)
                           .map(p => (
                             <div key={p.key} className="rounded-2xl border-2 border-primary-lighter bg-white p-4">
                               <p className="font-black text-secondary text-sm mb-3 flex items-center gap-2">
                                 <ProductIcon productKey={p.key} className="w-4 h-4 text-primary" />
                                 {p.name[lang]}
                               </p>
-                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                                {(p.options ?? []).map(g => (
-                                  <label key={g.key} className="block">
-                                    <span className="block text-xs font-bold text-secondary-lighter mb-1">{g.label[lang]}</span>
-                                    <select
-                                      value={selected.productOptions[p.key]?.[g.key] ?? g.values[0]?.key}
-                                      onChange={(e) => setProductOption(p.key, g.key, e.target.value)}
-                                      className="w-full rounded-lg border-2 border-primary-lighter px-3 py-2.5 text-sm font-bold text-secondary focus:border-primary focus:outline-none bg-white"
-                                    >
-                                      {g.values.map(v => (
-                                        <option key={v.key} value={v.key}>{v.label[lang]}</option>
+                              <div className="space-y-3">
+                                {(selected.productUnits[p.key] ?? []).map((unitSel, idx) => (
+                                  <div key={idx} className="flex items-end gap-2">
+                                    <span className="text-xs font-black text-secondary-lighter w-7 shrink-0 pb-2.5 tabular-nums">#{idx + 1}</span>
+                                    <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                      {(p.options ?? []).map(g => (
+                                        <label key={g.key} className="block">
+                                          <span className="block text-xs font-bold text-secondary-lighter mb-1">{g.label[lang]}</span>
+                                          <select
+                                            value={unitSel[g.key] ?? g.values[0]?.key}
+                                            onChange={(e) => setProductUnitOption(p.key, idx, g.key, e.target.value)}
+                                            className="w-full rounded-lg border-2 border-primary-lighter px-3 py-2.5 text-sm font-bold text-secondary focus:border-primary focus:outline-none bg-white"
+                                          >
+                                            {g.values.map(v => (
+                                              <option key={v.key} value={v.key}>{v.label[lang]}</option>
+                                            ))}
+                                          </select>
+                                        </label>
                                       ))}
-                                    </select>
-                                  </label>
+                                    </div>
+                                    {productQty(p.key) > 1 && (
+                                      <button
+                                        type="button"
+                                        onClick={() => removeProductUnitAt(p.key, idx)}
+                                        aria-label={`Quitar unidad ${idx + 1} de ${p.name[lang]}`}
+                                        className="shrink-0 w-8 h-8 mb-0.5 rounded-full flex items-center justify-center border-2 border-primary-lighter text-secondary-lighter hover:border-primary hover:text-primary transition-colors"
+                                      >
+                                        <X className="w-4 h-4" />
+                                      </button>
+                                    )}
+                                  </div>
                                 ))}
                               </div>
                             </div>
@@ -308,15 +354,15 @@ export default function StudioPage() {
                     <p className="text-xs text-secondary-lighter mt-3">{t.studio.products.digital_note}</p>
                   </div>
 
-                  {/* 3 · Sube tus fotos (compacto) */}
+                  {/* 3 · Sube tus fotos (opcional) */}
                   <div>
-                    <h2 className="font-black text-xl text-secondary mb-1 tracking-tighter">{t.studio.step5.title}</h2>
+                    <h2 className="font-black text-xl text-secondary mb-1 tracking-tighter">
+                      {t.studio.step5.title}{' '}
+                      <span className="text-sm font-normal text-secondary-lighter">{t.studio.step4.notes_optional}</span>
+                    </h2>
                     <p className="text-sm text-secondary-lighter mb-3">{t.studio.step5.subtitle}</p>
                     <div
-                      onAnimationEnd={onShakeEnd}
-                      className={`rounded-2xl border-2 border-dashed bg-white p-6 text-center hover:border-primary hover:bg-primary-lighter transition-all cursor-pointer ${
-                        showError ? 'border-red-500' : 'border-primary-lighter'
-                      } ${errorRing} ${errorShake}`}
+                      className="rounded-2xl border-2 border-dashed border-primary-lighter bg-white p-6 text-center hover:border-primary hover:bg-primary-lighter transition-all cursor-pointer"
                     >
                       <p className="font-bold text-secondary text-sm mb-1">{t.studio.step5.drag}</p>
                       <p className="text-xs text-secondary-lighter mb-4">{t.studio.step5.or}</p>

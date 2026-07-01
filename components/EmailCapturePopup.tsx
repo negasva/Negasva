@@ -78,7 +78,7 @@ export default function EmailCapturePopup() {
         <div className="p-6">
           {submitted ? (
             <div className="text-center">
-              <p className="font-bold text-secondary mb-2">¡Listo! 🎉</p>
+              <p className="font-bold text-secondary mb-2">¡Listo!</p>
               <p className="text-sm text-secondary-lighter mb-4">
                 Usa este código en el checkout:
               </p>
