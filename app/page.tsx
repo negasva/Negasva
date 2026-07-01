@@ -409,12 +409,12 @@ export default function Home() {
             </div>
             {/* Envoltorio relativo: la etiqueta va FUERA del contenedor
                 enmascarado para que el mask-image no la recorte. */}
-            <div className="relative">
+            <div className="relative flota-suave">
               <span className="absolute -top-3 left-1/2 -translate-x-1/2 z-20 bg-primary text-white text-xs font-black px-4 py-1.5 rounded-full shadow-md whitespace-nowrap">
                 {tr('Más popular', 'Most popular', 'Le plus populaire')}
               </span>
               <div className="caja-flotante-glow">
-                <div className="forma-cuadro2 group relative bg-white px-8 pt-12 pb-10 text-center">
+                <div className="forma-cuadro2 forma-varia group relative bg-white px-8 pt-12 pb-10 text-center">
                   <h4 className="font-black text-secondary text-xl mb-1">{t.home.pricing.one_full}</h4>
                 <p className="text-sm text-secondary-lighter mb-4">{t.home.pricing.one_full_desc}</p>
                 <p className="font-black text-5xl text-primary mb-6">{fmt(25)}</p>

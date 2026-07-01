@@ -117,3 +117,28 @@ a {
 .caja-review {
   filter: drop-shadow(0 8px 14px rgba(0,0,0,0.14));
 }
+/* Movimiento suave SOLO para la tarjeta destacada ("Más popular"):
+   flota levemente (arrastra etiqueta + tarjeta) y la silueta varía muy poco
+   para dar una sensación orgánica. Se respeta prefers-reduced-motion. */
+@keyframes flota-suave {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-9px); }
+}
+.flota-suave {
+  animation: flota-suave 4.5s ease-in-out infinite;
+  will-change: transform;
+}
+@keyframes forma-varia {
+  0%, 100% { transform: scale(1) rotate(0deg); }
+  30%      { transform: scale(1.012) rotate(0.5deg); }
+  70%      { transform: scale(1.006) rotate(-0.5deg); }
+}
+.forma-varia {
+  animation: forma-varia 6s ease-in-out infinite;
+  transform-origin: center;
+  will-change: transform;
+}
+@media (prefers-reduced-motion: reduce) {
+  .flota-suave,
+  .forma-varia { animation: none; }
+}
