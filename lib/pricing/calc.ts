@@ -1,5 +1,5 @@
 import type { PricingConfig } from './server';
-import { sanitizeProductKeys } from './products';
+import { sanitizeProductKeys, optionsSurchargeUsd, type ProductOptions } from './products';
 
 /**
  * Single source of truth for order math. Pure function, no I/O — used by both
@@ -16,6 +16,7 @@ export interface QuoteInputs {
   background: string;
   express: boolean;
   products?: string[];    // print-on-demand physical add-ons (product keys)
+  productOptions?: ProductOptions; // chosen variant per product (size, model…)
 }
 
 export interface QuoteBreakdown {
@@ -69,7 +70,8 @@ export function computeQuoteUsd(
   // never to the physical products.
   const products = sanitizeProductKeys(inputs.products);
   const productsCost = products.reduce(
-    (sum, key) => sum + (config.podProductsUsd[key] ?? 0),
+    (sum, key) =>
+      sum + (config.podProductsUsd[key] ?? 0) + optionsSurchargeUsd(key, inputs.productOptions?.[key]),
     0,
   );
 

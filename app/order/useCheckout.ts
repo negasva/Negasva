@@ -10,7 +10,13 @@ import {
   FALLBACK_PRICES,
   type BodyTypeItem,
 } from '@/lib/pricing/fallbacks';
-import { POD_PRODUCTS, podPriceUsd, type PodProduct } from '@/lib/pricing/products';
+import {
+  POD_PRODUCTS,
+  podPriceUsd,
+  defaultProductOptions,
+  type PodProduct,
+  type ProductOptions,
+} from '@/lib/pricing/products';
 
 export type { BodyTypeItem };
 
@@ -37,6 +43,7 @@ export interface CheckoutSelection {
   photos: File[];
   express: boolean;
   products: string[]; // print-on-demand physical add-ons (product keys)
+  productOptions: ProductOptions; // chosen variant per product (size, model…)
 }
 
 export interface PriceBreakdown {
@@ -135,6 +142,7 @@ export function useCheckout() {
     photos: [],
     express: false,
     products: [],
+    productOptions: {},
   });
   const [dynamicBgs, setDynamicBgs] = useState<Record<string, BgItem[]>>({});
   const [styles, setStyles] = useState<{ id: string; name: string }[]>(FALLBACK_STYLES);
@@ -235,6 +243,7 @@ export function useCheckout() {
             background: selected.background || 'none',
             express: selected.express,
             products: selected.products,
+            productOptions: selected.productOptions,
             ...(appliedCode ? { discountCode: appliedCode.code } : {}),
           }),
         });
@@ -244,7 +253,7 @@ export function useCheckout() {
       } catch { /* keep last known quote */ }
     }, 200);
     return () => { cancelled = true; clearTimeout(timer); };
-  }, [selected.bodyType, selected.peopleCount, selected.background, selected.express, selected.products, appliedCode]);
+  }, [selected.bodyType, selected.peopleCount, selected.background, selected.express, selected.products, selected.productOptions, appliedCode]);
 
   const canAdvance = () => {
     if (step === 1) return !!selected.style;
@@ -325,6 +334,7 @@ export function useCheckout() {
       peopleCount: selected.peopleCount,
       express: selected.express,
       products: selected.products,
+      productOptions: selected.productOptions,
       specialRequests: selected.specialRequests,
       currency: currency.toLowerCase(),
       rate: rates[currency] ?? 1,
@@ -426,16 +436,27 @@ export function useCheckout() {
   const toggleExpress = () =>
     setSelected(prev => ({ ...prev, express: !prev.express }));
   const toggleProduct = (key: string) =>
+    setSelected(prev => {
+      const isOn = prev.products.includes(key);
+      const products = isOn ? prev.products.filter(p => p !== key) : [...prev.products, key];
+      const productOptions = { ...prev.productOptions };
+      if (isOn) delete productOptions[key];
+      else if (!productOptions[key]) productOptions[key] = defaultProductOptions(key);
+      return { ...prev, products, productOptions };
+    });
+  const setProductOption = (key: string, group: string, value: string) =>
     setSelected(prev => ({
       ...prev,
-      products: prev.products.includes(key)
-        ? prev.products.filter(p => p !== key)
-        : [...prev.products, key],
+      productOptions: {
+        ...prev.productOptions,
+        [key]: { ...(prev.productOptions[key] ?? {}), [group]: value },
+      },
     }));
   const setSpecialRequests = (value: string) =>
     setSelected(prev => ({ ...prev, specialRequests: value }));
 
-  // POD products with their live USD price (admin `pod_<key>` override applied).
+  // POD products with their live base USD price (admin `pod_<key>` override
+  // applied). Per-variant surcharges are added in the UI from the catalog.
   const getProducts = (): (PodProduct & { priceUsd: number })[] =>
     POD_PRODUCTS.map(p => ({ ...p, priceUsd: podPriceUsd(p.key, priceMap) }));
 
@@ -460,7 +481,7 @@ export function useCheckout() {
     // actions
     nextStep, prevStep, fetchClientSecret, handlePhotoUpload,
     selectStyle, selectBodyType, decPeople, incPeople,
-    selectBackground, toggleExpress, toggleProduct, setSpecialRequests,
+    selectBackground, toggleExpress, toggleProduct, setProductOption, setSpecialRequests,
   };
 }
 

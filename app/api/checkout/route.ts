@@ -5,7 +5,7 @@ import { buildWompiCheckoutUrl, newWompiReference } from '@/lib/payments/wompi';
 import { createServiceClient } from '@/lib/supabase/server';
 import { applyDiscountCode, loadPricingConfig } from '@/lib/pricing/server';
 import { computeQuoteUsd } from '@/lib/pricing/calc';
-import { getPodProduct, productsSummaryEs } from '@/lib/pricing/products';
+import { getPodProduct, productsSummaryEs, optionsSurchargeUsd, optionsLabelEs } from '@/lib/pricing/products';
 import { CheckoutSchema } from '@/lib/validation/order';
 import { verifyRecaptcha } from '@/lib/security/recaptcha';
 
@@ -67,7 +67,7 @@ export async function POST(request: Request) {
 
   // Note prepended to the order so the illustrator knows which physical
   // products to fulfill via Printify (the finished art is the print file).
-  const productsNote = productsSummaryEs(products);
+  const productsNote = productsSummaryEs(products, d.productOptions);
   const composedRequests = productsNote
     ? (d.specialRequests ? `${productsNote}\n${d.specialRequests}` : productsNote)
     : d.specialRequests;
@@ -218,15 +218,17 @@ export async function POST(request: Request) {
   for (const key of products) {
     const product = getPodProduct(key);
     if (!product) continue;
-    const priceUsd = pricing.podProductsUsd[key] ?? product.priceUsd;
+    const opts = d.productOptions?.[key];
+    const priceUsd = (pricing.podProductsUsd[key] ?? product.priceUsd) + optionsSurchargeUsd(key, opts);
     const unit = Math.round(priceUsd * d.rate * 100);
     if (unit <= 0) continue;
+    const spec = optionsLabelEs(key, opts);
     lineItems.push({
       price_data: {
         currency: d.currency,
         product_data: {
           name: `${product.emoji} ${product.name.es} — tu dibujo impreso`,
-          description: product.desc.es,
+          description: spec ? `${product.desc.es} · ${spec}` : product.desc.es,
         },
         unit_amount: unit,
       },
@@ -238,7 +240,9 @@ export async function POST(request: Request) {
 
   // Promo code shown as a real Stripe discount row instead of text
   const productsMinor = products.reduce(
-    (sum, key) => sum + Math.round((pricing.podProductsUsd[key] ?? getPodProduct(key)?.priceUsd ?? 0) * d.rate * 100),
+    (sum, key) => sum + Math.round(
+      ((pricing.podProductsUsd[key] ?? getPodProduct(key)?.priceUsd ?? 0) + optionsSurchargeUsd(key, d.productOptions?.[key])) * d.rate * 100,
+    ),
     0,
   );
 
