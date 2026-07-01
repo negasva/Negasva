@@ -400,7 +400,7 @@ export default function Home() {
           </div>
 
           <div className="grid md:grid-cols-2 gap-8 mb-8">
-            <div className="forma-cuadro2 group relative bg-white px-8 pt-12 pb-10 text-center">
+            <div className="forma-cuadro1 group relative bg-white px-8 pt-12 pb-10 text-center">
               <h4 className="font-black text-secondary text-xl mb-1">{t.home.pricing.one_torso}</h4>
               <p className="text-sm text-secondary-lighter mb-4">{t.home.pricing.one_torso_desc}</p>
               <p className="font-black text-5xl text-primary mb-6">{fmt(15)}</p>
