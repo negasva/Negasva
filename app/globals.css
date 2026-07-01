@@ -91,17 +91,22 @@ a {
   -webkit-mask-size: 100% 100%;
   mask-size: 100% 100%;
 }
-/* Sombra recta hacia abajo (90°), muy sutil, para dar sensación de flotar.
-   Sin desplazamiento horizontal → la sombra cae justo debajo del contenedor. */
 .forma-cuadro1 {
   -webkit-mask-image: url(/cuadro1.svg);
   mask-image: url(/cuadro1.svg);
-  filter: drop-shadow(0 10px 10px rgba(0,0,0,0.08));
 }
-/* Igual sombra flotante + un leve glow rosa para dar énfasis al plan de
-   cuerpo completo (color primario del sitio). */
 .forma-cuadro2 {
   -webkit-mask-image: url(/cuadro2.svg);
   mask-image: url(/cuadro2.svg);
-  filter: drop-shadow(0 10px 10px rgba(0,0,0,0.08)) drop-shadow(0 0 14px rgba(255,158,197,0.55));
+}
+/* El mask-image recorta también la drop-shadow si el filter va en el mismo
+   elemento, así que la sombra/glow se aplican en un envoltorio EXTERIOR:
+   el filtro toma el alpha ya recortado del hijo y la sombra sigue la silueta.
+   Sombra recta hacia abajo (90°), muy sutil → sensación de flotar. */
+.caja-flotante {
+  filter: drop-shadow(0 10px 10px rgba(0,0,0,0.10));
+}
+/* Igual sombra flotante + un leve glow rosa para dar énfasis (color primario). */
+.caja-flotante-glow {
+  filter: drop-shadow(0 10px 10px rgba(0,0,0,0.10)) drop-shadow(0 0 16px rgba(255,158,197,0.6));
 }
