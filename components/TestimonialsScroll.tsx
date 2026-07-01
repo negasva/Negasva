@@ -49,24 +49,33 @@ function gradientFor(name: string) {
 }
 
 const ReviewCard = memo(function ReviewCard({ name, comment, stars, variant }: { name: string; comment: string; stars: number; variant: 1 | 2 }) {
+  const shape = variant === 1 ? 'forma-cuadro1' : 'forma-cuadro2';
   return (
-    <div className={`${variant === 1 ? 'forma-cuadro1' : 'forma-cuadro2'} w-72 flex-shrink-0 bg-white border-2 border-primary-lighter p-6 mx-3 shadow-sm`}>
-      <div className="flex gap-1 mb-3">
-        {Array.from({ length: stars }).map((_, i) => (
-          <span key={i} className="text-primary text-lg">★</span>
-        ))}
-      </div>
-      <p className="text-secondary-lighter text-sm mb-4 leading-relaxed">"{comment}"</p>
-      <div className="flex items-center gap-3">
-        <span
-          className={`w-9 h-9 rounded-full bg-gradient-to-br ${gradientFor(name)} flex items-center justify-center text-white text-xs font-black flex-shrink-0`}
-          aria-hidden
-        >
-          {initials(name)}
-        </span>
-        <div>
-          <p className="font-bold text-secondary text-sm leading-tight">{name}</p>
-          <p className="text-[11px] text-secondary-lighter">✓ Compra verificada</p>
+    // Envoltorio con sombra (no enmascarado) → separa la tarjeta del fondo.
+    <div className="caja-review w-72 flex-shrink-0 mx-3">
+      {/* Capa de color = borde que sigue la silueta hecha a mano (el padding
+          crea la franja de color que asoma alrededor de la capa blanca). */}
+      <div className={`${shape} bg-primary p-[3px]`}>
+        {/* Capa blanca de contenido. */}
+        <div className={`${shape} bg-white p-6`}>
+          <div className="flex gap-1 mb-3">
+            {Array.from({ length: stars }).map((_, i) => (
+              <span key={i} className="text-primary text-lg">★</span>
+            ))}
+          </div>
+          <p className="text-secondary-lighter text-sm mb-4 leading-relaxed">"{comment}"</p>
+          <div className="flex items-center gap-3">
+            <span
+              className={`w-9 h-9 rounded-full bg-gradient-to-br ${gradientFor(name)} flex items-center justify-center text-white text-xs font-black flex-shrink-0`}
+              aria-hidden
+            >
+              {initials(name)}
+            </span>
+            <div>
+              <p className="font-bold text-secondary text-sm leading-tight">{name}</p>
+              <p className="text-[11px] text-secondary-lighter">✓ Compra verificada</p>
+            </div>
+          </div>
         </div>
       </div>
     </div>
