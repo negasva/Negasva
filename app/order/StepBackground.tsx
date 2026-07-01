@@ -1,6 +1,7 @@
 'use client';
 
 import Image from 'next/image';
+import { Check, Sparkles } from 'lucide-react';
 import type { CheckoutController } from './useCheckout';
 
 /** Step 3 — choose the background. */
@@ -32,7 +33,7 @@ export default function StepBackground({ c }: { c: CheckoutController }) {
                 }`}
               >
                 {isSelected && (
-                  <span className="block text-white text-base font-black mb-2 tracking-widest">✓</span>
+                  <Check className="w-5 h-5 text-white mb-2" />
                 )}
                 <p className="font-montserrat font-black text-white text-sm uppercase tracking-[0.12em] leading-tight px-3">
                   {bg.name}
@@ -53,10 +54,10 @@ export default function StepBackground({ c }: { c: CheckoutController }) {
                 }`}
               >
                 <div className="relative h-24 w-full flex items-center justify-center bg-gradient-to-br from-primary-lighter via-white to-primary-light flex-shrink-0">
-                  <span className="text-4xl select-none" style={{ filter: 'drop-shadow(0 0 6px rgba(255,158,197,0.8))' }}>✦</span>
+                  <Sparkles className="w-9 h-9 text-primary select-none" style={{ filter: 'drop-shadow(0 0 6px rgba(255,158,197,0.8))' }} />
                   {isSelected && (
                     <div className="absolute inset-0 bg-primary/20 flex items-center justify-center">
-                      <span className="text-white text-lg font-black drop-shadow">✓</span>
+                      <Check className="w-6 h-6 text-white drop-shadow" />
                     </div>
                   )}
                 </div>
@@ -90,7 +91,7 @@ export default function StepBackground({ c }: { c: CheckoutController }) {
                 />
                 {isSelected && (
                   <div className="absolute inset-0 bg-primary/20 flex items-center justify-center">
-                    <span className="text-white text-lg font-bold drop-shadow">✓</span>
+                    <Check className="w-6 h-6 text-white drop-shadow" />
                   </div>
                 )}
               </div>

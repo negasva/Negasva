@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Minus, Plus } from 'lucide-react';
+import { Minus, Plus, Flame } from 'lucide-react';
 import type { CheckoutController } from './useCheckout';
 
 /** Step 2 — body type + number of people. */
@@ -97,13 +97,13 @@ export default function StepBody({ c }: { c: CheckoutController }) {
               popupVisible ? 'opacity-100 scale-100 translate-y-0' : 'opacity-0 scale-90 -translate-y-2'
             }`}
           >
-            <span className="text-2xl">🔥</span>
+            <Flame className="w-6 h-6 shrink-0" />
             <p className="font-black text-sm sm:text-base tracking-tight">
               {t.studio.step2.next_tier
                 .replace('{n}', String(FIRST_TIER_AT - selected.peopleCount))
                 .replace('{pct}', String(FIRST_TIER_PCT))}
             </p>
-            <span className="text-2xl">🔥</span>
+            <Flame className="w-6 h-6 shrink-0" />
           </div>
         </div>
       )}
@@ -161,13 +161,13 @@ export default function StepBody({ c }: { c: CheckoutController }) {
               )}
               {nextTierAt && (
                 <div className="mt-2 bg-gradient-to-r from-primary to-primary-dark text-white rounded-xl px-4 py-3 flex items-center justify-center gap-2 shadow-lg shadow-primary/40 animate-pulse-slow">
-                  <span className="text-xl">🔥</span>
+                  <Flame className="w-5 h-5 shrink-0" />
                   <p className="font-black text-sm sm:text-base text-center tracking-tight">
                     {t.studio.step2.next_tier
                       .replace('{n}', String(nextTierAt - selected.peopleCount))
                       .replace('{pct}', String(nextRate))}
                   </p>
-                  <span className="text-xl">🔥</span>
+                  <Flame className="w-5 h-5 shrink-0" />
                 </div>
               )}
             </div>

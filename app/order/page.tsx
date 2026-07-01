@@ -1,8 +1,9 @@
 'use client';
 
 import Link from 'next/link';
-import { Lock, ShieldCheck } from 'lucide-react';
+import { Lock, ShieldCheck, Plus, Check } from 'lucide-react';
 import Logo from '@/components/Logo';
+import ProductIcon from '@/components/ProductIcon';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
 import CurrencySwitcher from '@/components/CurrencySwitcher';
 import { loadStripe } from '@stripe/stripe-js';
@@ -110,7 +111,7 @@ export default function StudioPage() {
                       .join(' · ');
                     return (
                       <span key={p.key} className="text-xs bg-white rounded-full px-2.5 py-1 font-bold text-secondary">
-                        {p.emoji} {p.name[lang]}{variant ? ` · ${variant}` : ''}
+                        {p.name[lang]}{variant ? ` · ${variant}` : ''}
                       </span>
                     );
                   })}
@@ -175,7 +176,7 @@ export default function StudioPage() {
                     i + 1 === step ? 'bg-primary text-white ring-4 ring-primary-lighter' :
                     'bg-primary-lighter text-secondary'
                   }`}>
-                    {i + 1 < step ? '✓' : i + 1}
+                    {i + 1 < step ? <Check className="w-4 h-4 sm:w-5 sm:h-5" /> : i + 1}
                   </div>
                   <span className={`mt-1 text-xs hidden sm:block font-bold ${i + 1 === step ? 'text-primary' : 'text-secondary-lighter'}`}>
                     {label}
@@ -191,7 +192,7 @@ export default function StudioPage() {
       </div>
 
       {/* Content */}
-      <main className="mx-auto max-w-6xl px-4 pt-8 pb-28 sm:pb-8 w-full overflow-x-hidden">
+      <main className="mx-auto max-w-6xl px-4 pt-8 pb-28 w-full overflow-x-hidden">
         <div className={`${step > 1 && step < 5 ? 'lg:grid lg:grid-cols-3 lg:gap-8' : ''}`}>
           {/* Main step content */}
           <div className={step > 1 && step < 5 ? 'lg:col-span-2' : ''}>
@@ -220,7 +221,7 @@ export default function StudioPage() {
                   >
                     <div className="flex items-start gap-4">
                       <div className={`mt-1 w-6 h-6 rounded-md border-2 flex items-center justify-center flex-shrink-0 ${selected.express ? 'bg-primary border-primary text-white' : 'border-secondary-lighter'}`}>
-                        {selected.express && '✓'}
+                        {selected.express && <Check className="w-4 h-4" />}
                       </div>
                       <div className="flex-1">
                         <p className="font-black text-secondary text-lg tracking-tighter">{t.studio.step4.express_title}</p>
@@ -243,21 +244,30 @@ export default function StudioPage() {
                             type="button"
                             onClick={() => toggleProduct(p.key)}
                             aria-pressed={isSelected}
-                            className={`rounded-2xl border-2 p-4 text-left transition-all focus:outline-none flex flex-col ${
+                            className={`rounded-2xl border-2 p-3 text-left transition-all focus:outline-none bg-white ${
                               isSelected
-                                ? 'border-primary bg-primary-lighter ring-2 ring-primary'
-                                : 'border-primary-lighter bg-white hover:border-primary'
+                                ? 'border-primary ring-2 ring-primary'
+                                : 'border-primary-lighter hover:border-primary'
                             }`}
                           >
-                            <div className="flex items-start justify-between">
-                              <span className="text-3xl leading-none">{p.emoji}</span>
-                              <span className={`w-5 h-5 rounded-md border-2 flex items-center justify-center flex-shrink-0 text-xs ${isSelected ? 'bg-primary border-primary text-white' : 'border-secondary-lighter'}`}>
-                                {isSelected && '✓'}
+                            <div className="aspect-square w-full rounded-xl bg-primary-lighter/40 flex items-center justify-center">
+                              <ProductIcon productKey={p.key} className="w-10 h-10 text-primary" />
+                            </div>
+                            <div className="mt-3 flex items-end justify-between gap-2">
+                              <div className="min-w-0">
+                                <p className="font-black text-secondary text-sm leading-tight">{p.name[lang]}</p>
+                                <p className="text-sm text-secondary-lighter mt-0.5">{fmt(p.priceUsd)}</p>
+                              </div>
+                              <span
+                                className={`shrink-0 w-8 h-8 rounded-full flex items-center justify-center shadow-md transition-colors ${
+                                  isSelected
+                                    ? 'bg-primary text-white'
+                                    : 'bg-white border-2 border-primary text-primary'
+                                }`}
+                              >
+                                {isSelected ? <Check className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
                               </span>
                             </div>
-                            <p className="font-black text-secondary text-sm mt-2 leading-tight">{p.name[lang]}</p>
-                            <p className="text-xs text-secondary-lighter mt-0.5 leading-snug">{p.desc[lang]}</p>
-                            <p className="text-sm text-primary font-black mt-2">+{fmt(p.priceUsd)}</p>
                           </button>
                         );
                       })}
@@ -270,7 +280,10 @@ export default function StudioPage() {
                           .filter(p => selected.products.includes(p.key) && p.options?.length)
                           .map(p => (
                             <div key={p.key} className="rounded-2xl border-2 border-primary-lighter bg-white p-4">
-                              <p className="font-black text-secondary text-sm mb-3">{p.emoji} {p.name[lang]}</p>
+                              <p className="font-black text-secondary text-sm mb-3 flex items-center gap-2">
+                                <ProductIcon productKey={p.key} className="w-4 h-4 text-primary" />
+                                {p.name[lang]}
+                              </p>
                               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                 {(p.options ?? []).map(g => (
                                   <label key={g.key} className="block">
@@ -437,9 +450,8 @@ export default function StudioPage() {
               </div>
             )}
 
-            {/* Navigation (pasos 1–4).
-                Móvil: barra fija abajo, siempre accesible (sin scrollear).
-                Desktop: en el flujo normal, al final del paso. */}
+            {/* Navigation (pasos 1–4). Barra fija abajo (móvil y desktop),
+                siempre accesible sin scrollear. */}
             {step < 5 && (
               <>
                 <div className="hidden sm:block">
@@ -453,7 +465,7 @@ export default function StudioPage() {
                   </p>
                 </div>
 
-                <div className="fixed bottom-0 left-0 right-0 z-50 bg-white/95 backdrop-blur border-t border-primary-lighter shadow-[0_-4px_20px_rgba(0,0,0,0.12)] px-4 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] sm:static sm:bg-transparent sm:backdrop-blur-none sm:border-0 sm:shadow-none sm:p-0 sm:mt-14">
+                <div className="fixed bottom-0 left-0 right-0 z-50 bg-white/95 backdrop-blur border-t border-primary-lighter shadow-[0_-4px_20px_rgba(0,0,0,0.12)] px-4 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
                   {showError && !canAdvance() && (
                     <p className="sm:hidden text-center text-xs text-red-500 font-bold mb-2">
                       {t.studio.nav.missing}

@@ -227,7 +227,7 @@ export async function POST(request: Request) {
       price_data: {
         currency: d.currency,
         product_data: {
-          name: `${product.emoji} ${product.name.es} — tu dibujo impreso`,
+          name: `${product.name.es} — tu dibujo impreso`,
           description: spec ? `${product.desc.es} · ${spec}` : product.desc.es,
         },
         unit_amount: unit,

@@ -10,6 +10,7 @@ import { useAutoTranslate } from '@/lib/i18n/useAutoTranslate';
 import { useCurrency } from '@/lib/currency/CurrencyContext';
 import { cachedFetchJSON } from '@/lib/cache/clientCache';
 import { POD_PRODUCTS } from '@/lib/pricing/products';
+import ProductIcon from '@/components/ProductIcon';
 import Navbar from '@/components/Navbar';
 import PageFooter from '@/components/PageFooter';
 import TestimonialsScroll from '@/components/TestimonialsScroll';
@@ -409,7 +410,9 @@ export default function Home() {
                 key={p.key}
                 className="rounded-2xl border-2 border-primary-lighter bg-white p-5 text-center hover:border-primary hover:shadow-md transition-all"
               >
-                <div className="text-4xl mb-2">{p.emoji}</div>
+                <div className="flex justify-center mb-3">
+                  <ProductIcon productKey={p.key} className="w-9 h-9 text-primary" />
+                </div>
                 <p className="font-black text-secondary text-sm leading-tight">{p.name[lang]}</p>
                 <p className="text-xs text-primary font-bold mt-1">{tr('desde', 'from', 'dès')} {fmt(p.priceUsd)}</p>
               </div>

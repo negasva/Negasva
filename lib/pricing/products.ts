@@ -31,7 +31,6 @@ export interface PodOptionGroup {
 
 export interface PodProduct {
   key: string;
-  emoji: string;
   name: { es: string; en: string; fr: string };
   desc: { es: string; en: string; fr: string };
   /** Fallback retail price in USD (used when the DB has no `pod_<key>` row). */
@@ -95,14 +94,12 @@ const PHONE_MODEL: PodOptionGroup = {
 export const POD_PRODUCTS: PodProduct[] = [
   {
     key: 'mug',
-    emoji: '☕',
     name: { es: 'Taza', en: 'Mug', fr: 'Mug' },
     desc: { es: 'Cerámica 11oz, apta para microondas', en: 'Ceramic 11oz, microwave-safe', fr: 'Céramique 11oz, va au micro-ondes' },
     priceUsd: 16,
   },
   {
     key: 'tshirt',
-    emoji: '👕',
     name: { es: 'Camiseta', en: 'T-shirt', fr: 'T-shirt' },
     desc: { es: 'Algodón premium', en: 'Premium cotton', fr: 'Coton premium' },
     priceUsd: 27,
@@ -110,7 +107,6 @@ export const POD_PRODUCTS: PodProduct[] = [
   },
   {
     key: 'pillow',
-    emoji: '🛋️',
     name: { es: 'Almohada / Cojín', en: 'Pillow', fr: 'Coussin' },
     desc: { es: 'Cojín suave con relleno', en: 'Soft cushion, filled', fr: 'Coussin doux, rembourré' },
     priceUsd: 25,
@@ -118,7 +114,6 @@ export const POD_PRODUCTS: PodProduct[] = [
   },
   {
     key: 'canvas',
-    emoji: '🖼️',
     name: { es: 'Cuadro / Lienzo', en: 'Canvas', fr: 'Toile' },
     desc: { es: 'Lienzo montado listo para colgar', en: 'Mounted canvas, ready to hang', fr: 'Toile montée, prête à accrocher' },
     priceUsd: 32,
@@ -126,14 +121,12 @@ export const POD_PRODUCTS: PodProduct[] = [
   },
   {
     key: 'tote',
-    emoji: '👜',
     name: { es: 'Bolsa tote', en: 'Tote bag', fr: 'Sac tote' },
     desc: { es: 'Tote de algodón resistente', en: 'Sturdy cotton tote', fr: 'Tote en coton résistant' },
     priceUsd: 21,
   },
   {
     key: 'phonecase',
-    emoji: '📱',
     name: { es: 'Funda de teléfono', en: 'Phone case', fr: 'Coque de téléphone' },
     desc: { es: 'Funda rígida', en: 'Hard case', fr: 'Coque rigide' },
     priceUsd: 22,
@@ -225,5 +218,5 @@ export function productsSummaryEs(keys: string[], options?: ProductOptions): str
     const spec = optionsLabelEs(k, options?.[k]);
     return spec ? `${name} (${spec})` : name;
   });
-  return items.length ? `🖨️ Productos físicos: ${items.join(' · ')}` : '';
+  return items.length ? `Productos físicos: ${items.join(' · ')}` : '';
 }

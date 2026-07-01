@@ -76,11 +76,11 @@ export default function SocialFloats() {
   // Posición vertical del stack para que no tape los CTA fijos que hay al
   // fondo en móvil:
   //  - Landing "/": el sticky CTA ocupa el fondo hasta md.
-  //  - Order "/order": la barra de checkout es fija hasta sm.
+  //  - Order "/order": la barra de checkout es fija abajo (móvil y desktop).
   //  - Resto: pegado al fondo.
   let bottom = 'bottom-5';
   if (pathname === '/') bottom = 'bottom-24 md:bottom-5';
-  else if (pathname.startsWith('/order')) bottom = 'bottom-24 sm:bottom-5';
+  else if (pathname.startsWith('/order')) bottom = 'bottom-24';
 
   return (
     <div
@@ -93,7 +93,7 @@ export default function SocialFloats() {
           target="_blank"
           rel="noopener noreferrer"
           aria-label={s.ariaLabel}
-          className={`flex items-center gap-2 rounded-full px-4 py-3 shadow-xl hover:scale-105 active:scale-95 transition-transform ${s.className}`}
+          className={`flex items-center gap-2 rounded-full px-4 py-3 shadow-xl hover:scale-105 active:scale-95 transition-transform sm:w-44 ${s.className}`}
         >
           {s.icon}
           <span className="hidden sm:inline text-sm font-bold">{s.label}</span>
