@@ -372,11 +372,11 @@ export default function Home() {
       {/* C — GALLERY marquee */}
       <section className="py-16 overflow-hidden bg-primary-lighter/30">
         <h2 className="font-black text-4xl md:text-5xl tracking-tighter text-secondary text-center mb-10">
-          {tr('Estilos que enamoran', 'Styles you’ll love', 'Des styles qu’on adore')}
+          {tr('Galería pedidos', 'Order gallery', 'Galerie de commandes')}
         </h2>
         <div className="flex animate-marquee-left hover:[animation-play-state:paused]" style={{ width: 'max-content' }}>
           {[...config.gallery_images, ...config.gallery_images].map((img, i) => (
-            <div key={i} className="relative h-[280px] w-[420px] mx-3 rounded-xl overflow-hidden flex-shrink-0">
+            <div key={i} className={`${i % 2 === 0 ? 'forma-cuadro1' : 'forma-cuadro2'} relative h-[280px] w-[420px] mx-3 overflow-hidden flex-shrink-0`}>
               <Image src={img.url} alt={img.caption} fill className="object-cover" sizes="420px" />
               <span className="absolute bottom-3 left-3 text-white font-bold text-sm bg-black/50 px-3 py-1.5 rounded-full">
                 {img.caption}

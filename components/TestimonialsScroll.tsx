@@ -48,9 +48,9 @@ function gradientFor(name: string) {
   return AVATAR_GRADIENTS[Math.abs(hash) % AVATAR_GRADIENTS.length];
 }
 
-const ReviewCard = memo(function ReviewCard({ name, comment, stars }: { name: string; comment: string; stars: number }) {
+const ReviewCard = memo(function ReviewCard({ name, comment, stars, variant }: { name: string; comment: string; stars: number; variant: 1 | 2 }) {
   return (
-    <div className="w-72 flex-shrink-0 bg-white rounded-2xl border-2 border-primary-lighter p-6 mx-3 shadow-sm">
+    <div className={`${variant === 1 ? 'forma-cuadro1' : 'forma-cuadro2'} w-72 flex-shrink-0 bg-white border-2 border-primary-lighter p-6 mx-3 shadow-sm`}>
       <div className="flex gap-1 mb-3">
         {Array.from({ length: stars }).map((_, i) => (
           <span key={i} className="text-primary text-lg">★</span>
@@ -91,7 +91,7 @@ function TestimonialsScroll() {
           style={{ width: 'max-content' }}
         >
           {[...row1, ...row1].map((r, i) => (
-            <ReviewCard key={i} {...r} />
+            <ReviewCard key={i} {...r} variant={i % 2 === 0 ? 1 : 2} />
           ))}
         </div>
       </div>
@@ -103,7 +103,7 @@ function TestimonialsScroll() {
           style={{ width: 'max-content' }}
         >
           {[...row2, ...row2].map((r, i) => (
-            <ReviewCard key={i} {...r} />
+            <ReviewCard key={i} {...r} variant={i % 2 === 0 ? 2 : 1} />
           ))}
         </div>
       </div>
