@@ -399,23 +399,23 @@ export default function Home() {
             <p className="text-lg text-secondary font-semibold">{t.home.pricing.subtitle}</p>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-10 md:gap-14 mb-8 px-2">
-            <div className="blob-card group relative bg-white px-8 py-12 border-2 border-primary-lighter shadow-md hover:shadow-xl hover:border-primary transition-shadow text-center">
+          <div className="grid md:grid-cols-2 gap-8 mb-8">
+            <div className="forma-cuadro2 group relative bg-white px-8 pt-12 pb-10 text-center">
               <h4 className="font-black text-secondary text-xl mb-1">{t.home.pricing.one_torso}</h4>
               <p className="text-sm text-secondary-lighter mb-4">{t.home.pricing.one_torso_desc}</p>
               <p className="font-black text-5xl text-primary mb-6">{fmt(15)}</p>
-              <Link href={orderHref} className="blob-btn inline-block bg-secondary px-8 py-4 font-black text-white hover:bg-secondary-light transition-colors">
+              <Link href={orderHref} className="block rounded-xl bg-secondary px-6 py-4 font-black text-white hover:bg-secondary-light transition-colors">
                 {t.home.pricing.cta}
               </Link>
             </div>
-            <div className="blob-card-alt group relative bg-white px-8 py-12 border-2 border-primary shadow-md hover:shadow-xl transition-shadow text-center">
-              <span className="absolute -top-2 left-1/2 -translate-x-1/2 z-10 bg-primary text-white text-xs font-black px-4 py-1.5 rounded-full shadow-md whitespace-nowrap">
+            <div className="forma-cuadro2 group relative bg-white px-8 pt-12 pb-10 text-center">
+              <span className="absolute -top-3 left-1/2 -translate-x-1/2 z-10 bg-primary text-white text-xs font-black px-4 py-1.5 rounded-full shadow-md whitespace-nowrap">
                 {tr('Más popular', 'Most popular', 'Le plus populaire')}
               </span>
               <h4 className="font-black text-secondary text-xl mb-1">{t.home.pricing.one_full}</h4>
               <p className="text-sm text-secondary-lighter mb-4">{t.home.pricing.one_full_desc}</p>
               <p className="font-black text-5xl text-primary mb-6">{fmt(25)}</p>
-              <Link href={orderHref} className="blob-btn inline-block bg-primary px-8 py-4 font-black text-white hover:bg-primary-dark transition-colors">
+              <Link href={orderHref} className="block rounded-xl bg-primary px-6 py-4 font-black text-white hover:bg-primary-dark transition-colors">
                 {t.home.pricing.cta}
               </Link>
             </div>
