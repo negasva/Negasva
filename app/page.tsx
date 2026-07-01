@@ -408,16 +408,20 @@ export default function Home() {
                 {t.home.pricing.cta}
               </Link>
             </div>
-            <div className="forma-cuadro2 group relative bg-white px-8 pt-12 pb-10 text-center">
-              <span className="absolute -top-3 left-1/2 -translate-x-1/2 z-10 bg-primary text-white text-xs font-black px-4 py-1.5 rounded-full shadow-md whitespace-nowrap">
+            {/* Envoltorio relativo: la etiqueta va FUERA del contenedor
+                enmascarado para que el mask-image no la recorte. */}
+            <div className="relative">
+              <span className="absolute -top-3 left-1/2 -translate-x-1/2 z-20 bg-primary text-white text-xs font-black px-4 py-1.5 rounded-full shadow-md whitespace-nowrap">
                 {tr('Más popular', 'Most popular', 'Le plus populaire')}
               </span>
-              <h4 className="font-black text-secondary text-xl mb-1">{t.home.pricing.one_full}</h4>
-              <p className="text-sm text-secondary-lighter mb-4">{t.home.pricing.one_full_desc}</p>
-              <p className="font-black text-5xl text-primary mb-6">{fmt(25)}</p>
-              <Link href={orderHref} className="block rounded-xl bg-primary px-6 py-4 font-black text-white hover:bg-primary-dark transition-colors">
-                {t.home.pricing.cta}
-              </Link>
+              <div className="forma-cuadro2 group relative bg-white px-8 pt-12 pb-10 text-center">
+                <h4 className="font-black text-secondary text-xl mb-1">{t.home.pricing.one_full}</h4>
+                <p className="text-sm text-secondary-lighter mb-4">{t.home.pricing.one_full_desc}</p>
+                <p className="font-black text-5xl text-primary mb-6">{fmt(25)}</p>
+                <Link href={orderHref} className="block rounded-xl bg-primary px-6 py-4 font-black text-white hover:bg-primary-dark transition-colors">
+                  {t.home.pricing.cta}
+                </Link>
+              </div>
             </div>
           </div>
           <p className="text-center text-sm text-secondary-lighter">
