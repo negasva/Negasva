@@ -20,6 +20,7 @@ const config: Config = {
       },
       fontFamily: {
         montserrat: ["var(--font-montserrat)"],
+        talina: ["var(--font-talina)", "sans-serif"],
       },
       fontWeight: {
         black: "900",
