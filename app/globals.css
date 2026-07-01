@@ -45,6 +45,11 @@ body {
   }
 }
 
+/* Los titulos h1 usan la fuente Talina Demo (cargada en app/layout.tsx). */
+h1 {
+  font-family: var(--font-talina), sans-serif;
+}
+
 @layer components {
   .font-black {
     @apply tracking-tighter;
