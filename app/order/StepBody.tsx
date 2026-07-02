@@ -1,7 +1,7 @@
 'use client';
 
-import { useEffect, useState } from 'react';
 import { Minus, Plus, Flame } from 'lucide-react';
+import { MAX_PEOPLE, nextFamilyTier } from '@/lib/pricing/calc';
 import type { CheckoutController } from './useCheckout';
 
 /** Step 2 — body type + number of people. */
@@ -11,27 +11,6 @@ export default function StepBody({ c }: { c: CheckoutController }) {
     errorRing, errorShake, onShakeEnd,
     selectBodyType, decPeople, incPeople,
   } = c;
-
-  // Recordatorio del descuento por cantidad: mientras todavía no se ha
-  // desbloqueado ningún descuento (1–2 personas), mostramos un pop-up
-  // informativo y animado para que el cliente vea que el descuento existe.
-  // Una vez aplicado el descuento ya no hay pop-up: la información aparece de
-  // forma permanente debajo del contador de personas.
-  const FIRST_TIER_AT = 3;
-  const FIRST_TIER_PCT = 15;
-  const reminderActive = !!selected.bodyType && selected.peopleCount < FIRST_TIER_AT;
-  const [popupOpen, setPopupOpen] = useState(false);
-  const [popupVisible, setPopupVisible] = useState(false);
-
-  useEffect(() => {
-    if (!reminderActive) { setPopupOpen(false); setPopupVisible(false); return; }
-    setPopupOpen(true);
-    setPopupVisible(false);
-    const enter = setTimeout(() => setPopupVisible(true), 30);
-    const leave = setTimeout(() => setPopupVisible(false), 3700);
-    const done = setTimeout(() => setPopupOpen(false), 4100);
-    return () => { clearTimeout(enter); clearTimeout(leave); clearTimeout(done); };
-  }, [reminderActive, selected.peopleCount]);
 
   return (
     <div>
@@ -102,7 +81,7 @@ export default function StepBody({ c }: { c: CheckoutController }) {
                     type="button"
                     onClick={decPeople}
                     disabled={selected.peopleCount <= 1}
-                    aria-label="Quitar persona"
+                    aria-label={t.studio.step2.remove_person}
                     className="w-9 h-9 rounded-full bg-white shadow flex items-center justify-center text-secondary hover:bg-primary hover:text-white transition-all disabled:opacity-30"
                   >
                     <Minus className="w-4 h-4" />
@@ -111,15 +90,15 @@ export default function StepBody({ c }: { c: CheckoutController }) {
                   <button
                     type="button"
                     onClick={incPeople}
-                    disabled={selected.peopleCount >= 8}
-                    aria-label="Anadir persona"
+                    disabled={selected.peopleCount >= MAX_PEOPLE}
+                    aria-label={t.studio.step2.add_person}
                     className="w-9 h-9 rounded-full bg-primary text-white shadow flex items-center justify-center hover:bg-primary-dark transition-all disabled:opacity-30 disabled:bg-primary-lighter disabled:text-secondary"
                   >
                     <Plus className="w-4 h-4" />
                   </button>
                 </div>
                 <p className="text-xs text-secondary-lighter mt-2">
-                  {t.studio.step2.people_subtitle.replace('4', '8')}
+                  {t.studio.step2.people_subtitle}
                 </p>
               </div>
             )}
@@ -127,31 +106,12 @@ export default function StepBody({ c }: { c: CheckoutController }) {
         ))}
       </div>
 
-      {/* Pop-up recordatorio: avisa de que existe un descuento por cantidad */}
-      {popupOpen && (
-        <div className="fixed top-24 left-1/2 -translate-x-1/2 z-[70] w-[90%] max-w-sm px-2 pointer-events-none">
-          <div
-            className={`flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-primary to-primary-dark px-5 py-4 text-center text-white shadow-2xl shadow-primary/50 ring-2 ring-primary-light transition-all duration-300 ease-out ${
-              popupVisible ? 'opacity-100 scale-100 translate-y-0' : 'opacity-0 scale-90 -translate-y-2'
-            }`}
-          >
-            <Flame className="w-6 h-6 shrink-0" />
-            <p className="font-black text-sm sm:text-base tracking-tight">
-              {t.studio.step2.next_tier
-                .replace('{n}', String(FIRST_TIER_AT - selected.peopleCount))
-                .replace('{pct}', String(FIRST_TIER_PCT))}
-            </p>
-            <Flame className="w-6 h-6 shrink-0" />
-          </div>
-        </div>
-      )}
-
-      {/* Dynamic price breakdown */}
-      <div className="max-w-2xl mx-auto">
+      {/* Dynamic price breakdown — solo móvil/tablet; en lg el sidebar
+          OrderSummary ya muestra lo mismo. */}
+      <div className="max-w-2xl mx-auto lg:hidden">
         {selected.bodyType && (() => {
           const b = priceBreakdown();
-          const nextTierAt = selected.peopleCount < 3 ? 3 : selected.peopleCount < 5 ? 5 : null;
-          const nextRate = selected.peopleCount < 3 ? 15 : 25;
+          const nextTier = nextFamilyTier(selected.peopleCount);
           return (
             <div className="mt-4 bg-primary-lighter rounded-2xl p-5 border-2 border-primary space-y-2">
               <div className="flex justify-between items-center">
@@ -170,13 +130,13 @@ export default function StepBody({ c }: { c: CheckoutController }) {
                   <span className="font-black text-xl text-primary">{fmt(b.peopleSubtotal - b.discount)}</span>
                 </div>
               )}
-              {nextTierAt && (
+              {nextTier && (
                 <div className="mt-2 bg-gradient-to-r from-primary to-primary-dark text-white rounded-xl px-4 py-3 flex items-center justify-center gap-2 shadow-lg shadow-primary/40 animate-pulse-slow">
                   <Flame className="w-5 h-5 shrink-0" />
                   <p className="font-black text-sm sm:text-base text-center tracking-tight">
                     {t.studio.step2.next_tier
-                      .replace('{n}', String(nextTierAt - selected.peopleCount))
-                      .replace('{pct}', String(nextRate))}
+                      .replace('{n}', String(nextTier.at - selected.peopleCount))
+                      .replace('{pct}', String(Math.round(nextTier.rate * 100)))}
                   </p>
                   <Flame className="w-5 h-5 shrink-0" />
                 </div>

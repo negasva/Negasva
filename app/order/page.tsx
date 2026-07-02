@@ -9,40 +9,27 @@ import CurrencySwitcher from '@/components/CurrencySwitcher';
 import { loadStripe } from '@stripe/stripe-js';
 import { EmbeddedCheckout, EmbeddedCheckoutProvider } from '@stripe/react-stripe-js';
 import RecaptchaScript from '@/components/RecaptchaScript';
-import { useCheckout } from './useCheckout';
+import { nextFamilyTier } from '@/lib/pricing/calc';
+import { useCheckout, type CheckoutController } from './useCheckout';
 import StepStyle from './StepStyle';
 import StepBody from './StepBody';
 import StepBackground from './StepBackground';
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
 
-export default function StudioPage() {
-  const c = useCheckout();
+// Order summary — shown as a sticky sidebar from step 2 onward, and as a
+// static, always-visible card on the checkout step so the customer sees
+// exactly what they're paying for (in the site's own style).
+function OrderSummary({ c, sticky = true }: { c: CheckoutController; sticky?: boolean }) {
   const {
-    t, lang, fmt,
-    step, setStep, selected, styles, priceMap,
-    discountCodeInput, setDiscountCodeInput,
-    appliedCode, setAppliedCode, codeStatus, setCodeStatus,
-    showError,
-    checkoutLoading, checkoutParams,
-    canAdvance, priceBreakdown, totalPrice, getBgName, getStyleBgs, getProducts,
-    nextStep, prevStep, fetchClientSecret, handlePhotoUpload,
-    toggleExpress, setSpecialRequests,
-    productQty, addProductUnit, removeProductUnit, removeProductUnitAt, setProductUnitOption,
+    t, lang, fmt, selected, styles, appliedCode,
+    priceBreakdown, totalPrice, getBgName, getStyleBgs, getProducts,
   } = c;
+  const b = priceBreakdown();
+  const styleName = styles.find(s => s.id === selected.style)?.name;
+  if (!selected.style) return null;
 
-  const STEPS = t.studio.steps as unknown as string[];
-
-  // Order summary — shown as a sticky sidebar from step 2 onward, and as a
-  // static, always-visible card on the checkout step so the customer sees
-  // exactly what they're paying for (in the site's own style).
-  const OrderSummary = ({ sticky = true }: { sticky?: boolean }) => {
-    const b = priceBreakdown();
-    const styleName = styles.find(s => s.id === selected.style)?.name;
-    const hasAnyContent = !!selected.style;
-    if (!hasAnyContent) return null;
-
-    return (
+  return (
       <div className={`rounded-2xl bg-primary-lighter border-2 border-primary p-5 space-y-3 text-sm ${sticky ? 'sticky top-24' : ''}`}>
         <p className="font-black text-secondary text-base tracking-tighter">{t.studio.summary.title}</p>
         <div className="space-y-2">
@@ -139,9 +126,36 @@ export default function StudioPage() {
             <span className="text-primary">{fmt(totalPrice())}</span>
           </div>
         )}
+        {(() => {
+          const nextTier = selected.bodyType ? nextFamilyTier(selected.peopleCount) : null;
+          return nextTier && (
+            <p className="bg-white rounded-xl px-3 py-2 text-xs font-bold text-primary text-center">
+              {t.studio.step2.next_tier
+                .replace('{n}', String(nextTier.at - selected.peopleCount))
+                .replace('{pct}', String(Math.round(nextTier.rate * 100)))}
+            </p>
+          );
+        })()}
       </div>
     );
-  };
+}
+
+export default function StudioPage() {
+  const c = useCheckout();
+  const {
+    t, lang, fmt,
+    step, setStep, selected, priceMap,
+    discountCodeInput, onDiscountInput,
+    appliedCode, codeStatus, applyDiscountCode, removeDiscountCode,
+    showError,
+    checkoutLoading, checkoutError, checkoutParams,
+    canAdvance, totalPrice, getProducts,
+    nextStep, prevStep, fetchClientSecret, handlePhotoUpload,
+    toggleExpress, setSpecialRequests,
+    productQty, addProductUnit, removeProductUnit, removeProductUnitAt, setProductUnitOption,
+  } = c;
+
+  const STEPS = t.studio.steps as unknown as string[];
 
   return (
     <div className="min-h-screen bg-white">
@@ -269,7 +283,7 @@ export default function StudioPage() {
                                 <button
                                   type="button"
                                   onClick={() => addProductUnit(p.key)}
-                                  aria-label={`Añadir ${p.name[lang]}`}
+                                  aria-label={`${t.studio.products.add} ${p.name[lang]}`}
                                   className="shrink-0 w-8 h-8 rounded-full flex items-center justify-center shadow-md transition-colors bg-white border-2 border-primary text-primary hover:bg-primary hover:text-white"
                                 >
                                   <Plus className="w-4 h-4" />
@@ -279,7 +293,7 @@ export default function StudioPage() {
                                   <button
                                     type="button"
                                     onClick={() => removeProductUnit(p.key)}
-                                    aria-label={`Quitar ${p.name[lang]}`}
+                                    aria-label={`${t.studio.products.remove} ${p.name[lang]}`}
                                     className="w-6 h-6 rounded-full flex items-center justify-center hover:bg-white/20 transition-colors"
                                   >
                                     <Minus className="w-3.5 h-3.5" />
@@ -288,7 +302,7 @@ export default function StudioPage() {
                                   <button
                                     type="button"
                                     onClick={() => addProductUnit(p.key)}
-                                    aria-label={`Añadir otro ${p.name[lang]}`}
+                                    aria-label={`${t.studio.products.add} ${p.name[lang]}`}
                                     className="w-6 h-6 rounded-full flex items-center justify-center hover:bg-white/20 transition-colors"
                                   >
                                     <Plus className="w-3.5 h-3.5" />
@@ -337,7 +351,7 @@ export default function StudioPage() {
                                       <button
                                         type="button"
                                         onClick={() => removeProductUnitAt(p.key, idx)}
-                                        aria-label={`Quitar unidad ${idx + 1} de ${p.name[lang]}`}
+                                        aria-label={`${t.studio.products.remove} ${p.name[lang]} #${idx + 1}`}
                                         className="shrink-0 w-8 h-8 mb-0.5 rounded-full flex items-center justify-center border-2 border-primary-lighter text-secondary-lighter hover:border-primary hover:text-primary transition-colors"
                                       >
                                         <X className="w-4 h-4" />
@@ -399,7 +413,7 @@ export default function StudioPage() {
 
                   {/* 5 · Código de descuento */}
                   <div>
-                    <label className="block font-bold text-secondary mb-3">Código de descuento <span className="font-normal text-secondary-lighter">(opcional)</span></label>
+                    <label className="block font-bold text-secondary mb-3">{t.studio.discount.label} <span className="font-normal text-secondary-lighter">{t.studio.step4.notes_optional}</span></label>
                     {appliedCode ? (
                       <div className="flex items-center justify-between rounded-2xl border-2 border-primary bg-primary-lighter px-4 py-3">
                         <span className="font-bold text-secondary text-sm">
@@ -407,17 +421,17 @@ export default function StudioPage() {
                         </span>
                         <button
                           type="button"
-                          onClick={() => { setAppliedCode(null); setDiscountCodeInput(''); setCodeStatus('idle'); }}
+                          onClick={removeDiscountCode}
                           className="text-xs font-bold text-secondary-lighter hover:text-primary transition-colors"
                         >
-                          Quitar
+                          {t.studio.discount.remove}
                         </button>
                       </div>
                     ) : (
                       <div className="flex gap-2">
                         <input
                           value={discountCodeInput}
-                          onChange={(e) => { setDiscountCodeInput(e.target.value.toUpperCase()); setCodeStatus('idle'); }}
+                          onChange={(e) => onDiscountInput(e.target.value)}
                           placeholder="MICODIGO"
                           maxLength={40}
                           className="flex-1 rounded-lg border-2 border-primary-lighter px-4 py-3 text-sm font-bold text-secondary uppercase focus:border-primary focus:outline-none"
@@ -425,33 +439,15 @@ export default function StudioPage() {
                         <button
                           type="button"
                           disabled={discountCodeInput.trim().length < 2 || codeStatus === 'checking'}
-                          onClick={async () => {
-                            setCodeStatus('checking');
-                            try {
-                              const res = await fetch('/api/discount-codes/validate', {
-                                method: 'POST',
-                                headers: { 'Content-Type': 'application/json' },
-                                body: JSON.stringify({ code: discountCodeInput.trim(), subtotal: priceBreakdown().subtotal + priceBreakdown().expressSurcharge }),
-                              });
-                              const data = await res.json();
-                              if (data.valid) {
-                                setAppliedCode({ code: data.code, type: data.type, value: data.value, amount: data.amount });
-                                setCodeStatus('idle');
-                              } else {
-                                setCodeStatus('invalid');
-                              }
-                            } catch {
-                              setCodeStatus('invalid');
-                            }
-                          }}
+                          onClick={applyDiscountCode}
                           className="rounded-lg bg-secondary px-6 py-3 text-sm font-bold text-white hover:bg-secondary-light transition-colors disabled:opacity-40"
                         >
-                          {codeStatus === 'checking' ? '...' : 'Aplicar'}
+                          {codeStatus === 'checking' ? '...' : t.studio.discount.apply}
                         </button>
                       </div>
                     )}
                     {codeStatus === 'invalid' && (
-                      <p className="text-xs text-red-500 font-bold mt-2">Código inválido o expirado.</p>
+                      <p className="text-xs text-red-500 font-bold mt-2">{t.studio.discount.invalid}</p>
                     )}
                   </div>
                 </div>
@@ -462,16 +458,16 @@ export default function StudioPage() {
             {step === 5 && checkoutParams && (
               <div>
                 <div className="text-center mb-8">
-                  <h2 className="font-black text-3xl text-secondary mb-2 tracking-tighter">Pago seguro</h2>
+                  <h2 className="font-black text-3xl text-secondary mb-2 tracking-tighter">{t.studio.pay.title}</h2>
                   <div className="flex items-center justify-center gap-4 text-xs text-secondary-lighter flex-wrap">
-                    <span className="flex items-center gap-1"><Lock className="w-3 h-3 text-primary" /> Cifrado SSL 256-bit</span>
-                    <span className="flex items-center gap-1"><ShieldCheck className="w-3 h-3 text-primary" /> Procesado por Stripe</span>
-                    <span className="flex items-center gap-1"><ShieldCheck className="w-3 h-3 text-primary" /> Nunca guardamos tu tarjeta</span>
+                    <span className="flex items-center gap-1"><Lock className="w-3 h-3 text-primary" /> {t.studio.pay.ssl}</span>
+                    <span className="flex items-center gap-1"><ShieldCheck className="w-3 h-3 text-primary" /> {t.studio.pay.stripe}</span>
+                    <span className="flex items-center gap-1"><ShieldCheck className="w-3 h-3 text-primary" /> {t.studio.pay.no_card}</span>
                   </div>
                 </div>
                 {/* Resumen detallado del pedido (estilo de la web), siempre visible */}
                 <div className="max-w-xl mx-auto mb-6">
-                  <OrderSummary sticky={false} />
+                  <OrderSummary c={c} sticky={false} />
                 </div>
 
                 <div className="max-w-xl mx-auto bg-white rounded-2xl border-2 border-primary-lighter shadow-lg overflow-hidden">
@@ -479,7 +475,7 @@ export default function StudioPage() {
                     <span className="font-black text-secondary text-sm">Total: {fmt(totalPrice())}</span>
                     <div className="flex items-center gap-2 text-xs text-secondary-lighter">
                       <Lock className="w-3 h-3" />
-                      <span>Pago seguro</span>
+                      <span>{t.studio.pay.secure}</span>
                     </div>
                   </div>
                   <div className="p-4">
@@ -490,7 +486,7 @@ export default function StudioPage() {
                 </div>
                 <div className="mt-6 text-center">
                   <button onClick={() => setStep(4)} className="text-secondary-lighter hover:text-primary text-sm font-bold transition-colors">
-                    Volver al paso anterior
+                    {t.studio.pay.back}
                   </button>
                 </div>
               </div>
@@ -515,6 +511,11 @@ export default function StudioPage() {
                   {showError && !canAdvance() && (
                     <p className="sm:hidden text-center text-xs text-red-500 font-bold mb-2">
                       {t.studio.nav.missing}
+                    </p>
+                  )}
+                  {checkoutError && (
+                    <p className="text-center text-xs text-red-500 font-bold mb-2">
+                      {checkoutError}
                     </p>
                   )}
                   <div className="flex justify-between items-center gap-3 mx-auto max-w-6xl">
@@ -547,7 +548,7 @@ export default function StudioPage() {
           {/* Sidebar: Order Summary */}
           {step > 1 && step < 5 && (
             <div className="hidden lg:block">
-              <OrderSummary />
+              <OrderSummary c={c} />
             </div>
           )}
         </div>
