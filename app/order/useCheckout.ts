@@ -77,13 +77,21 @@ function withTimeout<T>(p: Promise<T>, ms: number): Promise<T> {
   ]);
 }
 
-const FALLBACK_STYLES = [
-  { id: 'rick-morty',    name: 'Cartoon sci-fi'         },
-  { id: 'gravity-falls', name: 'Misterio del bosque'    },
-  { id: 'simpsons',      name: 'Familia amarilla clasica' },
-  { id: 'fairly-odd',    name: 'Fantasia brillante'     },
-  { id: 'negasva',       name: 'Estilo NEGASVA'         },
-];
+// Nombres propios (anti copyright): la BD puede traer todavía los nombres
+// reales de las series, así que en la UI siempre se muestran estas versiones.
+const SAFE_STYLE_NAMES: Record<string, string> = {
+  'rick-morty':    'Cartoon sci-fi',
+  'gravity-falls': 'Misterio del bosque',
+  'simpsons':      'Familia amarilla clásica',
+  'fairly-odd':    'Fantasía brillante',
+  'negasva':       'Estilo NEGASVA',
+};
+
+const FALLBACK_STYLES = Object.entries(SAFE_STYLE_NAMES).map(([id, name]) => ({ id, name }));
+
+// Los fondos de la BD llevan el nombre de la serie como prefijo
+// ("Rick & Morty — Portal"); se muestra solo la parte descriptiva.
+const safeBgName = (name: string) => name.replace(/^[^—]*—\s*/, '');
 
 /**
  * All state and logic for the multi-step order wizard. Extracted from the
@@ -150,7 +158,7 @@ export function useCheckout() {
     cachedFetchJSON<Array<{ slug: string; name: string }>>('/api/styles')
       .then((data) => {
         if (data && data.length > 0) {
-          setStyles(data.map(s => ({ id: s.slug, name: s.name })));
+          setStyles(data.map(s => ({ id: s.slug, name: SAFE_STYLE_NAMES[s.slug] ?? s.name })));
         }
       })
       .catch(() => null);
@@ -185,7 +193,7 @@ export function useCheckout() {
         if (data && data.length > 0) {
           setDynamicBgs(prev => ({
             ...prev,
-            [selected.style]: data.map(b => ({ id: b.id, url: b.image_url, name: b.name })),
+            [selected.style]: data.map(b => ({ id: b.id, url: b.image_url, name: safeBgName(b.name) })),
           }));
         }
       })
