@@ -3,7 +3,7 @@
  * can add to their digital portrait (mug, t-shirt, pillow, canvas, tote, phone
  * case). The digital illustration is ALWAYS the base product and stays included
  * in the per-person price; these are optional physical add-ons fulfilled via
- * Printify (the finished illustration is uploaded as the print file).
+ * Printful (the finished illustration is uploaded as the print file).
  *
  * This module is isomorphic (no server-only imports) so the client wizard and
  * the server pricing/checkout use the exact same keys and fallback prices —
