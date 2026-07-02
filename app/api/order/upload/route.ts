@@ -11,6 +11,11 @@ import { errorResponse, rateLimitByIp, validateSameOrigin } from '@/lib/security
  *
  * Uses the service role to write, so the bucket stays private and no anon
  * storage policy is needed. Files are still validated here (count/size/type).
+ *
+ * ponytail: las fotos se suben antes de crear el pago, así que un checkout
+ * abandonado deja la carpeta huérfana en el bucket. Limpieza pendiente vía
+ * política de retención del bucket (o cron que borre upload_id sin orden
+ * asociada) si el storage crece.
  */
 
 const MAX_FILES = 8;

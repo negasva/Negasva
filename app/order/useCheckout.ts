@@ -17,6 +17,7 @@ import {
   type PodProduct,
   type ProductUnits,
 } from '@/lib/pricing/products';
+import { MAX_PEOPLE } from '@/lib/pricing/calc';
 
 export type { BodyTypeItem };
 
@@ -31,7 +32,6 @@ export interface AppliedCode {
   code: string;
   type: 'percentage' | 'fixed';
   value: number;
-  amount: number;
 }
 
 export interface CheckoutSelection {
@@ -85,45 +85,6 @@ const FALLBACK_STYLES = [
   { id: 'negasva',       name: 'Estilo NEGASVA'         },
 ];
 
-// Fallback backgrounds if API is unavailable
-const FALLBACK_BACKGROUNDS: Record<string, BgItem[]> = {
-  'rick-morty': [
-    { id: 'rm-1', url: '/backgrounds/rm-1.jpg', name: 'Portal' },
-    { id: 'rm-3', url: '/backgrounds/rm-3.jpg', name: 'Garage' },
-    { id: 'rm-4', url: '/backgrounds/rm-4.jpg', name: 'Espacio' },
-    { id: 'rm-5', url: '/backgrounds/rm-5.jpg', name: 'Planeta alienigena' },
-    { id: 'rm-6', url: '/backgrounds/rm-6.jpg', name: 'Nave espacial' },
-    { id: 'rm-10', url: '/backgrounds/rm-10.jpg', name: 'Dimensión' },
-  ],
-  'gravity-falls': [
-    { id: 'gf-1', url: '/backgrounds/gf-1.jpg', name: 'Bosque' },
-    { id: 'gf-2', url: '/backgrounds/gf-2.jpg', name: 'Cabaña' },
-    { id: 'gf-3', url: '/backgrounds/gf-3.jpg', name: 'Pueblo' },
-    { id: 'gf-4', url: '/backgrounds/gf-4.jpg', name: 'Lago' },
-    { id: 'gf-5', url: '/backgrounds/gf-5.jpg', name: 'Cueva' },
-    { id: 'gf-8', url: '/backgrounds/gf-8.jpg', name: 'Noche' },
-    { id: 'gf-9', url: '/backgrounds/gf-9.jpg', name: 'Misterio' },
-  ],
-  'simpsons': [
-    { id: 'sp-1', url: '/backgrounds/sp-1.jpg', name: 'Ciudad familiar' },
-    { id: 'sp-2', url: '/backgrounds/sp-2.jpg', name: 'Casa' },
-    { id: 'sp-3', url: '/backgrounds/sp-3.jpg', name: 'Bar clasico' },
-    { id: 'sp-4', url: '/backgrounds/sp-4.jpg', name: 'Nuclear' },
-    { id: 'sp-5', url: '/backgrounds/sp-5.jpg', name: 'Escuela' },
-    { id: 'sp-6', url: '/backgrounds/sp-6.jpg', name: 'Calle' },
-    { id: 'sp-10', url: '/backgrounds/sp-10.jpg', name: 'Ciudad de noche' },
-  ],
-  'fairly-odd': [
-    { id: 'fo-1', url: '/backgrounds/fo-1.jpg', name: 'Ciudad brillante' },
-    { id: 'fo-2', url: '/backgrounds/fo-2.jpg', name: 'Casa Turner' },
-    { id: 'fo-3', url: '/backgrounds/fo-3.jpg', name: 'Hada World' },
-    { id: 'fo-5', url: '/backgrounds/fo-5.jpg', name: 'Escuela' },
-    { id: 'fo-10', url: '/backgrounds/fo-10.jpg', name: 'Cielo magico' },
-  ],
-  'negasva': [],
-  'custom': [],
-};
-
 /**
  * All state and logic for the multi-step order wizard. Extracted from the
  * page so the step components stay presentational. Behaviour is identical to
@@ -149,12 +110,17 @@ export function useCheckout() {
   const [bodyTypes, setBodyTypes] = useState<BodyTypeItem[]>(FALLBACK_BODY_TYPES);
   const [priceMap, setPriceMap] = useState<Record<string, number>>(FALLBACK_PRICES);
   const [discountCodeInput, setDiscountCodeInput] = useState('');
+  // Código que el usuario intentó aplicar. Viaja con el quote: el servidor lo
+  // valida y devuelve `appliedCode` (o null si es inválido/expirado).
+  const [discountCode, setDiscountCode] = useState('');
   const [appliedCode, setAppliedCode] = useState<AppliedCode | null>(null);
   const [codeStatus, setCodeStatus] = useState<'idle' | 'checking' | 'invalid'>('idle');
   // Validación: si faltan datos, el botón no avanza y resalta en rojo con shake.
   const [showError, setShowError] = useState(false);
   const [shaking, setShaking] = useState(false);
   const [checkoutLoading, setCheckoutLoading] = useState(false);
+  // Error de subida/pago mostrado en la barra de navegación (antes: alert()).
+  const [checkoutError, setCheckoutError] = useState('');
   const [checkoutParams, setCheckoutParams] = useState<Record<string, unknown> | null>(null);
   // Authoritative price breakdown comes from the server (/api/pricing/quote).
   // The client never does pricing arithmetic — it only renders this.
@@ -243,16 +209,47 @@ export function useCheckout() {
             background: selected.background || 'none',
             express: selected.express,
             productUnits: selected.productUnits,
-            ...(appliedCode ? { discountCode: appliedCode.code } : {}),
+            ...(discountCode ? { discountCode } : {}),
           }),
         });
         if (!res.ok) return;
         const data = await res.json();
-        if (!cancelled) setQuote(data as PriceBreakdown);
+        if (cancelled) return;
+        setQuote(data as PriceBreakdown);
+        // El quote es también quien valida el código: appliedCode viene null
+        // cuando es inválido/expirado/agotado.
+        if (discountCode) {
+          if (data.appliedCode) {
+            setAppliedCode(data.appliedCode as AppliedCode);
+            setCodeStatus('idle');
+          } else {
+            setDiscountCode('');
+            setAppliedCode(null);
+            setCodeStatus('invalid');
+          }
+        }
       } catch { /* keep last known quote */ }
     }, 200);
     return () => { cancelled = true; clearTimeout(timer); };
-  }, [selected.bodyType, selected.peopleCount, selected.background, selected.express, selected.productUnits, appliedCode]);
+  }, [selected.bodyType, selected.peopleCount, selected.background, selected.express, selected.productUnits, discountCode]);
+
+  // Aplica el código escrito: se manda con el próximo quote y el servidor decide.
+  const applyDiscountCode = () => {
+    const code = discountCodeInput.trim();
+    if (code.length < 2) return;
+    setCodeStatus('checking');
+    setDiscountCode(code);
+  };
+  const removeDiscountCode = () => {
+    setDiscountCode('');
+    setAppliedCode(null);
+    setDiscountCodeInput('');
+    setCodeStatus('idle');
+  };
+  const onDiscountInput = (value: string) => {
+    setDiscountCodeInput(value.toUpperCase());
+    setCodeStatus('idle');
+  };
 
   const canAdvance = () => {
     if (step === 1) return !!selected.style;
@@ -323,11 +320,12 @@ export function useCheckout() {
 
     // Step 4 → checkout. Upload photos first (for both payment providers).
     setCheckoutLoading(true);
+    setCheckoutError('');
     let uploaded: { uploadId?: string; paths: string[] };
     try {
       uploaded = await uploadPhotos();
     } catch {
-      alert('Error al subir las fotos. Intenta de nuevo.');
+      setCheckoutError(t.studio.errors.upload);
       setCheckoutLoading(false);
       return;
     }
@@ -360,11 +358,11 @@ export function useCheckout() {
         if (data.url) {
           window.location.href = data.url;
         } else {
-          alert('Error al iniciar el pago. Intenta de nuevo.');
+          setCheckoutError(t.studio.errors.payment);
           setCheckoutLoading(false);
         }
       } catch {
-        alert('Error de red. Intenta de nuevo.');
+        setCheckoutError(t.studio.errors.network);
         setCheckoutLoading(false);
       }
       return;
@@ -409,9 +407,8 @@ export function useCheckout() {
     (t.studio.backgrounds as Record<string, string>)[id] ?? id;
 
   const getStyleBgs = (): BgItem[] => {
-    const fromApi = dynamicBgs[selected.style];
-    const fallback = FALLBACK_BACKGROUNDS[selected.style] ?? [];
-    const base = fromApi && fromApi.length > 0 ? fromApi : fallback;
+    // Sin API solo quedan "custom" y "none" — no duplicamos el catálogo aquí.
+    const base = dynamicBgs[selected.style] ?? [];
     return [
       ...base,
       { id: 'custom', url: '', name: getBgName('custom'), price: priceMap.background_custom ?? 25 },
@@ -427,14 +424,14 @@ export function useCheckout() {
   // ── Action helpers (keep the step components presentational) ──────────────
   const selectStyle = (id: string) => {
     setSelected(prev => ({ ...prev, style: id, background: '' }));
-    setTimeout(() => setStep(2), 300);
+    setStep(2);
   };
   const selectBodyType = (slug: string) =>
     setSelected(prev => ({ ...prev, bodyType: slug }));
   const decPeople = () =>
     setSelected(prev => (prev.peopleCount > 1 ? { ...prev, peopleCount: prev.peopleCount - 1 } : prev));
   const incPeople = () =>
-    setSelected(prev => (prev.peopleCount < 8 ? { ...prev, peopleCount: prev.peopleCount + 1 } : prev));
+    setSelected(prev => (prev.peopleCount < MAX_PEOPLE ? { ...prev, peopleCount: prev.peopleCount + 1 } : prev));
   const selectBackground = (id: string) =>
     setSelected(prev => ({ ...prev, background: id }));
   const toggleExpress = () =>
@@ -499,11 +496,11 @@ export function useCheckout() {
     step, setStep,
     selected,
     styles, bodyTypes, priceMap,
-    discountCodeInput, setDiscountCodeInput,
-    appliedCode, setAppliedCode,
-    codeStatus, setCodeStatus,
+    discountCodeInput, onDiscountInput,
+    appliedCode, codeStatus,
+    applyDiscountCode, removeDiscountCode,
     showError, errorRing, errorShake, onShakeEnd,
-    checkoutLoading, checkoutParams,
+    checkoutLoading, checkoutError, checkoutParams,
     // derived
     canAdvance, priceBreakdown, totalPrice, getBgName, getStyleBgs, getProducts,
     // actions

@@ -40,11 +40,27 @@ export interface QuoteBreakdown {
   total: number;
 }
 
-/** Family pack discount by head count. Mirrored nowhere else — this is it. */
+/** Máximo de personas por retrato — única definición (schema, hook y UI). */
+export const MAX_PEOPLE = 8;
+
+/**
+ * Family pack discount tiers by head count. Mirrored nowhere else — this is
+ * it: the server math and the wizard's "add N more" hints both read this.
+ */
+export const FAMILY_TIERS = [
+  { at: 3, rate: 0.15 },
+  { at: 5, rate: 0.25 },
+] as const;
+
 export function familyDiscountRate(peopleCount: number): number {
-  if (peopleCount >= 5) return 0.25;
-  if (peopleCount >= 3) return 0.15;
-  return 0;
+  let rate = 0;
+  for (const tier of FAMILY_TIERS) if (peopleCount >= tier.at) rate = tier.rate;
+  return rate;
+}
+
+/** Next unreached tier for the wizard's upsell hint, or null at the top. */
+export function nextFamilyTier(peopleCount: number) {
+  return FAMILY_TIERS.find(tier => peopleCount < tier.at) ?? null;
 }
 
 /**

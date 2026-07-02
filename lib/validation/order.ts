@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { MAX_PEOPLE } from '@/lib/pricing/calc';
 
 /**
  * Fuente ÚNICA de verdad sobre lo que compone una orden. Antes había esquemas
@@ -20,7 +21,7 @@ const bodyType = z.string().trim().min(1).max(40);
 
 export const PricingSelectionSchema = z.object({
   bodyType,
-  peopleCount: z.number().int().min(1).max(8),
+  peopleCount: z.number().int().min(1).max(MAX_PEOPLE),
   background: z.string().max(60).default('none'),
   express: z.boolean().default(false),
   // Print-on-demand physical add-ons as a per-unit map:
