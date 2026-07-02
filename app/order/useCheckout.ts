@@ -362,8 +362,9 @@ export function useCheckout() {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ ...params, recaptchaToken }),
         });
-        const data = await res.json();
-        if (data.url) {
+        // Un 500 puede llegar sin cuerpo JSON; no debe leerse como error de red.
+        const data = await res.json().catch(() => null);
+        if (data?.url) {
           window.location.href = data.url;
         } else {
           setCheckoutError(t.studio.errors.payment);
