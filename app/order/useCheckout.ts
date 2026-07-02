@@ -94,7 +94,7 @@ const FALLBACK_STYLES = Object.entries(SAFE_STYLE_NAMES).map(([id, name]) => ({ 
 
 // País estimado para cotizar envío antes de conocer la dirección real
 // (la definitiva se captura en el checkout de Stripe).
-const CURRENCY_COUNTRY: Record<string, string> = {
+export const CURRENCY_COUNTRY: Record<string, string> = {
   COP: 'CO', USD: 'US', MXN: 'MX', EUR: 'ES', GBP: 'GB', CAD: 'CA',
 };
 

@@ -10,7 +10,8 @@ import { loadStripe } from '@stripe/stripe-js';
 import { EmbeddedCheckout, EmbeddedCheckoutProvider } from '@stripe/react-stripe-js';
 import RecaptchaScript from '@/components/RecaptchaScript';
 import { nextFamilyTier } from '@/lib/pricing/calc';
-import { useCheckout, type CheckoutController } from './useCheckout';
+import ShippingCalculator from '@/components/ShippingCalculator';
+import { useCheckout, CURRENCY_COUNTRY, type CheckoutController } from './useCheckout';
 import StepStyle from './StepStyle';
 import StepBody from './StepBody';
 import StepBackground from './StepBackground';
@@ -179,7 +180,7 @@ function OrderSummary({ c, sticky = true }: { c: CheckoutController; sticky?: bo
 export default function StudioPage() {
   const c = useCheckout();
   const {
-    t, lang, fmt,
+    t, lang, fmt, currency,
     step, setStep, selected, priceMap,
     discountCodeInput, onDiscountInput,
     appliedCode, codeStatus, applyDiscountCode, removeDiscountCode,
@@ -432,6 +433,18 @@ export default function StudioPage() {
                     )}
 
                     <p className="text-xs text-secondary-lighter mt-3">{t.studio.products.digital_note}</p>
+
+                    {/* Calculador de envío: solo con productos físicos en el carrito */}
+                    {Object.values(selected.productUnits).some(list => list.length > 0) && (
+                      <div className="mt-4">
+                        <ShippingCalculator
+                          productUnits={selected.productUnits}
+                          lang={lang as Lang}
+                          fmt={fmt}
+                          defaultCountry={CURRENCY_COUNTRY[currency] ?? 'US'}
+                        />
+                      </div>
+                    )}
                   </div>
 
                   {/* 3 · Sube tus fotos (opcional) */}
