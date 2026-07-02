@@ -45,14 +45,13 @@ body {
   }
 }
 
-/* Todos los titulos (h1-h6) usan la fuente Talina Demo (cargada en
-   app/layout.tsx) con un ligero espaciado entre letras. El !important en
-   letter-spacing garantiza ese espaciado aunque el titulo lleve una utilidad
-   tracking-* de Tailwind (p. ej. tracking-tighter), que de otro modo ganaria
-   por especificidad. */
+/* Todos los titulos (h1-h6) usan Montserrat Black con un espaciado entre
+   letras levemente menor al normal. El !important garantiza el tracking
+   aunque el titulo lleve una utilidad tracking-* de Tailwind. */
 h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-talina), sans-serif;
-  letter-spacing: 0.03em !important;
+  font-family: var(--font-montserrat), sans-serif;
+  font-weight: 900;
+  letter-spacing: -0.02em !important;
 }
 
 @layer components {

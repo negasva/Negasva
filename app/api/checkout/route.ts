@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import Stripe from 'stripe';
 import { errorResponse, rateLimitByIp, readJson } from '@/lib/security/apiHelpers';
-import { buildWompiCheckoutUrl, newWompiReference } from '@/lib/payments/wompi';
+import { createMpCheckoutUrl, newMpReference } from '@/lib/payments/mercadopago';
 import { createServiceClient } from '@/lib/supabase/server';
 import { applyDiscountCode, loadPricingConfig } from '@/lib/pricing/server';
 import { computeQuoteUsd } from '@/lib/pricing/calc';
@@ -16,6 +16,8 @@ function getStripe() {
   return new Stripe(key, { apiVersion: '2024-11-20.acacia' as any });
 }
 
+// Google Pay y Apple Pay se ofrecen automáticamente con 'card' en Stripe
+// Checkout (según navegador/dispositivo); no requieren tipo aparte.
 const STRIPE_PAYMENT_METHODS: Record<string, Stripe.Checkout.SessionCreateParams.PaymentMethodType[]> = {
   usd: ['card', 'link'],
   eur: ['card', 'sepa_debit', 'ideal', 'klarna', 'link'],
@@ -23,6 +25,17 @@ const STRIPE_PAYMENT_METHODS: Record<string, Stripe.Checkout.SessionCreateParams
   mxn: ['card'],
   cad: ['card', 'acss_debit', 'link'],
 };
+
+// PayPal en Stripe hay que activarlo en el dashboard; si la cuenta no lo tiene,
+// añadirlo rompería TODOS los checkouts. Por eso va detrás de un flag de env.
+const PAYPAL_CURRENCIES = new Set(['usd', 'eur', 'gbp']);
+function stripeMethods(currency: string): Stripe.Checkout.SessionCreateParams.PaymentMethodType[] {
+  const base = STRIPE_PAYMENT_METHODS[currency] ?? ['card'];
+  if (process.env.STRIPE_PAYPAL_ENABLED === 'true' && PAYPAL_CURRENCIES.has(currency)) {
+    return [...base, 'paypal' as Stripe.Checkout.SessionCreateParams.PaymentMethodType];
+  }
+  return base;
+}
 
 export async function POST(request: Request) {
   const rl = await rateLimitByIp(request, { prefix: 'checkout', max: 20, windowMs: 60_000 });
@@ -69,9 +82,12 @@ export async function POST(request: Request) {
   // Note prepended to the order so the illustrator knows which physical
   // products to fulfill via Printify (the finished art is the print file).
   const productsNote = productsSummaryEs(productUnits);
-  const composedRequests = productsNote
-    ? (d.specialRequests ? `${productsNote}\n${d.specialRequests}` : productsNote)
-    : d.specialRequests;
+  const notes = [
+    d.recording ? 'Incluye video del proceso de dibujo' : '',
+    productsNote,
+    d.specialRequests,
+  ].filter(Boolean);
+  const composedRequests = notes.join('\n');
 
   // COP has no minor units; round up to nearest 1.000 for clean prices
   const isCop = d.currency === 'cop';
@@ -85,15 +101,15 @@ export async function POST(request: Request) {
 
   const origin = request.headers.get('origin') ?? process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000';
 
-  // ── Wompi for Colombia (COP) ───────────────────────────────────────────
+  // ── Mercado Pago para Colombia (COP) ──────────────────────────────────
   if (isCop) {
-    const reference = newWompiReference();
+    const reference = newMpReference();
 
     // Persist a pending order so the webhook can find it by reference
     try {
       const supabase = createServiceClient();
       await supabase.from('orders').insert({
-        provider: 'wompi',
+        provider: 'mercadopago',
         provider_reference: reference,
         amount_total: amountMinor,
         currency: 'cop',
@@ -110,23 +126,26 @@ export async function POST(request: Request) {
         status: 'pending',
       });
     } catch (err) {
-      console.error('[checkout/wompi] failed to pre-insert order:', err);
+      console.error('[checkout/mercadopago] failed to pre-insert order:', err);
     }
 
     let url: string;
     try {
-      url = buildWompiCheckoutUrl({
-        amountInCents: amountMinor,
+      url = await createMpCheckoutUrl({
+        amountCop: amountMinor,
         reference,
-        redirectUrl: `${origin}/checkout/success?provider=wompi&ref=${encodeURIComponent(reference)}`,
+        title: `Retrato personalizado NEGASVA — ${d.peopleCount} ${d.peopleCount === 1 ? 'persona' : 'personas'}`,
+        successUrl: `${origin}/checkout/success?provider=mercadopago&ref=${encodeURIComponent(reference)}`,
+        failureUrl: `${origin}/order`,
+        notificationUrl: `${origin}/api/webhooks/mercadopago`,
       });
     } catch (err) {
-      // Sin las env vars de Wompi el pago en COP no puede iniciarse; responde
+      // Sin MERCADOPAGO_ACCESS_TOKEN (o si MP rechaza la preferencia) responde
       // JSON para que el cliente muestre un error de pago, no "error de red".
       return errorResponse('Payment provider not configured', 500, err);
     }
-    // NOTE: discount usage is recorded by the Wompi webhook on APPROVED, never
-    // here — otherwise abandoned/declined payments would burn coupon uses.
+    // NOTE: el uso del cupón lo registra el webhook de MP al aprobar el pago,
+    // nunca aquí — pagos abandonados/rechazados no queman usos.
     return NextResponse.json({ url });
   }
 
@@ -178,6 +197,7 @@ export async function POST(request: Request) {
   const perPersonMinor = Math.round(perPersonUsd * (1 - discountRate) * d.rate * 100);
   const bgMinor = Math.round(bgUsd * d.rate * 100);
   const expressMinor = Math.round(expressUsd * d.rate * 100);
+  const recordingMinor = Math.round(quote.recordingCost * d.rate * 100);
 
   const lineItems: Stripe.Checkout.SessionCreateParams.LineItem[] = [
     {
@@ -218,6 +238,19 @@ export async function POST(request: Request) {
           description: 'Tu retrato salta la cola y llega en 24 horas',
         },
         unit_amount: expressMinor,
+      },
+      quantity: 1,
+    });
+  }
+  if (recordingMinor > 0) {
+    lineItems.push({
+      price_data: {
+        currency: d.currency,
+        product_data: {
+          name: 'Video del proceso de dibujo',
+          description: 'Grabamos cómo se crea tu retrato, de boceto a color',
+        },
+        unit_amount: recordingMinor,
       },
       quantity: 1,
     });
@@ -268,7 +301,7 @@ export async function POST(request: Request) {
 
   let couponId: string | undefined;
   if (appliedCode) {
-    const lineTotal = perPersonMinor * d.peopleCount + bgMinor + expressMinor + productsMinor;
+    const lineTotal = perPersonMinor * d.peopleCount + bgMinor + expressMinor + recordingMinor + productsMinor;
     const amountOff = Math.min(Math.round(appliedCode.amountUsd * d.rate * 100), lineTotal - 50);
     if (amountOff > 0) {
       const coupon = await stripe.coupons.create({
@@ -288,7 +321,12 @@ export async function POST(request: Request) {
     return_url: `${origin}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
     line_items: lineItems,
     ...(couponId ? { discounts: [{ coupon: couponId }] } : {}),
-    payment_method_types: STRIPE_PAYMENT_METHODS[d.currency] ?? ['card'],
+    payment_method_types: stripeMethods(d.currency),
+    // Con productos físicos pedimos dirección de envío en el propio checkout;
+    // el costo de envío se cotiza con Printify al preparar el pedido.
+    ...(products.length > 0
+      ? { shipping_address_collection: { allowed_countries: ['CO', 'US', 'MX', 'ES', 'FR', 'GB', 'DE', 'IT', 'CA', 'AR', 'CL', 'PE', 'EC'] } }
+      : {}),
     metadata: {
       style: d.style,
       styleName,
@@ -297,6 +335,7 @@ export async function POST(request: Request) {
       backgroundName: bgName,
       peopleCount: String(d.peopleCount),
       express: String(d.express),
+      recording: String(d.recording),
       products: products.join(','),
       discountCode: appliedCode?.code ?? '',
       uploadId: d.uploadId ?? '',

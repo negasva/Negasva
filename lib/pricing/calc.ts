@@ -20,6 +20,8 @@ export interface QuoteInputs {
   peopleCount: number;
   background: string;
   express: boolean;
+  /** Add-on: video del proceso de dibujo (precio plano). */
+  recording?: boolean;
   // Per-unit POD add-ons: { productKey: [ { optionGroup: valueKey }, … ] }.
   // Array length is the quantity; each entry is that unit's chosen variant.
   productUnits?: ProductUnits;
@@ -33,6 +35,7 @@ export interface QuoteBreakdown {
   bgCost: number;
   subtotal: number;       // after family discount + background
   expressSurcharge: number;
+  recordingCost: number;  // add-on: video del proceso (0 si no se pidió)
   productsCost: number;   // sum of physical POD add-ons (no family/express applied)
   products: string[];     // sanitized product keys that were priced
   codeDiscount: number;   // promo code discount (already capped)
@@ -86,6 +89,7 @@ export function computeQuoteUsd(
 
   const subtotal = peopleAfterDiscount + bgCost;
   const expressSurcharge = inputs.express ? subtotal * config.expressSurchargePct : 0;
+  const recordingCost = inputs.recording ? config.recordingUsd : 0;
 
   // Physical POD add-ons are priced flat per unit: the family-pack discount and
   // the express surcharge apply only to the artwork, never to the physical
@@ -99,7 +103,7 @@ export function computeQuoteUsd(
     }
   }
 
-  const preCodeTotal = subtotal + expressSurcharge + productsCost;
+  const preCodeTotal = subtotal + expressSurcharge + recordingCost + productsCost;
   const codeDiscount = Math.min(Math.max(codeDiscountUsd, 0), preCodeTotal);
 
   return {
@@ -110,6 +114,7 @@ export function computeQuoteUsd(
     bgCost,
     subtotal,
     expressSurcharge,
+    recordingCost,
     productsCost,
     products,
     codeDiscount,

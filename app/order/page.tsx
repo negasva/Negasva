@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { Lock, ShieldCheck, Plus, Minus, Check, X } from 'lucide-react';
+import { Lock, ShieldCheck, Plus, Minus, Check, X, Clock, RefreshCcw, ImageUp, Info, Video } from 'lucide-react';
 import Logo from '@/components/Logo';
 import ProductIcon from '@/components/ProductIcon';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
@@ -16,6 +16,47 @@ import StepBody from './StepBody';
 import StepBackground from './StepBackground';
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
+
+type Lang = 'es' | 'en' | 'fr';
+const pick3 = (lang: Lang, es: string, en: string, fr: string) =>
+  lang === 'fr' ? fr : lang === 'en' ? en : es;
+
+// Franja de confianza bajo el progreso del wizard.
+function TrustStrip({ lang }: { lang: Lang }) {
+  const items = [
+    { Icon: Clock, text: pick3(lang, 'Preview en 2-3 días', 'Preview in 2-3 days', 'Aperçu en 2-3 jours') },
+    { Icon: RefreshCcw, text: pick3(lang, 'Revisiones ilimitadas', 'Unlimited revisions', 'Révisions illimitées') },
+    { Icon: ImageUp, text: pick3(lang, 'Sube cualquier foto', 'Upload any photos', 'Téléverse n’importe quelle photo') },
+  ];
+  return (
+    <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 py-3">
+      {items.map(({ Icon, text }) => (
+        <span key={text} className="inline-flex items-center gap-1.5 text-sm font-bold text-secondary">
+          <Icon className="w-4 h-4 text-primary" /> {text}
+        </span>
+      ))}
+    </div>
+  );
+}
+
+// Banner verde: puedes empezar ya y enviar las fotos después.
+function StartNowBanner({ lang }: { lang: Lang }) {
+  return (
+    <div className="flex items-center justify-between gap-3 rounded-2xl border-2 border-green-500/40 bg-green-50 px-5 py-3.5">
+      <span className="font-black text-green-600 text-sm sm:text-base">
+        ✏️ {pick3(lang, 'Empieza ya, sube las fotos luego', 'Start now, upload photos later', 'Commence maintenant, envoie les photos plus tard')}
+      </span>
+      <span title={pick3(
+        lang,
+        'Puedes pagar ahora y enviarnos las fotos después por email o WhatsApp.',
+        'You can pay now and send us your photos later by email or WhatsApp.',
+        'Tu peux payer maintenant et envoyer tes photos plus tard par email ou WhatsApp.',
+      )}>
+        <Info className="w-5 h-5 text-green-600 shrink-0" />
+      </span>
+    </div>
+  );
+}
 
 // Order summary — shown as a sticky sidebar from step 2 onward, and as a
 // static, always-visible card on the checkout step so the customer sees
@@ -82,6 +123,14 @@ function OrderSummary({ c, sticky = true }: { c: CheckoutController; sticky?: bo
               <span className="font-bold text-secondary">+{fmt(b.expressSurcharge)}</span>
             </div>
           )}
+          {selected.recording && (
+            <div className="flex justify-between">
+              <span className="text-secondary-lighter">
+                {pick3(lang as Lang, 'Video del proceso:', 'Process video:', 'Vidéo du processus :')}
+              </span>
+              <span className="font-bold text-secondary">+{fmt(b.recordingCost)}</span>
+            </div>
+          )}
           {b.products.length > 0 && (
             <>
               <div className="flex justify-between">
@@ -105,6 +154,9 @@ function OrderSummary({ c, sticky = true }: { c: CheckoutController; sticky?: bo
                     }),
                   )}
               </div>
+              <p className="text-xs text-secondary-lighter pl-2">
+                {pick3(lang as Lang, 'Envío calculado en el checkout', 'Shipping calculated at checkout', 'Livraison calculée au paiement')}
+              </p>
             </>
           )}
           {appliedCode && b.codeDiscount > 0 && (
@@ -151,7 +203,7 @@ export default function StudioPage() {
     checkoutLoading, checkoutError, checkoutParams,
     canAdvance, totalPrice, getProducts,
     nextStep, prevStep, fetchClientSecret, handlePhotoUpload,
-    toggleExpress, setSpecialRequests,
+    toggleExpress, toggleRecording, setSpecialRequests,
     productQty, addProductUnit, removeProductUnit, removeProductUnitAt, setProductUnitOption,
   } = c;
 
@@ -207,8 +259,11 @@ export default function StudioPage() {
         </div>
       </div>
 
+      {/* Confianza: preview, revisiones, fotos */}
+      <TrustStrip lang={lang as Lang} />
+
       {/* Content */}
-      <main className="mx-auto max-w-6xl px-4 pt-8 pb-28 w-full overflow-x-hidden">
+      <main className="mx-auto max-w-6xl px-4 pt-4 pb-28 w-full overflow-x-hidden">
         <div className={`${step > 1 && step < 5 ? 'lg:grid lg:grid-cols-3 lg:gap-8' : ''}`}>
           {/* Main step content */}
           <div className={step > 1 && step < 5 ? 'lg:col-span-2' : ''}>
@@ -246,6 +301,36 @@ export default function StudioPage() {
                       <span className="font-black text-secondary text-xl whitespace-nowrap">+{Math.round(priceMap.express_surcharge_pct ?? 30)}%</span>
                     </div>
                   </button>
+
+                  {/* 1b · Video del proceso de dibujo */}
+                  <button
+                    type="button"
+                    onClick={toggleRecording}
+                    className={`w-full rounded-2xl border-2 p-5 text-left transition-all ${
+                      selected.recording
+                        ? 'border-primary bg-primary-lighter ring-2 ring-primary'
+                        : 'border-primary-lighter bg-white hover:border-primary'
+                    }`}
+                  >
+                    <div className="flex items-start gap-4">
+                      <div className={`mt-1 w-6 h-6 rounded-md border-2 flex items-center justify-center flex-shrink-0 ${selected.recording ? 'bg-primary border-primary text-white' : 'border-secondary-lighter'}`}>
+                        {selected.recording && <Check className="w-4 h-4" />}
+                      </div>
+                      <div className="flex-1">
+                        <p className="font-black text-secondary text-lg tracking-tighter flex items-center gap-2">
+                          <Video className="w-5 h-5 text-primary" />
+                          {pick3(lang as Lang, 'Video del proceso de dibujo', 'Watch your artwork come to life', 'Vidéo du processus de dessin')}
+                        </p>
+                        <p className="text-sm text-secondary-lighter mt-1">
+                          {pick3(lang as Lang, 'Grabamos cómo se crea tu retrato, de boceto a color.', 'We record how your portrait is created, from sketch to color.', 'Nous filmons la création de ton portrait, du croquis à la couleur.')}
+                        </p>
+                      </div>
+                      <span className="font-black text-secondary text-xl whitespace-nowrap">+{fmt(priceMap.recording_addon ?? 20)}</span>
+                    </div>
+                  </button>
+
+                  {/* Puedes pagar ya y mandar las fotos después */}
+                  <StartNowBanner lang={lang as Lang} />
 
                   {/* 2 · Imprime tu dibujo (print on demand) */}
                   <div>

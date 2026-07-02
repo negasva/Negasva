@@ -53,6 +53,17 @@ const TSHIRT_SIZE: PodOptionGroup = {
   ],
 };
 
+const TSHIRT_COLOR: PodOptionGroup = {
+  key: 'color',
+  label: { es: 'Color', en: 'Color', fr: 'Couleur' },
+  values: [
+    { key: 'white', label: SIZE('Blanco', 'White', 'Blanc') },
+    { key: 'black', label: SIZE('Negro', 'Black', 'Noir') },
+    { key: 'navy', label: SIZE('Azul marino', 'Navy', 'Bleu marine') },
+    { key: 'sport-grey', label: SIZE('Gris deportivo', 'Sports Grey', 'Gris sport') },
+  ],
+};
+
 const CANVAS_SIZE: PodOptionGroup = {
   key: 'size',
   label: { es: 'Tamaño', en: 'Size', fr: 'Taille' },
@@ -103,7 +114,7 @@ export const POD_PRODUCTS: PodProduct[] = [
     name: { es: 'Camiseta', en: 'T-shirt', fr: 'T-shirt' },
     desc: { es: 'Algodón premium', en: 'Premium cotton', fr: 'Coton premium' },
     priceUsd: 27,
-    options: [TSHIRT_SIZE],
+    options: [TSHIRT_SIZE, TSHIRT_COLOR],
   },
   {
     key: 'pillow',

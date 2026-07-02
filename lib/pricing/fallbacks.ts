@@ -28,6 +28,8 @@ export const FALLBACK_BACKGROUND_STANDARD_USD = 15;
 export const FALLBACK_BACKGROUND_CUSTOM_USD = 25;
 /** Express surcharge as a percentage (30 = 30%). */
 export const FALLBACK_EXPRESS_SURCHARGE_PCT = 30;
+/** Add-on: video del proceso de dibujo, precio plano en USD. */
+export const FALLBACK_RECORDING_USD = 20;
 
 /** Fallback for /api/body-types — admin manages the real values. */
 export const FALLBACK_BODY_TYPES: BodyTypeItem[] = [
@@ -54,4 +56,5 @@ export const FALLBACK_PRICES: Record<string, number> = {
   background_standard: FALLBACK_BACKGROUND_STANDARD_USD,
   background_custom: FALLBACK_BACKGROUND_CUSTOM_USD,
   express_surcharge_pct: FALLBACK_EXPRESS_SURCHARGE_PCT,
+  recording_addon: FALLBACK_RECORDING_USD,
 };
