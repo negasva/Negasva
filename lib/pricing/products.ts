@@ -1,9 +1,9 @@
 /**
  * Print-on-demand (POD) product catalog — the physical "soportes" a customer
- * can add to their digital portrait (mug, t-shirt, pillow, canvas, tote, phone
- * case). The digital illustration is ALWAYS the base product and stays included
- * in the per-person price; these are optional physical add-ons fulfilled via
- * Printful (the finished illustration is uploaded as the print file).
+ * can add to their digital portrait (mug, t-shirt, hoodie, canvas, framed
+ * poster, phone case). The digital illustration is ALWAYS the base product and
+ * stays included in the per-person price; these are optional physical add-ons
+ * fulfilled via Printful (the finished illustration is uploaded as the print file).
  *
  * This module is isomorphic (no server-only imports) so the client wizard and
  * the server pricing/checkout use the exact same keys and fallback prices —
@@ -39,107 +39,179 @@ export interface PodProduct {
   options?: PodOptionGroup[];
 }
 
-const SIZE = (es: string, en: string, fr: string) => ({ es, en, fr });
+const L = (es: string, en: string, fr: string) => ({ es, en, fr });
 
-const TSHIRT_SIZE: PodOptionGroup = {
+// ── Shared option groups ─────────────────────────────────────────────────────
+
+const APPAREL_SIZE: PodOptionGroup = {
   key: 'size',
-  label: { es: 'Talla', en: 'Size', fr: 'Taille' },
+  label: L('Talla', 'Size', 'Taille'),
   values: [
-    { key: 'S', label: SIZE('S', 'S', 'S') },
-    { key: 'M', label: SIZE('M', 'M', 'M') },
-    { key: 'L', label: SIZE('L', 'L', 'L') },
-    { key: 'XL', label: SIZE('XL', 'XL', 'XL') },
-    { key: 'XXL', label: SIZE('XXL (+$3)', 'XXL (+$3)', 'XXL (+$3)'), add: 3 },
+    { key: 'S',   label: L('S', 'S', 'S') },
+    { key: 'M',   label: L('M', 'M', 'M') },
+    { key: 'L',   label: L('L', 'L', 'L') },
+    { key: 'XL',  label: L('XL', 'XL', 'XL') },
+    { key: '2XL', label: L('2XL (+$3)', '2XL (+$3)', '2XL (+3$)'), add: 3 },
+    { key: '3XL', label: L('3XL (+$5.50)', '3XL (+$5.50)', '3XL (+5,50$)'), add: 5.5 },
+    { key: '4XL', label: L('4XL (+$8.50)', '4XL (+$8.50)', '4XL (+8,50$)'), add: 8.5 },
+    { key: '5XL', label: L('5XL (+$11)', '5XL (+$11)', '5XL (+11$)'), add: 11 },
   ],
 };
 
 const TSHIRT_COLOR: PodOptionGroup = {
   key: 'color',
-  label: { es: 'Color', en: 'Color', fr: 'Couleur' },
+  label: L('Color', 'Color', 'Couleur'),
   values: [
-    { key: 'white', label: SIZE('Blanco', 'White', 'Blanc') },
-    { key: 'black', label: SIZE('Negro', 'Black', 'Noir') },
-    { key: 'navy', label: SIZE('Azul marino', 'Navy', 'Bleu marine') },
-    { key: 'sport-grey', label: SIZE('Gris deportivo', 'Sports Grey', 'Gris sport') },
+    { key: 'White',        label: L('Blanco',          'White',        'Blanc') },
+    { key: 'Black',        label: L('Negro',           'Black',        'Noir') },
+    { key: 'Navy',         label: L('Azul marino',     'Navy',         'Bleu marine') },
+    { key: 'Maroon',       label: L('Granate',         'Maroon',       'Bordeaux') },
+    { key: 'Red',          label: L('Rojo',            'Red',          'Rouge') },
+    { key: 'Royal',        label: L('Azul royal',      'Royal',        'Bleu royal') },
+    { key: 'Charcoal',     label: L('Carbón',          'Charcoal',     'Anthracite') },
+    { key: 'Sand',         label: L('Arena',           'Sand',         'Sable') },
+    { key: 'Natural',      label: L('Natural',         'Natural',      'Naturel') },
+    { key: 'Light Pink',   label: L('Rosa claro',      'Light Pink',   'Rose clair') },
+    { key: 'Brown Savana', label: L('Marrón sabana',   'Brown Savana', 'Brun savane') },
+  ],
+};
+
+const HOODIE_SIZE: PodOptionGroup = {
+  key: 'size',
+  label: L('Talla', 'Size', 'Taille'),
+  values: [
+    { key: 'S',   label: L('S', 'S', 'S') },
+    { key: 'M',   label: L('M', 'M', 'M') },
+    { key: 'L',   label: L('L', 'L', 'L') },
+    { key: 'XL',  label: L('XL', 'XL', 'XL') },
+    { key: '2XL', label: L('2XL (+$2)', '2XL (+$2)', '2XL (+2$)'), add: 2 },
+    { key: '3XL', label: L('3XL (+$3.50)', '3XL (+$3.50)', '3XL (+3,50$)'), add: 3.5 },
+  ],
+};
+
+const HOODIE_COLOR: PodOptionGroup = {
+  key: 'color',
+  label: L('Color', 'Color', 'Couleur'),
+  values: [
+    { key: 'Black',       label: L('Negro',          'Black',        'Noir') },
+    { key: 'White',       label: L('Blanco',         'White',        'Blanc') },
+    { key: 'Navy Blazer', label: L('Azul marino',    'Navy Blazer',  'Bleu marine') },
+    { key: 'Maroon',      label: L('Granate',        'Maroon',       'Bordeaux') },
+    { key: 'Forest Green',label: L('Verde bosque',   'Forest Green', 'Vert forêt') },
+    { key: 'Team Royal',  label: L('Azul royal',     'Team Royal',   'Bleu royal') },
+    { key: 'Team Red',    label: L('Rojo',           'Team Red',     'Rouge') },
+    { key: 'Bone',        label: L('Hueso',          'Bone',         'Ivoire') },
+    { key: 'Khaki',       label: L('Caqui',          'Khaki',        'Kaki') },
+  ],
+};
+
+const MUG_SIZE: PodOptionGroup = {
+  key: 'size',
+  label: L('Tamaño', 'Size', 'Taille'),
+  values: [
+    { key: '11 oz', label: L('11 oz',             '11 oz',             '11 oz') },
+    { key: '15 oz', label: L('15 oz (+$2)',        '15 oz (+$2)',        '15 oz (+2$)'),   add: 2 },
+    { key: '20 oz', label: L('20 oz (+$5.50)',     '20 oz (+$5.50)',     '20 oz (+5,50$)'), add: 5.5 },
   ],
 };
 
 const CANVAS_SIZE: PodOptionGroup = {
   key: 'size',
-  label: { es: 'Tamaño', en: 'Size', fr: 'Taille' },
+  label: L('Tamaño', 'Size', 'Taille'),
   values: [
-    { key: '20x30', label: SIZE('20×30 cm', '8×12 in', '20×30 cm') },
-    { key: '30x40', label: SIZE('30×40 cm (+$8)', '12×16 in (+$8)', '30×40 cm (+$8)'), add: 8 },
-    { key: '40x50', label: SIZE('40×50 cm (+$16)', '16×20 in (+$16)', '40×50 cm (+$16)'), add: 16 },
-    { key: '50x70', label: SIZE('50×70 cm (+$28)', '20×28 in (+$28)', '50×70 cm (+$28)'), add: 28 },
+    { key: '8x10',  label: L('20×25 cm',           '8×10 in',           '20×25 cm') },
+    { key: '8x12',  label: L('20×30 cm (+$0.50)',   '8×12 in (+$0.50)',  '20×30 cm (+0,50$)'),  add: 0.5 },
+    { key: '11x14', label: L('28×36 cm (+$2)',      '11×14 in (+$2)',    '28×36 cm (+2$)'),      add: 2 },
+    { key: '12x12', label: L('30×30 cm (+$8.50)',   '12×12 in (+$8.50)', '30×30 cm (+8,50$)'),  add: 8.5 },
+    { key: '12x16', label: L('30×40 cm (+$10)',     '12×16 in (+$10)',   '30×40 cm (+10$)'),     add: 10 },
+    { key: '16x16', label: L('40×40 cm (+$16.50)',  '16×16 in (+$16.50)','40×40 cm (+16,50$)'), add: 16.5 },
+    { key: '16x20', label: L('40×50 cm (+$17.50)',  '16×20 in (+$17.50)','40×50 cm (+17,50$)'), add: 17.5 },
+    { key: '18x24', label: L('45×60 cm (+$24)',     '18×24 in (+$24)',   '45×60 cm (+24$)'),     add: 24 },
+    { key: '24x36', label: L('60×90 cm (+$49.50)',  '24×36 in (+$49.50)','60×90 cm (+49,50$)'), add: 49.5 },
   ],
 };
 
-const PILLOW_SIZE: PodOptionGroup = {
-  key: 'size',
-  label: { es: 'Tamaño', en: 'Size', fr: 'Taille' },
+const POSTER_FRAME: PodOptionGroup = {
+  key: 'frame',
+  label: L('Marco', 'Frame', 'Cadre'),
   values: [
-    { key: '40x40', label: SIZE('40×40 cm', '16×16 in', '40×40 cm') },
-    { key: '45x45', label: SIZE('45×45 cm (+$3)', '18×18 in (+$3)', '45×45 cm (+$3)'), add: 3 },
-    { key: '50x50', label: SIZE('50×50 cm (+$6)', '20×20 in (+$6)', '50×50 cm (+$6)'), add: 6 },
+    { key: 'Black',   label: L('Negro',      'Black',   'Noir') },
+    { key: 'White',   label: L('Blanco',     'White',   'Blanc') },
+    { key: 'Red Oak', label: L('Roble rojo', 'Red Oak', 'Chêne rouge') },
+  ],
+};
+
+const POSTER_SIZE: PodOptionGroup = {
+  key: 'size',
+  label: L('Tamaño', 'Size', 'Taille'),
+  values: [
+    { key: '8x10',  label: L('20×25 cm',          '8×10 in',          '20×25 cm') },
+    { key: '12x16', label: L('30×40 cm (+$15)',    '12×16 in (+$15)',  '30×40 cm (+15$)'),  add: 15 },
+    { key: '16x20', label: L('40×50 cm (+$31.50)', '16×20 in (+$31.50)','40×50 cm (+31,50$)'), add: 31.5 },
+    { key: '18x24', label: L('45×60 cm (+$35)',    '18×24 in (+$35)',  '45×60 cm (+35$)'),  add: 35 },
+    { key: '24x36', label: L('60×90 cm (+$77)',    '24×36 in (+$77)',  '60×90 cm (+77$)'),  add: 77 },
   ],
 };
 
 const PHONE_MODEL: PodOptionGroup = {
   key: 'model',
-  label: { es: 'Modelo', en: 'Model', fr: 'Modèle' },
+  label: L('Modelo', 'Model', 'Modèle'),
   values: [
-    { key: 'iphone-16-pro-max', label: SIZE('iPhone 16 Pro Max', 'iPhone 16 Pro Max', 'iPhone 16 Pro Max') },
-    { key: 'iphone-16-pro', label: SIZE('iPhone 16 / 16 Pro', 'iPhone 16 / 16 Pro', 'iPhone 16 / 16 Pro') },
-    { key: 'iphone-15', label: SIZE('iPhone 15 / 15 Pro', 'iPhone 15 / 15 Pro', 'iPhone 15 / 15 Pro') },
-    { key: 'iphone-14-13', label: SIZE('iPhone 14 / 13', 'iPhone 14 / 13', 'iPhone 14 / 13') },
-    { key: 'iphone-12-11', label: SIZE('iPhone 12 / 11', 'iPhone 12 / 11', 'iPhone 12 / 11') },
-    { key: 'samsung-s24', label: SIZE('Samsung Galaxy S24 / S23', 'Samsung Galaxy S24 / S23', 'Samsung Galaxy S24 / S23') },
-    { key: 'samsung-a', label: SIZE('Samsung Galaxy A (serie)', 'Samsung Galaxy A (series)', 'Samsung Galaxy A (série)') },
-    { key: 'xiaomi', label: SIZE('Xiaomi / Redmi', 'Xiaomi / Redmi', 'Xiaomi / Redmi') },
-    { key: 'motorola', label: SIZE('Motorola', 'Motorola', 'Motorola') },
-    { key: 'otro', label: SIZE('Otro (indícalo en notas)', 'Other (specify in notes)', 'Autre (préciser en notes)') },
+    { key: 'iphone-16-pro-max', label: L('iPhone 16 Pro Max',           'iPhone 16 Pro Max',           'iPhone 16 Pro Max') },
+    { key: 'iphone-16-pro',     label: L('iPhone 16 / 16 Pro',          'iPhone 16 / 16 Pro',          'iPhone 16 / 16 Pro') },
+    { key: 'iphone-15',         label: L('iPhone 15 / 15 Pro',          'iPhone 15 / 15 Pro',          'iPhone 15 / 15 Pro') },
+    { key: 'iphone-14-13',      label: L('iPhone 14 / 13',              'iPhone 14 / 13',              'iPhone 14 / 13') },
+    { key: 'iphone-12-11',      label: L('iPhone 12 / 11',              'iPhone 12 / 11',              'iPhone 12 / 11') },
+    { key: 'samsung-s24',       label: L('Samsung Galaxy S24 / S23',    'Samsung Galaxy S24 / S23',    'Samsung Galaxy S24 / S23') },
+    { key: 'samsung-a',         label: L('Samsung Galaxy A (serie)',     'Samsung Galaxy A (series)',   'Samsung Galaxy A (série)') },
+    { key: 'xiaomi',            label: L('Xiaomi / Redmi',              'Xiaomi / Redmi',              'Xiaomi / Redmi') },
+    { key: 'motorola',          label: L('Motorola',                    'Motorola',                    'Motorola') },
+    { key: 'otro',              label: L('Otro (indícalo en notas)',     'Other (specify in notes)',    'Autre (préciser en notes)') },
   ],
 };
+
+// ── Product catalog ──────────────────────────────────────────────────────────
 
 export const POD_PRODUCTS: PodProduct[] = [
   {
     key: 'mug',
-    name: { es: 'Taza', en: 'Mug', fr: 'Mug' },
-    desc: { es: 'Cerámica 11oz, apta para microondas', en: 'Ceramic 11oz, microwave-safe', fr: 'Céramique 11oz, va au micro-ondes' },
-    priceUsd: 16,
+    name: L('Taza', 'Mug', 'Mug'),
+    desc: L('Taza blanca brillante, apta para microondas y lavavajillas', 'White glossy mug, microwave & dishwasher safe', 'Mug blanc brillant, micro-ondes & lave-vaisselle'),
+    priceUsd: 9.5,
+    options: [MUG_SIZE],
   },
   {
     key: 'tshirt',
-    name: { es: 'Camiseta', en: 'T-shirt', fr: 'T-shirt' },
-    desc: { es: 'Algodón premium', en: 'Premium cotton', fr: 'Coton premium' },
-    priceUsd: 27,
-    options: [TSHIRT_SIZE, TSHIRT_COLOR],
+    name: L('Camiseta', 'T-shirt', 'T-shirt'),
+    desc: L('100% algodón preencogido, unisex', '100% pre-shrunk cotton, unisex', '100% coton pré-rétréci, unisexe'),
+    priceUsd: 12.5,
+    options: [APPAREL_SIZE, TSHIRT_COLOR],
   },
   {
-    key: 'pillow',
-    name: { es: 'Almohada / Cojín', en: 'Pillow', fr: 'Coussin' },
-    desc: { es: 'Cojín suave con relleno', en: 'Soft cushion, filled', fr: 'Coussin doux, rembourré' },
-    priceUsd: 25,
-    options: [PILLOW_SIZE],
+    key: 'hoodie',
+    name: L('Sudadera con capucha', 'Hoodie', 'Sweat à capuche'),
+    desc: L('Sudadera unisex premium con capucha', 'Premium unisex pullover hoodie', 'Sweat à capuche unisexe premium'),
+    priceUsd: 41,
+    options: [HOODIE_SIZE, HOODIE_COLOR],
   },
   {
     key: 'canvas',
-    name: { es: 'Cuadro / Lienzo', en: 'Canvas', fr: 'Toile' },
-    desc: { es: 'Lienzo montado listo para colgar', en: 'Mounted canvas, ready to hang', fr: 'Toile montée, prête à accrocher' },
-    priceUsd: 32,
+    name: L('Lienzo', 'Canvas', 'Toile'),
+    desc: L('Lienzo estirado sobre bastidor listo para colgar', 'Stretched canvas on frame, ready to hang', 'Toile sur châssis, prête à accrocher'),
+    priceUsd: 22.5,
     options: [CANVAS_SIZE],
   },
   {
-    key: 'tote',
-    name: { es: 'Bolsa tote', en: 'Tote bag', fr: 'Sac tote' },
-    desc: { es: 'Tote de algodón resistente', en: 'Sturdy cotton tote', fr: 'Tote en coton résistant' },
-    priceUsd: 21,
+    key: 'poster',
+    name: L('Póster enmarcado', 'Framed poster', 'Poster encadré'),
+    desc: L('Lámina de alta calidad con marco de madera', 'High-quality print with wood frame', 'Impression haute qualité avec cadre en bois'),
+    priceUsd: 26.5,
+    options: [POSTER_FRAME, POSTER_SIZE],
   },
   {
     key: 'phonecase',
-    name: { es: 'Funda de teléfono', en: 'Phone case', fr: 'Coque de téléphone' },
-    desc: { es: 'Funda rígida', en: 'Hard case', fr: 'Coque rigide' },
+    name: L('Funda de teléfono', 'Phone case', 'Coque de téléphone'),
+    desc: L('Funda rígida', 'Hard case', 'Coque rigide'),
     priceUsd: 22,
     options: [PHONE_MODEL],
   },

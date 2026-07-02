@@ -19,6 +19,7 @@
  */
 
 import { getPodProduct, sanitizeProductUnits, type ProductOptionSelection, type ProductUnits } from '@/lib/pricing/products';
+import { PRINTFUL_VARIANT_CATALOG } from '@/lib/printful-catalog';
 
 const PRINTFUL_API = 'https://api.printful.com';
 
@@ -27,12 +28,12 @@ type VariantMapEntry = number | Record<string, number>;
 function variantMap(): Record<string, VariantMapEntry> {
   try {
     const raw = process.env.PRINTFUL_VARIANT_MAP;
-    if (!raw) return {};
-    const parsed = JSON.parse(raw) as Record<string, VariantMapEntry>;
-    return parsed && typeof parsed === 'object' ? parsed : {};
-  } catch {
-    return {};
-  }
+    if (raw) {
+      const parsed = JSON.parse(raw) as Record<string, VariantMapEntry>;
+      if (parsed && typeof parsed === 'object') return parsed;
+    }
+  } catch { /* fall through to catalog */ }
+  return PRINTFUL_VARIANT_CATALOG;
 }
 
 /** Firma de opciones de una unidad ("S/white") en el orden del catálogo. */
