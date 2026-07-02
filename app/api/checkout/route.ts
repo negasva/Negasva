@@ -113,11 +113,18 @@ export async function POST(request: Request) {
       console.error('[checkout/wompi] failed to pre-insert order:', err);
     }
 
-    const url = buildWompiCheckoutUrl({
-      amountInCents: amountMinor,
-      reference,
-      redirectUrl: `${origin}/checkout/success?provider=wompi&ref=${encodeURIComponent(reference)}`,
-    });
+    let url: string;
+    try {
+      url = buildWompiCheckoutUrl({
+        amountInCents: amountMinor,
+        reference,
+        redirectUrl: `${origin}/checkout/success?provider=wompi&ref=${encodeURIComponent(reference)}`,
+      });
+    } catch (err) {
+      // Sin las env vars de Wompi el pago en COP no puede iniciarse; responde
+      // JSON para que el cliente muestre un error de pago, no "error de red".
+      return errorResponse('Payment provider not configured', 500, err);
+    }
     // NOTE: discount usage is recorded by the Wompi webhook on APPROVED, never
     // here — otherwise abandoned/declined payments would burn coupon uses.
     return NextResponse.json({ url });
