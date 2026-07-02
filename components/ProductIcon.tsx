@@ -1,22 +1,18 @@
 import {
   Coffee,
   Shirt,
-  Sofa,
   Frame,
-  ShoppingBag,
   Smartphone,
   Package,
 } from 'lucide-react';
 import type { ComponentType, SVGProps } from 'react';
 
-// Icono (línea) que representa cada producto físico (POD). Sustituye a los
-// emojis: la marca nunca usa emojis en la interfaz.
 const PRODUCT_ICONS: Record<string, ComponentType<SVGProps<SVGSVGElement>>> = {
   mug: Coffee,
   tshirt: Shirt,
-  pillow: Sofa,
+  hoodie: Shirt,
   canvas: Frame,
-  tote: ShoppingBag,
+  poster: Frame,
   phonecase: Smartphone,
 };
 
