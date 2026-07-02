@@ -4,6 +4,7 @@ import {
   FALLBACK_BACKGROUND_STANDARD_USD,
   FALLBACK_BACKGROUND_CUSTOM_USD,
   FALLBACK_EXPRESS_SURCHARGE_PCT,
+  FALLBACK_RECORDING_USD,
 } from './fallbacks';
 import { FALLBACK_POD_PRICE_USD } from './products';
 
@@ -19,6 +20,7 @@ export interface PricingConfig {
   backgroundStandardUsd: number;
   backgroundCustomUsd: number;
   expressSurchargePct: number; // 0.30 = 30%
+  recordingUsd: number; // add-on: video del proceso de dibujo
   podProductsUsd: Record<string, number>; // print-on-demand add-on price by product key
 }
 
@@ -27,6 +29,7 @@ const FALLBACK: PricingConfig = {
   backgroundStandardUsd: FALLBACK_BACKGROUND_STANDARD_USD,
   backgroundCustomUsd: FALLBACK_BACKGROUND_CUSTOM_USD,
   expressSurchargePct: FALLBACK_EXPRESS_SURCHARGE_PCT / 100,
+  recordingUsd: FALLBACK_RECORDING_USD,
   podProductsUsd: { ...FALLBACK_POD_PRICE_USD },
 };
 
@@ -63,6 +66,9 @@ export async function loadPricingConfig(): Promise<PricingConfig> {
           break;
         case 'express_surcharge_pct':
           config.expressSurchargePct = amount / 100;
+          break;
+        case 'recording_addon':
+          config.recordingUsd = amount;
           break;
         default:
           // POD add-on prices live under `pod_<key>` (e.g. pod_mug).

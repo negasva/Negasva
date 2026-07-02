@@ -1,25 +1,16 @@
 import type { Metadata, Viewport } from "next";
 import { Montserrat } from "next/font/google";
-import localFont from "next/font/local";
 import Script from "next/script";
 import "./globals.css";
 import { LanguageProvider } from "@/lib/i18n/LanguageContext";
 import { CurrencyProvider } from "@/lib/currency/CurrencyContext";
 import SocialFloats from "@/components/SocialFloats";
 import EmailCapturePopup from "@/components/EmailCapturePopup";
-import TitleAccentStripper from "@/components/TitleAccentStripper";
 
 const montserrat = Montserrat({
   subsets: ["latin"],
   weight: ["400", "600", "900"],
-  display: "swap",
-});
-
-// Fuente para los titulos h1 (Talina Demo). Se expone como variable CSS y se
-// aplica a los h1 desde globals.css.
-const talina = localFont({
-  src: "./fonts/talinademo-regular.otf",
-  variable: "--font-talina",
+  variable: "--font-montserrat",
   display: "swap",
 });
 
@@ -137,13 +128,12 @@ export default function RootLayout({
           async
         />
       </head>
-      <body className={`${montserrat.className} ${talina.variable} min-h-screen flex flex-col bg-white`}>
+      <body className={`${montserrat.className} ${montserrat.variable} min-h-screen flex flex-col bg-white`}>
         <LanguageProvider>
           <CurrencyProvider>
             {children}
             <SocialFloats />
             <EmailCapturePopup />
-            <TitleAccentStripper />
           </CurrencyProvider>
         </LanguageProvider>
       </body>

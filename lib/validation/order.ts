@@ -24,6 +24,8 @@ export const PricingSelectionSchema = z.object({
   peopleCount: z.number().int().min(1).max(MAX_PEOPLE),
   background: z.string().max(60).default('none'),
   express: z.boolean().default(false),
+  // Add-on: video del proceso de dibujo (precio plano, prices.recording_addon).
+  recording: z.boolean().default(false),
   // Print-on-demand physical add-ons as a per-unit map:
   //   { productKey: [ { optionGroup: valueKey }, … ] }
   // The array length is the quantity of that product, and each entry holds the

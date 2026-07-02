@@ -8,10 +8,12 @@ import Logo from '@/components/Logo';
 function SuccessContent() {
   const params = useSearchParams();
   const sessionId = params.get('session_id');                  // Stripe — also the provider_reference
-  const wompiRef = params.get('ref');                           // Wompi provider_reference (negasva-…)
-  const wompiStatus = params.get('status') ?? 'APPROVED';       // APPROVED | DECLINED | VOIDED | ERROR | PENDING
+  const providerRef = params.get('ref');                        // MP/Wompi provider_reference (negasva-…)
+  // Mercado Pago vuelve con collection_status/status (approved|pending|rejected);
+  // Wompi (pedidos antiguos) con status APPROVED|DECLINED|… — se normalizan.
+  const rawStatus = (params.get('collection_status') ?? params.get('status') ?? 'APPROVED').toUpperCase();
   // ref = the value stored as provider_reference in orders table — used for tracking
-  const ref = sessionId ?? wompiRef ?? '';
+  const ref = sessionId ?? providerRef ?? '';
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
@@ -19,8 +21,8 @@ function SuccessContent() {
     return () => clearTimeout(t);
   }, []);
 
-  const isFailure = wompiStatus === 'DECLINED' || wompiStatus === 'ERROR' || wompiStatus === 'VOIDED';
-  const isPending = wompiStatus === 'PENDING';
+  const isFailure = ['DECLINED', 'ERROR', 'VOIDED', 'REJECTED', 'CANCELLED'].includes(rawStatus);
+  const isPending = ['PENDING', 'IN_PROCESS'].includes(rawStatus);
 
   const ui = isFailure
     ? { icon: 'fail', title: 'Pago no completado', body: 'Tu pago no se procesó. Puedes intentarlo de nuevo desde el estudio.' }

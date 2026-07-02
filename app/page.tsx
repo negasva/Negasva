@@ -385,6 +385,9 @@ export default function Home() {
         </div>
       </section>
 
+      {/* D — Testimonios */}
+      <TestimonialsScroll />
+
       {/* C2 — Print on demand: tu dibujo en productos físicos */}
       <section className="py-20 px-4 bg-white">
         <div className="mx-auto max-w-6xl">
@@ -435,8 +438,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* D — Testimonios */}
-      <TestimonialsScroll />
 
       {/* E — Precios */}
       <section className="bg-primary-lighter py-20 px-4">

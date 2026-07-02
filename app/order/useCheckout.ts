@@ -42,6 +42,8 @@ export interface CheckoutSelection {
   specialRequests: string;
   photos: File[];
   express: boolean;
+  /** Add-on: video del proceso de dibujo. */
+  recording: boolean;
   // Per-unit POD add-ons: { productKey: [ { optionGroup: valueKey }, … ] }.
   // Array length is the quantity; each entry is that unit's chosen variant.
   productUnits: ProductUnits;
@@ -55,6 +57,7 @@ export interface PriceBreakdown {
   bgCost: number;
   subtotal: number;
   expressSurcharge: number;
+  recordingCost: number;
   productsCost: number;
   products: string[];
   codeDiscount: number;
@@ -64,7 +67,7 @@ export interface PriceBreakdown {
 
 const ZERO_QUOTE: PriceBreakdown = {
   perPerson: 0, peopleSubtotal: 0, discountRate: 0, discount: 0, bgCost: 0,
-  subtotal: 0, expressSurcharge: 0, productsCost: 0, products: [],
+  subtotal: 0, expressSurcharge: 0, recordingCost: 0, productsCost: 0, products: [],
   codeDiscount: 0, preCodeTotal: 0, total: 0,
 };
 
@@ -111,6 +114,7 @@ export function useCheckout() {
     specialRequests: '',
     photos: [],
     express: false,
+    recording: false,
     productUnits: {},
   });
   const [dynamicBgs, setDynamicBgs] = useState<Record<string, BgItem[]>>({});
@@ -216,6 +220,7 @@ export function useCheckout() {
             peopleCount: selected.peopleCount,
             background: selected.background || 'none',
             express: selected.express,
+            recording: selected.recording,
             productUnits: selected.productUnits,
             ...(discountCode ? { discountCode } : {}),
           }),
@@ -239,7 +244,7 @@ export function useCheckout() {
       } catch { /* keep last known quote */ }
     }, 200);
     return () => { cancelled = true; clearTimeout(timer); };
-  }, [selected.bodyType, selected.peopleCount, selected.background, selected.express, selected.productUnits, discountCode]);
+  }, [selected.bodyType, selected.peopleCount, selected.background, selected.express, selected.recording, selected.productUnits, discountCode]);
 
   // Aplica el código escrito: se manda con el próximo quote y el servidor decide.
   const applyDiscountCode = () => {
@@ -344,6 +349,7 @@ export function useCheckout() {
       background: selected.background,
       peopleCount: selected.peopleCount,
       express: selected.express,
+      recording: selected.recording,
       productUnits: selected.productUnits,
       specialRequests: selected.specialRequests,
       currency: currency.toLowerCase(),
@@ -445,6 +451,8 @@ export function useCheckout() {
     setSelected(prev => ({ ...prev, background: id }));
   const toggleExpress = () =>
     setSelected(prev => ({ ...prev, express: !prev.express }));
+  const toggleRecording = () =>
+    setSelected(prev => ({ ...prev, recording: !prev.recording }));
   // Cantidad seleccionada de un producto (número de unidades).
   const productQty = (key: string) => selected.productUnits[key]?.length ?? 0;
   // Añade una unidad (con su variante por defecto) del producto.
@@ -515,7 +523,7 @@ export function useCheckout() {
     // actions
     nextStep, prevStep, fetchClientSecret, handlePhotoUpload,
     selectStyle, selectBodyType, decPeople, incPeople,
-    selectBackground, toggleExpress, setSpecialRequests,
+    selectBackground, toggleExpress, toggleRecording, setSpecialRequests,
     productQty, addProductUnit, removeProductUnit, removeProductUnitAt, setProductUnitOption,
   };
 }
