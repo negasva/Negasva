@@ -1,11 +1,11 @@
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import { errorResponse, rateLimitByIp, readJson } from '@/lib/security/apiHelpers';
-import { quoteShippingUsd } from '@/lib/printify';
+import { quoteShippingUsd } from '@/lib/printful';
 
 /**
- * Cotización pública de envío de los productos físicos (vía Printify).
- * Devuelve { available:false } cuando Printify no está configurado — el
+ * Cotización pública de envío de los productos físicos (vía Printful).
+ * Devuelve { available:false } cuando Printful no está configurado — el
  * checkout muestra entonces "envío calculado luego" en vez de un monto.
  */
 
@@ -25,7 +25,7 @@ export async function POST(request: Request) {
   const parsed = Schema.safeParse(body);
   if (!parsed.success) return errorResponse(parsed.error.issues[0]?.message ?? 'Invalid input', 400);
 
-  if (!process.env.PRINTIFY_API_TOKEN) {
+  if (!process.env.PRINTFUL_API_TOKEN) {
     return NextResponse.json({ available: false, totalUsd: 0 });
   }
 

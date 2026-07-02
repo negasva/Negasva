@@ -92,6 +92,12 @@ const SAFE_STYLE_NAMES: Record<string, string> = {
 
 const FALLBACK_STYLES = Object.entries(SAFE_STYLE_NAMES).map(([id, name]) => ({ id, name }));
 
+// País estimado para cotizar envío antes de conocer la dirección real
+// (la definitiva se captura en el checkout de Stripe).
+const CURRENCY_COUNTRY: Record<string, string> = {
+  COP: 'CO', USD: 'US', MXN: 'MX', EUR: 'ES', GBP: 'GB', CAD: 'CA',
+};
+
 // Los fondos de la BD llevan el nombre de la serie como prefijo
 // ("Rick & Morty — Portal"); se muestra solo la parte descriptiva.
 const safeBgName = (name: string) => name.replace(/^[^—]*—\s*/, '');
@@ -137,6 +143,8 @@ export function useCheckout() {
   // Authoritative price breakdown comes from the server (/api/pricing/quote).
   // The client never does pricing arithmetic — it only renders this.
   const [quote, setQuote] = useState<PriceBreakdown>(ZERO_QUOTE);
+  // Envío estimado de productos físicos (Printful) — null si no cotizable.
+  const [shippingEstimate, setShippingEstimate] = useState<number | null>(null);
 
   // Al cambiar de paso, la página vuelve siempre al inicio para que el usuario
   // vea el contenido del nuevo paso desde arriba.
@@ -245,6 +253,30 @@ export function useCheckout() {
     }, 200);
     return () => { cancelled = true; clearTimeout(timer); };
   }, [selected.bodyType, selected.peopleCount, selected.background, selected.express, selected.recording, selected.productUnits, discountCode]);
+
+  // Envío estimado (Printful) cuando hay productos físicos. Informativo: la
+  // dirección real se captura en el checkout y el envío final puede variar.
+  useEffect(() => {
+    const hasProducts = Object.values(selected.productUnits).some(list => list.length > 0);
+    if (!hasProducts) { setShippingEstimate(null); return; }
+    let cancelled = false;
+    const timer = setTimeout(async () => {
+      try {
+        const res = await fetch('/api/shipping/quote', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            country: CURRENCY_COUNTRY[currency] ?? 'US',
+            productUnits: selected.productUnits,
+          }),
+        });
+        if (!res.ok) return;
+        const data = await res.json();
+        if (!cancelled) setShippingEstimate(data.available ? Number(data.totalUsd) : null);
+      } catch { /* deja el último estimado */ }
+    }, 300);
+    return () => { cancelled = true; clearTimeout(timer); };
+  }, [selected.productUnits, currency]);
 
   // Aplica el código escrito: se manda con el próximo quote y el servidor decide.
   const applyDiscountCode = () => {
@@ -512,7 +544,7 @@ export function useCheckout() {
     // state
     step, setStep,
     selected,
-    styles, bodyTypes, priceMap,
+    styles, bodyTypes, priceMap, shippingEstimate,
     discountCodeInput, onDiscountInput,
     appliedCode, codeStatus,
     applyDiscountCode, removeDiscountCode,

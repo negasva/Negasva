@@ -80,7 +80,7 @@ export async function POST(request: Request) {
   const totalLocal = quote.total * d.rate;
 
   // Note prepended to the order so the illustrator knows which physical
-  // products to fulfill via Printify (the finished art is the print file).
+  // products to fulfill via Printful (the finished art is the print file).
   const productsNote = productsSummaryEs(productUnits);
   const notes = [
     d.recording ? 'Incluye video del proceso de dibujo' : '',
@@ -323,7 +323,7 @@ export async function POST(request: Request) {
     ...(couponId ? { discounts: [{ coupon: couponId }] } : {}),
     payment_method_types: stripeMethods(d.currency),
     // Con productos físicos pedimos dirección de envío en el propio checkout;
-    // el costo de envío se cotiza con Printify al preparar el pedido.
+    // el costo de envío se cotiza con Printful al preparar el pedido.
     ...(products.length > 0
       ? { shipping_address_collection: { allowed_countries: ['CO', 'US', 'MX', 'ES', 'FR', 'GB', 'DE', 'IT', 'CA', 'AR', 'CL', 'PE', 'EC'] } }
       : {}),

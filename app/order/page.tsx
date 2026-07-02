@@ -45,7 +45,7 @@ function StartNowBanner({ lang }: { lang: Lang }) {
 // exactly what they're paying for (in the site's own style).
 function OrderSummary({ c, sticky = true }: { c: CheckoutController; sticky?: boolean }) {
   const {
-    t, lang, fmt, selected, styles, appliedCode,
+    t, lang, fmt, selected, styles, appliedCode, shippingEstimate,
     priceBreakdown, totalPrice, getBgName, getStyleBgs, getProducts,
   } = c;
   const b = priceBreakdown();
@@ -137,7 +137,9 @@ function OrderSummary({ c, sticky = true }: { c: CheckoutController; sticky?: bo
                   )}
               </div>
               <p className="text-xs text-secondary-lighter pl-2">
-                {pick3(lang as Lang, 'Envío calculado en el checkout', 'Shipping calculated at checkout', 'Livraison calculée au paiement')}
+                {shippingEstimate != null
+                  ? `${pick3(lang as Lang, 'Envío estimado', 'Estimated shipping', 'Livraison estimée')}: ~${fmt(shippingEstimate)}`
+                  : pick3(lang as Lang, 'Envío calculado en el checkout', 'Shipping calculated at checkout', 'Livraison calculée au paiement')}
               </p>
             </>
           )}
