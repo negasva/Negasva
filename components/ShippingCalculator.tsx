@@ -44,6 +44,64 @@ const COUNTRIES: Array<{ code: string; label: Record<Lang, string> }> = [
   { code: 'AU', label: { es: 'Australia', en: 'Australia', fr: 'Australie' } },
 ];
 
+// Estados de EE.UU. (código que espera Printful como state_code). Para US la
+// tarifa depende solo del estado, así que ciudad y ZIP se ocultan y basta
+// elegir de esta lista.
+const US_STATES: Array<{ code: string; name: string }> = [
+  { code: 'AL', name: 'Alabama' },
+  { code: 'AK', name: 'Alaska' },
+  { code: 'AZ', name: 'Arizona' },
+  { code: 'AR', name: 'Arkansas' },
+  { code: 'CA', name: 'California' },
+  { code: 'CO', name: 'Colorado' },
+  { code: 'CT', name: 'Connecticut' },
+  { code: 'DE', name: 'Delaware' },
+  { code: 'DC', name: 'District of Columbia' },
+  { code: 'FL', name: 'Florida' },
+  { code: 'GA', name: 'Georgia' },
+  { code: 'HI', name: 'Hawaii' },
+  { code: 'ID', name: 'Idaho' },
+  { code: 'IL', name: 'Illinois' },
+  { code: 'IN', name: 'Indiana' },
+  { code: 'IA', name: 'Iowa' },
+  { code: 'KS', name: 'Kansas' },
+  { code: 'KY', name: 'Kentucky' },
+  { code: 'LA', name: 'Louisiana' },
+  { code: 'ME', name: 'Maine' },
+  { code: 'MD', name: 'Maryland' },
+  { code: 'MA', name: 'Massachusetts' },
+  { code: 'MI', name: 'Michigan' },
+  { code: 'MN', name: 'Minnesota' },
+  { code: 'MS', name: 'Mississippi' },
+  { code: 'MO', name: 'Missouri' },
+  { code: 'MT', name: 'Montana' },
+  { code: 'NE', name: 'Nebraska' },
+  { code: 'NV', name: 'Nevada' },
+  { code: 'NH', name: 'New Hampshire' },
+  { code: 'NJ', name: 'New Jersey' },
+  { code: 'NM', name: 'New Mexico' },
+  { code: 'NY', name: 'New York' },
+  { code: 'NC', name: 'North Carolina' },
+  { code: 'ND', name: 'North Dakota' },
+  { code: 'OH', name: 'Ohio' },
+  { code: 'OK', name: 'Oklahoma' },
+  { code: 'OR', name: 'Oregon' },
+  { code: 'PA', name: 'Pennsylvania' },
+  { code: 'PR', name: 'Puerto Rico' },
+  { code: 'RI', name: 'Rhode Island' },
+  { code: 'SC', name: 'South Carolina' },
+  { code: 'SD', name: 'South Dakota' },
+  { code: 'TN', name: 'Tennessee' },
+  { code: 'TX', name: 'Texas' },
+  { code: 'UT', name: 'Utah' },
+  { code: 'VT', name: 'Vermont' },
+  { code: 'VA', name: 'Virginia' },
+  { code: 'WA', name: 'Washington' },
+  { code: 'WV', name: 'West Virginia' },
+  { code: 'WI', name: 'Wisconsin' },
+  { code: 'WY', name: 'Wyoming' },
+];
+
 export default function ShippingCalculator({
   productUnits,
   lang,
@@ -64,6 +122,14 @@ export default function ShippingCalculator({
   const [state, setState] = useState('');
   const [city, setCity] = useState('');
   const [zip, setZip] = useState('');
+  // Para EE.UU. la tarifa de Printful depende solo del estado: basta un
+  // dropdown y se ocultan ciudad y ZIP.
+  const isUS = country === 'US';
+
+  const changeCountry = (code: string) => {
+    setCountry(code);
+    setState('');
+  };
   const [status, setStatus] = useState<'idle' | 'loading' | 'done' | 'error'>('idle');
   const [options, setOptions] = useState<ShippingOption[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -80,8 +146,8 @@ export default function ShippingCalculator({
         body: JSON.stringify({
           country,
           ...(state.trim() ? { state: state.trim() } : {}),
-          ...(city.trim() ? { city: city.trim() } : {}),
-          ...(zip.trim() ? { zip: zip.trim() } : {}),
+          ...(!isUS && city.trim() ? { city: city.trim() } : {}),
+          ...(!isUS && zip.trim() ? { zip: zip.trim() } : {}),
           productUnits,
         }),
       });
@@ -131,7 +197,7 @@ export default function ShippingCalculator({
           <span className="block text-xs font-bold text-secondary-lighter mb-1">
             {pick3(lang, 'País', 'Country', 'Pays')}
           </span>
-          <select value={country} onChange={(e) => setCountry(e.target.value)} className={inputClass}>
+          <select value={country} onChange={(e) => changeCountry(e.target.value)} className={inputClass}>
             {COUNTRIES.map((c) => (
               <option key={c.code} value={c.code}>{c.label[lang]}</option>
             ))}
@@ -139,22 +205,39 @@ export default function ShippingCalculator({
         </label>
         <label className="block">
           <span className="block text-xs font-bold text-secondary-lighter mb-1">
-            {pick3(lang, 'Estado / Provincia', 'State / Province', 'État / Province')}
+            {isUS
+              ? pick3(lang, 'Estado', 'State', 'État')
+              : pick3(lang, 'Estado / Provincia', 'State / Province', 'État / Province')}
           </span>
-          <input value={state} onChange={(e) => setState(e.target.value)} maxLength={40} className={inputClass} />
+          {isUS ? (
+            <select value={state} onChange={(e) => setState(e.target.value)} required className={inputClass}>
+              <option value="" disabled>
+                {pick3(lang, 'Elige tu estado', 'Choose your state', 'Choisis ton état')}
+              </option>
+              {US_STATES.map((s) => (
+                <option key={s.code} value={s.code}>{s.name}</option>
+              ))}
+            </select>
+          ) : (
+            <input value={state} onChange={(e) => setState(e.target.value)} maxLength={40} className={inputClass} />
+          )}
         </label>
-        <label className="block">
-          <span className="block text-xs font-bold text-secondary-lighter mb-1">
-            {pick3(lang, 'Ciudad', 'City', 'Ville')}
-          </span>
-          <input value={city} onChange={(e) => setCity(e.target.value)} maxLength={80} className={inputClass} />
-        </label>
-        <label className="block">
-          <span className="block text-xs font-bold text-secondary-lighter mb-1">
-            {pick3(lang, 'Código postal', 'ZIP / Postal code', 'Code postal')}
-          </span>
-          <input value={zip} onChange={(e) => setZip(e.target.value)} maxLength={16} className={inputClass} />
-        </label>
+        {!isUS && (
+          <label className="block">
+            <span className="block text-xs font-bold text-secondary-lighter mb-1">
+              {pick3(lang, 'Ciudad', 'City', 'Ville')}
+            </span>
+            <input value={city} onChange={(e) => setCity(e.target.value)} maxLength={80} className={inputClass} />
+          </label>
+        )}
+        {!isUS && (
+          <label className="block">
+            <span className="block text-xs font-bold text-secondary-lighter mb-1">
+              {pick3(lang, 'Código postal', 'ZIP / Postal code', 'Code postal')}
+            </span>
+            <input value={zip} onChange={(e) => setZip(e.target.value)} maxLength={16} className={inputClass} />
+          </label>
+        )}
         <div className="flex items-end">
           <button
             type="submit"
