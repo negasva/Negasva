@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { Lock, ShieldCheck, Plus, Minus, Check, X, Clock, RefreshCcw, ImageUp, Info, Video } from 'lucide-react';
+import { Lock, ShieldCheck, Plus, Minus, Check, X, Info, Video } from 'lucide-react';
 import Logo from '@/components/Logo';
 import ProductIcon from '@/components/ProductIcon';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
@@ -20,24 +20,6 @@ const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!
 type Lang = 'es' | 'en' | 'fr';
 const pick3 = (lang: Lang, es: string, en: string, fr: string) =>
   lang === 'fr' ? fr : lang === 'en' ? en : es;
-
-// Franja de confianza bajo el progreso del wizard.
-function TrustStrip({ lang }: { lang: Lang }) {
-  const items = [
-    { Icon: Clock, text: pick3(lang, 'Preview en 2-3 días', 'Preview in 2-3 days', 'Aperçu en 2-3 jours') },
-    { Icon: RefreshCcw, text: pick3(lang, 'Revisiones ilimitadas', 'Unlimited revisions', 'Révisions illimitées') },
-    { Icon: ImageUp, text: pick3(lang, 'Sube cualquier foto', 'Upload any photos', 'Téléverse n’importe quelle photo') },
-  ];
-  return (
-    <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 py-3">
-      {items.map(({ Icon, text }) => (
-        <span key={text} className="inline-flex items-center gap-1.5 text-sm font-bold text-secondary">
-          <Icon className="w-4 h-4 text-primary" /> {text}
-        </span>
-      ))}
-    </div>
-  );
-}
 
 // Banner verde: puedes empezar ya y enviar las fotos después.
 function StartNowBanner({ lang }: { lang: Lang }) {
@@ -259,11 +241,8 @@ export default function StudioPage() {
         </div>
       </div>
 
-      {/* Confianza: preview, revisiones, fotos */}
-      <TrustStrip lang={lang as Lang} />
-
       {/* Content */}
-      <main className="mx-auto max-w-6xl px-4 pt-4 pb-28 w-full overflow-x-hidden">
+      <main className="mx-auto max-w-6xl px-4 pt-8 pb-28 w-full overflow-x-hidden">
         <div className={`${step > 1 && step < 5 ? 'lg:grid lg:grid-cols-3 lg:gap-8' : ''}`}>
           {/* Main step content */}
           <div className={step > 1 && step < 5 ? 'lg:col-span-2' : ''}>

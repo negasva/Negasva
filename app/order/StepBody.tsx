@@ -1,8 +1,17 @@
 'use client';
 
-import { Minus, Plus, Flame } from 'lucide-react';
+import Image from 'next/image';
+import { Minus, Plus, Flame, User } from 'lucide-react';
 import { MAX_PEOPLE, nextFamilyTier } from '@/lib/pricing/calc';
 import type { CheckoutController } from './useCheckout';
+
+// Imagen de ejemplo por tipo de cuerpo. Los archivos van en
+// /public/body-types/<slug>.webp; mientras no existan se muestra un
+// espacio reservado con icono (las imágenes reales llegan aparte).
+const BODY_TYPE_IMAGES: Record<string, string> = {
+  torso_only: '/body-types/torso_only.webp',
+  full_body: '/body-types/full_body.webp',
+};
 
 /** Step 2 — body type + number of people. */
 export default function StepBody({ c }: { c: CheckoutController }) {
@@ -60,6 +69,17 @@ export default function StepBody({ c }: { c: CheckoutController }) {
               {selected.bodyType === b.id && (
                 <span className="block text-primary font-bold text-xs mb-2">{t.studio.body_types.selected}</span>
               )}
+              <div className="relative h-36 w-full rounded-xl overflow-hidden bg-primary-lighter/50 mb-3 flex items-center justify-center">
+                <User className="w-10 h-10 text-primary/40" aria-hidden />
+                <Image
+                  src={BODY_TYPE_IMAGES[b.id] ?? `/body-types/${b.id}.webp`}
+                  alt={b.name}
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 640px) 100vw, 340px"
+                  onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
+                />
+              </div>
               <p className="font-black text-xl sm:text-2xl text-secondary mb-2 tracking-tighter">{b.name}</p>
               <p className="text-secondary-lighter text-sm mb-4">{b.desc}</p>
               {b.original && (
