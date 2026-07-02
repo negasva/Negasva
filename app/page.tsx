@@ -4,7 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { ChevronRight, ChevronDown, Palette, Users, Image as ImageIcon, Camera, Sparkles, Tag, Flame } from 'lucide-react';
+import { ChevronRight, ChevronDown, Palette, Users, Image as ImageIcon, Camera, Sparkles, Tag, Flame, Clock, RefreshCcw, ImageUp } from 'lucide-react';
 import { useLanguage } from '@/lib/i18n/LanguageContext';
 import { useAutoTranslate } from '@/lib/i18n/useAutoTranslate';
 import { useCurrency } from '@/lib/currency/CurrencyContext';
@@ -280,6 +280,21 @@ export default function Home() {
         >
           <ChevronDown className="w-8 h-8" />
         </motion.div>
+      </section>
+
+      {/* A2 — Franja de confianza */}
+      <section className="bg-primary-lighter/40 border-b border-primary-lighter py-4 px-4">
+        <div className="mx-auto max-w-5xl flex flex-wrap items-center justify-center gap-x-10 gap-y-2">
+          {[
+            { Icon: Clock, text: tr('Preview en 2-3 días', 'Preview in 2-3 days', 'Aperçu en 2-3 jours') },
+            { Icon: RefreshCcw, text: tr('Revisiones ilimitadas', 'Unlimited revisions', 'Révisions illimitées') },
+            { Icon: ImageUp, text: tr('Sube cualquier foto', 'Upload any photos', 'Téléverse n’importe quelle photo') },
+          ].map(({ Icon, text }) => (
+            <span key={text} className="inline-flex items-center gap-2 text-sm sm:text-base font-bold text-secondary">
+              <Icon className="w-5 h-5 text-primary" /> {text}
+            </span>
+          ))}
+        </div>
       </section>
 
       {/* B — HOW IT WORKS funcional */}

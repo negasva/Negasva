@@ -76,6 +76,18 @@ a {
   @apply transition-colors;
 }
 
+/* Carrusel de reseñas: barra de scroll con los colores de la tienda y sin
+   las flechitas nativas del scrollbar. */
+.reviews-track {
+  scrollbar-width: thin;                 /* Firefox */
+  scrollbar-color: #FC90B6 #FFD0E5;
+}
+.reviews-track::-webkit-scrollbar { height: 8px; }
+.reviews-track::-webkit-scrollbar-track { background: #FFD0E5; border-radius: 9999px; }
+.reviews-track::-webkit-scrollbar-thumb { background: #FC90B6; border-radius: 9999px; }
+.reviews-track::-webkit-scrollbar-thumb:hover { background: #F870A0; }
+.reviews-track::-webkit-scrollbar-button { display: none; width: 0; height: 0; }
+
 /* Marquee animations for testimonials */
 @keyframes marquee-left {
   from { transform: translateX(0); }

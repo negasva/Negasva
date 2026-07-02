@@ -122,7 +122,7 @@ function TestimonialsScroll() {
         </button>
         <div
           ref={trackRef}
-          className="flex gap-5 overflow-x-auto snap-x snap-mandatory scroll-smooth pb-2 sm:mx-8 [scrollbar-width:thin]"
+          className="reviews-track flex gap-5 overflow-x-auto snap-x snap-mandatory scroll-smooth pb-3 sm:mx-8"
         >
           {REVIEWS.map((r) => (
             <ReviewCard key={r.name} {...r} />
