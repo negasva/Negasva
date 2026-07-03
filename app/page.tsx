@@ -134,12 +134,17 @@ export default function Home() {
   const [showStickyCta, setShowStickyCta] = useState(false);
   const [pairs, setPairs] = useState<BeforeAfterPair[]>([]);
   const [activePair, setActivePair] = useState(0);
+  // Evita el flash de las imágenes por defecto: el slider no se pinta hasta
+  // tener la config real del admin.
+  const [configLoaded, setConfigLoaded] = useState(false);
+  const [pairsLoaded, setPairsLoaded] = useState(false);
 
   useEffect(() => {
     // ttlMs:0 + no-store → el contenido editable del admin se ve al instante
     cachedFetchJSON<Partial<LandingConfig>>('/api/landing-config', { ttlMs: 0, init: { cache: 'no-store' } })
       .then((data) => { if (data) setConfig(mergeWithFrench(data)); })
-      .catch(() => null);
+      .catch(() => null)
+      .finally(() => setConfigLoaded(true));
     cachedFetchJSON<ApiFaq[]>('/api/faqs')
       .then((data) => { if (Array.isArray(data)) setFaqs(data.slice(0, 5)); })
       .catch(() => null);
@@ -149,7 +154,8 @@ export default function Home() {
     // Pares antes/después: solo obras con ambas imágenes alimentan el slider.
     cachedFetchJSON<BeforeAfterPair[]>('/api/gallery')
       .then((data) => { if (Array.isArray(data)) setPairs(data.filter((g) => g.before_url && g.image_url)); })
-      .catch(() => null);
+      .catch(() => null)
+      .finally(() => setPairsLoaded(true));
   }, []);
 
   // Sticky CTA en mobile: aparece cuando el hero ya salió de pantalla.
@@ -206,18 +212,24 @@ export default function Home() {
 
       {/* A — HERO full viewport */}
       <section className="relative min-h-[calc(100vh-64px)] flex flex-col items-center justify-center overflow-hidden">
-        <Image src={heroImage} alt={config.gallery_images[0]?.caption ?? 'Negasva'} fill className="object-cover" priority sizes="100vw" />
+        {configLoaded && (
+          <Image src={heroImage} alt={config.gallery_images[0]?.caption ?? 'Negasva'} fill className="object-cover" priority sizes="100vw" />
+        )}
 
         <div className="relative z-10 w-full max-w-6xl mx-auto px-6 py-16 grid md:grid-cols-2 gap-10 lg:gap-14 items-center">
           {/* Izquierda: antes y después arrastrable + miniaturas */}
           <motion.div {...heroItem(0)}>
-            <BeforeAfterSlider
-              key={currentPair.id}
-              beforeSrc={currentPair.before_url ?? SAMPLE_PAIR.before_url!}
-              afterSrc={currentPair.image_url}
-              beforeLabel={tr('Antes', 'Before', 'Avant')}
-              afterLabel={tr('Después', 'After', 'Après')}
-            />
+            {configLoaded && pairsLoaded ? (
+              <BeforeAfterSlider
+                key={currentPair.id}
+                beforeSrc={currentPair.before_url ?? SAMPLE_PAIR.before_url!}
+                afterSrc={currentPair.image_url}
+                beforeLabel={tr('Antes', 'Before', 'Avant')}
+                afterLabel={tr('Después', 'After', 'Après')}
+              />
+            ) : (
+              <div className="w-full aspect-square rounded-2xl bg-white/10" />
+            )}
             {displayPairs.length > 1 && (
               <div className="flex flex-wrap justify-center gap-2 mt-4">
                 {displayPairs.map((p, i) => (
