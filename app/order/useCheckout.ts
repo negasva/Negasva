@@ -421,31 +421,8 @@ export function useCheckout() {
       ...(appliedCode ? { discountCode: appliedCode.code } : {}),
     };
 
-    // COP: Wompi redirect
-    if (currency === 'COP') {
-      try {
-        const recaptchaToken = await getRecaptchaToken('checkout');
-        const res = await fetch('/api/checkout', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ ...params, recaptchaToken }),
-        });
-        // Un 500 puede llegar sin cuerpo JSON; no debe leerse como error de red.
-        const data = await res.json().catch(() => null);
-        if (data?.url) {
-          window.location.href = data.url;
-        } else {
-          setCheckoutError(t.studio.errors.payment);
-          setCheckoutLoading(false);
-        }
-      } catch {
-        setCheckoutError(t.studio.errors.network);
-        setCheckoutLoading(false);
-      }
-      return;
-    }
-
-    // Stripe: embedded checkout (paso 5)
+    // Checkout embebido (paso 5): Stripe para monedas internacionales,
+    // Mercado Pago (Payment Brick) para COP. Ambos cobran dentro de la web.
     setCheckoutParams(params);
     setStep(5);
     setCheckoutLoading(false);
@@ -462,6 +439,20 @@ export function useCheckout() {
     });
     const data = await res.json();
     return data.client_secret ?? '';
+  }, [checkoutParams]);
+
+  // Crea el pedido pendiente de Mercado Pago (COP) y devuelve { reference,
+  // amount } para inicializar el Payment Brick embebido.
+  const createMpOrder = useCallback(async (): Promise<{ reference: string; amount: number } | null> => {
+    if (!checkoutParams) return null;
+    const recaptchaToken = await getRecaptchaToken('checkout');
+    const res = await fetch('/api/checkout', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ...checkoutParams, recaptchaToken }),
+    });
+    const data = await res.json().catch(() => null);
+    return data?.mp ?? null;
   }, [checkoutParams]);
 
   const prevStep = () => {
@@ -584,7 +575,7 @@ export function useCheckout() {
     // derived
     canAdvance, priceBreakdown, totalPrice, getBgName, getStyleBgs, getProducts,
     // actions
-    nextStep, prevStep, fetchClientSecret, handlePhotoUpload,
+    nextStep, prevStep, fetchClientSecret, createMpOrder, handlePhotoUpload,
     selectStyle, selectBodyType, decPeople, incPeople,
     selectBackground, toggleExpress, toggleRecording, setSpecialRequests,
     productQty, addProductUnit, removeProductUnit, removeProductUnitAt, setProductUnitOption,
