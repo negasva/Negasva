@@ -18,6 +18,7 @@ import {
   type ProductUnits,
 } from '@/lib/pricing/products';
 import { MAX_PEOPLE } from '@/lib/pricing/calc';
+import type { ShippingOption, ShippingAddress } from '@/components/ShippingCalculator';
 
 export type { BodyTypeItem };
 
@@ -145,6 +146,9 @@ export function useCheckout() {
   const [quote, setQuote] = useState<PriceBreakdown>(ZERO_QUOTE);
   // Envío estimado de productos físicos (Printful) — null si no cotizable.
   const [shippingEstimate, setShippingEstimate] = useState<number | null>(null);
+  // Método de envío elegido en el calculador: viaja al checkout y se cobra.
+  // El servidor lo re-cotiza con Printful; aquí solo se guarda para mostrar.
+  const [shippingSelection, setShippingSelection] = useState<{ option: ShippingOption; address: ShippingAddress } | null>(null);
 
   // Al cambiar de paso, la página vuelve siempre al inicio para que el usuario
   // vea el contenido del nuevo paso desde arriba.
@@ -278,6 +282,17 @@ export function useCheckout() {
     return () => { cancelled = true; clearTimeout(timer); };
   }, [selected.productUnits, currency]);
 
+  // Si cambian los productos del carrito, la tarifa elegida queda obsoleta
+  // (peso/artículos distintos) — se descarta y el usuario recalcula.
+  useEffect(() => {
+    setShippingSelection(null);
+  }, [selected.productUnits]);
+
+  // Callback del ShippingCalculator: guarda opción + dirección cotizada.
+  const selectShipping = useCallback((option: ShippingOption | null, address?: ShippingAddress) => {
+    setShippingSelection(option && address ? { option, address } : null);
+  }, []);
+
   // Aplica el código escrito: se manda con el próximo quote y el servidor decide.
   const applyDiscountCode = () => {
     const code = discountCodeInput.trim();
@@ -387,6 +402,10 @@ export function useCheckout() {
       currency: currency.toLowerCase(),
       rate: rates[currency] ?? 1,
       photoPaths: uploaded.paths,
+      // Envío elegido: solo id de tarifa + dirección; el servidor re-cotiza.
+      ...(shippingSelection
+        ? { shipping: { rateId: shippingSelection.option.id, ...shippingSelection.address } }
+        : {}),
       ...(uploaded.uploadId ? { uploadId: uploaded.uploadId } : {}),
       ...(appliedCode ? { discountCode: appliedCode.code } : {}),
     };
@@ -448,7 +467,8 @@ export function useCheckout() {
 
   // The breakdown is whatever the server last quoted — no client-side math.
   const priceBreakdown = (): PriceBreakdown => quote;
-  const totalPrice = () => quote.total;
+  // El total mostrado incluye el envío elegido (se cobra como línea aparte).
+  const totalPrice = () => quote.total + (shippingSelection?.option.rateUsd ?? 0);
 
   const getBgName = (id: string) =>
     (t.studio.backgrounds as Record<string, string>)[id] ?? id;
@@ -544,7 +564,7 @@ export function useCheckout() {
     // state
     step, setStep,
     selected,
-    styles, bodyTypes, priceMap, shippingEstimate,
+    styles, bodyTypes, priceMap, shippingEstimate, shippingSelection, selectShipping,
     discountCodeInput, onDiscountInput,
     appliedCode, codeStatus,
     applyDiscountCode, removeDiscountCode,
