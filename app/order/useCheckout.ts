@@ -149,6 +149,10 @@ export function useCheckout() {
   // Método de envío elegido en el calculador: viaja al checkout y se cobra.
   // El servidor lo re-cotiza con Printful; aquí solo se guarda para mostrar.
   const [shippingSelection, setShippingSelection] = useState<{ option: ShippingOption; address: ShippingAddress } | null>(null);
+  // true mientras el calculador tenga opciones que elegir (o falte el estado):
+  // en ese caso no se avanza del paso 4 sin método de envío. Si Printful no
+  // cotiza (país sin cobertura, API caída), no se bloquea el checkout.
+  const [shippingRequired, setShippingRequired] = useState(false);
 
   // Al cambiar de paso, la página vuelve siempre al inicio para que el usuario
   // vea el contenido del nuevo paso desde arriba.
@@ -286,6 +290,11 @@ export function useCheckout() {
   // (peso/artículos distintos) — se descarta y el usuario recalcula.
   useEffect(() => {
     setShippingSelection(null);
+    // Solo se libera la obligatoriedad cuando ya no hay productos físicos.
+    // Con productos, el calculador (que se remonta con cada cambio) es quien
+    // fija el valor — y su efecto corre ANTES que este; resetear aquí lo pisaría.
+    const hasProducts = Object.values(selected.productUnits).some(list => list.length > 0);
+    if (!hasProducts) setShippingRequired(false);
   }, [selected.productUnits]);
 
   // Callback del ShippingCalculator: guarda opción + dirección cotizada.
@@ -315,7 +324,9 @@ export function useCheckout() {
     if (step === 1) return !!selected.style;
     if (step === 2) return !!selected.bodyType;
     if (step === 3) return !!selected.background;
-    // Step 4: las fotos son opcionales, el cliente puede enviarlas luego.
+    // Step 4: las fotos son opcionales, pero con productos físicos el método
+    // de envío es obligatorio (se cobra junto con el pedido).
+    if (step === 4) return !shippingRequired || !!shippingSelection;
     return true;
   };
 
@@ -461,7 +472,7 @@ export function useCheckout() {
   useEffect(() => {
     if (showError && canAdvance()) setShowError(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selected, step, showError]);
+  }, [selected, step, showError, shippingSelection, shippingRequired]);
 
   const onShakeEnd = () => setShaking(false);
 
@@ -564,7 +575,7 @@ export function useCheckout() {
     // state
     step, setStep,
     selected,
-    styles, bodyTypes, priceMap, shippingEstimate, shippingSelection, selectShipping,
+    styles, bodyTypes, priceMap, shippingEstimate, shippingSelection, selectShipping, setShippingRequired,
     discountCodeInput, onDiscountInput,
     appliedCode, codeStatus,
     applyDiscountCode, removeDiscountCode,

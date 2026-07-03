@@ -41,6 +41,57 @@ function StartNowBanner({ lang }: { lang: Lang }) {
   );
 }
 
+// Código de descuento — vive debajo del resumen del pedido, fuera de su
+// contenedor (y dentro del paso 4 en pantallas sin sidebar).
+function DiscountCode({ c }: { c: CheckoutController }) {
+  const {
+    t, fmt, discountCodeInput, onDiscountInput,
+    appliedCode, codeStatus, applyDiscountCode, removeDiscountCode,
+  } = c;
+  return (
+    <div className="mt-4">
+      <label className="block font-bold text-secondary mb-2 text-sm">
+        {t.studio.discount.label} <span className="font-normal text-secondary-lighter">{t.studio.step4.notes_optional}</span>
+      </label>
+      {appliedCode ? (
+        <div className="flex items-center justify-between rounded-2xl border-2 border-primary bg-primary-lighter px-4 py-3">
+          <span className="font-bold text-secondary text-sm">
+            {appliedCode.code} · −{appliedCode.type === 'percentage' ? `${appliedCode.value}%` : fmt(appliedCode.value)}
+          </span>
+          <button
+            type="button"
+            onClick={removeDiscountCode}
+            className="text-xs font-bold text-secondary-lighter hover:text-primary transition-colors"
+          >
+            {t.studio.discount.remove}
+          </button>
+        </div>
+      ) : (
+        <div className="flex gap-2">
+          <input
+            value={discountCodeInput}
+            onChange={(e) => onDiscountInput(e.target.value)}
+            placeholder="MICODIGO"
+            maxLength={40}
+            className="flex-1 min-w-0 rounded-lg border-2 border-primary-lighter px-4 py-3 text-sm font-bold text-secondary uppercase focus:border-primary focus:outline-none"
+          />
+          <button
+            type="button"
+            disabled={discountCodeInput.trim().length < 2 || codeStatus === 'checking'}
+            onClick={applyDiscountCode}
+            className="rounded-lg bg-secondary px-5 py-3 text-sm font-bold text-white hover:bg-secondary-light transition-colors disabled:opacity-40"
+          >
+            {codeStatus === 'checking' ? '...' : t.studio.discount.apply}
+          </button>
+        </div>
+      )}
+      {codeStatus === 'invalid' && (
+        <p className="text-xs text-red-500 font-bold mt-2">{t.studio.discount.invalid}</p>
+      )}
+    </div>
+  );
+}
+
 // Order summary — shown as a sticky sidebar from step 2 onward, and as a
 // static, always-visible card on the checkout step so the customer sees
 // exactly what they're paying for (in the site's own style).
@@ -191,8 +242,6 @@ export default function StudioPage() {
   const {
     t, lang, fmt, currency,
     step, setStep, selected, priceMap,
-    discountCodeInput, onDiscountInput,
-    appliedCode, codeStatus, applyDiscountCode, removeDiscountCode,
     showError,
     checkoutLoading, checkoutError, checkoutParams,
     canAdvance, totalPrice, getProducts,
@@ -443,9 +492,15 @@ export default function StudioPage() {
 
                     <p className="text-xs text-secondary-lighter mt-3">{t.studio.products.digital_note}</p>
 
-                    {/* Calculador de envío: solo con productos físicos en el carrito */}
+                    {/* Calculador de envío: solo con productos físicos en el
+                        carrito. Obligatorio — sin método elegido no se avanza
+                        y se resalta en rojo con shake como el resto. */}
                     {Object.values(selected.productUnits).some(list => list.length > 0) && (
-                      <div className="mt-4">
+                      <div
+                        id="required-field"
+                        onAnimationEnd={c.onShakeEnd}
+                        className={`mt-4 ${c.errorRing} ${c.errorShake}`}
+                      >
                         <ShippingCalculator
                           key={JSON.stringify(selected.productUnits)}
                           productUnits={selected.productUnits}
@@ -453,6 +508,7 @@ export default function StudioPage() {
                           fmt={fmt}
                           defaultCountry={CURRENCY_COUNTRY[currency] ?? 'US'}
                           onSelect={c.selectShipping}
+                          onRequiredChange={c.setShippingRequired}
                         />
                       </div>
                     )}
@@ -501,44 +557,10 @@ export default function StudioPage() {
                     <p className="text-right text-xs text-secondary-lighter mt-2">{selected.specialRequests.length}/500</p>
                   </div>
 
-                  {/* 5 · Código de descuento */}
-                  <div>
-                    <label className="block font-bold text-secondary mb-3">{t.studio.discount.label} <span className="font-normal text-secondary-lighter">{t.studio.step4.notes_optional}</span></label>
-                    {appliedCode ? (
-                      <div className="flex items-center justify-between rounded-2xl border-2 border-primary bg-primary-lighter px-4 py-3">
-                        <span className="font-bold text-secondary text-sm">
-                          {appliedCode.code} · −{appliedCode.type === 'percentage' ? `${appliedCode.value}%` : fmt(appliedCode.value)}
-                        </span>
-                        <button
-                          type="button"
-                          onClick={removeDiscountCode}
-                          className="text-xs font-bold text-secondary-lighter hover:text-primary transition-colors"
-                        >
-                          {t.studio.discount.remove}
-                        </button>
-                      </div>
-                    ) : (
-                      <div className="flex gap-2">
-                        <input
-                          value={discountCodeInput}
-                          onChange={(e) => onDiscountInput(e.target.value)}
-                          placeholder="MICODIGO"
-                          maxLength={40}
-                          className="flex-1 rounded-lg border-2 border-primary-lighter px-4 py-3 text-sm font-bold text-secondary uppercase focus:border-primary focus:outline-none"
-                        />
-                        <button
-                          type="button"
-                          disabled={discountCodeInput.trim().length < 2 || codeStatus === 'checking'}
-                          onClick={applyDiscountCode}
-                          className="rounded-lg bg-secondary px-6 py-3 text-sm font-bold text-white hover:bg-secondary-light transition-colors disabled:opacity-40"
-                        >
-                          {codeStatus === 'checking' ? '...' : t.studio.discount.apply}
-                        </button>
-                      </div>
-                    )}
-                    {codeStatus === 'invalid' && (
-                      <p className="text-xs text-red-500 font-bold mt-2">{t.studio.discount.invalid}</p>
-                    )}
+                  {/* 5 · Código de descuento: solo móvil/tablet — en lg vive
+                      debajo del resumen del pedido en el sidebar. */}
+                  <div className="lg:hidden">
+                    <DiscountCode c={c} />
                   </div>
                 </div>
               </div>
@@ -638,7 +660,12 @@ export default function StudioPage() {
           {/* Sidebar: Order Summary */}
           {step > 1 && step < 5 && (
             <div className="hidden lg:block">
-              <OrderSummary c={c} />
+              {/* Sticky sobre el conjunto: el cupón va debajo del resumen,
+                  fuera de su contenedor, y baja junto con él al hacer scroll. */}
+              <div className="sticky top-24">
+                <OrderSummary c={c} sticky={false} />
+                <DiscountCode c={c} />
+              </div>
             </div>
           )}
         </div>
