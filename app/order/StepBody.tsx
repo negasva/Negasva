@@ -1,7 +1,10 @@
 'use client';
 
 import Image from 'next/image';
+import { useEffect, useState } from 'react';
 import { Minus, Plus, Flame, User, Check } from 'lucide-react';
+import { cachedFetchJSON } from '@/lib/cache/clientCache';
+import type { SiteImages } from '@/lib/siteImages';
 import FitText from '@/components/FitText';
 import { MAX_PEOPLE, nextFamilyTier } from '@/lib/pricing/calc';
 import type { CheckoutController } from './useCheckout';
@@ -21,6 +24,14 @@ export default function StepBody({ c }: { c: CheckoutController }) {
     errorRing, errorShake, onShakeEnd,
     selectBodyType, decPeople, incPeople,
   } = c;
+
+  // Overrides de imagen editables desde /admin/imagenes (clave order_body_<slug>).
+  const [siteImages, setSiteImages] = useState<SiteImages>({});
+  useEffect(() => {
+    cachedFetchJSON<{ site_images?: SiteImages }>('/api/landing-config', { ttlMs: 0, init: { cache: 'no-store' } })
+      .then((data) => { if (data?.site_images) setSiteImages(data.site_images); })
+      .catch(() => null);
+  }, []);
 
   return (
     <div>
@@ -82,7 +93,8 @@ export default function StepBody({ c }: { c: CheckoutController }) {
               <div className="relative h-32 w-full rounded-xl overflow-hidden bg-primary-lighter/50 mb-3 flex items-center justify-center">
                 <User className="w-10 h-10 text-primary/40" aria-hidden />
                 <Image
-                  src={BODY_TYPE_IMAGES[b.id] ?? `/body-types/${b.id}.webp`}
+                  key={siteImages[`order_body_${b.id}`] || b.id}
+                  src={siteImages[`order_body_${b.id}`] || BODY_TYPE_IMAGES[b.id] || `/body-types/${b.id}.webp`}
                   alt={b.name}
                   fill
                   className="object-cover"

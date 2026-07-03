@@ -3,7 +3,7 @@ import { createServerClient, createServiceClient } from '@/lib/supabase/server';
 import { requireAdminRoute } from '@/lib/admin/auth';
 import { errorResponse, rateLimitByIp, readJson, validateSameOrigin } from '@/lib/security/apiHelpers';
 
-const ALLOWED_KEYS = ['hero', 'how_it_works', 'gallery_images', 'stats', 'footer'];
+const ALLOWED_KEYS = ['hero', 'how_it_works', 'gallery_images', 'stats', 'footer', 'site_images'];
 
 export async function GET(request: Request) {
   const rl = await rateLimitByIp(request, { prefix: 'pub-landing', max: 60, windowMs: 60_000 });

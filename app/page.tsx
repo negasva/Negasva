@@ -15,6 +15,7 @@ import Navbar from '@/components/Navbar';
 import PageFooter from '@/components/PageFooter';
 import TestimonialsScroll from '@/components/TestimonialsScroll';
 import BeforeAfterSlider from '@/components/BeforeAfterSlider';
+import { siteImg, type SiteImages } from '@/lib/siteImages';
 
 // ── Tipos y defaults (fallback si /api/landing-config no responde) ──────────
 
@@ -30,7 +31,7 @@ interface StepConfig { step: number; icon: string; title_es: string; title_en: s
 interface GalleryImage { url: string; caption: string; }
 interface StatConfig { value: string; label_es: string; label_en: string; label_fr?: string; }
 interface ApiFaq { id: string; question: string; answer: string; }
-interface LandingConfig { hero: HeroConfig; how_it_works: StepConfig[]; gallery_images: GalleryImage[]; stats: StatConfig[]; }
+interface LandingConfig { hero: HeroConfig; how_it_works: StepConfig[]; gallery_images: GalleryImage[]; stats: StatConfig[]; site_images?: SiteImages; }
 interface BeforeAfterPair { id: string; title: string; style: string | null; image_url: string; before_url: string | null; }
 
 // Par de ejemplo: se usa solo mientras no haya obras reales con foto "antes",
@@ -118,6 +119,7 @@ function mergeWithFrench(data: Partial<LandingConfig>): LandingConfig {
       ...s,
       label_fr: s.label_fr || d.stats[i]?.label_fr,
     })),
+    site_images: data.site_images,
   };
 }
 
@@ -160,10 +162,16 @@ export default function Home() {
 
   const orderHref = '/order';
   // Pares reales si existen; si no, el de ejemplo para que la sección no quede vacía.
-  const displayPairs = pairs.length > 0 ? pairs : [SAMPLE_PAIR];
+  const samplePair: BeforeAfterPair = {
+    ...SAMPLE_PAIR,
+    before_url: siteImg(config.site_images, 'landing_before_sample'),
+    image_url: siteImg(config.site_images, 'landing_after_sample'),
+  };
+  const displayPairs = pairs.length > 0 ? pairs : [samplePair];
   const currentPair = displayPairs[Math.min(activePair, displayPairs.length - 1)];
   const hero = config.hero;
-  const heroImage = config.gallery_images[0]?.url ?? '/backgrounds/rm-1.webp';
+  const si = config.site_images;
+  const heroImage = siteImg(si, 'landing_hero_bg', config.gallery_images[0]?.url);
   // Selección por idioma con fallback fr → en → es.
   const pick = (esVal: string, enVal: string, frVal?: string) =>
     lang === 'fr' ? (frVal || enVal || esVal) : lang === 'en' ? enVal : esVal;
@@ -180,7 +188,7 @@ export default function Home() {
     title_es: s.title_es,
     title_en: s.title_en,
     title_fr: s.title_fr || DEFAULT_CONFIG.how_it_works[i]?.title_fr,
-    img: HOW_STEPS[i]?.img ?? '/backgrounds/rm-1.webp',
+    img: siteImg(si, `landing_how_step_${i + 1}`, HOW_STEPS[i]?.img ?? '/backgrounds/rm-1.webp'),
   }));
 
   // FAQ del admin (español) traducida al idioma activo automáticamente.

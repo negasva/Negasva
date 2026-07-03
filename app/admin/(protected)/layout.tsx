@@ -11,6 +11,7 @@ const NAV: NavItem[] = [
   { href: '/admin/estilos',      label: 'Estilos'         },
   { href: '/admin/body-types',   label: 'Tipos de cuerpo' },
   { href: '/admin/backgrounds',  label: 'Fondos'          },
+  { href: '/admin/imagenes',     label: 'Imágenes del sitio' },
   { href: '/admin/prices',       label: 'Precios'         },
   { href: '/adminlanding',       label: '→ Contenido del sitio' },
 ];
