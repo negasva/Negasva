@@ -9,6 +9,7 @@ import CurrencySwitcher from '@/components/CurrencySwitcher';
 import { loadStripe } from '@stripe/stripe-js';
 import { EmbeddedCheckout, EmbeddedCheckoutProvider } from '@stripe/react-stripe-js';
 import RecaptchaScript from '@/components/RecaptchaScript';
+import MercadoPagoBrick from '@/components/MercadoPagoBrick';
 import { nextFamilyTier } from '@/lib/pricing/calc';
 import ShippingCalculator from '@/components/ShippingCalculator';
 import { useCheckout, CURRENCY_COUNTRY, type CheckoutController } from './useCheckout';
@@ -245,7 +246,7 @@ export default function StudioPage() {
     showError,
     checkoutLoading, checkoutError, checkoutParams,
     canAdvance, totalPrice, getProducts,
-    nextStep, prevStep, fetchClientSecret, handlePhotoUpload,
+    nextStep, prevStep, fetchClientSecret, createMpOrder, handlePhotoUpload,
     toggleExpress, toggleRecording, setSpecialRequests,
     productQty, addProductUnit, removeProductUnit, removeProductUnitAt, setProductUnitOption,
   } = c;
@@ -573,7 +574,7 @@ export default function StudioPage() {
                   <h2 className="font-black text-3xl text-secondary mb-2 tracking-tighter">{t.studio.pay.title}</h2>
                   <div className="flex items-center justify-center gap-4 text-xs text-secondary-lighter flex-wrap">
                     <span className="flex items-center gap-1"><Lock className="w-3 h-3 text-primary" /> {t.studio.pay.ssl}</span>
-                    <span className="flex items-center gap-1"><ShieldCheck className="w-3 h-3 text-primary" /> {t.studio.pay.stripe}</span>
+                    <span className="flex items-center gap-1"><ShieldCheck className="w-3 h-3 text-primary" /> {currency === 'COP' ? 'Mercado Pago' : t.studio.pay.stripe}</span>
                     <span className="flex items-center gap-1"><ShieldCheck className="w-3 h-3 text-primary" /> {t.studio.pay.no_card}</span>
                   </div>
                 </div>
@@ -591,9 +592,13 @@ export default function StudioPage() {
                     </div>
                   </div>
                   <div className="p-4">
-                    <EmbeddedCheckoutProvider stripe={stripePromise} options={{ fetchClientSecret }}>
-                      <EmbeddedCheckout />
-                    </EmbeddedCheckoutProvider>
+                    {currency === 'COP' ? (
+                      <MercadoPagoBrick lang={lang as Lang} createOrder={createMpOrder} />
+                    ) : (
+                      <EmbeddedCheckoutProvider stripe={stripePromise} options={{ fetchClientSecret }}>
+                        <EmbeddedCheckout />
+                      </EmbeddedCheckoutProvider>
+                    )}
                   </div>
                 </div>
                 <div className="mt-6 text-center">

@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import Stripe from 'stripe';
 import { errorResponse, rateLimitByIp, readJson } from '@/lib/security/apiHelpers';
-import { createMpCheckoutUrl, newMpReference } from '@/lib/payments/mercadopago';
+import { newMpReference } from '@/lib/payments/mercadopago';
 import { createServiceClient } from '@/lib/supabase/server';
 import { applyDiscountCode, loadPricingConfig } from '@/lib/pricing/server';
 import { computeQuoteUsd } from '@/lib/pricing/calc';
@@ -126,11 +126,13 @@ export async function POST(request: Request) {
 
   const origin = request.headers.get('origin') ?? process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000';
 
-  // ── Mercado Pago para Colombia (COP) ──────────────────────────────────
+  // ── Mercado Pago para Colombia (COP) — checkout embebido (Payment Brick) ──
+  // Se persiste el pedido pendiente (con el monto AUTORITATIVO) y se devuelven
+  // referencia + monto para inicializar el Brick. El pago real lo crea
+  // /api/payments/mercadopago tomando el monto del pedido, nunca del cliente.
   if (isCop) {
     const reference = newMpReference();
 
-    // Persist a pending order so the webhook can find it by reference
     try {
       const supabase = createServiceClient();
       await supabase.from('orders').insert({
@@ -151,27 +153,19 @@ export async function POST(request: Request) {
         status: 'pending',
       });
     } catch (err) {
-      console.error('[checkout/mercadopago] failed to pre-insert order:', err);
+      // Sin BD no se puede cotejar el pago con el pedido — se aborta el checkout.
+      return errorResponse('Could not create order', 500, err);
     }
 
-    let url: string;
-    try {
-      url = await createMpCheckoutUrl({
-        amountCop: amountMinor,
-        reference,
-        title: `Retrato personalizado NEGASVA — ${d.peopleCount} ${d.peopleCount === 1 ? 'persona' : 'personas'}`,
-        successUrl: `${origin}/checkout/success?provider=mercadopago&ref=${encodeURIComponent(reference)}`,
-        failureUrl: `${origin}/order`,
-        notificationUrl: `${origin}/api/webhooks/mercadopago`,
-      });
-    } catch (err) {
-      // Sin MERCADOPAGO_ACCESS_TOKEN (o si MP rechaza la preferencia) responde
-      // JSON para que el cliente muestre un error de pago, no "error de red".
-      return errorResponse('Payment provider not configured', 500, err);
-    }
     // NOTE: el uso del cupón lo registra el webhook de MP al aprobar el pago,
     // nunca aquí — pagos abandonados/rechazados no queman usos.
-    return NextResponse.json({ url });
+    return NextResponse.json({
+      mp: {
+        reference,
+        amount: amountMinor,
+        description: `Retrato personalizado NEGASVA — ${d.peopleCount} ${d.peopleCount === 1 ? 'persona' : 'personas'}`,
+      },
+    });
   }
 
   // ── Stripe embedded checkout ──────────────────────────────────────────
