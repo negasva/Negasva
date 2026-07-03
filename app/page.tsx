@@ -207,7 +207,6 @@ export default function Home() {
       {/* A — HERO full viewport */}
       <section className="relative min-h-[calc(100vh-64px)] flex flex-col items-center justify-center overflow-hidden">
         <Image src={heroImage} alt={config.gallery_images[0]?.caption ?? 'Negasva'} fill className="object-cover" priority sizes="100vw" />
-        <div className="absolute inset-0 bg-black/65" />
 
         <div className="relative z-10 w-full max-w-6xl mx-auto px-6 py-16 grid md:grid-cols-2 gap-10 lg:gap-14 items-center">
           {/* Izquierda: antes y después arrastrable + miniaturas */}
