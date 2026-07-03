@@ -51,7 +51,7 @@ export default function StepBody({ c }: { c: CheckoutController }) {
         })).map((b) => (
           <div
             key={b.id}
-            className={`rounded-2xl border-2 p-5 text-center transition-all relative ${
+            className={`rounded-2xl border-2 p-5 text-center transition-all relative flex flex-col ${
               b.bestValue
                 ? selected.bodyType === b.id
                   ? 'border-primary bg-gradient-to-br from-primary-lighter via-white to-primary-light ring-4 ring-primary shadow-2xl shadow-primary/50 animate-wiggle-slow'
@@ -72,7 +72,7 @@ export default function StepBody({ c }: { c: CheckoutController }) {
             <button
               type="button"
               onClick={() => selectBodyType(b.id)}
-              className="block w-full text-center focus:outline-none"
+              className="flex flex-col w-full flex-1 text-center focus:outline-none"
             >
               {b.bestValue && (
                 <div className="inline-flex items-center gap-1 bg-primary text-white px-3 py-1 rounded-full text-xs font-black mb-3 shadow-lg ring-2 ring-primary-light">
