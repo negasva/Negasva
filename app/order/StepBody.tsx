@@ -28,29 +28,12 @@ export default function StepBody({ c }: { c: CheckoutController }) {
         <p className="text-lg text-secondary-lighter">{t.studio.step2.subtitle}</p>
       </div>
 
-      {/* Body Type selector: personaje con líneas de corte + tarjetas apiladas */}
+      {/* Body Type selector: grilla de tarjetas tipo ecommerce. */}
       <div
         id="required-field"
         onAnimationEnd={onShakeEnd}
-        className={`flex flex-col md:flex-row items-center md:items-stretch gap-6 md:gap-8 max-w-4xl mx-auto mb-10 ${errorRing} ${errorShake}`}
+        className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto mb-10 ${errorRing} ${errorShake}`}
       >
-        {/* Personaje de referencia: las líneas horizontales marcan dónde corta
-            cada encuadre (cabeza / torso / cuerpo completo). En md+ la columna
-            se estira a la altura de la pila de tarjetas y la imagen la llena
-            por completo (alto = alto de las 3 tarjetas, ancho según su relación
-            de aspecto). En móvil es un tamaño fijo y responsive. */}
-        <div className="shrink-0 flex justify-center md:block md:self-stretch overflow-hidden md:w-44 lg:w-56">
-          <Image
-            src="/images/body-type-character.png"
-            alt={t.studio.step2.title}
-            width={300}
-            height={532}
-            priority
-            className="w-56 sm:w-64 h-auto md:h-full md:w-full object-contain object-top select-none pointer-events-none"
-          />
-        </div>
-
-        <div className="flex-1 w-full space-y-4">
         {bodyTypes.map((bt) => ({
           id: bt.slug,
           // The two default slugs keep their translated copy; admin-created
@@ -154,7 +137,6 @@ export default function StepBody({ c }: { c: CheckoutController }) {
             )}
           </div>
         ))}
-        </div>
       </div>
 
       {/* Dynamic price breakdown — solo móvil/tablet; en lg el sidebar
