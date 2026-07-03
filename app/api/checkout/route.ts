@@ -8,6 +8,7 @@ import { computeQuoteUsd } from '@/lib/pricing/calc';
 import { getPodProduct, productsSummaryEs, optionsSurchargeUsd, optionsLabelEs, sanitizeProductUnits } from '@/lib/pricing/products';
 import { CheckoutSchema } from '@/lib/validation/order';
 import { verifyRecaptcha } from '@/lib/security/recaptcha';
+import { listShippingOptions } from '@/lib/printful';
 
 function getStripe() {
   const key = process.env.STRIPE_SECRET_KEY;
@@ -77,7 +78,28 @@ export async function POST(request: Request) {
   // Physical POD add-ons that survived sanitizing/pricing.
   const products = quote.products;
   const productUnits = sanitizeProductUnits(d.productUnits);
-  const totalLocal = quote.total * d.rate;
+
+  // Envío elegido en el calculador: se re-cotiza con Printful para la misma
+  // dirección y se cobra la tarifa REAL de la opción elegida (por id). Si esa
+  // opción ya no existe, cae a la más barata disponible. El monto del cliente
+  // nunca se usa.
+  let shippingUsd = 0;
+  let shippingName = '';
+  if (products.length > 0 && d.shipping) {
+    const { options } = await listShippingOptions(productUnits, {
+      country: d.shipping.country,
+      state: d.shipping.state,
+      city: d.shipping.city,
+      zip: d.shipping.zip,
+    });
+    const opt = options.find((o) => o.id === d.shipping!.rateId) ?? options[0];
+    if (opt) {
+      shippingUsd = opt.rateUsd;
+      shippingName = opt.name;
+    }
+  }
+
+  const totalLocal = (quote.total + shippingUsd) * d.rate;
 
   // Note prepended to the order so the illustrator knows which physical
   // products to fulfill via Printful (the finished art is the print file).
@@ -85,6 +107,9 @@ export async function POST(request: Request) {
   const notes = [
     d.recording ? 'Incluye video del proceso de dibujo' : '',
     productsNote,
+    shippingName
+      ? `Envío elegido: ${shippingName} — $${shippingUsd.toFixed(2)} USD (${d.shipping?.country ?? ''})`
+      : '',
     d.specialRequests,
   ].filter(Boolean);
   const composedRequests = notes.join('\n');
@@ -198,6 +223,7 @@ export async function POST(request: Request) {
   const bgMinor = Math.round(bgUsd * d.rate * 100);
   const expressMinor = Math.round(expressUsd * d.rate * 100);
   const recordingMinor = Math.round(quote.recordingCost * d.rate * 100);
+  const shippingMinor = Math.round(shippingUsd * d.rate * 100);
 
   const lineItems: Stripe.Checkout.SessionCreateParams.LineItem[] = [
     {
@@ -287,6 +313,22 @@ export async function POST(request: Request) {
     }
   }
 
+  // Envío elegido: se cobra como línea propia para que el cliente lo vea
+  // desglosado igual que en el resumen del pedido.
+  if (shippingMinor > 0) {
+    lineItems.push({
+      price_data: {
+        currency: d.currency,
+        product_data: {
+          name: `Envío: ${shippingName}`,
+          description: 'Envío de tus productos físicos (Printful)',
+        },
+        unit_amount: shippingMinor,
+      },
+      quantity: 1,
+    });
+  }
+
   const stripe = getStripe();
 
   // Promo code shown as a real Stripe discount row instead of text
@@ -301,7 +343,7 @@ export async function POST(request: Request) {
 
   let couponId: string | undefined;
   if (appliedCode) {
-    const lineTotal = perPersonMinor * d.peopleCount + bgMinor + expressMinor + recordingMinor + productsMinor;
+    const lineTotal = perPersonMinor * d.peopleCount + bgMinor + expressMinor + recordingMinor + productsMinor + shippingMinor;
     const amountOff = Math.min(Math.round(appliedCode.amountUsd * d.rate * 100), lineTotal - 50);
     if (amountOff > 0) {
       const coupon = await stripe.coupons.create({
@@ -337,6 +379,9 @@ export async function POST(request: Request) {
       express: String(d.express),
       recording: String(d.recording),
       products: products.join(','),
+      shippingRateId: d.shipping?.rateId ?? '',
+      shippingName,
+      shippingUsd: shippingUsd ? shippingUsd.toFixed(2) : '',
       discountCode: appliedCode?.code ?? '',
       uploadId: d.uploadId ?? '',
       specialRequests: composedRequests.slice(0, 220),

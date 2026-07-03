@@ -49,8 +49,22 @@ export const OrderSelectionSchema = PricingSelectionSchema.extend({
   specialRequests: z.string().max(500).default(''),
 });
 
+// Envío elegido en el calculador del carrito. Solo viaja el ID de la tarifa y
+// la dirección cotizada — el precio SIEMPRE se re-cotiza en el servidor con
+// Printful antes de cobrar (nunca se confía en un monto del cliente).
+export const ShippingSelectionSchema = z.object({
+  rateId: z.string().trim().min(1).max(60),
+  country: z.string().trim().toUpperCase().length(2),
+  state: z.string().trim().max(40).optional(),
+  city: z.string().trim().max(80).optional(),
+  zip: z.string().trim().max(16).optional(),
+});
+
 export const CheckoutSchema = OrderSelectionSchema.extend({
   currency: CURRENCY,
+  // Método de envío elegido para los productos físicos (opcional: sin él se
+  // mantiene el comportamiento anterior — envío cotizado al preparar el pedido).
+  shipping: ShippingSelectionSchema.optional(),
   discountCode: z.string().max(40).optional(),
   // Rutas de las fotos del cliente, ya subidas al bucket order-photos.
   photoPaths: z.array(z.string().max(200)).max(8).optional(),

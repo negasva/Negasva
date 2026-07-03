@@ -6,20 +6,27 @@ import { Truck, Loader2 } from 'lucide-react';
 /**
  * Calculador de envío (Printful) para el carrito: formulario de dirección
  * que consulta /api/shipping y lista las opciones (STANDARD, EXPRESS…) con
- * su precio y plazo. Informativo — la dirección definitiva se captura en el
- * checkout de Stripe y el envío final puede variar.
+ * su precio y plazo. La opción elegida viaja al checkout y se cobra como línea
+ * de envío (el servidor la re-cotiza con Printful antes de cobrar).
  */
 
 type Lang = 'es' | 'en' | 'fr';
 const pick3 = (lang: Lang, es: string, en: string, fr: string) =>
   lang === 'fr' ? fr : lang === 'en' ? en : es;
 
-interface ShippingOption {
+export interface ShippingOption {
   id: string;
   name: string;
   rateUsd: number;
   minDeliveryDays: number | null;
   maxDeliveryDays: number | null;
+}
+
+export interface ShippingAddress {
+  country: string;
+  state?: string;
+  city?: string;
+  zip?: string;
 }
 
 // Países a los que Printful envía con más frecuencia desde nuestra tienda.
@@ -115,8 +122,8 @@ export default function ShippingCalculator({
   /** Formatea un monto USD en la moneda visible del sitio. */
   fmt: (usd: number) => string;
   defaultCountry?: string;
-  /** Notifica la opción elegida (para reflejarla en el resumen si se desea). */
-  onSelect?: (option: ShippingOption | null) => void;
+  /** Notifica la opción elegida y la dirección cotizada, para cobrarla en el checkout. */
+  onSelect?: (option: ShippingOption | null, address?: ShippingAddress) => void;
 }) {
   const [country, setCountry] = useState(defaultCountry);
   const [state, setState] = useState('');
@@ -163,7 +170,12 @@ export default function ShippingCalculator({
 
   const pickOption = (o: ShippingOption) => {
     setSelectedId(o.id);
-    onSelect?.(o);
+    onSelect?.(o, {
+      country,
+      ...(state.trim() ? { state: state.trim() } : {}),
+      ...(!isUS && city.trim() ? { city: city.trim() } : {}),
+      ...(!isUS && zip.trim() ? { zip: zip.trim() } : {}),
+    });
   };
 
   const deliveryLabel = (o: ShippingOption) => {

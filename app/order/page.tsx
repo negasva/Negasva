@@ -46,7 +46,7 @@ function StartNowBanner({ lang }: { lang: Lang }) {
 // exactly what they're paying for (in the site's own style).
 function OrderSummary({ c, sticky = true }: { c: CheckoutController; sticky?: boolean }) {
   const {
-    t, lang, fmt, selected, styles, appliedCode, shippingEstimate,
+    t, lang, fmt, selected, styles, appliedCode, shippingEstimate, shippingSelection,
     priceBreakdown, totalPrice, getBgName, getStyleBgs, getProducts,
   } = c;
   const b = priceBreakdown();
@@ -137,11 +137,20 @@ function OrderSummary({ c, sticky = true }: { c: CheckoutController; sticky?: bo
                     }),
                   )}
               </div>
-              <p className="text-xs text-secondary-lighter pl-2">
-                {shippingEstimate != null
-                  ? `${pick3(lang as Lang, 'Envío estimado', 'Estimated shipping', 'Livraison estimée')}: ~${fmt(shippingEstimate)}`
-                  : pick3(lang as Lang, 'Envío calculado en el checkout', 'Shipping calculated at checkout', 'Livraison calculée au paiement')}
-              </p>
+              {shippingSelection ? (
+                <div className="flex justify-between">
+                  <span className="text-secondary-lighter">
+                    {pick3(lang as Lang, 'Envío', 'Shipping', 'Livraison')}: {shippingSelection.option.name}
+                  </span>
+                  <span className="font-bold text-secondary">+{fmt(shippingSelection.option.rateUsd)}</span>
+                </div>
+              ) : (
+                <p className="text-xs text-secondary-lighter pl-2">
+                  {shippingEstimate != null
+                    ? `${pick3(lang as Lang, 'Envío estimado', 'Estimated shipping', 'Livraison estimée')}: ~${fmt(shippingEstimate)}`
+                    : pick3(lang as Lang, 'Envío calculado en el checkout', 'Shipping calculated at checkout', 'Livraison calculée au paiement')}
+                </p>
+              )}
             </>
           )}
           {appliedCode && b.codeDiscount > 0 && (
@@ -438,10 +447,12 @@ export default function StudioPage() {
                     {Object.values(selected.productUnits).some(list => list.length > 0) && (
                       <div className="mt-4">
                         <ShippingCalculator
+                          key={JSON.stringify(selected.productUnits)}
                           productUnits={selected.productUnits}
                           lang={lang as Lang}
                           fmt={fmt}
                           defaultCountry={CURRENCY_COUNTRY[currency] ?? 'US'}
+                          onSelect={c.selectShipping}
                         />
                       </div>
                     )}
