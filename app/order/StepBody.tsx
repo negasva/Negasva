@@ -2,6 +2,7 @@
 
 import Image from 'next/image';
 import { Minus, Plus, Flame, User, Check } from 'lucide-react';
+import FitText from '@/components/FitText';
 import { MAX_PEOPLE, nextFamilyTier } from '@/lib/pricing/calc';
 import type { CheckoutController } from './useCheckout';
 
@@ -100,9 +101,9 @@ export default function StepBody({ c }: { c: CheckoutController }) {
             <button
               type="button"
               onClick={() => selectBodyType(b.id)}
-              className={`block w-full bg-gradient-to-r from-primary to-primary-dark text-white rounded-xl px-2 py-3 font-black text-base sm:text-lg whitespace-nowrap ${b.bestValue ? 'shadow-lg shadow-primary/40' : ''}`}
+              className={`block w-full bg-gradient-to-r from-primary to-primary-dark text-white rounded-xl px-3 py-3 font-black text-base sm:text-lg ${b.bestValue ? 'shadow-lg shadow-primary/40' : ''}`}
             >
-              <span className="block leading-tight">{fmt(b.price)}{t.studio.body_types.per_person}</span>
+              <FitText className="leading-tight">{fmt(b.price)}{t.studio.body_types.per_person}</FitText>
             </button>
 
             {/* Stepper de personas con altura reservada fija: la tarjeta mide
