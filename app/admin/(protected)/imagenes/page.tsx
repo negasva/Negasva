@@ -39,6 +39,7 @@ export default function SiteImagesPage() {
           section: 'Tipo de cuerpo',
           label: `Tarjeta ${bt.name}`,
           def: `/body-types/${bt.slug}.webp`,
+          recommended: '600 × 400 px',
         }));
       setSlots([...SITE_IMAGE_SLOTS, ...extra]);
     }
@@ -139,6 +140,7 @@ export default function SiteImagesPage() {
                     section: 'Galería pedidos',
                     label: `Imagen ${i + 1}${i === 0 ? ' (también fondo del header si no hay override)' : ''} — ${img.caption}`,
                     def: img.url,
+                    recommended: '840 × 560 px',
                   }}
                   current={img.url}
                   saving={savingKey === `gallery_${i}`}
@@ -210,6 +212,11 @@ function SlotCard({
       </div>
       <div className="p-3 space-y-2">
         <p className="text-xs font-bold text-secondary">{slot.label}</p>
+        {slot.recommended && (
+          <p className="text-[10px] font-bold text-primary bg-primary/10 rounded-md px-2 py-1 inline-block">
+            Recomendado: {slot.recommended}
+          </p>
+        )}
         <p className="text-[10px] text-secondary-lighter break-all">
           {slot.page} → {slot.section} · <span className="font-mono">{effective}</span>
         </p>
