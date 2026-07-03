@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Truck, Loader2 } from 'lucide-react';
 
 /**
@@ -115,6 +115,7 @@ export default function ShippingCalculator({
   fmt,
   defaultCountry = 'US',
   onSelect,
+  onRequiredChange,
 }: {
   /** Unidades de productos físicos seleccionadas (mismo shape que el checkout). */
   productUnits: Record<string, Array<Record<string, string>>>;
@@ -124,13 +125,17 @@ export default function ShippingCalculator({
   defaultCountry?: string;
   /** Notifica la opción elegida y la dirección cotizada, para cobrarla en el checkout. */
   onSelect?: (option: ShippingOption | null, address?: ShippingAddress) => void;
+  /**
+   * Notifica si elegir método de envío debe ser obligatorio: true mientras hay
+   * opciones que elegir (o falta el estado para cotizar); false cuando Printful
+   * no devuelve opciones o falla — ahí no se puede bloquear el checkout.
+   */
+  onRequiredChange?: (required: boolean) => void;
 }) {
   const [country, setCountry] = useState(defaultCountry);
   const [state, setState] = useState('');
-  const [city, setCity] = useState('');
-  const [zip, setZip] = useState('');
-  // Para EE.UU. la tarifa de Printful depende solo del estado: basta un
-  // dropdown y se ocultan ciudad y ZIP.
+  // La tarifa de Printful se cotiza solo por país + estado/provincia, sin
+  // ciudad ni ZIP (la dirección completa se captura al pagar).
   const isUS = country === 'US';
 
   const changeCountry = (code: string) => {
@@ -141,40 +146,59 @@ export default function ShippingCalculator({
   const [options, setOptions] = useState<ShippingOption[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
-  const calculate = async (e: React.FormEvent) => {
-    e.preventDefault();
+  // Cotización automática al cambiar país/estado — sin botón. Debounce para
+  // no disparar una llamada por cada tecla en el campo de provincia.
+  useEffect(() => {
+    // En EE.UU. la tarifa depende del estado: se espera a que elija uno.
+    if (isUS && !state) {
+      setOptions([]);
+      setStatus('idle');
+      setSelectedId(null);
+      onSelect?.(null);
+      // Falta elegir estado: sigue siendo obligatorio completar el envío.
+      onRequiredChange?.(true);
+      return;
+    }
+    let cancelled = false;
     setStatus('loading');
     setSelectedId(null);
     onSelect?.(null);
-    try {
-      const res = await fetch('/api/shipping', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          country,
-          ...(state.trim() ? { state: state.trim() } : {}),
-          ...(!isUS && city.trim() ? { city: city.trim() } : {}),
-          ...(!isUS && zip.trim() ? { zip: zip.trim() } : {}),
-          productUnits,
-        }),
-      });
-      if (!res.ok) throw new Error('bad status');
-      const data = await res.json();
-      setOptions(data.available ? (data.options as ShippingOption[]) : []);
-      setStatus('done');
-    } catch {
-      setOptions([]);
-      setStatus('error');
-    }
-  };
+    onRequiredChange?.(true);
+    const timer = setTimeout(async () => {
+      try {
+        const res = await fetch('/api/shipping', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            country,
+            ...(state.trim() ? { state: state.trim() } : {}),
+            productUnits,
+          }),
+        });
+        if (!res.ok) throw new Error('bad status');
+        const data = await res.json();
+        if (cancelled) return;
+        const opts = data.available ? (data.options as ShippingOption[]) : [];
+        setOptions(opts);
+        setStatus('done');
+        onRequiredChange?.(opts.length > 0);
+      } catch {
+        if (cancelled) return;
+        setOptions([]);
+        setStatus('error');
+        // Sin cotización posible no se puede exigir la selección.
+        onRequiredChange?.(false);
+      }
+    }, 400);
+    return () => { cancelled = true; clearTimeout(timer); };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [country, state]);
 
   const pickOption = (o: ShippingOption) => {
     setSelectedId(o.id);
     onSelect?.(o, {
       country,
       ...(state.trim() ? { state: state.trim() } : {}),
-      ...(!isUS && city.trim() ? { city: city.trim() } : {}),
-      ...(!isUS && zip.trim() ? { zip: zip.trim() } : {}),
     });
   };
 
@@ -198,14 +222,14 @@ export default function ShippingCalculator({
       <p className="text-xs text-secondary-lighter mb-3">
         {pick3(
           lang,
-          'Estimado según tu dirección. La dirección definitiva se confirma al pagar.',
-          'Estimate based on your address. The final address is confirmed at checkout.',
-          'Estimation selon ton adresse. L’adresse définitive est confirmée au paiement.',
+          'Elige tu método de envío — se cobra junto con tu pedido. La dirección definitiva se confirma al pagar.',
+          'Choose your shipping method — it is charged with your order. The final address is confirmed at checkout.',
+          'Choisis ton mode de livraison — il est facturé avec ta commande. L’adresse définitive est confirmée au paiement.',
         )}
       </p>
 
-      <form onSubmit={calculate} className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        <label className="block sm:col-span-2">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <label className="block">
           <span className="block text-xs font-bold text-secondary-lighter mb-1">
             {pick3(lang, 'País', 'Country', 'Pays')}
           </span>
@@ -234,33 +258,14 @@ export default function ShippingCalculator({
             <input value={state} onChange={(e) => setState(e.target.value)} maxLength={40} className={inputClass} />
           )}
         </label>
-        {!isUS && (
-          <label className="block">
-            <span className="block text-xs font-bold text-secondary-lighter mb-1">
-              {pick3(lang, 'Ciudad', 'City', 'Ville')}
-            </span>
-            <input value={city} onChange={(e) => setCity(e.target.value)} maxLength={80} className={inputClass} />
-          </label>
-        )}
-        {!isUS && (
-          <label className="block">
-            <span className="block text-xs font-bold text-secondary-lighter mb-1">
-              {pick3(lang, 'Código postal', 'ZIP / Postal code', 'Code postal')}
-            </span>
-            <input value={zip} onChange={(e) => setZip(e.target.value)} maxLength={16} className={inputClass} />
-          </label>
-        )}
-        <div className="flex items-end">
-          <button
-            type="submit"
-            disabled={status === 'loading'}
-            className="w-full rounded-lg bg-secondary px-4 py-2.5 text-sm font-bold text-white hover:bg-secondary-light transition-colors disabled:opacity-40 flex items-center justify-center gap-2"
-          >
-            {status === 'loading' && <Loader2 className="w-4 h-4 animate-spin" />}
-            {pick3(lang, 'Calcular envío', 'Calculate shipping', 'Calculer')}
-          </button>
-        </div>
-      </form>
+      </div>
+
+      {status === 'loading' && (
+        <p className="flex items-center gap-2 text-xs text-secondary-lighter font-bold mt-3">
+          <Loader2 className="w-4 h-4 animate-spin" />
+          {pick3(lang, 'Calculando envío…', 'Calculating shipping…', 'Calcul de la livraison…')}
+        </p>
+      )}
 
       {status === 'error' && (
         <p className="text-xs text-red-500 font-bold mt-3">

@@ -5,6 +5,14 @@ import { Minus, Plus, Flame, User } from 'lucide-react';
 import { MAX_PEOPLE, nextFamilyTier } from '@/lib/pricing/calc';
 import type { CheckoutController } from './useCheckout';
 
+// Imagen de ejemplo por tipo de cuerpo. Los archivos van en
+// /public/body-types/<slug>.webp; mientras no existan se muestra un
+// espacio reservado con icono (las imágenes reales llegan aparte).
+const BODY_TYPE_IMAGES: Record<string, string> = {
+  torso_only: '/body-types/torso_only.webp',
+  full_body: '/body-types/full_body.webp',
+};
+
 /** Step 2 — body type + number of people. */
 export default function StepBody({ c }: { c: CheckoutController }) {
   const {
@@ -27,15 +35,17 @@ export default function StepBody({ c }: { c: CheckoutController }) {
         className={`flex flex-col md:flex-row items-center md:items-start gap-6 md:gap-8 max-w-3xl mx-auto mb-10 ${errorRing} ${errorShake}`}
       >
         {/* Personaje de referencia: las líneas horizontales marcan dónde corta
-            cada encuadre (cabeza / torso / cuerpo completo). */}
-        <div className="shrink-0 md:sticky md:top-28">
+            cada encuadre (cabeza / torso / cuerpo completo). En md+ el
+            contenedor se estira a la altura de la pila de tarjetas y la imagen
+            la llena verticalmente. */}
+        <div className="shrink-0 relative w-52 sm:w-64 md:w-72 md:self-stretch">
           <Image
             src="/images/body-type-character.png"
             alt={t.studio.step2.title}
             width={300}
             height={532}
             priority
-            className="w-52 sm:w-64 md:w-72 h-auto select-none pointer-events-none"
+            className="w-full h-auto md:absolute md:inset-0 md:h-full md:w-full md:object-contain md:object-top select-none pointer-events-none"
           />
         </div>
 
@@ -79,24 +89,41 @@ export default function StepBody({ c }: { c: CheckoutController }) {
               {selected.bodyType === b.id && (
                 <span className="block text-primary font-bold text-xs mb-2">{t.studio.body_types.selected}</span>
               )}
-              <User className="w-8 h-8 mx-auto text-primary/50 mb-2" aria-hidden />
+              <div className="relative h-32 w-full rounded-xl overflow-hidden bg-primary-lighter/50 mb-3 flex items-center justify-center">
+                <User className="w-10 h-10 text-primary/40" aria-hidden />
+                <Image
+                  src={BODY_TYPE_IMAGES[b.id] ?? `/body-types/${b.id}.webp`}
+                  alt={b.name}
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 640px) 100vw, 340px"
+                  onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
+                />
+              </div>
               <p className="font-black text-xl text-secondary mb-1 tracking-tighter">{b.name}</p>
               <p className="text-secondary-lighter text-xs mb-3">{b.desc}</p>
               {b.original && (
                 <p className="text-xs text-secondary-lighter line-through mb-1">{fmt(b.original)}</p>
               )}
-              <div className={`bg-gradient-to-r from-primary to-primary-dark text-white rounded-xl px-2 py-3 font-black text-base sm:text-lg whitespace-nowrap ${b.bestValue ? 'shadow-lg shadow-primary/40' : ''}`}>
-                <span className="block leading-tight">{fmt(b.price)}{t.studio.body_types.per_person}</span>
-              </div>
             </button>
 
-            {/* Contador de personas: dentro de la tarjeta seleccionada. */}
+            {/* Precio y (si está seleccionada) contador de personas en la
+                misma fila, alineados horizontalmente. */}
             {selected.bodyType === b.id && (
-              <div className="mt-5 pt-4 border-t-2 border-primary/30">
-                <p className="text-xs font-black text-secondary-lighter uppercase tracking-wide mb-2">
-                  {t.studio.step2.people_title}
-                </p>
-                <div className="flex items-center justify-center gap-3">
+              <p className="text-xs font-black text-secondary-lighter uppercase tracking-wide mb-2">
+                {t.studio.step2.people_title}
+              </p>
+            )}
+            <div className="flex items-center gap-3">
+              <button
+                type="button"
+                onClick={() => selectBodyType(b.id)}
+                className={`flex-1 bg-gradient-to-r from-primary to-primary-dark text-white rounded-xl px-2 py-3 font-black text-base sm:text-lg whitespace-nowrap ${b.bestValue ? 'shadow-lg shadow-primary/40' : ''}`}
+              >
+                <span className="block leading-tight">{fmt(b.price)}{t.studio.body_types.per_person}</span>
+              </button>
+              {selected.bodyType === b.id && (
+                <div className="flex items-center gap-2 shrink-0">
                   <button
                     type="button"
                     onClick={decPeople}
@@ -106,7 +133,7 @@ export default function StepBody({ c }: { c: CheckoutController }) {
                   >
                     <Minus className="w-4 h-4" />
                   </button>
-                  <span className="font-black text-2xl text-secondary w-9 text-center tabular-nums">{selected.peopleCount}</span>
+                  <span className="font-black text-2xl text-secondary w-8 text-center tabular-nums">{selected.peopleCount}</span>
                   <button
                     type="button"
                     onClick={incPeople}
@@ -117,10 +144,12 @@ export default function StepBody({ c }: { c: CheckoutController }) {
                     <Plus className="w-4 h-4" />
                   </button>
                 </div>
-                <p className="text-xs text-secondary-lighter mt-2">
-                  {t.studio.step2.people_subtitle}
-                </p>
-              </div>
+              )}
+            </div>
+            {selected.bodyType === b.id && (
+              <p className="text-xs text-secondary-lighter mt-2">
+                {t.studio.step2.people_subtitle}
+              </p>
             )}
           </div>
         ))}
