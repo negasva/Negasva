@@ -21,6 +21,22 @@ export default function BeforeAfterSlider({
   const containerRef = useRef<HTMLDivElement>(null);
   const [pos, setPos] = useState(50);
   const dragging = useRef(false);
+  const [interacted, setInteracted] = useState(false);
+
+  // Vaivén automático del divisor hasta que el usuario lo toca: enseña que
+  // el slider se puede arrastrar. Respeta prefers-reduced-motion.
+  useEffect(() => {
+    if (interacted) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    let raf = 0;
+    const start = performance.now();
+    const tick = (now: number) => {
+      setPos(50 + Math.sin((now - start) / 1100) * 20);
+      raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [interacted]);
 
   const updateFromClientX = useCallback((clientX: number) => {
     const el = containerRef.current;
@@ -49,6 +65,7 @@ export default function BeforeAfterSlider({
       ref={containerRef}
       className="relative w-full aspect-square select-none overflow-hidden rounded-2xl shadow-lg border-2 border-primary-lighter touch-none"
       onPointerDown={(e) => {
+        setInteracted(true);
         dragging.current = true;
         updateFromClientX(e.clientX);
       }}
