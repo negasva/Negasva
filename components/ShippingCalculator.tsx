@@ -149,13 +149,14 @@ export default function ShippingCalculator({
   // Cotización automática al cambiar país/estado — sin botón. Debounce para
   // no disparar una llamada por cada tecla en el campo de provincia.
   useEffect(() => {
-    // En EE.UU. la tarifa depende del estado: se espera a que elija uno.
-    if (isUS && !state) {
+    // El estado/provincia es obligatorio en TODOS los países para poder
+    // cotizar: sin él no hay tarifa y el envío queda pendiente (bloquea el
+    // checkout hasta que se complete).
+    if (!state.trim()) {
       setOptions([]);
       setStatus('idle');
       setSelectedId(null);
       onSelect?.(null);
-      // Falta elegir estado: sigue siendo obligatorio completar el envío.
       onRequiredChange?.(true);
       return;
     }
@@ -171,7 +172,7 @@ export default function ShippingCalculator({
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             country,
-            ...(state.trim() ? { state: state.trim() } : {}),
+            state: state.trim(),
             productUnits,
           }),
         });
@@ -181,12 +182,21 @@ export default function ShippingCalculator({
         const opts = data.available ? (data.options as ShippingOption[]) : [];
         setOptions(opts);
         setStatus('done');
-        onRequiredChange?.(opts.length > 0);
+        if (opts.length > 0) {
+          // Se selecciona automáticamente la opción más barata (vienen
+          // ordenadas por precio); el usuario puede cambiarla.
+          setSelectedId(opts[0].id);
+          onSelect?.(opts[0], { country, state: state.trim() });
+          onRequiredChange?.(true);
+        } else {
+          // Sin cobertura para esta dirección: no se puede exigir selección
+          // (el envío se cotiza al preparar el pedido).
+          onRequiredChange?.(false);
+        }
       } catch {
         if (cancelled) return;
         setOptions([]);
         setStatus('error');
-        // Sin cotización posible no se puede exigir la selección.
         onRequiredChange?.(false);
       }
     }, 400);
@@ -259,6 +269,14 @@ export default function ShippingCalculator({
           )}
         </label>
       </div>
+
+      {status === 'idle' && (
+        <p className="text-xs text-primary font-bold mt-3">
+          {isUS
+            ? pick3(lang, 'Elige tu estado para ver las opciones de envío.', 'Choose your state to see shipping options.', 'Choisis ton état pour voir les options de livraison.')
+            : pick3(lang, 'Escribe tu estado o provincia para ver las opciones de envío.', 'Enter your state or province to see shipping options.', 'Saisis ton état ou province pour voir les options de livraison.')}
+        </p>
+      )}
 
       {status === 'loading' && (
         <p className="flex items-center gap-2 text-xs text-secondary-lighter font-bold mt-3">

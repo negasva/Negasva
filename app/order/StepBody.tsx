@@ -32,20 +32,21 @@ export default function StepBody({ c }: { c: CheckoutController }) {
       <div
         id="required-field"
         onAnimationEnd={onShakeEnd}
-        className={`flex flex-col md:flex-row items-center md:items-start gap-6 md:gap-8 max-w-3xl mx-auto mb-10 ${errorRing} ${errorShake}`}
+        className={`flex flex-col md:flex-row items-center md:items-stretch gap-6 md:gap-8 max-w-4xl mx-auto mb-10 ${errorRing} ${errorShake}`}
       >
         {/* Personaje de referencia: las líneas horizontales marcan dónde corta
-            cada encuadre (cabeza / torso / cuerpo completo). En md+ el
-            contenedor se estira a la altura de la pila de tarjetas y la imagen
-            la llena verticalmente. */}
-        <div className="shrink-0 relative w-52 sm:w-64 md:w-72 md:self-stretch">
+            cada encuadre (cabeza / torso / cuerpo completo). En md+ la columna
+            se estira a la altura de la pila de tarjetas y la imagen la llena
+            por completo (alto = alto de las 3 tarjetas, ancho según su relación
+            de aspecto). En móvil es un tamaño fijo y responsive. */}
+        <div className="shrink-0 flex justify-center md:block md:self-stretch">
           <Image
             src="/images/body-type-character.png"
             alt={t.studio.step2.title}
             width={300}
             height={532}
             priority
-            className="w-full h-auto md:absolute md:inset-0 md:h-full md:w-full md:object-contain md:object-top select-none pointer-events-none"
+            className="w-56 sm:w-64 h-auto md:h-full md:w-auto md:max-w-none object-contain object-top select-none pointer-events-none"
           />
         </div>
 
