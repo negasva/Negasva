@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import { Minus, Plus, Flame, User } from 'lucide-react';
+import { Minus, Plus, Flame, User, Check } from 'lucide-react';
 import { MAX_PEOPLE, nextFamilyTier } from '@/lib/pricing/calc';
 import type { CheckoutController } from './useCheckout';
 
@@ -60,6 +60,14 @@ export default function StepBody({ c }: { c: CheckoutController }) {
                   : 'border-primary-lighter bg-white hover:border-primary hover:shadow-lg'
             }`}
           >
+            {selected.bodyType === b.id && (
+              <span
+                className="absolute top-3 right-3 z-10 w-7 h-7 rounded-full bg-primary text-white flex items-center justify-center shadow-lg ring-2 ring-white"
+                aria-label={t.studio.body_types.selected}
+              >
+                <Check className="w-4 h-4" strokeWidth={3} />
+              </span>
+            )}
             <button
               type="button"
               onClick={() => selectBodyType(b.id)}
@@ -69,9 +77,6 @@ export default function StepBody({ c }: { c: CheckoutController }) {
                 <div className="inline-flex items-center gap-1 bg-primary text-white px-3 py-1 rounded-full text-xs font-black mb-3 shadow-lg ring-2 ring-primary-light">
                   {t.studio.body_types.best_value}
                 </div>
-              )}
-              {selected.bodyType === b.id && (
-                <span className="block text-primary font-bold text-xs mb-2">{t.studio.body_types.selected}</span>
               )}
               <div className="relative h-32 w-full rounded-xl overflow-hidden bg-primary-lighter/50 mb-3 flex items-center justify-center">
                 <User className="w-10 h-10 text-primary/40" aria-hidden />
@@ -91,50 +96,47 @@ export default function StepBody({ c }: { c: CheckoutController }) {
               )}
             </button>
 
-            {/* Precio y (si está seleccionada) contador de personas en la
-                misma fila, alineados horizontalmente. */}
-            {selected.bodyType === b.id && (
-              <p className="text-xs font-black text-secondary-lighter uppercase tracking-wide mb-2">
-                {t.studio.step2.people_title}
-              </p>
-            )}
-            <div className="flex items-center gap-3">
-              <button
-                type="button"
-                onClick={() => selectBodyType(b.id)}
-                className={`flex-1 bg-gradient-to-r from-primary to-primary-dark text-white rounded-xl px-2 py-3 font-black text-base sm:text-lg whitespace-nowrap ${b.bestValue ? 'shadow-lg shadow-primary/40' : ''}`}
-              >
-                <span className="block leading-tight">{fmt(b.price)}{t.studio.body_types.per_person}</span>
-              </button>
+            {/* Precio en fila completa. */}
+            <button
+              type="button"
+              onClick={() => selectBodyType(b.id)}
+              className={`block w-full bg-gradient-to-r from-primary to-primary-dark text-white rounded-xl px-2 py-3 font-black text-base sm:text-lg whitespace-nowrap ${b.bestValue ? 'shadow-lg shadow-primary/40' : ''}`}
+            >
+              <span className="block leading-tight">{fmt(b.price)}{t.studio.body_types.per_person}</span>
+            </button>
+
+            {/* Stepper de personas con altura reservada fija: la tarjeta mide
+                lo mismo esté o no seleccionada (solo se muestra al seleccionar). */}
+            <div className="h-14 mt-3 flex flex-col items-center justify-center">
               {selected.bodyType === b.id && (
-                <div className="flex items-center gap-2 shrink-0">
-                  <button
-                    type="button"
-                    onClick={decPeople}
-                    disabled={selected.peopleCount <= 1}
-                    aria-label={t.studio.step2.remove_person}
-                    className="w-9 h-9 rounded-full bg-white shadow flex items-center justify-center text-secondary hover:bg-primary hover:text-white transition-all disabled:opacity-30"
-                  >
-                    <Minus className="w-4 h-4" />
-                  </button>
-                  <span className="font-black text-2xl text-secondary w-8 text-center tabular-nums">{selected.peopleCount}</span>
-                  <button
-                    type="button"
-                    onClick={incPeople}
-                    disabled={selected.peopleCount >= MAX_PEOPLE}
-                    aria-label={t.studio.step2.add_person}
-                    className="w-9 h-9 rounded-full bg-primary text-white shadow flex items-center justify-center hover:bg-primary-dark transition-all disabled:opacity-30 disabled:bg-primary-lighter disabled:text-secondary"
-                  >
-                    <Plus className="w-4 h-4" />
-                  </button>
-                </div>
+                <>
+                  <div className="flex items-center gap-3">
+                    <button
+                      type="button"
+                      onClick={decPeople}
+                      disabled={selected.peopleCount <= 1}
+                      aria-label={t.studio.step2.remove_person}
+                      className="w-9 h-9 rounded-full bg-white shadow flex items-center justify-center text-secondary hover:bg-primary hover:text-white transition-all disabled:opacity-30"
+                    >
+                      <Minus className="w-4 h-4" />
+                    </button>
+                    <span className="font-black text-2xl text-secondary w-8 text-center tabular-nums">{selected.peopleCount}</span>
+                    <button
+                      type="button"
+                      onClick={incPeople}
+                      disabled={selected.peopleCount >= MAX_PEOPLE}
+                      aria-label={t.studio.step2.add_person}
+                      className="w-9 h-9 rounded-full bg-primary text-white shadow flex items-center justify-center hover:bg-primary-dark transition-all disabled:opacity-30 disabled:bg-primary-lighter disabled:text-secondary"
+                    >
+                      <Plus className="w-4 h-4" />
+                    </button>
+                  </div>
+                  <p className="text-[11px] text-secondary-lighter mt-1 leading-tight">
+                    {t.studio.step2.people_subtitle}
+                  </p>
+                </>
               )}
             </div>
-            {selected.bodyType === b.id && (
-              <p className="text-xs text-secondary-lighter mt-2">
-                {t.studio.step2.people_subtitle}
-              </p>
-            )}
           </div>
         ))}
       </div>
