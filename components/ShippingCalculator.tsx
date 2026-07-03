@@ -14,6 +14,33 @@ type Lang = 'es' | 'en' | 'fr';
 const pick3 = (lang: Lang, es: string, en: string, fr: string) =>
   lang === 'fr' ? fr : lang === 'en' ? en : es;
 
+// Los nombres de las opciones de envío vienen de la API de Printful SIEMPRE en
+// inglés ("Flat Rate", "Standard", "Express", "Standard rate with CO2
+// offsetting"…). Se traducen al idioma del sitio; si aparece un nombre nuevo no
+// mapeado, se muestra tal cual (fallback seguro).
+const SHIPPING_NAME_MAP: Array<{ re: RegExp; label: Record<Lang, string> }> = [
+  { re: /flat\s*rate/i, label: { es: 'Tarifa plana', en: 'Flat rate', fr: 'Tarif forfaitaire' } },
+  { re: /economy/i, label: { es: 'Económico', en: 'Economy', fr: 'Économique' } },
+  { re: /overnight/i, label: { es: 'Entrega al día siguiente', en: 'Overnight', fr: 'Livraison le lendemain' } },
+  { re: /express/i, label: { es: 'Exprés', en: 'Express', fr: 'Express' } },
+  { re: /standard/i, label: { es: 'Estándar', en: 'Standard', fr: 'Standard' } },
+];
+
+function localizeShippingName(name: string, lang: Lang): string {
+  // Printful anexa al nombre un paréntesis en inglés con la fecha estimada
+  // ("(Estimated delivery: Jul 16)"). Ya mostramos el plazo en "días hábiles"
+  // justo debajo, así que se elimina para no dejar texto en inglés.
+  const withoutEta = name.replace(/\s*\(estimated delivery[^)]*\)/i, '').trim();
+  // Suffix de compensación de CO2 que Printful añade a algunas tarifas.
+  const hasCo2 = /co2|carbon/i.test(withoutEta);
+  const base = withoutEta.replace(/\s*(?:with|\+|,)?\s*(?:co2|carbon)[^,]*offsett?ing/i, '').trim();
+  const match = SHIPPING_NAME_MAP.find((m) => m.re.test(base));
+  const translated = match ? match.label[lang] : base;
+  if (!hasCo2) return translated;
+  const co2 = pick3(lang, 'con compensación de CO₂', 'with CO₂ offsetting', 'avec compensation CO₂');
+  return `${translated} (${co2})`;
+}
+
 export interface ShippingOption {
   id: string;
   name: string;
@@ -318,13 +345,13 @@ export default function ShippingCalculator({
                   : 'border-primary-lighter hover:border-primary'
               }`}
             >
-              <span className="min-w-0">
-                <span className="block font-bold text-secondary text-sm truncate">{o.name}</span>
+              <span className="min-w-0 flex-1">
+                <span className="block font-bold text-secondary text-sm truncate">{localizeShippingName(o.name, lang)}</span>
                 {deliveryLabel(o) && (
                   <span className="block text-xs text-secondary-lighter">{deliveryLabel(o)}</span>
                 )}
               </span>
-              <span className="font-black text-secondary text-sm whitespace-nowrap">{fmt(o.rateUsd)}</span>
+              <span className="font-black text-secondary text-sm whitespace-nowrap shrink-0">{fmt(o.rateUsd)}</span>
             </button>
           ))}
         </div>
