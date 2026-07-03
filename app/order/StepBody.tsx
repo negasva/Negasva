@@ -5,14 +5,6 @@ import { Minus, Plus, Flame, User } from 'lucide-react';
 import { MAX_PEOPLE, nextFamilyTier } from '@/lib/pricing/calc';
 import type { CheckoutController } from './useCheckout';
 
-// Imagen de ejemplo por tipo de cuerpo. Los archivos van en
-// /public/body-types/<slug>.webp; mientras no existan se muestra un
-// espacio reservado con icono (las imágenes reales llegan aparte).
-const BODY_TYPE_IMAGES: Record<string, string> = {
-  torso_only: '/body-types/torso_only.webp',
-  full_body: '/body-types/full_body.webp',
-};
-
 /** Step 2 — body type + number of people. */
 export default function StepBody({ c }: { c: CheckoutController }) {
   const {
@@ -28,8 +20,26 @@ export default function StepBody({ c }: { c: CheckoutController }) {
         <p className="text-lg text-secondary-lighter">{t.studio.step2.subtitle}</p>
       </div>
 
-      {/* Body Type selector */}
-      <div id="required-field" onAnimationEnd={onShakeEnd} className={`grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-2xl mx-auto mb-10 ${errorRing} ${errorShake}`}>
+      {/* Body Type selector: personaje con líneas de corte + tarjetas apiladas */}
+      <div
+        id="required-field"
+        onAnimationEnd={onShakeEnd}
+        className={`flex flex-col md:flex-row items-center md:items-start gap-6 md:gap-8 max-w-3xl mx-auto mb-10 ${errorRing} ${errorShake}`}
+      >
+        {/* Personaje de referencia: las líneas horizontales marcan dónde corta
+            cada encuadre (cabeza / torso / cuerpo completo). */}
+        <div className="shrink-0 md:sticky md:top-28">
+          <Image
+            src="/images/body-type-character.png"
+            alt={t.studio.step2.title}
+            width={300}
+            height={532}
+            priority
+            className="w-52 sm:w-64 md:w-72 h-auto select-none pointer-events-none"
+          />
+        </div>
+
+        <div className="flex-1 w-full space-y-4">
         {bodyTypes.map((bt) => ({
           id: bt.slug,
           // The two default slugs keep their translated copy; admin-created
@@ -46,7 +56,7 @@ export default function StepBody({ c }: { c: CheckoutController }) {
         })).map((b) => (
           <div
             key={b.id}
-            className={`rounded-2xl border-2 p-6 text-center transition-all relative ${
+            className={`rounded-2xl border-2 p-5 text-center transition-all relative ${
               b.bestValue
                 ? selected.bodyType === b.id
                   ? 'border-primary bg-gradient-to-br from-primary-lighter via-white to-primary-light ring-4 ring-primary shadow-2xl shadow-primary/50 animate-wiggle-slow'
@@ -69,19 +79,9 @@ export default function StepBody({ c }: { c: CheckoutController }) {
               {selected.bodyType === b.id && (
                 <span className="block text-primary font-bold text-xs mb-2">{t.studio.body_types.selected}</span>
               )}
-              <div className="relative h-36 w-full rounded-xl overflow-hidden bg-primary-lighter/50 mb-3 flex items-center justify-center">
-                <User className="w-10 h-10 text-primary/40" aria-hidden />
-                <Image
-                  src={BODY_TYPE_IMAGES[b.id] ?? `/body-types/${b.id}.webp`}
-                  alt={b.name}
-                  fill
-                  className="object-cover"
-                  sizes="(max-width: 640px) 100vw, 340px"
-                  onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
-                />
-              </div>
-              <p className="font-black text-xl sm:text-2xl text-secondary mb-2 tracking-tighter">{b.name}</p>
-              <p className="text-secondary-lighter text-sm mb-4">{b.desc}</p>
+              <User className="w-8 h-8 mx-auto text-primary/50 mb-2" aria-hidden />
+              <p className="font-black text-xl text-secondary mb-1 tracking-tighter">{b.name}</p>
+              <p className="text-secondary-lighter text-xs mb-3">{b.desc}</p>
               {b.original && (
                 <p className="text-xs text-secondary-lighter line-through mb-1">{fmt(b.original)}</p>
               )}
@@ -124,6 +124,7 @@ export default function StepBody({ c }: { c: CheckoutController }) {
             )}
           </div>
         ))}
+        </div>
       </div>
 
       {/* Dynamic price breakdown — solo móvil/tablet; en lg el sidebar
