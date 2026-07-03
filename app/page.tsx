@@ -211,7 +211,7 @@ export default function Home() {
       <Navbar />
 
       {/* A — HERO full viewport */}
-      <section className="relative min-h-[calc(100vh-64px)] flex flex-col items-center justify-center overflow-hidden">
+      <section className="relative min-h-[calc(100vh-64px)] flex flex-col items-center justify-center overflow-hidden bg-secondary">
         {configLoaded && (
           <Image src={heroImage} alt={config.gallery_images[0]?.caption ?? 'Negasva'} fill className="object-cover" priority sizes="100vw" />
         )}
@@ -262,11 +262,11 @@ export default function Home() {
               </motion.div>
             </motion.div>
 
-            <motion.h1 {...heroItem(0.2)} className="font-black text-4xl sm:text-5xl lg:text-6xl tracking-tighter leading-none mb-5">
+            <motion.h1 {...heroItem(0.2)} className="font-black text-4xl sm:text-5xl lg:text-6xl tracking-tighter leading-none mb-5 [text-shadow:_0_2px_16px_rgba(0,0,0,0.6)]">
               <span className="text-white block">{pick(hero.headline_es, hero.headline_en, hero.headline_fr)}</span>
               <span className="text-primary block">{pick(hero.headline_highlight_es, hero.headline_highlight_en, hero.headline_highlight_fr)}</span>
             </motion.h1>
-            <motion.p {...heroItem(0.3)} className="text-base sm:text-lg text-gray-200 leading-relaxed max-w-xl mx-auto md:mx-0 mb-8">
+            <motion.p {...heroItem(0.3)} className="text-base sm:text-lg text-white leading-relaxed max-w-xl mx-auto md:mx-0 mb-8 [text-shadow:_0_1px_10px_rgba(0,0,0,0.7)]">
               {pick(hero.subheadline_es, hero.subheadline_en, hero.subheadline_fr)}
             </motion.p>
             <motion.div {...heroItem(0.4)} className="flex flex-col items-center md:items-start gap-4 mb-8">
@@ -274,7 +274,7 @@ export default function Home() {
                 {pick(hero.cta_primary_es, hero.cta_primary_en, hero.cta_primary_fr)}
                 <ChevronRight className="w-6 h-6" />
               </Link>
-              <a href="#how-it-works" className="inline-flex items-center gap-2 rounded-lg border border-white/60 px-5 py-2.5 font-bold text-white/90 hover:bg-white hover:text-secondary transition-colors text-sm">
+              <a href="#how-it-works" className="inline-flex items-center gap-2 rounded-lg border border-white/60 bg-black/20 backdrop-blur-sm px-5 py-2.5 font-bold text-white hover:bg-white hover:text-secondary transition-colors text-sm">
                 {pick(hero.cta_secondary_es, hero.cta_secondary_en, hero.cta_secondary_fr)}
               </a>
               {weeklyOrders >= 3 && (
@@ -284,10 +284,10 @@ export default function Home() {
               )}
             </motion.div>
 
-            <motion.div {...heroItem(0.5)} className="flex flex-wrap justify-center md:justify-start items-center gap-x-8 gap-y-2 text-white">
-              <span><span className="font-black text-xl">1.8M</span> <span className="text-sm text-gray-300">TikTok</span></span>
-              <span><span className="font-black text-xl">50K</span> <span className="text-sm text-gray-300">Instagram</span></span>
-              <span><span className="font-black text-xl">+1000</span> <span className="text-sm text-gray-300">{tr('clientes', 'clients', 'clients')}</span></span>
+            <motion.div {...heroItem(0.5)} className="flex flex-wrap justify-center md:justify-start items-center gap-x-8 gap-y-2 text-white [text-shadow:_0_1px_10px_rgba(0,0,0,0.7)]">
+              <span><span className="font-black text-xl">1.8M</span> <span className="text-sm text-gray-200">TikTok</span></span>
+              <span><span className="font-black text-xl">50K</span> <span className="text-sm text-gray-200">Instagram</span></span>
+              <span><span className="font-black text-xl">+1000</span> <span className="text-sm text-gray-200">{tr('clientes', 'clients', 'clients')}</span></span>
             </motion.div>
           </div>
         </div>
