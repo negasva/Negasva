@@ -39,14 +39,14 @@ export default function StepBody({ c }: { c: CheckoutController }) {
             se estira a la altura de la pila de tarjetas y la imagen la llena
             por completo (alto = alto de las 3 tarjetas, ancho según su relación
             de aspecto). En móvil es un tamaño fijo y responsive. */}
-        <div className="shrink-0 flex justify-center md:block md:self-stretch">
+        <div className="shrink-0 flex justify-center md:block md:self-stretch overflow-hidden md:w-44 lg:w-56">
           <Image
             src="/images/body-type-character.png"
             alt={t.studio.step2.title}
             width={300}
             height={532}
             priority
-            className="w-56 sm:w-64 h-auto md:h-full md:w-auto md:max-w-none object-contain object-top select-none pointer-events-none"
+            className="w-56 sm:w-64 h-auto md:h-full md:w-full object-contain object-top select-none pointer-events-none"
           />
         </div>
 
