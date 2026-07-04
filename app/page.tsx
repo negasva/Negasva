@@ -159,11 +159,11 @@ export default function Home() {
   const si = config.site_images;
 
   // Hero images: use admin-configured photos when set, otherwise placeholders.
-  const heroImg1 = siteImg(si, 'landing_hero_img1', null);
-  const heroImg2 = siteImg(si, 'landing_hero_img2', null);
+  const heroImg1 = siteImg(si, 'landing_hero_img1', undefined);
+  const heroImg2 = siteImg(si, 'landing_hero_img2', undefined);
   // "Pasos" images
-  const pasosImg1 = siteImg(si, 'landing_paso_img1', null);
-  const pasosImg2 = siteImg(si, 'landing_paso_img2', null);
+  const pasosImg1 = siteImg(si, 'landing_paso_img1', undefined);
+  const pasosImg2 = siteImg(si, 'landing_paso_img2', undefined);
 
   const faqFlatSrc = faqs.flatMap((f) => [f.question, f.answer]);
   const { translated: faqFlatTr } = useAutoTranslate(faqFlatSrc);
