@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Montserrat } from "next/font/google";
+import { Montserrat, Caveat } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
 import { LanguageProvider } from "@/lib/i18n/LanguageContext";
@@ -11,6 +11,13 @@ const montserrat = Montserrat({
   subsets: ["latin"],
   weight: ["400", "600", "900"],
   variable: "--font-montserrat",
+  display: "swap",
+});
+
+const caveat = Caveat({
+  subsets: ["latin"],
+  weight: ["500", "700"],
+  variable: "--font-caveat",
   display: "swap",
 });
 
@@ -128,7 +135,7 @@ export default function RootLayout({
           async
         />
       </head>
-      <body className={`${montserrat.className} ${montserrat.variable} min-h-screen flex flex-col bg-white`}>
+      <body className={`${montserrat.className} ${montserrat.variable} ${caveat.variable} min-h-screen flex flex-col bg-white`}>
         <LanguageProvider>
           <CurrencyProvider>
             {children}
