@@ -229,3 +229,15 @@ a {
   .flota-retrato-a,
   .flota-retrato-b { animation: none !important; }
 }
+
+/* En móvil la máscara orgánica se estira a lo alto y sus bordes ondulados
+   invaden el contenido (recorta títulos y botones de las tarjetas de precio).
+   Debajo de md se sustituye por un rectángulo redondeado normal. */
+@media (max-width: 767px) {
+  .forma-cuadro1,
+  .forma-cuadro2 {
+    -webkit-mask-image: none;
+    mask-image: none;
+    border-radius: 28px;
+  }
+}

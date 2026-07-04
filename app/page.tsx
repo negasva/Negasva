@@ -183,7 +183,7 @@ export default function Home() {
           {/* Left: copy */}
           <div>
             {/* Badge */}
-            <div className="inline-flex items-center gap-2.5 bg-primary text-white font-black text-lg px-6 py-3 rounded-full shadow-[0_10px_30px_rgba(252,144,182,0.45)] pulso-badge mb-7">
+            <div className="inline-flex items-center gap-2.5 bg-primary text-white font-black text-base md:text-lg px-5 md:px-6 py-2.5 md:py-3 rounded-full shadow-[0_10px_30px_rgba(252,144,182,0.45)] pulso-badge mb-7">
               <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
                 <path d="M3 11 L11 3 L20 3 L20 12 L12 20 Z" fill="none" stroke="#fff" strokeWidth="2" strokeLinejoin="round" />
                 <circle cx="15.5" cy="7.5" r="1.6" fill="#fff" />
@@ -192,7 +192,7 @@ export default function Home() {
             </div>
 
             {/* H1 with animated sketch underline */}
-            <h1 className="font-black text-[58px] md:text-[62px] leading-[1.02] mb-2 tracking-tight">
+            <h1 className="font-black text-[40px] sm:text-[50px] md:text-[62px] leading-[1.05] md:leading-[1.02] mb-2 tracking-tight">
               {pick(hero.headline_es, hero.headline_en, hero.headline_fr)}
               <span className="relative inline-block text-primary-dark ml-2">
                 {pick(hero.headline_highlight_es, hero.headline_highlight_en, hero.headline_highlight_fr)}
@@ -200,7 +200,7 @@ export default function Home() {
                   className="sketch-anim"
                   viewBox="0 0 420 36"
                   aria-hidden="true"
-                  style={{ position: 'absolute', left: '-4px', bottom: '-20px', width: '104%', height: '36px', overflow: 'visible' }}
+                  style={{ position: 'absolute', left: '-0.05em', bottom: '-0.32em', width: '104%', height: '0.58em', overflow: 'visible' }}
                 >
                   <path d="M6 12 C 80 4, 200 2, 412 9" fill="none" stroke="#FC90B6" strokeWidth="6" strokeLinecap="round" />
                   <path d="M20 24 C 120 17, 260 15, 380 21" fill="none" stroke="#FC90B6" strokeWidth="5" strokeLinecap="round" opacity={0.7} />
@@ -218,7 +218,7 @@ export default function Home() {
             <div className="flex items-center gap-4 flex-wrap mb-7">
               <Link
                 href={orderHref}
-                className="inline-flex items-center gap-2.5 bg-primary text-white font-black text-xl px-11 py-5 rounded-[14px] shadow-[0_14px_34px_rgba(252,144,182,0.5)] hover:bg-primary-dark hover:scale-[1.03] transition-all"
+                className="inline-flex items-center justify-center gap-2.5 bg-primary text-white font-black text-lg md:text-xl px-8 md:px-11 py-4 md:py-5 rounded-[14px] shadow-[0_14px_34px_rgba(252,144,182,0.5)] hover:bg-primary-dark hover:scale-[1.03] transition-all w-full sm:w-auto"
               >
                 {pick(hero.cta_primary_es, hero.cta_primary_en, hero.cta_primary_fr)} →
               </Link>
@@ -250,7 +250,7 @@ export default function Home() {
               {/* Portrait 1 */}
               <div className="relative z-10 flota-retrato-a">
                 {heroImg1 ? (
-                  <div className="w-[250px] h-[330px] rounded-[130px] overflow-hidden shadow-[0_18px_40px_rgba(0,0,0,0.14)]">
+                  <div className="relative w-[250px] h-[330px] rounded-[130px] overflow-hidden shadow-[0_18px_40px_rgba(0,0,0,0.14)]">
                     <Image src={heroImg1} alt="Retrato cartoon" fill className="object-cover" sizes="250px" />
                   </div>
                 ) : (
@@ -263,7 +263,7 @@ export default function Home() {
               {/* Portrait 2 */}
               <div className="relative z-0 -ml-9 mt-[70px] flota-retrato-b">
                 {heroImg2 ? (
-                  <div className="w-[220px] h-[290px] rounded-[115px] overflow-hidden shadow-[0_18px_40px_rgba(0,0,0,0.14)]">
+                  <div className="relative w-[220px] h-[290px] rounded-[115px] overflow-hidden shadow-[0_18px_40px_rgba(0,0,0,0.14)]">
                     <Image src={heroImg2} alt="Retrato cartoon ejemplo" fill className="object-cover" sizes="220px" />
                   </div>
                 ) : (
@@ -278,7 +278,7 @@ export default function Home() {
         </div>
 
         {/* Trust strip */}
-        <div className="mx-auto max-w-[900px] mt-14 flex justify-center gap-11 flex-wrap">
+        <div className="mx-auto max-w-[900px] mt-10 md:mt-14 flex justify-center gap-x-6 gap-y-3 md:gap-11 flex-wrap">
           {[
             { icon: <Clock className="w-5 h-5 text-primary" />, text: tr('Preview en 2–3 días', 'Preview in 2–3 days', 'Aperçu en 2–3 jours') },
             { icon: <RefreshCcw className="w-5 h-5 text-primary" />, text: tr('Revisiones ilimitadas', 'Unlimited revisions', 'Révisions illimitées') },
@@ -301,7 +301,7 @@ export default function Home() {
           <div className="relative min-h-[360px] hidden md:block">
             <div className="absolute top-0 left-[4%] rotate-[-3deg] z-10">
               {pasosImg1 ? (
-                <div className="w-[240px] h-[320px] rounded-[120px] overflow-hidden shadow-[0_16px_36px_rgba(0,0,0,0.13)] bg-white">
+                <div className="relative w-[240px] h-[320px] rounded-[120px] overflow-hidden shadow-[0_16px_36px_rgba(0,0,0,0.13)] bg-white">
                   <Image src={pasosImg1} alt="Ejemplo de retrato" fill className="object-cover" sizes="240px" />
                 </div>
               ) : (
@@ -310,7 +310,7 @@ export default function Home() {
             </div>
             <div className="absolute top-[110px] left-[46%] rotate-[2deg] z-0">
               {pasosImg2 ? (
-                <div className="w-[220px] h-[300px] rounded-[110px] overflow-hidden shadow-[0_16px_36px_rgba(0,0,0,0.13)] bg-white">
+                <div className="relative w-[220px] h-[300px] rounded-[110px] overflow-hidden shadow-[0_16px_36px_rgba(0,0,0,0.13)] bg-white">
                   <Image src={pasosImg2} alt="Retrato en pareja" fill className="object-cover" sizes="220px" />
                 </div>
               ) : (
@@ -321,7 +321,7 @@ export default function Home() {
 
           {/* Right: headline + steps */}
           <div>
-            <h2 className="font-black text-[40px] md:text-[46px] leading-[1.08] mb-10">
+            <h2 className="font-black text-[32px] md:text-[46px] leading-[1.1] md:leading-[1.08] mb-10">
               {tr('Crea tu regalo personalizado en', 'Create your personalised gift in', 'Crée ton cadeau personnalisé en')}
               {' '}
               <span className="relative inline-block px-2 py-1">
@@ -375,7 +375,7 @@ export default function Home() {
             <span className="font-caveat font-bold text-[28px] text-primary-dark inline-block rotate-[-2deg] mb-2">
               {tr('nuevo', 'new', 'nouveau')}
             </span>
-            <h2 className="font-black text-[40px] md:text-[46px] leading-[1.08] mb-5">
+            <h2 className="font-black text-[32px] md:text-[46px] leading-[1.1] md:leading-[1.08] mb-5">
               {tr('Tu dibujo, en lo que', 'Your drawing, on anything', 'Ton dessin, sur ce que')}{' '}
               <span className="relative inline-block text-primary-dark">
                 {tr('tú quieras', 'you want', 'tu veux')}
@@ -435,16 +435,16 @@ export default function Home() {
       {/* ══ PRECIOS ══ */}
       <section className="bg-white pb-24 px-6">
         <div className="mx-auto max-w-[900px]">
-          <h2 className="font-black text-[40px] md:text-[46px] text-center mb-2">{t.home.pricing.title}</h2>
+          <h2 className="font-black text-[32px] md:text-[46px] text-center mb-2">{t.home.pricing.title}</h2>
           <p className="text-center text-[17px] text-secondary-lighter mb-12">{t.home.pricing.subtitle}</p>
 
           <div className="grid md:grid-cols-2 gap-9">
             {/* Torso */}
             <div className="caja-flotante">
-              <div className="forma-cuadro1 bg-[#FFF1F7] px-9 pt-12 pb-10 text-center">
+              <div className="forma-cuadro1 bg-[#FFF1F7] px-6 md:px-9 pt-10 md:pt-12 pb-8 md:pb-10 text-center">
                 <h4 className="font-black text-[21px] mb-1">{t.home.pricing.one_torso}</h4>
                 <p className="text-sm text-secondary-lighter mb-4">{t.home.pricing.one_torso_desc}</p>
-                <p className="font-black text-[52px] text-primary-dark mb-6">{fmt(15)}</p>
+                <p className="font-black text-[44px] md:text-[52px] text-primary-dark mb-6">{fmt(15)}</p>
                 <Link href={orderHref} className="block bg-secondary text-white font-black py-4 rounded-xl hover:bg-secondary-light transition-colors">
                   {t.home.pricing.cta}
                 </Link>
@@ -457,10 +457,10 @@ export default function Home() {
                 ★ {tr('Más popular', 'Most popular', 'Le plus populaire')}
               </span>
               <div className="caja-flotante-glow">
-                <div className="forma-cuadro2 forma-varia bg-white px-9 pt-12 pb-10 text-center">
+                <div className="forma-cuadro2 forma-varia bg-white px-6 md:px-9 pt-10 md:pt-12 pb-8 md:pb-10 text-center border-2 border-primary-lighter md:border-0">
                   <h4 className="font-black text-[21px] mb-1">{t.home.pricing.one_full}</h4>
                   <p className="text-sm text-secondary-lighter mb-4">{t.home.pricing.one_full_desc}</p>
-                  <p className="font-black text-[52px] text-primary-dark mb-6">{fmt(25)}</p>
+                  <p className="font-black text-[44px] md:text-[52px] text-primary-dark mb-6">{fmt(25)}</p>
                   <Link href={orderHref} className="block bg-primary text-white font-black py-4 rounded-xl hover:bg-primary-dark transition-colors">
                     {t.home.pricing.cta}
                   </Link>
@@ -482,7 +482,7 @@ export default function Home() {
       {faqsT.length > 0 && (
         <section className="bg-white pb-20 px-6">
           <div className="mx-auto max-w-[720px]">
-            <h2 className="font-black text-[40px] text-center mb-9">
+            <h2 className="font-black text-[32px] md:text-[40px] text-center mb-9">
               {tr('Preguntas frecuentes', 'Frequently asked questions', 'Questions fréquentes')}
             </h2>
             <div className="flex flex-col gap-3">
@@ -528,7 +528,7 @@ export default function Home() {
       {/* ══ CTA FINAL ══ */}
       <section className="bg-[#FFF1F7] py-20 px-6 text-center">
         <div className="mx-auto max-w-[680px]">
-          <h2 className="font-black text-[42px] md:text-[48px] leading-[1.08] mb-5">
+          <h2 className="font-black text-[32px] md:text-[48px] leading-[1.1] md:leading-[1.08] mb-5">
             {tr('¿Listo para convertir tu foto en', 'Ready to turn your photo into', 'Prêt à transformer ta photo en')}{' '}
             <span className="relative inline-block text-primary-dark">
               {tr('arte', 'art', 'art')}
@@ -544,12 +544,12 @@ export default function Home() {
               'Plus de 1 000 portraits livrés. Une idée spéciale hors catalogue ? Écris-nous — nous sommes là pour la dessiner.',
             )}
           </p>
-          <div className="inline-flex items-center bg-white rounded-[14px] p-1.5 shadow-[0_10px_26px_rgba(0,0,0,0.08)]">
-            <Link href={orderHref} className="bg-primary text-white font-black text-[17px] px-8 py-4 rounded-[10px] hover:bg-primary-dark transition-colors">
+          <div className="inline-flex flex-col sm:flex-row items-stretch sm:items-center w-full max-w-[400px] sm:w-auto sm:max-w-none bg-white rounded-[14px] p-1.5 shadow-[0_10px_26px_rgba(0,0,0,0.08)]">
+            <Link href={orderHref} className="bg-primary text-white text-center font-black text-[17px] px-8 py-4 rounded-[10px] hover:bg-primary-dark transition-colors">
               {pick(hero.cta_primary_es, hero.cta_primary_en, hero.cta_primary_fr)}
             </Link>
-            <span className="text-[13px] text-secondary-lighter px-3">{tr('o', 'or', 'ou')}</span>
-            <Link href="/contacto" className="font-black text-[15px] px-5 py-4 underline underline-offset-4 decoration-primary">
+            <span className="text-[13px] text-secondary-lighter px-3 py-1 sm:py-0 text-center">{tr('o', 'or', 'ou')}</span>
+            <Link href="/contacto" className="font-black text-[15px] text-center px-5 py-3 sm:py-4 underline underline-offset-4 decoration-primary">
               {tr('¡Pregúntame!', 'Ask me!', 'Pose ta question !')}
             </Link>
           </div>
