@@ -179,8 +179,8 @@ export default function Home() {
       <Navbar />
 
       {/* ══ HERO ══ */}
-      <section className="relative bg-white py-16 md:py-[72px] px-6 overflow-hidden">
-        <div className="mx-auto max-w-[1150px] grid md:grid-cols-[1.1fr_1fr] gap-14 items-center">
+      <section className="relative bg-white pt-6 pb-16 md:py-[72px] px-6 overflow-hidden">
+        <div className="mx-auto max-w-[1150px] grid md:grid-cols-[1.1fr_1fr] gap-10 md:gap-14 items-center">
           {/* Left: copy */}
           <div>
             {/* Badge */}
@@ -246,7 +246,7 @@ export default function Home() {
           </div>
 
           {/* Right (desktop) / Above H1 (mobile): floating portrait photos */}
-          <div className="relative pt-4 pb-6 md:pt-2 md:pb-10 mb-2 md:mb-0 order-first md:order-none flex justify-center md:block">
+          <div className="relative pt-4 md:pt-2 md:pb-10 order-first md:order-none flex justify-center md:block">
             <div className="flex items-end">
               {/* Portrait 1 — Antes */}
               <div className="relative z-10 flota-retrato-a">
@@ -299,7 +299,7 @@ export default function Home() {
       <BrushDividerDown />
 
       {/* ══ 3 SIMPLES PASOS ══ */}
-      <section id="pasos" className="bg-[#FFF1F7] py-14 sm:py-16 md:py-20 px-6">
+      <section id="pasos" className="bg-[#FFF1F7] pt-10 pb-14 sm:py-16 md:py-20 px-6">
         <div className="mx-auto max-w-[1150px] grid md:grid-cols-[1fr_1.1fr] gap-10 md:gap-16 items-center">
           {/* Mobile: side-by-side portraits that always fit (no clipping) */}
           <div className="flex md:hidden justify-center items-end">
@@ -352,7 +352,7 @@ export default function Home() {
               {' '}
               <span className="relative inline-block px-2 py-1">
                 {tr('3 simples pasos', '3 simple steps', '3 étapes simples')}
-                <svg viewBox="0 0 320 90" aria-hidden="true" style={{ position: 'absolute', inset: '-8px -12px', width: 'calc(100% + 24px)', height: 'calc(100% + 16px)', overflow: 'visible' }}>
+                <svg viewBox="0 0 320 90" preserveAspectRatio="none" aria-hidden="true" style={{ position: 'absolute', inset: '-8px -12px', width: 'calc(100% + 24px)', height: 'calc(100% + 16px)', overflow: 'visible' }}>
                   <path d="M20 45 C 10 12, 150 2, 250 14 C 320 24, 316 66, 220 78 C 120 88, 18 80, 20 48" fill="none" stroke="#FC90B6" strokeWidth="5" strokeLinecap="round" opacity={0.85} />
                 </svg>
               </span>
