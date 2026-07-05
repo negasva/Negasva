@@ -56,25 +56,22 @@ export function middleware(request: NextRequest) {
   }
 
   if (isProtectedRequest(request)) {
+    // Solo bloquea el hotlinking real: un navegador en OTRO origen embebiendo
+    // la imagen manda sec-fetch-site: cross-site. Todo lo demás debe pasar —
+    // usuarios (same-origin), navegación directa (none), y clientes sin
+    // sec-fetch: el optimizador de imágenes de Next, buscadores y previews
+    // sociales. Antes se bloqueaba a todos esos, rompiendo la optimización de
+    // los hero de blog/estilos (400) y la OG image en Ahrefs/redes.
     const site = request.headers.get('sec-fetch-site');
-    const dest = request.headers.get('sec-fetch-dest');
-    const mode = request.headers.get('sec-fetch-mode');
-
-    const allowed =
-      site === 'same-origin' &&
-      dest === 'image' &&
-      (mode === 'no-cors' || mode === 'cors');
-
-    if (allowed) {
-      const res = NextResponse.next();
-      res.headers.set('Cache-Control', 'private, no-store');
-      return res;
+    if (site === 'cross-site') {
+      return new NextResponse('Forbidden', {
+        status: 403,
+        headers: { 'Content-Type': 'text/plain; charset=utf-8' },
+      });
     }
-
-    return new NextResponse('Forbidden', {
-      status: 403,
-      headers: { 'Content-Type': 'text/plain; charset=utf-8' },
-    });
+    const res = NextResponse.next();
+    res.headers.set('Cache-Control', 'private, no-store');
+    return res;
   }
 
   const res = NextResponse.next();
