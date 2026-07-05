@@ -146,6 +146,17 @@ a {
   -webkit-mask-image: url(/cuadro2.svg);
   mask-image: url(/cuadro2.svg);
 }
+/* En móvil el trazo hecho a mano (mask SVG) recorta el texto/botón de las
+   tarjetas de precio porque se estira en un rectángulo alto y angosto. Ahí
+   usamos un rectángulo redondeado normal para que nada quede cortado. */
+@media (max-width: 767px) {
+  .forma-cuadro1,
+  .forma-cuadro2 {
+    -webkit-mask-image: none;
+    mask-image: none;
+    border-radius: 26px;
+  }
+}
 /* El mask-image recorta también la drop-shadow si el filter va en el mismo
    elemento, así que la sombra/glow se aplican en un envoltorio EXTERIOR:
    el filtro toma el alpha ya recortado del hijo y la sombra sigue la silueta.

@@ -41,10 +41,11 @@ interface LandingConfig {
 const DEFAULT_CONFIG: LandingConfig = {
   hero: {
     badge_es: 'Ilustración digital personalizada', badge_en: 'Custom digital illustration',
-    headline_es: 'Tu retrato,', headline_en: 'Your portrait,',
-    headline_highlight_es: 'dibujado a mano', headline_highlight_en: 'hand drawn',
-    subheadline_es: 'Convierte tu foto en un retrato estilo cartoon dibujado por un ilustrador real — nada de filtros, nada de IA. Entrega digital en 48 horas.',
-    subheadline_en: 'Turn your photo into a hand-drawn cartoon portrait by a real illustrator — no filters, no AI. Digital delivery in 48 hours.',
+    headline_es: 'Tu Retrato Animado', headline_en: 'Your Animated Portrait', headline_fr: 'Ton Portrait Animé',
+    headline_highlight_es: 'Personalizado', headline_highlight_en: 'Custom', headline_highlight_fr: 'Personnalisé',
+    subheadline_es: 'Transforma tu foto en un personaje de caricatura icónico. Rick y Morty, Gravity Falls, Simpsons y más.',
+    subheadline_en: 'Turn your photo into an iconic cartoon character. Rick and Morty, Gravity Falls, Simpsons and more.',
+    subheadline_fr: 'Transforme ta photo en un personnage de dessin animé iconique. Rick et Morty, Gravity Falls, Simpsons et plus.',
     cta_primary_es: 'Pedir mi retrato', cta_primary_en: 'Order my portrait',
     cta_secondary_es: 'Ver cómo funciona', cta_secondary_en: 'See how it works',
   },
@@ -192,7 +193,7 @@ export default function Home() {
             </div>
 
             {/* H1 with animated sketch underline */}
-            <h1 className="font-black text-[38px] sm:text-[50px] md:text-[62px] leading-[1.05] md:leading-[1.02] mb-2 tracking-tight">
+            <h1 className="font-black text-[30px] sm:text-[46px] md:text-[62px] leading-[1.08] md:leading-[1.02] mb-2 tracking-tight break-words">
               {pick(hero.headline_es, hero.headline_en, hero.headline_fr)}
               <span className="relative inline-block text-primary-dark ml-2">
                 {pick(hero.headline_highlight_es, hero.headline_highlight_en, hero.headline_highlight_fr)}
@@ -244,34 +245,37 @@ export default function Home() {
             )}
           </div>
 
-          {/* Right: floating portrait photos */}
-          <div className="relative pt-2 pb-6 md:pb-10 mt-8 md:mt-0 flex justify-center md:block">
+          {/* Right (desktop) / Above H1 (mobile): floating portrait photos */}
+          <div className="relative pt-4 pb-6 md:pt-2 md:pb-10 mb-2 md:mb-0 order-first md:order-none flex justify-center md:block">
             <div className="flex items-end">
-              {/* Portrait 1 */}
+              {/* Portrait 1 — Antes */}
               <div className="relative z-10 flota-retrato-a">
+                <span className="absolute -top-3 left-1/2 -translate-x-1/2 z-30 bg-primary text-white font-black text-xs px-4 py-1.5 rounded-full rotate-[-3deg] shadow-md whitespace-nowrap">
+                  {tr('Antes', 'Before', 'Avant')}
+                </span>
                 {heroImg1 ? (
                   <div className="w-[168px] h-[222px] rounded-[84px] sm:w-[250px] sm:h-[330px] sm:rounded-[130px] overflow-hidden shadow-[0_18px_40px_rgba(0,0,0,0.14)]">
-                    <Image src={heroImg1} alt="Retrato cartoon" fill className="object-cover" sizes="(max-width: 640px) 168px, 250px" />
+                    <Image src={heroImg1} alt="Foto original (antes)" fill className="object-cover" sizes="(max-width: 640px) 168px, 250px" />
                   </div>
                 ) : (
                   <ImgSlot className="w-[168px] h-[222px] rounded-[84px] sm:w-[250px] sm:h-[330px] sm:rounded-[130px] shadow-[0_18px_40px_rgba(0,0,0,0.14)]" />
                 )}
-                <span className="absolute top-[-8px] right-[-10px] z-20 bg-primary text-white font-black text-xs px-3 py-1.5 rounded-full rotate-6">
-                  NEGASVA
-                </span>
               </div>
-              {/* Portrait 2 */}
+              {/* Portrait 2 — Después */}
               <div className="relative z-0 -ml-6 sm:-ml-9 mt-[48px] sm:mt-[70px] flota-retrato-b">
+                <span className="absolute -top-3 left-1/2 -translate-x-1/2 z-30 bg-secondary text-white font-black text-xs px-4 py-1.5 rounded-full rotate-[3deg] shadow-md whitespace-nowrap">
+                  {tr('Después', 'After', 'Après')}
+                </span>
                 {heroImg2 ? (
                   <div className="w-[148px] h-[196px] rounded-[74px] sm:w-[220px] sm:h-[290px] sm:rounded-[115px] overflow-hidden shadow-[0_18px_40px_rgba(0,0,0,0.14)]">
-                    <Image src={heroImg2} alt="Retrato cartoon ejemplo" fill className="object-cover" sizes="(max-width: 640px) 148px, 220px" />
+                    <Image src={heroImg2} alt="Retrato animado (después)" fill className="object-cover" sizes="(max-width: 640px) 148px, 220px" />
                   </div>
                 ) : (
                   <ImgSlot className="w-[148px] h-[196px] rounded-[74px] sm:w-[220px] sm:h-[290px] sm:rounded-[115px] shadow-[0_18px_40px_rgba(0,0,0,0.14)]" />
                 )}
               </div>
             </div>
-            <span className="font-caveat font-bold text-[24px] sm:text-[30px] text-green-600 rotate-[-4deg] inline-block absolute bottom-0 left-1">
+            <span className="font-caveat font-bold text-[30px] text-green-600 rotate-[-4deg] hidden md:inline-block absolute bottom-0 left-1">
               {tr('¡hazlos reír!', 'make them laugh!', 'faites-les rire !')}
             </span>
           </div>
@@ -297,8 +301,30 @@ export default function Home() {
       {/* ══ 3 SIMPLES PASOS ══ */}
       <section id="pasos" className="bg-[#FFF1F7] py-14 sm:py-16 md:py-20 px-6">
         <div className="mx-auto max-w-[1150px] grid md:grid-cols-[1fr_1.1fr] gap-10 md:gap-16 items-center">
-          {/* Left: overlapping portrait images */}
-          <div className="relative h-[300px] md:min-h-[360px] overflow-hidden md:overflow-visible scale-90 sm:scale-100 origin-top">
+          {/* Mobile: side-by-side portraits that always fit (no clipping) */}
+          <div className="flex md:hidden justify-center items-end">
+            <div className="relative z-10 rotate-[-3deg]">
+              {pasosImg1 ? (
+                <div className="w-[150px] h-[200px] rounded-[75px] overflow-hidden shadow-[0_16px_36px_rgba(0,0,0,0.13)] bg-white">
+                  <Image src={pasosImg1} alt="Ejemplo de retrato" fill className="object-cover" sizes="150px" />
+                </div>
+              ) : (
+                <ImgSlot className="w-[150px] h-[200px] rounded-[75px] shadow-[0_16px_36px_rgba(0,0,0,0.13)]" />
+              )}
+            </div>
+            <div className="relative z-0 -ml-5 mt-8 rotate-[2deg]">
+              {pasosImg2 ? (
+                <div className="w-[135px] h-[180px] rounded-[68px] overflow-hidden shadow-[0_16px_36px_rgba(0,0,0,0.13)] bg-white">
+                  <Image src={pasosImg2} alt="Retrato en pareja" fill className="object-cover" sizes="135px" />
+                </div>
+              ) : (
+                <ImgSlot className="w-[135px] h-[180px] rounded-[68px] shadow-[0_16px_36px_rgba(0,0,0,0.13)]" />
+              )}
+            </div>
+          </div>
+
+          {/* Desktop: artistic overlapping portrait images */}
+          <div className="relative min-h-[360px] hidden md:block">
             <div className="absolute top-0 left-[4%] rotate-[-3deg] z-10">
               {pasosImg1 ? (
                 <div className="w-[240px] h-[320px] rounded-[120px] overflow-hidden shadow-[0_16px_36px_rgba(0,0,0,0.13)] bg-white">
