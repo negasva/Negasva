@@ -45,13 +45,8 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
     setLangState(resolved);
   }, []);
 
-  // Mantener <html lang> sincronizado con el idioma activo.
-  useEffect(() => {
-    if (typeof document !== 'undefined') {
-      document.documentElement.lang = lang;
-    }
-  }, [lang]);
-
+  // No tocamos <html lang>: el contenido servido es inglés estático y el
+  // atributo debe decir la verdad para que el navegador ofrezca traducir.
   const setLang = useCallback((l: Lang) => {
     setLangState(l);
     try { localStorage.setItem(STORAGE_KEY, l); } catch { /* ignore */ }

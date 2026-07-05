@@ -4,7 +4,6 @@ import { memo, useState } from 'react';
 import Link from 'next/link';
 import { Menu, X } from 'lucide-react';
 import Logo from '@/components/Logo';
-import LanguageSwitcher from '@/components/LanguageSwitcher';
 import CurrencySwitcher from '@/components/CurrencySwitcher';
 import { useLanguage } from '@/lib/i18n/LanguageContext';
 
@@ -21,7 +20,6 @@ function Navbar() {
           {/* Desktop: all controls inline */}
           <div className="hidden md:flex items-center gap-4">
             <CurrencySwitcher />
-            <LanguageSwitcher />
             <Link
               href="/order"
               className="bg-secondary rounded-lg px-5 py-2.5 text-sm font-black text-white hover:bg-secondary-light transition-colors shadow-sm"
@@ -53,12 +51,14 @@ function Navbar() {
         </div>
       </div>
 
-      {/* Mobile dropdown: currency + language pickers, out of the cramped top row */}
+      {/* Mobile dropdown: currency picker, out of the cramped top row.
+          El selector de idioma se quitó del navbar: las páginas SEO son EN
+          estático y el navegador ofrece la traducción; sigue vivo en /order,
+          donde el wizard sí traduce completo. */}
       {menuOpen && (
         <div className="md:hidden border-t border-primary-lighter bg-white">
           <div className="mx-auto max-w-7xl px-4 py-4 flex items-center justify-between gap-4">
             <CurrencySwitcher />
-            <LanguageSwitcher />
           </div>
         </div>
       )}
