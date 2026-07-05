@@ -29,19 +29,19 @@ function detectBrowserLang(): Lang | undefined {
 }
 
 const LanguageContext = createContext<LanguageContextType>({
-  lang: 'es',
+  lang: 'en',
   setLang: () => {},
-  t: translations.es as unknown as TranslationValues,
+  t: translations.en,
 });
 
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
-  // Default 'es' coincide con <html lang="es"> del layout para evitar
+  // Default 'en' coincide con <html lang="en"> del layout para evitar
   // mismatch de hidratación. El idioma real se resuelve en el efecto.
-  const [lang, setLangState] = useState<Lang>('es');
+  const [lang, setLangState] = useState<Lang>('en');
 
   useEffect(() => {
     const saved = localStorage.getItem(STORAGE_KEY);
-    const resolved: Lang = isLang(saved) ? saved : detectBrowserLang() ?? 'es';
+    const resolved: Lang = isLang(saved) ? saved : detectBrowserLang() ?? 'en';
     setLangState(resolved);
   }, []);
 
