@@ -50,25 +50,6 @@ export default function StylePage({ params }: { params: { slug: string } }) {
     description: style.metaDescription,
     brand: { '@type': 'Brand', name: 'NEGASVA' },
     image: `https://negasva.shop${style.image}`,
-    aggregateRating: {
-      '@type': 'AggregateRating',
-      ratingValue: '4.8',
-      bestRating: '5',
-      worstRating: '1',
-      ratingCount: '1200',
-    },
-    review: {
-      '@type': 'Review',
-      reviewRating: {
-        '@type': 'Rating',
-        ratingValue: '5',
-        bestRating: '5',
-        worstRating: '1',
-      },
-      author: { '@type': 'Person', name: 'Cliente Verificado' },
-      reviewBody: 'Retratos personalizados de excelente calidad con entrega rápida. Muy recomendado.',
-      datePublished: new Date().toISOString().split('T')[0],
-    },
     offers: {
       '@type': 'AggregateOffer',
       url: `https://negasva.shop${orderHref}`,
