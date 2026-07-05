@@ -217,6 +217,203 @@ export const STYLES_CONTENT: StyleContent[] = [
     image: '/backgrounds/rm-5.webp',
     imageAlt: 'Fairly OddParents style custom portrait hand drawn from photo with electric colors and geometric shapes',
   },
+  // ponytail: imágenes placeholder (rm-*.webp) hasta tener samples reales de cada estilo nuevo.
+  {
+    slug: 'family-guy-style-portrait',
+    dbSlug: 'family-guy',
+    name: 'Family Guy Style',
+    h1: 'Family Guy Style Custom Portrait from Your Photo',
+    metaTitle: 'Family Guy Style Custom Portrait — Hand-Drawn in 48h, From $15',
+    metaDescription:
+      'Turn your photo into a Family Guy style custom portrait: round faces, bold outlines, sitcom humor. Hand-drawn by a real artist, no AI. Delivered in 48 hours, from $15.',
+    keywords: [
+      'family guy style portrait',
+      'turn photo into family guy style',
+      'family guy style drawing from photo',
+      'custom cartoon portrait sitcom',
+      'family guy style couple portrait',
+    ],
+    intro:
+      'The look of the classic adult animated sitcom: round faces, big chins, bold outlines and flat suburban colors. Perfect for turning yourself, your partner or the whole family into characters from a living-room comedy scene.',
+    whatIs: {
+      title: 'What is a Family Guy style portrait?',
+      body:
+        'It is a digital illustration hand-drawn from your photo in the visual language of the famous suburban animated sitcom: rounded heads, prominent chins, simple oval eyes, thick outlines and cozy home or bar backdrops. We adapt each person\'s hairstyle, outfit, glasses and defining features so the likeness lands instantly. Every portrait is drawn from scratch by a real artist — no AI, no filters. This is a fan-art style tribute; we are not affiliated with the show.',
+    },
+    forWho: {
+      title: 'Who is it best for?',
+      body:
+        'Great for couples with a sense of humor, groups of friends, family gifts and anyone who grew up with adult animated sitcoms. If Simpsons style feels too classic and Rick and Morty style too chaotic, this sits right in the middle: familiar, funny and instantly readable.',
+    },
+    includes: {
+      title: 'What does your portrait include?',
+      items: [
+        'High-resolution digital portrait ready to print',
+        '1 to 8 people and pets in the same drawing',
+        'Living room, bar, street or fully custom backgrounds',
+        'A revision round to adjust small details',
+        'Standard delivery in 48 hours, or express in 24h',
+      ],
+    },
+    process: {
+      title: 'How is it made?',
+      body:
+        'Upload clear photos, choose how many people, body type and background, and add notes for poses or props. A real illustrator redraws everyone in the rounded sitcom style, keeps the likeness sharp and delivers the file to your inbox within 48 hours.',
+    },
+    faq: [
+      { q: 'Can you draw us on the famous couch?', a: 'Yes. Ask for a living-room scene in your order notes and we will compose a couch scene for your group.' },
+      { q: 'Does it work for couples?', a: 'Yes. Couple portraits are one of the most requested uses of this style.' },
+    ],
+    image: '/backgrounds/rm-6.webp',
+    imageAlt: 'Family Guy style custom portrait hand drawn from photo with round faces and bold outlines',
+  },
+  {
+    slug: 'south-park-style-portrait',
+    dbSlug: 'south-park',
+    name: 'South Park Style',
+    h1: 'South Park Style Custom Portrait from Your Photo',
+    metaTitle: 'South Park Style Custom Portrait — Hand-Drawn in 48h, From $15',
+    metaDescription:
+      'Get yourself drawn in South Park style: paper-cutout look, tiny bodies, big heads. Hand-drawn from your photo by a real artist, no AI. Delivered in 48 hours, from $15.',
+    keywords: [
+      'south park style portrait',
+      'turn photo into south park style',
+      'south park style drawing from photo',
+      'paper cutout cartoon portrait',
+      'south park style group portrait',
+    ],
+    intro:
+      'The iconic paper-cutout look: big round heads, tiny mitten hands, minimal features and snowy mountain-town backdrops. The funniest, most instantly recognizable way to turn a group of friends into cartoon characters.',
+    whatIs: {
+      title: 'What is a South Park style portrait?',
+      body:
+        'It is a hand-drawn digital illustration that recreates the flat, construction-paper aesthetic of the famous mountain-town cartoon: oversized heads, simple dot eyes, small rounded bodies and clean flat colors. We match each person\'s hair, beanie, jacket and accessories so everyone is recognizable at a glance. Drawn from scratch by a real artist — no AI. This is a fan-art style tribute; we are not affiliated with the show.',
+    },
+    forWho: {
+      title: 'Who is it best for?',
+      body:
+        'The go-to style for friend groups, coworkers, gaming squads and irreverent gifts. Because the shapes are so simple, it works brilliantly for large groups and reads perfectly even at sticker or avatar size.',
+    },
+    includes: {
+      title: 'What does your portrait include?',
+      items: [
+        'High-resolution digital portrait ready to print',
+        '1 to 8 people and pets in the same drawing',
+        'Snowy town, school, sofa or fully custom backgrounds',
+        'A revision round to adjust small details',
+        'Standard delivery in 48 hours, or express in 24h',
+      ],
+    },
+    process: {
+      title: 'How is it made?',
+      body:
+        'Send clear photos of each person, pick the background and tell us about outfits, props or poses. The artist rebuilds everyone in the cutout style — hair, clothes and expression included — and delivers the print-ready file within 48 hours.',
+    },
+    faq: [
+      { q: 'Is it good for big groups?', a: 'Yes. The simple shapes make it the best style for groups of 5 to 8 people.' },
+      { q: 'Can I use it as an avatar or sticker?', a: 'Yes. The bold simple shapes read perfectly at small sizes.' },
+    ],
+    image: '/backgrounds/rm-10.webp',
+    imageAlt: 'South Park style custom group portrait hand drawn from photo with paper cutout look',
+  },
+  {
+    slug: 'anime-style-portrait',
+    dbSlug: 'anime',
+    name: 'Anime Style',
+    h1: 'Anime Style Custom Portrait from Your Photo',
+    metaTitle: 'Anime Portrait from Photo — Hand-Drawn in 48h, From $15',
+    metaDescription:
+      'Turn your photo into an anime style custom portrait: expressive eyes, dynamic hair, manga-inspired shading. Hand-drawn by a real artist, no AI. Delivered in 48 hours, from $15.',
+    keywords: [
+      'anime portrait from photo',
+      'anime style portrait',
+      'turn photo into anime',
+      'custom anime drawing from photo',
+      'anime couple portrait commission',
+    ],
+    intro:
+      'A hand-drawn anime portrait with everything the style is loved for: large expressive eyes, dynamic hair, clean linework and soft cel shading. From wholesome slice-of-life vibes to dramatic shonen energy — you pick the mood.',
+    whatIs: {
+      title: 'What is an anime style portrait?',
+      body:
+        'It is a custom illustration drawn from your photo in Japanese animation aesthetics: expressive eyes with light reflections, stylized proportions, detailed hair and backgrounds ranging from cherry blossoms to neon city streets. Unlike AI anime filters, every line is drawn by a real artist, so your actual features — not a generic anime face — come through in the final piece.',
+    },
+    forWho: {
+      title: 'Who is it best for?',
+      body:
+        'Perfect for anime fans, couples, gamer profiles, VTuber-style avatars and gifts for anyone who loves manga. It is also the most flexible style for dramatic or romantic scenes: sunsets, rain, festivals, neon nights.',
+    },
+    includes: {
+      title: 'What does your portrait include?',
+      items: [
+        'High-resolution digital portrait ready to print',
+        '1 to 8 people and pets in the same drawing',
+        'Backgrounds: cherry blossom, city, sunset, festival or custom scene',
+        'A revision round to adjust small details',
+        'Standard delivery in 48 hours, or express in 24h',
+      ],
+    },
+    process: {
+      title: 'How is it made?',
+      body:
+        'Upload clear photos, choose the number of people and the mood — cute, epic or romantic. The artist draws your features into anime proportions while keeping your hairstyle, eye color and signature expression, then delivers the high-resolution file within 48 hours.',
+    },
+    faq: [
+      { q: 'Can you match a specific anime aesthetic?', a: 'Yes. Describe the vibe or reference the general look you want in your order notes and the artist will adapt the shading and linework.' },
+      { q: 'Is this made with AI?', a: 'No. Every portrait is 100% hand-drawn by a real artist from scratch.' },
+    ],
+    image: '/backgrounds/rm-3.webp',
+    imageAlt: 'Anime style custom portrait hand drawn from photo with expressive eyes and cel shading',
+  },
+  {
+    slug: 'disney-pixar-style-portrait',
+    dbSlug: 'disney-pixar',
+    name: 'Disney-Pixar Style',
+    h1: 'Disney-Pixar Style Custom Portrait from Your Photo',
+    metaTitle: 'Disney-Pixar Style Custom Portrait — Hand-Drawn in 48h, From $15',
+    metaDescription:
+      'Turn your photo into a Disney-Pixar style custom portrait: big warm eyes, soft 3D-look shading, storybook charm. Hand-drawn by a real artist, no AI. In 48 hours, from $15.',
+    keywords: [
+      'disney pixar style portrait',
+      'turn photo into disney style',
+      'pixar style portrait from photo',
+      'disney style family portrait',
+      'cartoon movie style portrait',
+    ],
+    intro:
+      'The warm, polished look of modern animated movies: big sparkling eyes, soft rounded features, gentle painterly shading and storybook lighting. The most heartwarming style for family portraits, kids and romantic gifts.',
+    whatIs: {
+      title: 'What is a Disney-Pixar style portrait?',
+      body:
+        'It is a hand-drawn digital illustration inspired by the aesthetics of modern animated feature films: expressive oversized eyes, soft volumes that mimic 3D shading, warm color grading and charming, cinematic backdrops. We keep every person\'s real features — freckles, glasses, curls — so the result feels like a frame from a movie starring your family. Drawn by a real artist, no AI. This is a fan-art style tribute; we are not affiliated with any studio.',
+    },
+    forWho: {
+      title: 'Who is it best for?',
+      body:
+        'The favorite for family portraits, babies and kids, wedding and anniversary gifts, and memorial portraits. If you want the most emotional, universally loved style of the catalog, this is it.',
+    },
+    includes: {
+      title: 'What does your portrait include?',
+      items: [
+        'High-resolution digital portrait ready to print',
+        '1 to 8 people and pets in the same drawing',
+        'Castle, sunset, home or fully custom storybook backgrounds',
+        'A revision round to adjust small details',
+        'Standard delivery in 48 hours, or express in 24h',
+      ],
+    },
+    process: {
+      title: 'How is it made?',
+      body:
+        'Upload clear photos of everyone, choose torso or full body and pick a backdrop. The artist sculpts each face into soft movie-style volumes while keeping the real likeness, then paints lighting and color and delivers the final file within 48 hours.',
+    },
+    faq: [
+      { q: 'Does it work for babies and kids?', a: 'Yes. The soft rounded features of this style are especially flattering for children.' },
+      { q: 'Is it a good anniversary or wedding gift?', a: 'Yes. It is our most requested style for romantic and family milestone gifts.' },
+    ],
+    image: '/backgrounds/rm-4.webp',
+    imageAlt: 'Disney-Pixar style custom family portrait hand drawn from photo with big warm eyes and soft shading',
+  },
 ];
 
 export function getStyleBySlug(slug: string): StyleContent | undefined {
