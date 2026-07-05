@@ -1,6 +1,7 @@
 import type { MetadataRoute } from 'next';
 import { STYLES_CONTENT } from '@/lib/content/styles';
 import { BLOG_POSTS } from '@/lib/content/blogPosts';
+import { LANDINGS } from '@/lib/content/landings';
 
 const BASE = 'https://negasva.shop';
 
@@ -22,6 +23,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
     // Landing individual por estilo — páginas de captación SEO
     ...STYLES_CONTENT.map((s) => ({
       path: `/styles/${s.slug}`,
+      priority: 0.9,
+      changeFrequency: 'weekly' as const,
+    })),
+    // Landings SEO por sujeto, ocasión y ángulo
+    ...LANDINGS.map((l) => ({
+      path: l.path,
       priority: 0.9,
       changeFrequency: 'weekly' as const,
     })),
