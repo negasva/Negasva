@@ -39,7 +39,7 @@ const DEFAULT_FOOTER: FooterConfig = {
     {
       title_es: 'Empresa', title_en: 'Company', title_fr: 'Entreprise',
       links: [
-        { label_es: 'Sobre', label_en: 'About', label_fr: 'À propos', href: '/sobre' },
+        { label_es: 'Sobre', label_en: 'About', label_fr: 'À propos', href: '/about' },
         { label_es: 'Blog', label_en: 'Blog', label_fr: 'Blog', href: '/blog' },
         { label_es: 'Contacto', label_en: 'Contact', label_fr: 'Contact', href: '/contacto' },
         { label_es: 'FAQ', label_en: 'FAQ', label_fr: 'FAQ', href: '/faq' },

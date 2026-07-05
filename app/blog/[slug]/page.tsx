@@ -48,7 +48,12 @@ export default function BlogPostPage({ params }: { params: { slug: string } }) {
     datePublished: post.date,
     dateModified: post.date,
     image: `https://negasva.shop${post.image}`,
-    author: { '@type': 'Organization', name: 'NEGASVA', url: 'https://negasva.shop' },
+    author: {
+      '@type': 'Person',
+      name: 'Negasva',
+      jobTitle: 'Illustrator & Founder',
+      url: 'https://negasva.shop/about',
+    },
     publisher: {
       '@type': 'Organization',
       name: 'NEGASVA',
@@ -61,7 +66,7 @@ export default function BlogPostPage({ params }: { params: { slug: string } }) {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
     itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'Inicio', item: 'https://negasva.shop' },
+      { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://negasva.shop' },
       { '@type': 'ListItem', position: 2, name: 'Blog', item: 'https://negasva.shop/blog' },
       { '@type': 'ListItem', position: 3, name: post.title, item: `https://negasva.shop/blog/${post.slug}` },
     ],
@@ -77,7 +82,7 @@ export default function BlogPostPage({ params }: { params: { slug: string } }) {
       <section className="bg-primary-lighter/30 py-16 px-4">
         <div className="mx-auto max-w-3xl">
           <nav aria-label="breadcrumb" className="mb-4 text-sm text-secondary-lighter">
-            <Link href="/" className="hover:text-primary">Inicio</Link>
+            <Link href="/" className="hover:text-primary">Home</Link>
             <span className="mx-2">/</span>
             <Link href="/blog" className="hover:text-primary">Blog</Link>
           </nav>
@@ -88,7 +93,8 @@ export default function BlogPostPage({ params }: { params: { slug: string } }) {
             {post.title}
           </h1>
           <p className="text-sm text-secondary-lighter">
-            <time dateTime={post.date}>{post.dateLabel}</time> · Equipo NEGASVA
+            <time dateTime={post.date}>{post.dateLabel}</time> · By{' '}
+            <Link href="/about" className="hover:text-primary underline">Negasva, the artist</Link>
           </p>
         </div>
       </section>
@@ -128,7 +134,7 @@ export default function BlogPostPage({ params }: { params: { slug: string } }) {
           {/* Enlaces internos a estilos relacionados */}
           {related.length > 0 && (
             <div className="rounded-2xl bg-primary-lighter/30 p-8 mb-10">
-              <h2 className="font-black text-xl text-secondary mb-4">Estilos mencionados en este artículo</h2>
+              <h2 className="font-black text-xl text-secondary mb-4">Styles mentioned in this article</h2>
               <div className="flex flex-wrap gap-3">
                 {related.map((s) => (
                   <Link
@@ -136,10 +142,17 @@ export default function BlogPostPage({ params }: { params: { slug: string } }) {
                     href={`/styles/${s.slug}`}
                     className="inline-flex items-center gap-1 rounded-xl border-2 border-primary bg-white px-4 py-2 font-bold text-primary hover:bg-primary hover:text-white transition-all text-sm"
                   >
-                    Retrato {s.name}
+                    {s.name} Portrait
                     <ChevronRight className="w-4 h-4" />
                   </Link>
                 ))}
+                <Link
+                  href="/styles"
+                  className="inline-flex items-center gap-1 rounded-xl border-2 border-primary-lighter bg-white px-4 py-2 font-bold text-secondary hover:border-primary hover:text-primary transition-all text-sm"
+                >
+                  All styles
+                  <ChevronRight className="w-4 h-4" />
+                </Link>
               </div>
             </div>
           )}
@@ -150,14 +163,14 @@ export default function BlogPostPage({ params }: { params: { slug: string } }) {
       <section className="bg-secondary py-16 px-4">
         <div className="mx-auto max-w-3xl text-center">
           <h2 className="font-black text-4xl text-white mb-4 tracking-tighter">
-            ¿Listo para tu retrato?
+            Ready for your portrait?
           </h2>
-          <p className="text-white/70 mb-8">Desde $15 USD · Entrega en 48h · +1000 clientes felices</p>
+          <p className="text-white/70 mb-8">From $15 USD · Delivered in 48h · 1000+ happy customers</p>
           <Link
             href="/order"
             className="inline-flex items-center gap-2 rounded-xl bg-primary px-10 py-4 font-black text-white hover:bg-primary-dark hover:shadow-xl transition-all"
           >
-            Pedir mi retrato
+            Order my portrait
             <ChevronRight className="w-5 h-5" />
           </Link>
         </div>
@@ -166,7 +179,7 @@ export default function BlogPostPage({ params }: { params: { slug: string } }) {
       {/* Más artículos */}
       <section className="py-16 px-4">
         <div className="mx-auto max-w-4xl">
-          <h2 className="font-black text-3xl tracking-tighter text-secondary mb-8">Sigue leyendo</h2>
+          <h2 className="font-black text-3xl tracking-tighter text-secondary mb-8">Keep reading</h2>
           <div className="grid md:grid-cols-3 gap-6">
             {otherPosts.map((p) => (
               <Link

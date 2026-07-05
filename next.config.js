@@ -25,6 +25,8 @@ const nextConfig = {
     // El wizard vivía en /studio; los links antiguos compartidos siguen funcionando.
     { source: '/studio', destination: '/order', permanent: true },
     // Rutas de estilos migradas a slugs EN keyword-exact (SEO).
+    // Página del artista migrada a slug EN (SEO / E-E-A-T).
+    { source: '/sobre', destination: '/about', permanent: true },
     { source: '/estilos', destination: '/styles', permanent: true },
     { source: '/estilos/rick-y-morty', destination: '/styles/rick-and-morty-style-portrait', permanent: true },
     { source: '/estilos/simpsons', destination: '/styles/simpsons-style-portrait', permanent: true },
