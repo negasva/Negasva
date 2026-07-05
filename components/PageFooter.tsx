@@ -30,7 +30,7 @@ const DEFAULT_FOOTER: FooterConfig = {
     {
       title_es: 'Producto', title_en: 'Product', title_fr: 'Produit',
       links: [
-        { label_es: 'Estilos', label_en: 'Styles', label_fr: 'Styles', href: '/estilos' },
+        { label_es: 'Estilos', label_en: 'Styles', label_fr: 'Styles', href: '/styles' },
         { label_es: 'Precios', label_en: 'Pricing', label_fr: 'Tarifs', href: '/precios' },
         { label_es: 'Galería', label_en: 'Gallery', label_fr: 'Galerie', href: '/galeria' },
         { label_es: 'Seguimiento', label_en: 'Tracking', label_fr: 'Suivi', href: '/seguimiento' },

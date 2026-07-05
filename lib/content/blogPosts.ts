@@ -103,7 +103,7 @@ export const BLOG_POSTS: BlogPost[] = [
         ],
       },
     ],
-    relatedStyleSlugs: ['rick-y-morty', 'simpsons', 'padrinos-magicos'],
+    relatedStyleSlugs: ['rick-and-morty-style-portrait', 'simpsons-style-portrait', 'fairly-oddparents-style-portrait'],
   },
   {
     slug: 'como-elegir-el-estilo-de-tu-retrato',
@@ -157,7 +157,7 @@ export const BLOG_POSTS: BlogPost[] = [
         ],
       },
     ],
-    relatedStyleSlugs: ['rick-y-morty', 'simpsons', 'gravity-falls', 'padrinos-magicos'],
+    relatedStyleSlugs: ['rick-and-morty-style-portrait', 'simpsons-style-portrait', 'gravity-falls-style-portrait', 'fairly-oddparents-style-portrait'],
   },
   {
     slug: 'rick-y-morty-vs-simpsons-que-estilo-elegir',
@@ -229,7 +229,7 @@ export const BLOG_POSTS: BlogPost[] = [
         ],
       },
     ],
-    relatedStyleSlugs: ['rick-y-morty', 'simpsons'],
+    relatedStyleSlugs: ['rick-and-morty-style-portrait', 'simpsons-style-portrait'],
   },
   {
     slug: 'consejos-para-fotos-perfectas',
@@ -279,7 +279,7 @@ export const BLOG_POSTS: BlogPost[] = [
         ],
       },
     ],
-    relatedStyleSlugs: ['rick-y-morty', 'gravity-falls'],
+    relatedStyleSlugs: ['rick-and-morty-style-portrait', 'gravity-falls-style-portrait'],
   },
   {
     slug: 'el-proceso-detras-de-cada-retrato',
@@ -323,7 +323,7 @@ export const BLOG_POSTS: BlogPost[] = [
         ],
       },
     ],
-    relatedStyleSlugs: ['rick-y-morty', 'simpsons', 'gravity-falls', 'padrinos-magicos'],
+    relatedStyleSlugs: ['rick-and-morty-style-portrait', 'simpsons-style-portrait', 'gravity-falls-style-portrait', 'fairly-oddparents-style-portrait'],
   },
   {
     slug: 'retratos-familiares-personalizados',
@@ -368,7 +368,7 @@ export const BLOG_POSTS: BlogPost[] = [
         ],
       },
     ],
-    relatedStyleSlugs: ['simpsons', 'rick-y-morty', 'gravity-falls'],
+    relatedStyleSlugs: ['simpsons-style-portrait', 'rick-and-morty-style-portrait', 'gravity-falls-style-portrait'],
   },
 ];
 

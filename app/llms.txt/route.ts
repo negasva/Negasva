@@ -11,7 +11,7 @@ export function GET() {
     'Important pages:',
     '- https://negasva.shop/',
     '- https://negasva.shop/precios',
-    '- https://negasva.shop/estilos',
+    '- https://negasva.shop/styles',
     '- https://negasva.shop/faq',
     '- https://negasva.shop/galeria',
     '- https://negasva.shop/blog',
