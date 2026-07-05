@@ -20,12 +20,18 @@ export function generateMetadata({ params }: { params: { slug: string } }): Meta
     title: style.metaTitle,
     description: style.metaDescription,
     keywords: style.keywords,
-    alternates: { canonical: `/estilos/${style.slug}` },
+    alternates: { canonical: `/styles/${style.slug}` },
     openGraph: {
       title: style.metaTitle,
       description: style.metaDescription,
-      url: `https://negasva.shop/estilos/${style.slug}`,
+      url: `https://negasva.shop/styles/${style.slug}`,
       images: [{ url: style.image, width: 819, height: 461, alt: style.imageAlt }],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: style.metaTitle,
+      description: style.metaDescription,
+      images: [style.image],
     },
   };
 }
@@ -37,16 +43,16 @@ export default function StylePage({ params }: { params: { slug: string } }) {
   const others = STYLES_CONTENT.filter((s) => s.slug !== style.slug);
   const orderHref = `/order?style=${style.dbSlug}`;
   const bestForMap: Record<string, string> = {
-    'rick-y-morty': 'Ideal para parejas, amigos y retratos con humor irreverente y fondos sci-fi espectaculares.',
-    'simpsons': 'Ideal para familias, regalos intergeneracionales y quienes quieren una referencia universal al instante.',
-    'gravity-falls': 'Ideal para avatares, hermanos, parejas tiernas y retratos con vibra misteriosa y adorable.',
-    'padrinos-magicos': 'Ideal para colores vibrantes, energia magica y retratos de pareja muy llamativos.',
+    'rick-and-morty-style-portrait': 'Perfect for couples, friends and portraits with irreverent humor and spectacular sci-fi backgrounds.',
+    'simpsons-style-portrait': 'Perfect for families, cross-generational gifts and anyone who wants an instantly universal reference.',
+    'gravity-falls-style-portrait': 'Perfect for avatars, siblings, sweet couples and portraits with a cozy, mysterious vibe.',
+    'fairly-oddparents-style-portrait': 'Perfect for vibrant colors, magical energy and eye-catching couple portraits.',
   };
 
   const productSchema = {
     '@context': 'https://schema.org',
     '@type': 'Product',
-    name: `Retrato Personalizado ${style.name}`,
+    name: `${style.name} Custom Portrait`,
     description: style.metaDescription,
     brand: { '@type': 'Brand', name: 'NEGASVA' },
     image: `https://negasva.shop${style.image}`,
@@ -65,9 +71,9 @@ export default function StylePage({ params }: { params: { slug: string } }) {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
     itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'Inicio', item: 'https://negasva.shop' },
-      { '@type': 'ListItem', position: 2, name: 'Estilos', item: 'https://negasva.shop/estilos' },
-      { '@type': 'ListItem', position: 3, name: style.name, item: `https://negasva.shop/estilos/${style.slug}` },
+      { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://negasva.shop' },
+      { '@type': 'ListItem', position: 2, name: 'Styles', item: 'https://negasva.shop/styles' },
+      { '@type': 'ListItem', position: 3, name: style.name, item: `https://negasva.shop/styles/${style.slug}` },
     ],
   };
 
@@ -92,9 +98,9 @@ export default function StylePage({ params }: { params: { slug: string } }) {
       <section className="bg-primary-lighter/30 py-16 md:py-20 px-4">
         <div className="mx-auto max-w-7xl">
           <nav aria-label="breadcrumb" className="mb-4 text-sm text-secondary-lighter">
-            <Link href="/" className="hover:text-primary">Inicio</Link>
+            <Link href="/" className="hover:text-primary">Home</Link>
             <span className="mx-2">/</span>
-            <Link href="/estilos" className="hover:text-primary">Estilos</Link>
+            <Link href="/styles" className="hover:text-primary">Styles</Link>
             <span className="mx-2">/</span>
             <span className="text-secondary font-bold">{style.name}</span>
           </nav>
@@ -105,17 +111,17 @@ export default function StylePage({ params }: { params: { slug: string } }) {
               </h1>
           <p className="text-lg text-secondary-lighter mb-8">{style.intro}</p>
           <div className="mb-8 rounded-2xl border-2 border-primary bg-primary-lighter/50 p-5">
-            <p className="font-black text-secondary tracking-tighter mb-1">Ideal para</p>
+            <p className="font-black text-secondary tracking-tighter mb-1">Best for</p>
             <p className="text-secondary-lighter">{bestForMap[style.slug] ?? style.intro}</p>
           </div>
           <Link
             href={orderHref}
             className="inline-flex items-center gap-2 rounded-xl bg-primary px-8 py-4 font-black text-white hover:bg-primary-dark hover:shadow-xl transition-all"
           >
-                Pedir mi retrato {style.name}
+                Order my {style.name} portrait
                 <ChevronRight className="w-5 h-5" />
               </Link>
-              <p className="mt-3 text-sm text-secondary-lighter">Desde $15 USD · Entrega en 48h · Revisión incluida</p>
+              <p className="mt-3 text-sm text-secondary-lighter">From $15 USD · Delivered in 48h · Revision included</p>
             </div>
             <div className="relative aspect-video rounded-2xl overflow-hidden border-2 border-primary-lighter shadow-lg">
               <Image
@@ -163,7 +169,7 @@ export default function StylePage({ params }: { params: { slug: string } }) {
 
           {/* FAQ del estilo */}
           <div>
-            <h2 className="font-black text-3xl tracking-tighter text-secondary mb-6">Preguntas frecuentes</h2>
+            <h2 className="font-black text-3xl tracking-tighter text-secondary mb-6">Frequently asked questions</h2>
             <div className="space-y-4">
               {style.faq.map((f) => (
                 <div key={f.q} className="rounded-2xl border-2 border-primary-lighter p-6">
@@ -180,14 +186,14 @@ export default function StylePage({ params }: { params: { slug: string } }) {
       <section className="bg-secondary py-16 px-4">
         <div className="mx-auto max-w-3xl text-center">
           <h2 className="font-black text-4xl text-white mb-4 tracking-tighter">
-            Tu retrato {style.name} te está esperando
+            Your {style.name} portrait is waiting
           </h2>
-          <p className="text-white/70 mb-8">Desde $15 USD · Entrega en 48h · +1000 clientes felices</p>
+          <p className="text-white/70 mb-8">From $15 USD · Delivered in 48h · +1000 happy clients</p>
           <Link
             href={orderHref}
             className="inline-flex items-center gap-2 rounded-xl bg-primary px-10 py-4 font-black text-white hover:bg-primary-dark hover:shadow-xl transition-all"
           >
-            Empezar mi pedido
+            Start my order
             <ChevronRight className="w-5 h-5" />
           </Link>
         </div>
@@ -197,13 +203,13 @@ export default function StylePage({ params }: { params: { slug: string } }) {
       <section className="py-16 px-4">
         <div className="mx-auto max-w-7xl">
           <h2 className="font-black text-3xl tracking-tighter text-secondary mb-8 text-center">
-            Otros estilos que te pueden gustar
+            Other styles you might like
           </h2>
           <div className="grid md:grid-cols-3 gap-6">
             {others.map((o) => (
               <Link
                 key={o.slug}
-                href={`/estilos/${o.slug}`}
+                href={`/styles/${o.slug}`}
                 className="group rounded-2xl border-2 border-primary-lighter hover:border-primary hover:shadow-lg transition-all overflow-hidden"
               >
                 <div className="relative aspect-video">
@@ -217,7 +223,7 @@ export default function StylePage({ params }: { params: { slug: string } }) {
                 </div>
                 <div className="p-5">
                   <h3 className="font-black text-xl text-secondary group-hover:text-primary transition-colors">
-                    Retrato {o.name}
+                    {o.name} Portrait
                   </h3>
                   <p className="text-sm text-secondary-lighter mt-1 line-clamp-2">{o.intro}</p>
                 </div>

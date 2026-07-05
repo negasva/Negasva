@@ -16,7 +16,7 @@ interface ApiStyle {
   description: string | null;
 }
 
-export default function EstilosPage() {
+export default function StylesPage() {
   const { t } = useLanguage();
   const [apiStyles, setApiStyles] = useState<ApiStyle[] | null>(null);
 
@@ -30,29 +30,29 @@ export default function EstilosPage() {
   // their DB description.
   const translated: Record<string, { desc: string; features: string[] }> = {
     'rick-morty': {
-      desc: 'Trazos expresivos, colores acidos y fondos espaciales para un retrato con humor y energia sci-fi.',
-      features: ['Expresiones exageradas', 'Fondos futuristas', 'Ideal para parejas y amigos'],
+      desc: 'Expressive linework, acid colors and space backgrounds for a portrait with humor and sci-fi energy.',
+      features: ['Exaggerated expressions', 'Futuristic backgrounds', 'Great for couples and friends'],
     },
     'gravity-falls': {
-      desc: 'Ojos grandes, colores calidos y vibra de aventura misteriosa para un retrato tierno y memorable.',
-      features: ['Atmosfera de bosque', 'Rostros tiernos', 'Ideal para avatares'],
+      desc: 'Big eyes, warm colors and cozy mystery vibes for a sweet, memorable portrait.',
+      features: ['Forest atmosphere', 'Cute faces', 'Great for avatars'],
     },
     'simpsons': {
-      desc: 'Piel amarilla, contornos limpios y humor familiar para regalos que todos entienden al instante.',
-      features: ['Retratos familiares', 'Colores planos', 'Perfecto para imprimir'],
+      desc: 'Yellow skin, clean outlines and family humor for gifts everyone gets at first glance.',
+      features: ['Family portraits', 'Flat colors', 'Perfect for printing'],
     },
     'fairly-odd': {
-      desc: 'Formas geometricas, colores brillantes y detalles magicos para retratos alegres y llamativos.',
-      features: ['Alto contraste', 'Accesorios de fantasia', 'Ideal para parejas'],
+      desc: 'Geometric shapes, bright colors and magic details for joyful, eye-catching portraits.',
+      features: ['High contrast', 'Fantasy accessories', 'Great for couples'],
     },
   };
 
   // Fallback list if the API is unavailable — admin manages the real catalog
   const fallbackStyles = [
-    { name: 'Cartoon sci-fi', detailHref: `/estilos/${DB_SLUG_TO_URL['rick-morty']}`, ...translated['rick-morty'] },
-    { name: 'Misterio del bosque', detailHref: `/estilos/${DB_SLUG_TO_URL['gravity-falls']}`, ...translated['gravity-falls'] },
-    { name: 'Familia amarilla clasica', detailHref: `/estilos/${DB_SLUG_TO_URL['simpsons']}`, ...translated['simpsons'] },
-    { name: 'Fantasia brillante', detailHref: `/estilos/${DB_SLUG_TO_URL['fairly-odd']}`, ...translated['fairly-odd'] },
+    { name: 'Rick and Morty Style', detailHref: `/styles/${DB_SLUG_TO_URL['rick-morty']}`, ...translated['rick-morty'] },
+    { name: 'Gravity Falls Style', detailHref: `/styles/${DB_SLUG_TO_URL['gravity-falls']}`, ...translated['gravity-falls'] },
+    { name: 'Simpsons Style', detailHref: `/styles/${DB_SLUG_TO_URL['simpsons']}`, ...translated['simpsons'] },
+    { name: 'Fairly OddParents Style', detailHref: `/styles/${DB_SLUG_TO_URL['fairly-odd']}`, ...translated['fairly-odd'] },
   ];
 
   const styles = apiStyles
@@ -60,13 +60,13 @@ export default function EstilosPage() {
         name: s.name,
         desc: translated[s.slug]?.desc ?? s.description ?? '',
         features: translated[s.slug]?.features ?? [],
-        detailHref: DB_SLUG_TO_URL[s.slug] ? `/estilos/${DB_SLUG_TO_URL[s.slug]}` : null,
+        detailHref: DB_SLUG_TO_URL[s.slug] ? `/styles/${DB_SLUG_TO_URL[s.slug]}` : null,
       }))
     : fallbackStyles;
 
   return (
     <div className="min-h-screen bg-white">
-      <BreadcrumbSchema name="Estilos" path="/estilos" />
+      <BreadcrumbSchema name="Styles" path="/styles" />
       <Navbar />
 
       {/* Hero */}
@@ -114,7 +114,7 @@ export default function EstilosPage() {
                         href={style.detailHref}
                         className="flex-1 inline-flex items-center justify-center gap-2 rounded-xl border-2 border-primary px-6 py-3 font-black text-primary hover:bg-primary-lighter transition-all"
                       >
-                        Ver estilo
+                        View style
                       </Link>
                     )}
                     <Link

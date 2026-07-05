@@ -133,7 +133,7 @@ export default function BlogPostPage({ params }: { params: { slug: string } }) {
                 {related.map((s) => (
                   <Link
                     key={s.slug}
-                    href={`/estilos/${s.slug}`}
+                    href={`/styles/${s.slug}`}
                     className="inline-flex items-center gap-1 rounded-xl border-2 border-primary bg-white px-4 py-2 font-bold text-primary hover:bg-primary hover:text-white transition-all text-sm"
                   >
                     Retrato {s.name}

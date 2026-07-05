@@ -8,7 +8,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const routes: Array<{ path: string; priority: number; changeFrequency: 'daily' | 'weekly' | 'monthly' }> = [
     { path: '/', priority: 1.0, changeFrequency: 'weekly' },
     { path: '/order', priority: 0.9, changeFrequency: 'weekly' },
-    { path: '/estilos', priority: 0.8, changeFrequency: 'weekly' },
+    { path: '/styles', priority: 0.8, changeFrequency: 'weekly' },
     { path: '/precios', priority: 0.8, changeFrequency: 'weekly' },
     { path: '/galeria', priority: 0.7, changeFrequency: 'weekly' },
     { path: '/sobre', priority: 0.5, changeFrequency: 'monthly' },
@@ -21,7 +21,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { path: '/cookies', priority: 0.2, changeFrequency: 'monthly' },
     // Landing individual por estilo — páginas de captación SEO
     ...STYLES_CONTENT.map((s) => ({
-      path: `/estilos/${s.slug}`,
+      path: `/styles/${s.slug}`,
       priority: 0.9,
       changeFrequency: 'weekly' as const,
     })),

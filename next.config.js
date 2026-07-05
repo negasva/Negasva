@@ -24,6 +24,13 @@ const nextConfig = {
   redirects: async () => [
     // El wizard vivía en /studio; los links antiguos compartidos siguen funcionando.
     { source: '/studio', destination: '/order', permanent: true },
+    // Rutas de estilos migradas a slugs EN keyword-exact (SEO).
+    { source: '/estilos', destination: '/styles', permanent: true },
+    { source: '/estilos/rick-y-morty', destination: '/styles/rick-and-morty-style-portrait', permanent: true },
+    { source: '/estilos/simpsons', destination: '/styles/simpsons-style-portrait', permanent: true },
+    { source: '/estilos/gravity-falls', destination: '/styles/gravity-falls-style-portrait', permanent: true },
+    { source: '/estilos/padrinos-magicos', destination: '/styles/fairly-oddparents-style-portrait', permanent: true },
+    { source: '/estilos/:slug', destination: '/styles/:slug', permanent: true },
   ],
   headers: async () => {
     // Content Security Policy. Built to allow the third-parties this app
