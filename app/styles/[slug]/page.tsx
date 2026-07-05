@@ -47,6 +47,10 @@ export default function StylePage({ params }: { params: { slug: string } }) {
     'simpsons-style-portrait': 'Perfect for families, cross-generational gifts and anyone who wants an instantly universal reference.',
     'gravity-falls-style-portrait': 'Perfect for avatars, siblings, sweet couples and portraits with a cozy, mysterious vibe.',
     'fairly-oddparents-style-portrait': 'Perfect for vibrant colors, magical energy and eye-catching couple portraits.',
+    'family-guy-style-portrait': 'Perfect for couples with humor, friend groups and fans of adult animated sitcoms.',
+    'south-park-style-portrait': 'Perfect for big friend groups, coworkers, gaming squads and irreverent gifts.',
+    'anime-style-portrait': 'Perfect for anime fans, couples, avatars and dramatic or romantic custom scenes.',
+    'disney-pixar-style-portrait': 'Perfect for family portraits, kids, weddings, anniversaries and emotional gifts.',
   };
 
   const productSchema = {
