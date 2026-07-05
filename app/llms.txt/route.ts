@@ -6,7 +6,7 @@ export function GET() {
     '- Personalized cartoon portrait service',
     '- Handmade digital illustration, not AI filters',
     '- Delivery in 48 hours',
-    '- Prices start at $20 USD',
+    '- Prices start at $15 USD',
     '',
     'Important pages:',
     '- https://negasva.shop/',

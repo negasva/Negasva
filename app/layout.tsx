@@ -32,22 +32,23 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   metadataBase: new URL("https://negasva.shop"),
   title: {
-    default: "NEGASVA - Tu Retrato Animado Personalizado desde $20",
-    template: "%s | NEGASVA",
+    default:
+      "Custom Cartoon Portraits from Your Photo — Hand-Drawn, No AI • 48h Delivery • From $15 | Negasva",
+    template: "%s | Negasva",
   },
   description:
-    "Retratos personalizados dibujados a mano en estilos cartoon, familiares, sci-fi y fantasia. Entrega digital en 48h, desde $20 USD.",
+    "Turn your photo into a custom cartoon portrait, 100% hand-drawn by a real artist — no AI. Simpsons, Rick and Morty & more styles. Delivered in 48 hours, from $15.",
   keywords: [
-    "retrato animado",
-    "retrato personalizado",
-    "ilustracion personalizada",
-    "caricatura personalizada",
-    "regalo original",
-    "retrato cartoon",
-    "retrato familiar personalizado",
-    "cartoon portrait",
-    "custom art",
-    "estilo cartoon fantasia",
+    "custom cartoon portrait",
+    "turn photo into cartoon",
+    "hand drawn portrait from photo",
+    "simpsons style portrait",
+    "rick and morty custom portrait",
+    "custom couple portrait",
+    "custom family portrait",
+    "personalized gift portrait",
+    "cartoon yourself",
+    "no AI portrait",
   ],
   alternates: {
     canonical: "/",
@@ -55,25 +56,25 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     url: "https://negasva.shop",
-    siteName: "NEGASVA",
-    title: "NEGASVA - Tu Retrato Animado Personalizado desde $20",
+    siteName: "Negasva",
+    title: "Custom Cartoon Portraits from Your Photo — Hand-Drawn, No AI • 48h Delivery • From $15",
     description:
-      "Convierte tu foto en un retrato digital personalizado, dibujado a mano y listo para regalar. Entrega en 48 horas.",
+      "Turn your photo into a hand-drawn cartoon portrait by a real artist — no AI. Delivered in 48 hours, from $15.",
     images: [
       {
         url: "/backgrounds/rm-1.jpg",
         width: 1200,
         height: 630,
-        alt: "NEGASVA - Retratos animados personalizados",
+        alt: "Custom cartoon portrait hand drawn from photo — Negasva",
       },
     ],
-    locale: "es_CO",
+    locale: "en_US",
   },
   twitter: {
     card: "summary_large_image",
-    title: "NEGASVA - Tu Retrato Animado Personalizado desde $20",
+    title: "Custom Cartoon Portraits from Your Photo — Hand-Drawn, No AI • 48h • From $15",
     description:
-      "Transforma tu foto en un personaje de caricatura iconico. Entrega en 48 horas, desde $20 USD.",
+      "Turn your photo into a hand-drawn cartoon portrait by a real artist — no AI. Delivered in 48 hours, from $15.",
     images: ["/backgrounds/rm-1.jpg"],
   },
   robots: { index: true, follow: true },
@@ -93,13 +94,13 @@ export const metadata: Metadata = {
 const ORGANIZATION_SCHEMA = {
   "@context": "https://schema.org",
   "@type": "OnlineStore",
-  name: "NEGASVA",
+  name: "Negasva",
   url: "https://negasva.shop",
   logo: "https://negasva.shop/favicon.png",
   description:
-    "Retratos personalizados dibujados a mano en estilos cartoon, familiares, sci-fi y fantasia. Entrega digital en 48 horas.",
-  areaServed: ["Colombia", "Espana", "Mexico", "Estados Unidos"],
-  priceRange: "$20-$160",
+    "Custom cartoon portraits hand-drawn from your photo by a real artist — no AI. Digital delivery in 48 hours, from $15.",
+  areaServed: ["United States", "Europe", "Colombia", "Mexico"],
+  priceRange: "$15-$160",
   sameAs: ["https://instagram.com/negasva", "https://tiktok.com/@negasva"],
 };
 
@@ -109,7 +110,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="es" className="scroll-smooth">
+    <html lang="en" className="scroll-smooth">
       <head>
         <script
           type="application/ld+json"

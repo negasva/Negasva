@@ -26,7 +26,7 @@ export const STYLES_CONTENT: StyleContent[] = [
     h1: 'Retrato personalizado estilo cartoon sci-fi',
     metaTitle: 'Retrato Cartoon Sci-Fi Personalizado | NEGASVA',
     metaDescription:
-      'Convierte tu foto en un retrato cartoon sci-fi con trazos expresivos, colores intensos y fondos espaciales. Dibujado a mano, desde $20 USD.',
+      'Convierte tu foto en un retrato cartoon sci-fi con trazos expresivos, colores intensos y fondos espaciales. Dibujado a mano, desde $15 USD.',
     keywords: [
       'retrato personalizado sci fi',
       'caricatura personalizada sci fi',
@@ -75,7 +75,7 @@ export const STYLES_CONTENT: StyleContent[] = [
     h1: 'Retrato personalizado estilo familia amarilla clasica',
     metaTitle: 'Retrato Familiar Amarillo Personalizado | NEGASVA',
     metaDescription:
-      'Retrato personalizado con piel amarilla, contornos limpios y humor familiar. Ideal para parejas, familias y regalos. Dibujado a mano desde $20 USD.',
+      'Retrato personalizado con piel amarilla, contornos limpios y humor familiar. Ideal para parejas, familias y regalos. Dibujado a mano desde $15 USD.',
     keywords: [
       'retrato familiar personalizado',
       'caricatura familiar personalizada',

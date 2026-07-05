@@ -99,7 +99,7 @@ export const BLOG_POSTS: BlogPost[] = [
         h2: '10. Para ti: porque sí',
         paragraphs: [
           'No todo regalo necesita ocasión. Muchos de nuestros clientes piden su retrato simplemente porque quieren verse como personaje de su serie favorita. Y honestamente, es razón suficiente.',
-          'Cualquiera de estas ideas empieza igual: eliges el estilo, subes la foto y en 48 horas tienes el retrato en tu correo, listo para imprimir o regalar en digital. Desde $20 USD.',
+          'Cualquiera de estas ideas empieza igual: eliges el estilo, subes la foto y en 48 horas tienes el retrato en tu correo, listo para imprimir o regalar en digital. Desde $15 USD.',
         ],
       },
     ],
@@ -205,7 +205,7 @@ export const BLOG_POSTS: BlogPost[] = [
         paragraphs: [
           'Elige cartoon sci-fi si: el retrato es de pareja o amigos, quieres fondos espectaculares, y el humor ácido va contigo.',
           'Elige familia amarilla clasica si: el retrato es familiar, es un regalo para alguien de otra generación, o quieres el estilo más reconocible que existe.',
-          'Y recuerda que no tienes que casarte con uno para siempre: muchos clientes piden su primer retrato en un estilo y vuelven por el otro. Ambos cuestan lo mismo, desde $20 USD con entrega en 48 horas.',
+          'Y recuerda que no tienes que casarte con uno para siempre: muchos clientes piden su primer retrato en un estilo y vuelven por el otro. Ambos cuestan lo mismo, desde $15 USD con entrega en 48 horas.',
         ],
       },
       {
@@ -330,7 +330,7 @@ export const BLOG_POSTS: BlogPost[] = [
     title: 'Retratos familiares personalizados: el regalo que une generaciones',
     metaTitle: 'Retratos Familiares Personalizados — El Regalo que Une Generaciones',
     metaDescription:
-      'Por qué un retrato familiar animado es el regalo perfecto: hasta 8 personas y mascotas, estilos familia amarilla o cartoon sci-fi, entrega en 48h desde $20.',
+      'Por qué un retrato familiar animado es el regalo perfecto: hasta 8 personas y mascotas, estilos familia amarilla o cartoon sci-fi, entrega en 48h desde $15.',
     category: 'Historias',
     date: '2026-05-02',
     dateLabel: '2 de Mayo, 2026',
@@ -364,7 +364,7 @@ export const BLOG_POSTS: BlogPost[] = [
         h2: 'Del archivo digital al cuadro en la pared',
         paragraphs: [
           'Entregamos el retrato en alta resolución, apto para imprimir en el tamaño que quieras: lienzo, póster enmarcado, o incluso tazas y camisetas. Un truco que usan muchos clientes: imprimen una copia grande para la casa de los padres y copias pequeñas para cada hermano.',
-          'El pedido completo toma cinco minutos: eliges estilo, indicas cuántas personas, subes las fotos y nos das las indicaciones. En 48 horas, tu familia es oficialmente parte de una ciudad animada. Desde $20 USD.',
+          'El pedido completo toma cinco minutos: eliges estilo, indicas cuántas personas, subes las fotos y nos das las indicaciones. En 48 horas, tu familia es oficialmente parte de una ciudad animada. Desde $15 USD.',
         ],
       },
     ],

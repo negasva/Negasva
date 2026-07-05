@@ -7,7 +7,7 @@ export const blogContent = {
     subtitle:
       'Consejos, historias y novedades del mundo de los retratos animados personalizados.',
     cta_title: '¿Listo para tu retrato?',
-    cta_subtitle: 'Desde $20 · Entrega en 48h · +1000 clientes felices',
+    cta_subtitle: 'Desde $15 · Entrega en 48h · +1000 clientes felices',
     cta_button: 'Pedir mi retrato',
   },
   en: {
@@ -16,7 +16,7 @@ export const blogContent = {
     subtitle:
       'Tips, stories and news from the world of custom cartoon portraits.',
     cta_title: 'Ready for your portrait?',
-    cta_subtitle: 'From $20 · 48h delivery · +1000 happy customers',
+    cta_subtitle: 'From $15 · 48h delivery · +1000 happy customers',
     cta_button: 'Order my portrait',
   },
   fr: {

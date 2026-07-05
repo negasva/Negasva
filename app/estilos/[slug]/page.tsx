@@ -73,7 +73,7 @@ export default function StylePage({ params }: { params: { slug: string } }) {
       '@type': 'AggregateOffer',
       url: `https://negasva.shop${orderHref}`,
       priceCurrency: 'USD',
-      lowPrice: '20',
+      lowPrice: '15',
       highPrice: '160',
       offerCount: '4',
       availability: 'https://schema.org/InStock',
@@ -134,7 +134,7 @@ export default function StylePage({ params }: { params: { slug: string } }) {
                 Pedir mi retrato {style.name}
                 <ChevronRight className="w-5 h-5" />
               </Link>
-              <p className="mt-3 text-sm text-secondary-lighter">Desde $20 USD · Entrega en 48h · Revisión incluida</p>
+              <p className="mt-3 text-sm text-secondary-lighter">Desde $15 USD · Entrega en 48h · Revisión incluida</p>
             </div>
             <div className="relative aspect-video rounded-2xl overflow-hidden border-2 border-primary-lighter shadow-lg">
               <Image
@@ -201,7 +201,7 @@ export default function StylePage({ params }: { params: { slug: string } }) {
           <h2 className="font-black text-4xl text-white mb-4 tracking-tighter">
             Tu retrato {style.name} te está esperando
           </h2>
-          <p className="text-white/70 mb-8">Desde $20 USD · Entrega en 48h · +1000 clientes felices</p>
+          <p className="text-white/70 mb-8">Desde $15 USD · Entrega en 48h · +1000 clientes felices</p>
           <Link
             href={orderHref}
             className="inline-flex items-center gap-2 rounded-xl bg-primary px-10 py-4 font-black text-white hover:bg-primary-dark hover:shadow-xl transition-all"

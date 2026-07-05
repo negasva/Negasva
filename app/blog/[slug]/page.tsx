@@ -152,7 +152,7 @@ export default function BlogPostPage({ params }: { params: { slug: string } }) {
           <h2 className="font-black text-4xl text-white mb-4 tracking-tighter">
             ¿Listo para tu retrato?
           </h2>
-          <p className="text-white/70 mb-8">Desde $20 USD · Entrega en 48h · +1000 clientes felices</p>
+          <p className="text-white/70 mb-8">Desde $15 USD · Entrega en 48h · +1000 clientes felices</p>
           <Link
             href="/order"
             className="inline-flex items-center gap-2 rounded-xl bg-primary px-10 py-4 font-black text-white hover:bg-primary-dark hover:shadow-xl transition-all"
