@@ -12,7 +12,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { path: '/styles', priority: 0.8, changeFrequency: 'weekly' },
     { path: '/precios', priority: 0.8, changeFrequency: 'weekly' },
     { path: '/galeria', priority: 0.7, changeFrequency: 'weekly' },
-    { path: '/sobre', priority: 0.5, changeFrequency: 'monthly' },
+    { path: '/about', priority: 0.5, changeFrequency: 'monthly' },
     { path: '/blog', priority: 0.6, changeFrequency: 'weekly' },
     { path: '/contacto', priority: 0.5, changeFrequency: 'monthly' },
     { path: '/faq', priority: 0.7, changeFrequency: 'weekly' },
