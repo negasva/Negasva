@@ -60,14 +60,7 @@ export const metadata: Metadata = {
     title: "Custom Cartoon Portraits from Your Photo — Hand-Drawn, No AI • 48h Delivery • From $15",
     description:
       "Turn your photo into a hand-drawn cartoon portrait by a real artist — no AI. Delivered in 48 hours, from $15.",
-    images: [
-      {
-        url: "/backgrounds/rm-1.jpg",
-        width: 1200,
-        height: 630,
-        alt: "Custom cartoon portrait hand drawn from photo — Negasva",
-      },
-    ],
+    // og:image la aporta app/opengraph-image.tsx (convención de archivo).
     locale: "en_US",
   },
   twitter: {
@@ -75,7 +68,6 @@ export const metadata: Metadata = {
     title: "Custom Cartoon Portraits from Your Photo — Hand-Drawn, No AI • 48h • From $15",
     description:
       "Turn your photo into a hand-drawn cartoon portrait by a real artist — no AI. Delivered in 48 hours, from $15.",
-    images: ["/backgrounds/rm-1.jpg"],
   },
   robots: { index: true, follow: true },
   // PWA: iOS la abre en modo app (sin barra del navegador) desde "Añadir a
@@ -130,11 +122,13 @@ export default function RootLayout({
             </Script>
           </>
         )}
-        <script
-          src="https://analytics.ahrefs.com/analytics.js"
-          data-key="zAkVF4nhVT9cGpq+Y87ZNw"
-          async
-        />
+        {process.env.NEXT_PUBLIC_AHREFS_KEY && (
+          <script
+            src="https://analytics.ahrefs.com/analytics.js"
+            data-key={process.env.NEXT_PUBLIC_AHREFS_KEY}
+            async
+          />
+        )}
       </head>
       <body className={`${montserrat.className} ${montserrat.variable} ${caveat.variable} min-h-screen flex flex-col bg-white`}>
         <LanguageProvider>

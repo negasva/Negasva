@@ -5,8 +5,12 @@ import { LANDINGS } from '@/lib/content/landings';
 
 const BASE = 'https://negasva.shop';
 
+// Fecha del último cambio real de contenido de las páginas estáticas
+// (migración EN + reescritura SEO). Actualizar al tocar el contenido.
+const CONTENT_UPDATED = new Date('2026-07-05');
+
 export default function sitemap(): MetadataRoute.Sitemap {
-  const routes: Array<{ path: string; priority: number; changeFrequency: 'daily' | 'weekly' | 'monthly' }> = [
+  const routes: Array<{ path: string; priority: number; changeFrequency: 'daily' | 'weekly' | 'monthly'; lastModified?: Date }> = [
     { path: '/', priority: 1.0, changeFrequency: 'weekly' },
     { path: '/order', priority: 0.9, changeFrequency: 'weekly' },
     { path: '/styles', priority: 0.8, changeFrequency: 'weekly' },
@@ -32,17 +36,18 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.9,
       changeFrequency: 'weekly' as const,
     })),
-    // Artículos del blog
+    // Artículos del blog — lastModified = fecha real del post
     ...BLOG_POSTS.map((p) => ({
       path: `/blog/${p.slug}`,
       priority: 0.6,
       changeFrequency: 'monthly' as const,
+      lastModified: new Date(p.date),
     })),
   ];
 
   return routes.map((r) => ({
     url: `${BASE}${r.path}`,
-    lastModified: new Date(),
+    lastModified: r.lastModified ?? CONTENT_UPDATED,
     changeFrequency: r.changeFrequency,
     priority: r.priority,
   }));
