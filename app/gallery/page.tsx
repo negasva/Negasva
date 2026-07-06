@@ -1,13 +1,13 @@
-'use client';
-
-import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useLanguage } from '@/lib/i18n/LanguageContext';
-import { cachedFetchJSON } from '@/lib/cache/clientCache';
 import Navbar from '@/components/Navbar';
 import PageFooter from '@/components/PageFooter';
 import BeforeAfterSlider from '@/components/BeforeAfterSlider';
+import { createAnonClient } from '@/lib/supabase/server';
+
+// Server component: la galería llega en el HTML inicial (SEO). ISR cada 5 min.
+// El slider antes/después sigue siendo isla cliente (interactividad).
+export const revalidate = 300;
 
 interface GalleryItem {
   id: string;
@@ -16,15 +16,24 @@ interface GalleryItem {
   image_url: string;
 }
 
-export default function GaleriaPage() {
-  const { t } = useLanguage();
-  const [items, setItems] = useState<GalleryItem[]>([]);
+async function fetchGallery(): Promise<GalleryItem[]> {
+  const supabase = createAnonClient();
+  if (!supabase) return [];
+  const { data, error } = await supabase
+    .from('gallery_items')
+    .select('id, title, style, image_url')
+    .eq('is_active', true)
+    .order('sort_order', { ascending: true })
+    .order('created_at', { ascending: true });
+  return error ? [] : (data ?? []);
+}
 
-  useEffect(() => {
-    cachedFetchJSON<GalleryItem[]>('/api/gallery')
-      .then((data) => { if (Array.isArray(data)) setItems(data); })
-      .catch(() => null);
-  }, []);
+// Alt pattern keyword para image SEO.
+const altFor = (item: GalleryItem) =>
+  `${item.style ? `${item.style} style ` : ''}custom portrait hand drawn from photo — ${item.title}`;
+
+export default async function GalleryPage() {
+  const items = await fetchGallery();
 
   return (
     <div className="min-h-screen bg-white">
@@ -34,10 +43,10 @@ export default function GaleriaPage() {
       <section className="bg-primary-lighter/30 py-20 px-4">
         <div className="mx-auto max-w-7xl">
           <h1 className="font-black text-5xl md:text-6xl tracking-tighter text-secondary mb-4">
-            {t.gallery.title}
+            Work Gallery
           </h1>
           <p className="text-lg text-secondary-lighter max-w-2xl">
-            {t.gallery.subtitle}
+            Discover the portraits our customers have created
           </p>
         </div>
       </section>
@@ -47,15 +56,15 @@ export default function GaleriaPage() {
         <div className="mx-auto max-w-3xl">
           <div className="text-center mb-8">
             <h2 className="font-black text-3xl md:text-4xl tracking-tighter text-secondary mb-2">
-              Arrastra para ver la transformación
+              Drag to see the transformation
             </h2>
-            <p className="text-secondary-lighter">De foto real a personaje animado</p>
+            <p className="text-secondary-lighter">From real photo to cartoon character</p>
           </div>
           <BeforeAfterSlider
             beforeSrc="/samples/before-1.svg"
             afterSrc="/samples/after-1.svg"
-            beforeLabel="Antes"
-            afterLabel="Después"
+            beforeLabel="Before"
+            afterLabel="After"
           />
         </div>
       </section>
@@ -74,7 +83,7 @@ export default function GaleriaPage() {
                   <div className="relative aspect-square overflow-hidden">
                     <Image
                       src={item.image_url}
-                      alt={item.title}
+                      alt={altFor(item)}
                       fill
                       className="object-cover group-hover:scale-110 transition-transform duration-300"
                       sizes="(max-width: 768px) 50vw, 33vw"
@@ -95,16 +104,16 @@ export default function GaleriaPage() {
       <section className="bg-secondary py-16 px-4">
         <div className="mx-auto max-w-3xl text-center">
           <h2 className="font-black text-4xl text-white mb-6 tracking-tighter">
-            {t.gallery.cta_title}
+            Will yours be next?
           </h2>
           <p className="text-gray-300 mb-8">
-            {t.gallery.cta_subtitle}
+            Join our community of satisfied customers
           </p>
           <Link
             href="/order"
             className="inline-block rounded-xl bg-primary px-10 py-4 font-black text-white hover:bg-primary-dark hover:shadow-xl transition-all"
           >
-            {t.gallery.cta_btn}
+            Create My Portrait
           </Link>
         </div>
       </section>
