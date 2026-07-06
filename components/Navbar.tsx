@@ -9,6 +9,7 @@ import { useLanguage } from '@/lib/i18n/LanguageContext';
 
 // Links SEO del sitio EN estático — texto fijo en inglés, sin i18n.
 const NAV_LINKS = [
+  { href: '/how-it-works', label: 'How It Works' },
   { href: '/styles', label: 'Styles' },
   { href: '/pricing', label: 'Pricing' },
   { href: '/gallery', label: 'Gallery' },
