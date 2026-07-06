@@ -1,12 +1,12 @@
 import Link from 'next/link';
 
 const SECTIONS = [
-  { href: '/adminlanding/landing',        label: 'Landing Page', desc: 'Hero, pasos, galería marquee, stats y footer' },
-  { href: '/adminlanding/galeria',        label: 'Galería',      desc: 'Portafolio que se muestra en /galeria' },
-  { href: '/adminlanding/faqs',           label: 'FAQ',          desc: 'Preguntas frecuentes del sitio' },
+  { href: '/adminlanding/landing',        label: 'Footer',       desc: 'Tagline, redes y columnas de enlaces del pie' },
+  { href: '/adminlanding/galeria',        label: 'Galería',      desc: 'Portafolio que se muestra en /gallery' },
+  { href: '/adminlanding/faqs',           label: 'FAQ',          desc: 'Preguntas frecuentes (home y /faq)' },
   { href: '/adminlanding/discount-codes', label: 'Descuentos',   desc: 'Códigos y reglas generales' },
-  { href: '/adminlanding/packages',       label: 'Paquetes',     desc: 'Combos de marketing' },
-  { href: '/adminlanding/contenido',      label: 'Contenido',    desc: 'Textos de páginas, footer, legales' },
+  { href: '/adminlanding/packages',       label: 'Paquetes',     desc: 'Combos que se muestran en /pricing' },
+  { href: '/adminlanding/contenido',      label: 'Contenido',    desc: 'Textos de páginas: FAQ, blog, legales…' },
 ];
 
 export default function AdminLandingHome() {

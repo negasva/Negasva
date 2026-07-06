@@ -480,7 +480,7 @@ export function useCheckout() {
     const base = dynamicBgs[selected.style] ?? [];
     return [
       ...base,
-      { id: 'custom', url: '', name: getBgName('custom'), price: priceMap.background_custom ?? 25 },
+      { id: 'custom', url: '', name: getBgName('custom'), price: priceMap.background_custom ?? 15 },
       { id: 'none', url: '', name: getBgName('none') },
     ];
   };

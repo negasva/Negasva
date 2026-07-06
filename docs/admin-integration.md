@@ -1,5 +1,12 @@
 # Admin Panel — Guía de integración con el frontend
 
+> **⚠️ Documento histórico (parcialmente desactualizado).** Las rutas
+> `app/precios/page.tsx` y `app/studio/page.tsx` ya no existen; los precios los
+> lee `/pricing` y `/order` desde las tablas `prices`/`body_types`, y los
+> paquetes se muestran en `/pricing`. Para el estado real de qué controla cada
+> panel, ver `AUDIT-ADMIN-LANDING.md`, `scripts/sync-landing-content.sql` y
+> `CLEANUP.sql`.
+
 Este documento describe qué partes del sitio público deben actualizarse para leer
 los datos dinámicamente desde Supabase en lugar de tener los valores hardcodeados.
 
