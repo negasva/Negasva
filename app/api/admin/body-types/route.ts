@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import { createServiceClient } from '@/lib/supabase/server';
 import { requireAdminRoute } from '@/lib/admin/auth';
 import { z } from 'zod';
@@ -12,6 +13,12 @@ import {
 async function guard(request: Request, mutating: boolean) {
   if (mutating && !validateSameOrigin(request)) return errorResponse('Invalid origin', 403);
   return await rateLimitByIp(request, { prefix: 'admin-bt', max: 60, windowMs: 60_000 });
+}
+
+// La home y /pricing renderizan estos precios en el servidor (ISR).
+function revalidatePricingPages() {
+  revalidatePath('/');
+  revalidatePath('/pricing');
 }
 
 const CreateSchema = z.object({
@@ -66,6 +73,7 @@ export async function POST(request: Request) {
 
   const { data, error } = await db.from('body_types').insert(parsed.data).select().single();
   if (error) return errorResponse('Failed to create body type', 500, error);
+  revalidatePricingPages();
   return NextResponse.json(data, { status: 201 });
 }
 
@@ -87,6 +95,7 @@ export async function PUT(request: Request) {
 
   const { error } = await db.from('body_types').update(fields).eq('id', id);
   if (error) return errorResponse('Failed to update body type', 500, error);
+  revalidatePricingPages();
   return NextResponse.json({ ok: true });
 }
 
@@ -105,5 +114,6 @@ export async function DELETE(request: Request) {
 
   const { error } = await db.from('body_types').delete().eq('id', parsed.data.id);
   if (error) return errorResponse('Failed to delete body type', 500, error);
+  revalidatePricingPages();
   return NextResponse.json({ ok: true });
 }

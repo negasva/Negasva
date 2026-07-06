@@ -1,7 +1,7 @@
 import Link from 'next/link';
 
 const SECTIONS = [
-  { href: '/adminlanding/landing',        label: 'Footer',       desc: 'Tagline, redes y columnas de enlaces del pie' },
+  { href: '/adminlanding/landing',        label: 'Landing Page', desc: 'Textos de la home, testimonios y footer' },
   { href: '/adminlanding/galeria',        label: 'Galería',      desc: 'Portafolio que se muestra en /gallery' },
   { href: '/adminlanding/faqs',           label: 'FAQ',          desc: 'Preguntas frecuentes (home y /faq)' },
   { href: '/adminlanding/discount-codes', label: 'Descuentos',   desc: 'Códigos y reglas generales' },

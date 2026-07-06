@@ -4,33 +4,11 @@ import { memo, useRef } from 'react';
 import Image from 'next/image';
 import { ChevronLeft, ChevronRight, Camera } from 'lucide-react';
 import { useLanguage } from '@/lib/i18n/LanguageContext';
+import { DEFAULT_HOME_CONTENT, type HomeTestimonial } from '@/lib/content/homeContent';
 
-// 20 reseñas, comentario de UNA línea. `photo` es la ruta de la foto del
-// retrato entregado (14 tarjetas la llevan); mientras el archivo no exista se
-// muestra un espacio reservado — las rutas se rellenan cuando lleguen las
-// imágenes reales a /public/reviews/.
-const REVIEWS: Array<{ name: string; comment: string; photo: string | null }> = [
-  { name: 'Maria Gonzalez', comment: 'Mi retrato quedó increíble, la calidad es asombrosa.', photo: null },
-  { name: 'Emma Thompson', comment: 'Absolutely stunning! Got my portrait in under 24 hours.', photo: null },
-  { name: 'Lucas Muller', comment: 'Incredible quality, so much personality.', photo: null },
-  { name: 'Carlos Reyes', comment: 'Perfecto para regalo, mi hermano quedó sin palabras.', photo: null },
-  { name: 'Camille Dubois', comment: 'Portrait magnifique, la ressemblance est frappante.', photo: null },
-  { name: 'Valentina Sanchez', comment: 'El nivel de detalle es increíble.', photo: null },
-  { name: "James O'Brien", comment: 'Best gift ever, my wife cried happy tears.', photo: null },
-  { name: 'Alejandro Garcia', comment: 'Capturó perfectamente mi estilo, lo recomiendo al 100%.', photo: null },
-  { name: 'Isabella Rossi', comment: 'Sono rimasta senza parole, bellissimo.', photo: null },
-  { name: 'Noah Williams', comment: 'My kids absolutely love it.', photo: null },
-  { name: 'Sofia Lindstrom', comment: 'My family portrait is now framed on my wall.', photo: null },
-  { name: 'Pierre Laurent', comment: 'Le résultat dépasse toutes mes attentes.', photo: null },
-  { name: 'Oliver Schneider', comment: 'Every single detail was perfect.', photo: null },
-  { name: 'Catalina Herrera', comment: 'El retrato le encantó a toda mi familia.', photo: null },
-  { name: 'Sofia Martinez', comment: 'Proceso muy fácil y entrega rápida.', photo: null },
-  { name: 'Daniel Kim', comment: 'Great communication and a flawless result.', photo: null },
-  { name: 'Laura Pérez', comment: 'Superó lo que imaginaba, volveré a pedir.', photo: null },
-  { name: 'Tom Becker', comment: 'Fast, friendly and incredibly talented artists.', photo: null },
-  { name: 'Ana Suárez', comment: 'El mejor regalo de aniversario que he dado.', photo: null },
-  { name: 'Chloé Martin', comment: 'Très professionnel et rapide, je recommande.', photo: null },
-];
+// Las reseñas se editan en /adminlanding/landing (landing_config.home_content)
+// y llegan por props desde la home; el default de lib/content/homeContent.ts
+// es solo el fallback para consumidores sin props.
 
 const AVATAR_GRADIENTS = [
   'from-primary to-primary-dark',
@@ -55,7 +33,7 @@ const ReviewCard = memo(function ReviewCard({ name, comment, photo }: { name: st
   return (
     <div className="w-[340px] sm:w-[400px] flex-shrink-0 snap-start rounded-2xl border-2 border-primary-lighter bg-white overflow-hidden shadow-sm">
       {/* Foto del retrato entregado — espacio reservado si aún no hay imagen */}
-      {photo !== null && (
+      {!!photo && (
         <div className="relative h-44 w-full bg-primary-lighter/40 flex items-center justify-center">
           <Camera className="w-8 h-8 text-primary/40" aria-hidden />
           <Image
@@ -94,7 +72,7 @@ const ReviewCard = memo(function ReviewCard({ name, comment, photo }: { name: st
   );
 });
 
-function TestimonialsScroll() {
+function TestimonialsScroll({ reviews = DEFAULT_HOME_CONTENT.testimonials }: { reviews?: HomeTestimonial[] }) {
   const { t } = useLanguage();
   const trackRef = useRef<HTMLDivElement>(null);
 
@@ -124,7 +102,7 @@ function TestimonialsScroll() {
           ref={trackRef}
           className="reviews-track flex gap-5 overflow-x-auto snap-x snap-mandatory scroll-smooth pb-3 sm:mx-8"
         >
-          {REVIEWS.map((r) => (
+          {reviews.map((r) => (
             <ReviewCard key={r.name} {...r} />
           ))}
         </div>

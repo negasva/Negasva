@@ -147,12 +147,13 @@ export function WeeklyOrdersBadge() {
 // ── FAQ acordeón (contenido del admin, traducido client-side) ────────────────
 interface ApiFaq { id: string; question: string; answer: string; }
 
-export function HomeFaq() {
+export function HomeFaq({ heading, seeAllLabel }: { heading: string; seeAllLabel: string }) {
   const [faqs, setFaqs] = useState<ApiFaq[]>([]);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
 
   useEffect(() => {
-    cachedFetchJSON<ApiFaq[]>('/api/faqs')
+    // Sin caché: las FAQs las edita el admin y deben verse al instante.
+    cachedFetchJSON<ApiFaq[]>('/api/faqs', { ttlMs: 0, init: { cache: 'no-store' } })
       .then((data) => { if (Array.isArray(data)) setFaqs(data.slice(0, 5)); })
       .catch(() => null);
   }, []);
@@ -170,7 +171,7 @@ export function HomeFaq() {
     <section className="bg-white pb-20 px-6">
       <div className="mx-auto max-w-[720px]">
         <h2 className="font-black text-[30px] sm:text-[40px] text-center mb-9">
-          Frequently asked questions
+          {heading}
         </h2>
         <div className="flex flex-col gap-3">
           {faqsT.map((item, i) => {
@@ -202,7 +203,7 @@ export function HomeFaq() {
         </div>
         <div className="text-center mt-8">
           <Link href="/faq" className="font-bold text-primary hover:text-primary-dark underline underline-offset-4">
-            See all questions
+            {seeAllLabel}
           </Link>
         </div>
       </div>
@@ -212,7 +213,7 @@ export function HomeFaq() {
 
 // ── CTA fija en móvil al hacer scroll ────────────────────────────────────────
 // ponytail: CSS transition en vez de framer-motion; mismo efecto, menos JS.
-export function StickyOrderCta() {
+export function StickyOrderCta({ label, href }: { label: string; href: string }) {
   const [show, setShow] = useState(false);
   useEffect(() => {
     const onScroll = () => setShow(window.scrollY > window.innerHeight * 0.85);
@@ -226,10 +227,10 @@ export function StickyOrderCta() {
       style={{ pointerEvents: show ? 'auto' : 'none' }}
     >
       <Link
-        href="/order"
+        href={href}
         className="flex items-center justify-center gap-2 rounded-xl bg-primary py-4 font-black text-white text-lg shadow-lg shadow-primary/30 active:scale-[0.98] transition-transform"
       >
-        Order my portrait · from $15
+        {label}
         <ChevronRight className="w-5 h-5" />
       </Link>
     </div>
