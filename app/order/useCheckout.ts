@@ -495,8 +495,9 @@ export function useCheckout() {
     setSelected(prev => ({ ...prev, style: id, background: '' }));
     setStep(2);
   };
+  // Toggle tipo radio: reseleccionar la opción activa la deselecciona.
   const selectBodyType = (slug: string) =>
-    setSelected(prev => ({ ...prev, bodyType: slug }));
+    setSelected(prev => ({ ...prev, bodyType: prev.bodyType === slug ? '' : slug }));
   const decPeople = () =>
     setSelected(prev => (prev.peopleCount > 1 ? { ...prev, peopleCount: prev.peopleCount - 1 } : prev));
   const incPeople = () =>

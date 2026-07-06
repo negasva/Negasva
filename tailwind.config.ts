@@ -48,12 +48,18 @@ const config: Config = {
           '0%': { opacity: '0', transform: 'translateY(6px) scale(0.96)' },
           '100%': { opacity: '1', transform: 'translateY(0) scale(1)' },
         },
+        breathe: {
+          '0%, 100%': { transform: 'scale(1)' },
+          '50%': { transform: 'scale(1.02)' },
+        },
       },
       animation: {
         'wiggle-slow': 'wiggle 3s ease-in-out infinite',
         'pulse-slow': 'pulse-slow 2s ease-in-out infinite',
         shake: 'shake 0.45s ease-in-out 1',
         'pop-in': 'pop-in 0.35s ease-out',
+        // Affordance táctil en móvil: dos ciclos al cargar y se detiene.
+        'breathe-twice': 'breathe 2s ease-in-out 2',
       },
     },
   },
