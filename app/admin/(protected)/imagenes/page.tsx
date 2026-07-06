@@ -4,12 +4,9 @@ import { useEffect, useRef, useState, useCallback } from 'react';
 import { uploadAdminImage } from '@/lib/admin/uploadImage';
 import { SITE_IMAGE_SLOTS, type SiteImageSlot, type SiteImages } from '@/lib/siteImages';
 
-interface GalleryImage { url: string; caption: string; }
-
 /** Editor visual de todas las imágenes fijas del sitio (landing y /order). */
 export default function SiteImagesPage() {
   const [siteImages, setSiteImages] = useState<SiteImages>({});
-  const [gallery, setGallery] = useState<GalleryImage[]>([]);
   const [slots, setSlots] = useState<SiteImageSlot[]>(SITE_IMAGE_SLOTS);
   const [loading, setLoading] = useState(true);
   const [savingKey, setSavingKey] = useState('');
@@ -27,7 +24,6 @@ export default function SiteImagesPage() {
       fetch('/api/admin/body-types').then((r) => r.json()).catch(() => []),
     ]);
     setSiteImages(cfgRes.site_images ?? {});
-    setGallery(Array.isArray(cfgRes.gallery_images) ? cfgRes.gallery_images : []);
     // Slots dinámicos: un slot por cada tipo de cuerpo creado en el admin
     // que no esté ya en el registro estático.
     if (Array.isArray(btRes)) {
@@ -58,22 +54,6 @@ export default function SiteImagesPage() {
     if (res.ok) {
       setSiteImages(next);
       showToast('Imagen guardada');
-    } else {
-      showToast('Error al guardar');
-    }
-    setSavingKey('');
-  }
-
-  async function saveGallery(next: GalleryImage[], key: string) {
-    setSavingKey(key);
-    const res = await fetch('/api/landing-config', {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ key: 'gallery_images', value: next }),
-    });
-    if (res.ok) {
-      setGallery(next);
-      showToast('Galería guardada');
     } else {
       showToast('Error al guardar');
     }
@@ -125,36 +105,6 @@ export default function SiteImagesPage() {
             </section>
           ))}
 
-          {/* Galería (marquee de la landing): array editable de landing_config. */}
-          <section className="mb-8">
-            <h2 className="font-black text-secondary text-base">
-              Landing (/) <span className="text-secondary-lighter font-bold">→ Galería pedidos (carrusel)</span>
-            </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 mt-3">
-              {gallery.map((img, i) => (
-                <SlotCard
-                  key={`gallery_${i}`}
-                  slot={{
-                    key: `gallery_${i}`,
-                    page: 'Landing (/)',
-                    section: 'Galería pedidos',
-                    label: `Imagen ${i + 1}${i === 0 ? ' (también fondo del header si no hay override)' : ''} — ${img.caption}`,
-                    def: img.url,
-                    recommended: '840 × 560 px',
-                  }}
-                  current={img.url}
-                  saving={savingKey === `gallery_${i}`}
-                  allowClear={false}
-                  onSave={(url) => {
-                    if (!url) return;
-                    const next = gallery.map((x, j) => (j === i ? { ...x, url } : x));
-                    saveGallery(next, `gallery_${i}`);
-                  }}
-                />
-              ))}
-            </div>
-          </section>
-
           <p className="text-xs text-secondary-lighter">
             Los estilos, fondos por estilo y obras de la galería antes/después se editan en sus propias secciones
             (Estilos, Fondos y Contenido del sitio → Galería).
@@ -202,8 +152,14 @@ function SlotCard({
   return (
     <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
       <div className="relative aspect-video bg-gray-100">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img key={effective} src={effective} alt={slot.label} loading="lazy" className="w-full h-full object-cover" />
+        {effective ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img key={effective} src={effective} alt={slot.label} loading="lazy" className="w-full h-full object-cover" />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center text-xs font-bold text-secondary-lighter">
+            Sin imagen — la web muestra un placeholder
+          </div>
+        )}
         {current && (
           <span className="absolute top-2 left-2 text-[10px] font-bold bg-primary text-white px-2 py-0.5 rounded-full">
             Personalizada

@@ -65,7 +65,7 @@ export default function StepBackground({ c }: { c: CheckoutController }) {
                   <p className="text-sm font-black text-secondary leading-tight uppercase tracking-tight">
                     {bg.name}
                   </p>
-                  <p className="text-xs text-primary mt-1 font-bold">+{fmt(bg.price ?? priceMap.background_custom ?? 25)}</p>
+                  <p className="text-xs text-primary mt-1 font-bold">+{fmt(bg.price ?? priceMap.background_custom ?? 15)}</p>
                 </div>
               </button>
             );

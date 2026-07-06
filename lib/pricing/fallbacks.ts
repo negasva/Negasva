@@ -18,14 +18,19 @@ export interface BodyTypeItem {
   is_best_value: boolean;
 }
 
-/** Per-person price in USD, keyed by body_type slug. */
+/**
+ * Per-person price in USD, keyed by body_type slug.
+ * Must match the prices announced on the landing (app/page.tsx: "$15" torso,
+ * "$25" full body, "Custom Background: +$15") — see scripts/sync-landing-content.sql
+ * for the matching DB update.
+ */
 export const FALLBACK_PER_PERSON_USD: Record<string, number> = {
-  torso_only: 25,
-  full_body: 29.99,
+  torso_only: 15,
+  full_body: 25,
 };
 
 export const FALLBACK_BACKGROUND_STANDARD_USD = 15;
-export const FALLBACK_BACKGROUND_CUSTOM_USD = 25;
+export const FALLBACK_BACKGROUND_CUSTOM_USD = 15;
 /** Express surcharge as a percentage (30 = 30%). */
 export const FALLBACK_EXPRESS_SURCHARGE_PCT = 30;
 /** Add-on: video del proceso de dibujo, precio plano en USD. */

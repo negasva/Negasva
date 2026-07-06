@@ -3,7 +3,10 @@ import { createServerClient, createServiceClient } from '@/lib/supabase/server';
 import { requireAdminRoute } from '@/lib/admin/auth';
 import { errorResponse, rateLimitByIp, readJson, validateSameOrigin } from '@/lib/security/apiHelpers';
 
-const ALLOWED_KEYS = ['hero', 'how_it_works', 'gallery_images', 'stats', 'footer', 'site_images'];
+// Solo las claves con lector en la web actual: 'footer' (PageFooter) y
+// 'site_images' (fotos de la landing y de /order). Las claves antiguas
+// (hero, how_it_works, gallery_images, stats) se retiran — ver CLEANUP.sql.
+const ALLOWED_KEYS = ['footer', 'site_images'];
 
 export async function GET(request: Request) {
   const rl = await rateLimitByIp(request, { prefix: 'pub-landing', max: 60, windowMs: 60_000 });

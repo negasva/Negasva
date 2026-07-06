@@ -16,9 +16,9 @@ interface PackageItem {
 }
 
 // Fallbacks if the DB is unavailable — admin manages the real values.
-// Must match the studio/checkout fallbacks so the displayed price is what gets charged.
-const FALLBACK_BODY_PRICES: Record<string, number> = { torso_only: 25, full_body: 29.99 };
-const FALLBACK_PRICES: Record<string, number> = { background_standard: 15, background_custom: 25 };
+// Must match lib/pricing/fallbacks.ts and the landing (app/page.tsx: $15 / $25 / +$15).
+const FALLBACK_BODY_PRICES: Record<string, number> = { torso_only: 15, full_body: 25 };
+const FALLBACK_PRICES: Record<string, number> = { background_standard: 15, background_custom: 15 };
 
 const usd = (n: number) => `$${Number.isInteger(n) ? n : n.toFixed(2)}`;
 
@@ -44,10 +44,10 @@ async function fetchPricing() {
 export default async function PricingPage() {
   const { bodyPrices, priceMap, packages } = await fetchPricing();
 
-  const torso = bodyPrices.torso_only ?? 25;
-  const full = bodyPrices.full_body ?? 29.99;
+  const torso = bodyPrices.torso_only ?? 15;
+  const full = bodyPrices.full_body ?? 25;
   const bgStandard = priceMap.background_standard ?? 15;
-  const bgCustom = priceMap.background_custom ?? 25;
+  const bgCustom = priceMap.background_custom ?? 15;
 
   return (
     <div className="min-h-screen bg-white">
