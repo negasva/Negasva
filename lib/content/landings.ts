@@ -384,6 +384,141 @@ export const LANDINGS: LandingContent[] = [
     relatedStyles: ['rick-and-morty-style-portrait', 'south-park-style-portrait', 'anime-style-portrait'],
     relatedLandings: ['/gifts/christmas', '/custom-couple-portrait', '/custom-pet-portrait'],
   },
+  {
+    path: '/gifts/mothers-day',
+    metaTitle: "Mother's Day Cartoon Portrait Gift — Hand-Drawn in 48h, From $15",
+    metaDescription:
+      "A Mother's Day gift she will frame: a custom cartoon portrait hand-drawn from her photo by a real artist, no AI. Delivered in 48 hours, from $15.",
+    keywords: ["mother's day cartoon portrait", "mother's day portrait gift", 'personalized gift for mom', 'custom portrait for mom', "last minute mother's day gift"],
+    h1: "Mother's Day Cartoon Portrait: the Gift She Will Frame",
+    intro:
+      "Flowers wilt and brunch gets forgotten — a Mother's Day cartoon portrait stays on the wall. Her favorite photo (or the whole family, or the grandkids, or the dog she loves more than you) hand-drawn by a real artist in a style she will adore, delivered in 48 hours from $15.",
+    sections: [
+      {
+        title: 'The portrait that makes moms cry (the good way)',
+        body:
+          "The winning formula is simple: mom surrounded by the people she raised. A family scene in Simpsons or Disney-Pixar style, everyone she loves in one frame, composed from separate photos so nobody has to coordinate a photoshoot. Grandmothers get the extended edition — kids, grandkids and pets in a single hand-drawn scene, up to 8 characters.",
+      },
+      {
+        title: 'Hand-drawn, because she can tell the difference',
+        body:
+          "Moms notice effort. An AI filter takes ten seconds and looks like it; a hand-drawn portrait takes hours of a real artist's attention and looks like that too. Every detail she recognizes — her haircut, her reading glasses, the mug she always uses — is drawn on purpose. That is what turns a gift into a keepsake she shows every visitor.",
+      },
+      {
+        title: 'Ordered on Thursday, framed by Sunday',
+        body:
+          "Mother's Day has a habit of arriving suddenly. Our standard delivery is 48 hours and express is 24, as a high-resolution file you can print at any local shop or send with a card. Pair it with a canvas or mug print if you have a few more days — or gift it digitally at the brunch table.",
+      },
+    ],
+    bullets: {
+      title: "Why it works for Mother's Day",
+      items: [
+        'Finished portrait in 48h — safe even the same week',
+        'Family scenes up to 8 people and pets, from separate photos',
+        'Styles from Simpsons to soft painterly Ghibli-inspired',
+        'High-resolution file: print, frame, mug or canvas',
+        'From $15 — more thoughtful than flowers, cheaper too',
+      ],
+    },
+    faq: [
+      { q: "Can I include my late father in mom's portrait?", a: 'Yes. Send his photo and tell us — we handle memorial inclusions with care, drawn from the photo you choose.' },
+      { q: 'Can it be from the grandkids?', a: 'Yes. Grandma with all the grandkids is one of our most ordered Mother\'s Day scenes.' },
+    ],
+    image: '/backgrounds/rm-6.webp',
+    imageAlt: "Mother's day cartoon portrait gift hand drawn from photo of mom and family",
+    relatedStyles: ['simpsons-style-portrait', 'disney-pixar-style-portrait', 'studio-ghibli-style-portrait'],
+    relatedLandings: ['/custom-family-portrait', '/gifts/fathers-day', '/memorial-portrait'],
+  },
+  {
+    path: '/gifts/fathers-day',
+    metaTitle: "Father's Day Cartoon Portrait Gift — Hand-Drawn in 48h, From $15",
+    metaDescription:
+      "Skip the tie. A Father's Day cartoon portrait hand-drawn from his photo by a real artist, no AI — dad as his favorite cartoon character. Delivered in 48 hours, from $15.",
+    keywords: ["father's day cartoon portrait", "father's day portrait gift", 'personalized gift for dad', 'custom portrait for dad', "last minute father's day gift"],
+    h1: "Father's Day Cartoon Portrait: Better Than Another Tie",
+    intro:
+      "Dads are impossible to shop for because they buy what they need and want nothing. The loophole: a Father's Day cartoon portrait. Dad hand-drawn as a character from the shows he actually watches — grill, dog, recliner and all — delivered in 48 hours from $15.",
+    sections: [
+      {
+        title: 'Draw him as the character he already is',
+        body:
+          "Every dad has a cartoon alter ego. The King of the Hill style fits the propane-and-lawn-care dad standing by his grill; Family Guy or American Dad style suits the sitcom dad with strong opinions from the couch; Simpsons style is the eternal crowd-pleaser. Put him in his natural habitat — garage, backyard, fishing spot — and watch him pretend not to love it.",
+      },
+      {
+        title: 'Hand-drawn beats gadget',
+        body:
+          "A real artist redraws his photo stroke by stroke — the cap he never takes off, the beard, the dog that follows him everywhere. No AI, no generic filter face. It is the rare gift that is personal without being socks, and it costs less than the bottle he would have politely shelved.",
+      },
+      {
+        title: 'Zero planning required',
+        body:
+          "Forgot until the week of? Standard delivery is 48 hours, express is 24. Upload one clear photo, tell us the scene, and the finished high-resolution file lands in your inbox ready to print, frame or send to the family group chat where he will deny being emotional about it.",
+      },
+    ],
+    bullets: {
+      title: "Why it works for Father's Day",
+      items: [
+        'Finished portrait in 48h — procrastinator-proof',
+        "Styles that match dad energy: King of the Hill, Family Guy, Simpsons",
+        'His hobbies drawn in: grill, boat, garage, dog',
+        'High-resolution file: print, frame, mug or t-shirt',
+        'From $15 — beats the tie by a mile',
+      ],
+    },
+    faq: [
+      { q: 'Can you draw him with his truck or boat?', a: 'Yes. Vehicles, tools and hobby gear are the most requested details for dad portraits — include a photo of it.' },
+      { q: 'Can the kids be in the portrait too?', a: 'Yes. Dad with the kids (and the dog) composed from separate photos is a classic — up to 8 characters.' },
+    ],
+    image: '/backgrounds/rm-3.webp',
+    imageAlt: "Father's day cartoon portrait gift hand drawn from photo of dad in cartoon style",
+    relatedStyles: ['king-of-the-hill-style-portrait', 'family-guy-style-portrait', 'simpsons-style-portrait'],
+    relatedLandings: ['/gifts/mothers-day', '/custom-family-portrait', '/gifts/birthday'],
+  },
+  {
+    path: '/gifts/wedding',
+    metaTitle: 'Wedding Cartoon Portrait — Custom Couple Gift, Hand-Drawn in 48h',
+    metaDescription:
+      'A wedding cartoon portrait of the couple, hand-drawn from their photo by a real artist — no AI. Unique wedding gift or engagement keepsake. Delivered in 48 hours, from $15.',
+    keywords: ['wedding cartoon portrait', 'couple wedding gift portrait', 'wedding gift for couple', 'engagement portrait from photo', 'unique wedding gift personalized'],
+    h1: 'Wedding Cartoon Portrait: a Couple Gift Nobody Else Will Give',
+    intro:
+      'Registries are efficient and forgettable. A wedding cartoon portrait is neither: the couple hand-drawn from their favorite photo — first dance, proposal spot, or the two of them with their dog — in a style that matches how they actually are. Delivered in 48 hours, from $15.',
+    sections: [
+      {
+        title: 'The wedding gift that skips the registry',
+        body:
+          'Everyone else buys the blender. You give them themselves: a hand-drawn portrait of the couple in Disney-Pixar style for full fairy-tale energy, Ghibli-inspired style for something painterly and romantic, or Simpsons style if their wedding hashtag was a pun. Add the venue, the city skyline where they met, or the pets that were technically the ring bearers.',
+      },
+      {
+        title: 'Works before and after the big day',
+        body:
+          'As an engagement gift, it becomes the save-the-date art. As a wedding gift, it hangs in the new home before the thank-you cards go out. As an anniversary gift, it redraws the wedding photo everyone loves. One clear photo of each person is all the artist needs — no coordinated photoshoot required.',
+      },
+      {
+        title: 'Hand-drawn, because wedding photos deserve it',
+        body:
+          'Wedding photos are the most looked-at pictures a couple owns — an AI filter version of them ages like milk. Our artist redraws the dress details, the flowers, the exact way they look at each other. No AI, a revision round included, and a high-resolution file ready for canvas printing at any size.',
+      },
+    ],
+    bullets: {
+      title: 'Why it works as a wedding gift',
+      items: [
+        'Unique: no other guest will give the same thing',
+        'From their photo — no photoshoot needed',
+        'Venue, city or pets drawn into the scene',
+        'High-resolution file ready for large canvas prints',
+        'Delivered in 48h — works for last-minute guests too',
+      ],
+    },
+    faq: [
+      { q: 'Can you draw the portrait from two separate photos?', a: 'Yes. Send one clear photo of each person and the artist composes them together in one scene.' },
+      { q: 'Can I get it printed on canvas for the gift?', a: 'Yes. Beyond the digital file, we offer print-on-demand canvas shipped to your door.' },
+    ],
+    image: '/backgrounds/rm-10.webp',
+    imageAlt: 'Wedding cartoon portrait of couple hand drawn from photo as unique wedding gift',
+    relatedStyles: ['disney-pixar-style-portrait', 'studio-ghibli-style-portrait', 'anime-style-portrait'],
+    relatedLandings: ['/custom-couple-portrait', '/gifts/anniversary', '/gifts/valentines-day'],
+  },
   // ── Angle: anti-AI ──────────────────────────────────────────────────────
   {
     path: '/hand-drawn-no-ai',

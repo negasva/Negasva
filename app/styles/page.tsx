@@ -23,8 +23,8 @@ export default function StylesPage() {
             Custom Cartoon Portrait Styles
           </h1>
           <p className="text-lg text-secondary-lighter max-w-2xl">
-            8 hand-drawn styles — Simpsons, Rick and Morty, Family Guy, South Park, anime,
-            Disney-Pixar and more. Pick yours and get your portrait in 48h.
+            13 hand-drawn styles — Simpsons, Rick and Morty, Family Guy, South Park, Futurama,
+            anime, Studio Ghibli, Disney-Pixar and more. Pick yours and get your portrait in 48h.
           </p>
         </div>
       </section>
