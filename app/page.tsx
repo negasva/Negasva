@@ -1,6 +1,8 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { Clock, RefreshCcw, PenTool } from 'lucide-react';
 import { POD_PRODUCTS } from '@/lib/pricing/products';
+import { STYLES_CONTENT } from '@/lib/content/styles';
 import ProductIcon from '@/components/ProductIcon';
 import Navbar from '@/components/Navbar';
 import PageFooter from '@/components/PageFooter';
@@ -9,6 +11,20 @@ import { HeroPortraits, StepsPortraits, WeeklyOrdersBadge, HomeFaq, StickyOrderC
 
 // Server component: la home llega como HTML estático en inglés (SEO).
 // Lo interactivo (fetch de config, FAQ, sticky CTA) vive en ./home-islands.tsx.
+
+// Enlaces a las landings de sujeto/ocasión (lib/content/landings.ts) con
+// etiquetas cortas para chips — el h1 completo de cada landing es muy largo.
+const GIFT_LINKS = [
+  { href: '/custom-couple-portrait', label: 'Couples' },
+  { href: '/custom-family-portrait', label: 'Families' },
+  { href: '/custom-pet-portrait', label: 'Pet lovers' },
+  { href: '/memorial-portrait', label: 'A memorial' },
+  { href: '/gifts/christmas', label: 'Christmas' },
+  { href: '/gifts/anniversary', label: 'Anniversaries' },
+  { href: '/gifts/valentines-day', label: "Valentine's Day" },
+  { href: '/gifts/birthday', label: 'Birthdays' },
+  { href: '/hand-drawn-no-ai', label: 'No-AI believers' },
+];
 
 const STEPS = [
   { step: 1, title: 'Choose your style', desc: 'Pick your favourite cartoon style, how many people or pets, and the background you want.' },
@@ -179,6 +195,61 @@ export default function Home() {
         </div>
       </section>
 
+      {/* ══ STYLES + GIFT LANDINGS (server-rendered internal links, SEO) ══ */}
+      <section className="bg-white py-16 md:py-20 px-6">
+        <div className="mx-auto max-w-[1150px]">
+          <h2 className="font-black text-[30px] sm:text-[38px] md:text-[46px] text-center mb-2">
+            Pick Your Cartoon Style
+          </h2>
+          <p className="text-center text-[17px] text-secondary-lighter mb-10">
+            8 hand-drawn styles — from Simpsons yellow to anime and Disney-Pixar
+          </p>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
+            {STYLES_CONTENT.map((s) => (
+              <Link
+                key={s.slug}
+                href={`/styles/${s.slug}`}
+                className="group rounded-2xl border-2 border-primary-lighter bg-white overflow-hidden hover:border-primary hover:shadow-md transition-all"
+              >
+                <div className="relative aspect-[4/3] bg-[#FFF1F7]">
+                  <Image
+                    src={s.image}
+                    alt={s.imageAlt}
+                    fill
+                    sizes="(max-width: 768px) 50vw, 25vw"
+                    className="object-cover group-hover:scale-[1.03] transition-transform"
+                  />
+                </div>
+                <p className="font-black text-secondary text-sm sm:text-base p-4 text-center group-hover:text-primary-dark transition-colors">
+                  {s.name}
+                </p>
+              </Link>
+            ))}
+          </div>
+          <p className="text-center mt-8">
+            <Link href="/styles" className="font-black text-[15px] underline underline-offset-4 decoration-primary decoration-2">
+              See all styles →
+            </Link>
+          </p>
+
+          {/* Perfect gift for… — internal links to subject/occasion landings */}
+          <div className="mt-14 text-center">
+            <h3 className="font-black text-[22px] sm:text-[26px] mb-6">The perfect gift for…</h3>
+            <div className="flex flex-wrap justify-center gap-3">
+              {GIFT_LINKS.map((l) => (
+                <Link
+                  key={l.href}
+                  href={l.href}
+                  className="rounded-full border-2 border-primary-lighter px-5 py-2.5 text-sm font-bold text-secondary hover:border-primary hover:text-primary-dark transition-colors"
+                >
+                  {l.label}
+                </Link>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* ══ YOUR DRAWING ON ANYTHING (POD) ══ */}
       <section className="bg-white py-20 md:py-24 px-6">
         <div className="mx-auto max-w-[1150px] grid md:grid-cols-[1fr_1.15fr] gap-16 items-start">
@@ -308,7 +379,7 @@ export default function Home() {
               Order my portrait
             </Link>
             <span className="text-[13px] text-secondary-lighter px-3">or</span>
-            <Link href="/contacto" className="font-black text-[15px] px-5 py-4 underline underline-offset-4 decoration-primary">
+            <Link href="/contact" className="font-black text-[15px] px-5 py-4 underline underline-offset-4 decoration-primary">
               Ask me!
             </Link>
           </div>

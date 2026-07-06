@@ -31,9 +31,9 @@ const DEFAULT_FOOTER: FooterConfig = {
       title_es: 'Producto', title_en: 'Product', title_fr: 'Produit',
       links: [
         { label_es: 'Estilos', label_en: 'Styles', label_fr: 'Styles', href: '/styles' },
-        { label_es: 'Precios', label_en: 'Pricing', label_fr: 'Tarifs', href: '/precios' },
-        { label_es: 'Galería', label_en: 'Gallery', label_fr: 'Galerie', href: '/galeria' },
-        { label_es: 'Seguimiento', label_en: 'Tracking', label_fr: 'Suivi', href: '/seguimiento' },
+        { label_es: 'Precios', label_en: 'Pricing', label_fr: 'Tarifs', href: '/pricing' },
+        { label_es: 'Galería', label_en: 'Gallery', label_fr: 'Galerie', href: '/gallery' },
+        { label_es: 'Seguimiento', label_en: 'Tracking', label_fr: 'Suivi', href: '/track-order' },
       ],
     },
     {
@@ -41,7 +41,7 @@ const DEFAULT_FOOTER: FooterConfig = {
       links: [
         { label_es: 'Sobre', label_en: 'About', label_fr: 'À propos', href: '/about' },
         { label_es: 'Blog', label_en: 'Blog', label_fr: 'Blog', href: '/blog' },
-        { label_es: 'Contacto', label_en: 'Contact', label_fr: 'Contact', href: '/contacto' },
+        { label_es: 'Contacto', label_en: 'Contact', label_fr: 'Contact', href: '/contact' },
         { label_es: 'FAQ', label_en: 'FAQ', label_fr: 'FAQ', href: '/faq' },
       ],
     },
@@ -55,6 +55,38 @@ const DEFAULT_FOOTER: FooterConfig = {
     },
   ],
 };
+
+// Columnas SEO fijas (sitio EN estático): enlazan las landings de intención y
+// de estilo desde todas las páginas. No editables desde el admin a propósito.
+const SEO_COLUMNS: Array<{ title: string; links: Array<{ label: string; href: string }> }> = [
+  {
+    title: 'Gifts & Occasions',
+    links: [
+      { label: 'Couple Portrait', href: '/custom-couple-portrait' },
+      { label: 'Family Portrait', href: '/custom-family-portrait' },
+      { label: 'Pet Portrait', href: '/custom-pet-portrait' },
+      { label: 'Memorial Portrait', href: '/memorial-portrait' },
+      { label: 'Christmas Gift', href: '/gifts/christmas' },
+      { label: 'Anniversary Gift', href: '/gifts/anniversary' },
+      { label: "Valentine's Day Gift", href: '/gifts/valentines-day' },
+      { label: 'Birthday Gift', href: '/gifts/birthday' },
+      { label: 'Hand-Drawn, No AI', href: '/hand-drawn-no-ai' },
+    ],
+  },
+  {
+    title: 'Styles',
+    links: [
+      { label: 'Simpsons Style', href: '/styles/simpsons-style-portrait' },
+      { label: 'Rick and Morty Style', href: '/styles/rick-and-morty-style-portrait' },
+      { label: 'Family Guy Style', href: '/styles/family-guy-style-portrait' },
+      { label: 'South Park Style', href: '/styles/south-park-style-portrait' },
+      { label: 'Anime Style', href: '/styles/anime-style-portrait' },
+      { label: 'Disney-Pixar Style', href: '/styles/disney-pixar-style-portrait' },
+      { label: 'Gravity Falls Style', href: '/styles/gravity-falls-style-portrait' },
+      { label: 'Fairly OddParents Style', href: '/styles/fairly-oddparents-style-portrait' },
+    ],
+  },
+];
 
 interface PageFooterProps {
   minimal?: boolean;
@@ -112,7 +144,7 @@ function PageFooter({ minimal = false }: PageFooterProps) {
   return (
     <footer className="bg-secondary py-16 px-4">
       <div className="mx-auto max-w-7xl">
-        <div className="grid md:grid-cols-4 gap-10 md:gap-12 mb-12">
+        <div className="grid md:grid-cols-3 lg:grid-cols-6 gap-10 md:gap-12 mb-12">
           {/* Brand + social */}
           <div className="flex flex-col items-center md:items-start text-center md:text-left">
             <Logo size="lg" variant="light" className="mb-4 block" />
@@ -140,6 +172,21 @@ function PageFooter({ minimal = false }: PageFooterProps) {
                   <li key={link.href}>
                     <Link href={link.href} className="text-white/70 hover:text-primary transition-colors">
                       {pick(link.label_es, link.label_en, link.label_fr)}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+
+          {SEO_COLUMNS.map((col) => (
+            <div key={col.title} className="text-center md:text-left">
+              <h4 className="font-bold text-white mb-4">{col.title}</h4>
+              <ul className="space-y-2 text-sm">
+                {col.links.map((link) => (
+                  <li key={link.href}>
+                    <Link href={link.href} className="text-white/70 hover:text-primary transition-colors">
+                      {link.label}
                     </Link>
                   </li>
                 ))}
