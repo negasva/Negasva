@@ -22,9 +22,197 @@ export interface BlogPost {
   intro: string;
   sections: BlogSection[];
   relatedStyleSlugs: string[]; // slugs de /estilos/[slug] para enlaces internos
+  relatedLandings?: Array<{ label: string; href: string }>; // landings de intención
 }
 
 export const BLOG_POSTS: BlogPost[] = [
+  {
+    slug: 'gift-ideas-boyfriend',
+    title: 'Personalized Gift Ideas for Your Boyfriend (That Are Not Socks)',
+    metaTitle: 'Personalized Gift Ideas for Your Boyfriend — 2026 Guide',
+    metaDescription:
+      'Personalized gift ideas for your boyfriend that actually land: custom cartoon portraits, printed products and inside-joke gifts he will keep. Hand-drawn, no AI, from $15.',
+    category: 'Gift Ideas',
+    date: '2026-07-06',
+    dateLabel: 'July 6, 2026',
+    excerpt:
+      'Boyfriends are famously hard to shop for. Here are personalized gift ideas he will actually keep — led by a custom cartoon portrait that turns your inside jokes into art.',
+    keywords: ['personalized gift ideas for boyfriend', 'custom gift for boyfriend', 'personalized boyfriend gift', 'cartoon portrait gift for him', 'anniversary gift for boyfriend'],
+    image: '/backgrounds/rm-1.webp',
+    imageAlt: 'Personalized cartoon portrait gift idea for a boyfriend, hand drawn from photo',
+    intro:
+      'Every gift guide for boyfriends recycles the same list: a watch, a wallet, a gadget he already researched and bought himself. The gifts that actually land are the personal ones — the ones that reference something only the two of you share. This guide focuses on personalized gift ideas for your boyfriend that feel thought-through, starting with the one we are admittedly biased about: a custom cartoon portrait hand-drawn from your photo.',
+    sections: [
+      {
+        h2: 'Why personalized beats expensive',
+        paragraphs: [
+          'The reason a personalized gift outperforms a pricey generic one is simple: it proves attention, not just budget. Anyone can buy the popular headphones. Only you know that you two quote the same cartoon at each other, that your first date was at a specific spot, that his dog is technically the third member of the relationship. A gift built around those details says you were paying attention — and that is what he actually remembers.',
+          'It also ages better. The gadget is obsolete in two years; the personal gift moves with him from apartment to apartment. That longevity is exactly why custom portraits, printed keepsakes and inside-joke gifts keep topping "gifts he actually kept" threads.',
+        ],
+      },
+      {
+        h2: 'Idea 1: a custom cartoon portrait of the two of you',
+        paragraphs: [
+          'Turn a photo of you two into a hand-drawn cartoon portrait in a style he loves — chaotic sci-fi cartoon style if your humor runs weird, classic yellow-family style if you want the crowd-pleaser, anime style if he is into it. A real artist redraws you both by hand (no AI), keeping the details that make it unmistakably you: his beard, your matching hoodies, the dog squeezed between you.',
+          'It works for an anniversary, a birthday, a long-distance "I miss you," or no occasion at all. Delivered in 48 hours from $15, and you can put it on a canvas for the wall or a mug for his desk.',
+        ],
+      },
+      {
+        h2: 'Idea 2: put the portrait on something he uses daily',
+        paragraphs: [
+          'A framed file is great; a portrait he touches every morning is better. The same hand-drawn art goes on a mug for his coffee, a t-shirt for the inside joke, or a canvas for the gaming setup. Physical products turn a one-time "aww" into a daily reminder — and they are surprisingly affordable as add-ons.',
+        ],
+      },
+      {
+        h2: 'Idea 3: lean all the way into the inside joke',
+        paragraphs: [
+          'The best boyfriend gifts are often slightly ridiculous. Draw him as the main character of the show you binge together. Put his face where a movie poster hero should be. Add the running gag — the food he is obsessed with, the game he rage-quits, the nickname only you use — into the portrait background. Specific and silly beats elegant and generic every time.',
+        ],
+      },
+      {
+        h2: 'How to pull it off with one good photo',
+        paragraphs: [
+          'You do not need a professional shoot. One clear, well-lit photo of each of you is enough for an artist to work from — front-facing, face large in the frame, natural daylight. Send the original file rather than a screenshot. Then pick the style, describe the scene, and the finished portrait arrives in 48 hours ready to gift digitally or print.',
+        ],
+        list: [
+          'Clear, front-facing photo of each person — no sunglasses',
+          'Natural light beats indoor lamps and flash',
+          'Send the original file, not a re-forwarded copy',
+          'Note the inside joke or scene you want in the order',
+        ],
+      },
+    ],
+    relatedStyleSlugs: ['rick-and-morty-style-portrait', 'anime-style-portrait', 'simpsons-style-portrait'],
+    relatedLandings: [
+      { label: 'Custom Couple Portrait', href: '/custom-couple-portrait' },
+      { label: 'Anniversary Gift', href: '/gifts/anniversary' },
+      { label: 'Portrait on Products', href: '/products' },
+    ],
+  },
+  {
+    slug: 'gift-ideas-dad',
+    title: 'Personalized Gift Ideas for Dad (When He Says He Wants Nothing)',
+    metaTitle: 'Personalized Gift Ideas for Dad — 2026 Guide',
+    metaDescription:
+      'Personalized gift ideas for the dad who wants nothing: custom cartoon portraits, printed keepsakes and gifts built around his hobbies. Hand-drawn, no AI, from $15.',
+    category: 'Gift Ideas',
+    date: '2026-07-06',
+    dateLabel: 'July 6, 2026',
+    excerpt:
+      'Dads are the hardest people to shop for because they buy what they need. The loophole is personalization — starting with a custom cartoon portrait of him as the character he already is.',
+    keywords: ['personalized gift ideas for dad', 'custom gift for dad', 'personalized dad gift', "father's day cartoon portrait", 'gift for dad who wants nothing'],
+    image: '/backgrounds/rm-3.webp',
+    imageAlt: 'Personalized cartoon portrait gift idea for a dad, hand drawn from photo',
+    intro:
+      'The dad problem is universal: ask what he wants and he says "nothing." He buys his own tools, replaces his own gadgets, and returns anything he does not need. The way around it is not spending more — it is getting personal. These personalized gift ideas for dad work precisely because he would never buy them for himself, led by a custom cartoon portrait that drops him into the world he already loves.',
+    sections: [
+      {
+        h2: 'Why "he wants nothing" is actually a clue',
+        paragraphs: [
+          'When a dad says he wants nothing, he means he has no unmet needs — not that he has no joy. So stop shopping for needs and shop for identity: the hobby he disappears into, the show he quotes, the dog that follows him around the yard. A gift aimed at who he is beats a gift aimed at what he lacks, because he was never going to buy himself the sentimental thing.',
+        ],
+      },
+      {
+        h2: 'Idea 1: draw him as the character he already is',
+        paragraphs: [
+          'Every dad has a cartoon alter ego. The propane-and-lawn-care dad standing by the grill fits a grounded, true-to-life cartoon style. The strong-opinions-from-the-couch dad suits an adult sitcom style. The universal choice is classic yellow-family style. A real artist hand-draws him from a photo — cap, beard, and the dog included — no AI, delivered in 48 hours from $15.',
+          'Put him in his natural habitat: the garage, the boat, the fishing spot, the backyard he is very proud of. Watch him pretend not to love it.',
+        ],
+      },
+      {
+        h2: 'Idea 2: the whole family in one portrait',
+        paragraphs: [
+          'The gift that reliably gets dads is not about him alone — it is him with the people he raised. A family scene composed from separate photos (nobody has to coordinate a shoot), up to 8 people and pets in one hand-drawn frame. It becomes the picture on his desk or the canvas in the hallway, and it works for a birthday, a milestone or a "just because."',
+        ],
+      },
+      {
+        h2: 'Idea 3: build the gift around his hobby',
+        paragraphs: [
+          'Personalization lands hardest when it is specific. Draw his truck, his boat, his motorcycle, his tools into the portrait. Add the team logo, the fishing lake, the workshop. Then put the finished art where he will see it daily — a mug for the garage fridge, a t-shirt for the cookout, a canvas above the workbench.',
+        ],
+      },
+      {
+        h2: 'Zero-effort ordering, procrastinator-proof',
+        paragraphs: [
+          'Forgot until the week of the occasion? Standard delivery is 48 hours and express is 24. Upload one clear photo, name the scene and his hobbies, and the finished high-resolution file lands in your inbox ready to print locally or send to the family chat where he will deny being emotional about it.',
+        ],
+        list: [
+          'One clear, front-facing photo per person',
+          'Include a photo of the truck, boat or tool to draw in',
+          'Note the hobby, team or place that matters to him',
+          '48-hour delivery, 24h express if you left it late',
+        ],
+      },
+    ],
+    relatedStyleSlugs: ['king-of-the-hill-style-portrait', 'family-guy-style-portrait', 'simpsons-style-portrait'],
+    relatedLandings: [
+      { label: "Father's Day Gift", href: '/gifts/fathers-day' },
+      { label: 'Custom Family Portrait', href: '/custom-family-portrait' },
+      { label: 'Portrait on Products', href: '/products' },
+    ],
+  },
+  {
+    slug: 'unique-wedding-gifts-couples',
+    title: 'Unique Wedding Gifts for Couples Who Have Everything',
+    metaTitle: 'Unique Wedding Gifts for Couples Who Have Everything — 2026',
+    metaDescription:
+      'Unique wedding gifts for the couple who already has everything: a custom cartoon portrait of the two of them, hand-drawn from a photo, no AI. Skip the registry. From $15.',
+    category: 'Gift Ideas',
+    date: '2026-07-06',
+    dateLabel: 'July 6, 2026',
+    excerpt:
+      'When the couple already owns everything on the registry, the winning wedding gift is the one thing no store sells: themselves, hand-drawn as a custom cartoon portrait.',
+    keywords: ['unique wedding gifts', 'wedding gift for couple who has everything', 'wedding cartoon portrait', 'unique wedding gift couple', 'personalized wedding gift'],
+    image: '/backgrounds/rm-10.webp',
+    imageAlt: 'Unique wedding gift idea: custom cartoon portrait of a couple hand drawn from photo',
+    intro:
+      'Some couples register for the blender, receive the blender, and have three blenders by the reception. When the pair already owns everything, the registry is a trap — every gift on it is efficient and forgettable. The unique wedding gift is the one thing no store stocks: the couple themselves, hand-drawn as a custom cartoon portrait. Here is why it works and how to get it right.',
+    sections: [
+      {
+        h2: 'The registry problem, solved',
+        paragraphs: [
+          'A registry optimizes for usefulness, which is exactly why registry gifts are unmemorable — nobody tears up over a nice colander. A portrait optimizes for meaning. It is not competing with the toaster; it is competing for wall space in the new home, and it wins because it is the only gift that is about them rather than their kitchen.',
+          'It also solves the "they have everything" problem by definition: they cannot already own a hand-drawn portrait of themselves that does not exist yet.',
+        ],
+      },
+      {
+        h2: 'Idea 1: the couple, in their style',
+        paragraphs: [
+          'Turn their favorite photo — the first dance, the proposal spot, the two of them with the dog who was technically the ring bearer — into a hand-drawn portrait. Storybook Disney-Pixar-inspired style for full fairy-tale energy, soft painterly Ghibli-inspired style for something romantic and timeless, or classic yellow-family style if their wedding hashtag was a pun. A real artist draws it, no AI, keeping the dress details and the way they look at each other.',
+        ],
+      },
+      {
+        h2: 'Idea 2: gift it before or after the big day',
+        paragraphs: [
+          'The portrait flexes across the timeline. As an engagement gift it becomes the save-the-date art. As a wedding gift it hangs in the new home before the thank-you cards are mailed. As a first-anniversary gift (traditionally paper) it redraws the wedding photo everyone already loves. One clear photo of each person is all the artist needs — no coordinated shoot required.',
+        ],
+      },
+      {
+        h2: 'Idea 3: make it wall-worthy',
+        paragraphs: [
+          'Because wedding photos are the most looked-at pictures a couple owns, the format matters. Order the portrait on a gallery canvas so it arrives ready to hang, or a framed print sized for the mantel. The high-resolution file prints cleanly at large sizes — which an AI-filter version never manages.',
+        ],
+      },
+      {
+        h2: 'How to nail it as a guest',
+        paragraphs: [
+          'You do not need to ask the couple for a photoshoot. Pull a great photo from their public posts (or ask a member of the wedding party for one), pick the style that matches their vibe, and note the venue or city you want drawn into the background. Delivered in 48 hours, so it works even if you are a last-minute-RSVP kind of guest.',
+        ],
+        list: [
+          'One clear photo of each person — separate photos are fine',
+          'Pick a style that matches the couple, not you',
+          'Name the venue, city or pets to draw into the scene',
+          'Order on canvas for a ready-to-hang gift',
+        ],
+      },
+    ],
+    relatedStyleSlugs: ['disney-pixar-style-portrait', 'studio-ghibli-style-portrait', 'anime-style-portrait'],
+    relatedLandings: [
+      { label: 'Wedding Cartoon Portrait', href: '/gifts/wedding' },
+      { label: 'Custom Couple Portrait', href: '/custom-couple-portrait' },
+      { label: 'Portrait on Canvas', href: '/products' },
+    ],
+  },
   {
     slug: 'turn-photo-into-cartoon',
     title: 'How to Turn a Photo into a Cartoon (2026 Guide)',
