@@ -81,6 +81,20 @@ export default function StylePage({ params }: { params: { slug: string } }) {
     ],
   };
 
+  const howToSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'HowTo',
+    name: `How to get a ${style.name} custom portrait from your photo`,
+    description: style.process.body,
+    totalTime: 'P2D',
+    estimatedCost: { '@type': 'MonetaryAmount', currency: 'USD', value: '15' },
+    step: [
+      { '@type': 'HowToStep', name: 'Upload your photo', text: 'Pick a clear photo of each person or pet and upload it in the order form, with your pose and detail instructions.' },
+      { '@type': 'HowToStep', name: 'A real artist draws it', text: `Our artist redraws your photo by hand in ${style.name} — no AI, no templates. ${style.process.body}` },
+      { '@type': 'HowToStep', name: 'Receive it in 48 hours', text: 'Your high-resolution portrait arrives by email within 48 hours, ready to print or gift. A revision round is included.' },
+    ],
+  };
+
   const faqSchema = {
     '@context': 'https://schema.org',
     '@type': 'FAQPage',
@@ -96,6 +110,7 @@ export default function StylePage({ params }: { params: { slug: string } }) {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(productSchema) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(howToSchema) }} />
       <Navbar />
 
       {/* Hero */}
