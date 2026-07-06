@@ -32,10 +32,21 @@ export default function StepBody({ c }: { c: CheckoutController }) {
   } = c;
 
   // Overrides de imagen editables desde /admin/imagenes (clave order_body_<slug>).
+  // Se cachean en localStorage para que al recargar se pinten las imágenes de
+  // inmediato (sin el flash de placeholder mientras llega el fetch).
   const [siteImages, setSiteImages] = useState<SiteImages>({});
   useEffect(() => {
-    cachedFetchJSON<{ site_images?: SiteImages }>('/api/landing-config', { ttlMs: 0, init: { cache: 'no-store' } })
-      .then((data) => { if (data?.site_images) setSiteImages(data.site_images); })
+    try {
+      const cached = localStorage.getItem('site_images_cache');
+      if (cached) setSiteImages(JSON.parse(cached));
+    } catch { /* no-op */ }
+    cachedFetchJSON<{ site_images?: SiteImages }>('/api/landing-config')
+      .then((data) => {
+        if (data?.site_images) {
+          setSiteImages(data.site_images);
+          try { localStorage.setItem('site_images_cache', JSON.stringify(data.site_images)); } catch { /* no-op */ }
+        }
+      })
       .catch(() => null);
   }, []);
 
@@ -59,11 +70,7 @@ export default function StepBody({ c }: { c: CheckoutController }) {
     name: bt.slug === 'torso_only' ? t.studio.body_types.torso_name
         : bt.slug === 'full_body' ? t.studio.body_types.full_name
         : bt.name,
-    desc: bt.slug === 'torso_only' ? t.studio.body_types.torso_desc
-        : bt.slug === 'full_body' ? t.studio.body_types.full_desc
-        : (bt.description ?? ''),
     price: bt.price_usd,
-    original: bt.original_price_usd,
     bestValue: bt.is_best_value,
   }));
   const lastIndex = options.length - 1;
@@ -103,23 +110,20 @@ export default function StepBody({ c }: { c: CheckoutController }) {
       </div>
 
       {/* ── DESKTOP: ilustración continua con hover acumulativo ────────────── */}
+      {/* px-10 deja aire para que el glow del panel exterior no se recorte. */}
       <div
         id="required-field"
         onAnimationEnd={onShakeEnd}
-        className={`hidden sm:grid gap-1 max-w-5xl mx-auto mb-8 ${errorRing} ${errorShake}`}
+        className={`hidden sm:grid gap-1 max-w-5xl mx-auto mb-8 px-10 ${errorRing} ${errorShake}`}
         style={{ gridTemplateColumns: `repeat(${options.length}, minmax(0, 1fr))` }}
       >
         {options.map((b, i) => {
           const lit = hovered !== null && i <= hovered;
           const dimmed = hovered !== null && i > hovered;
           const ringed = selectedIndex >= 0 && i <= selectedIndex;
-          // El grupo iluminado crece en la misma dirección (hacia el borde
-          // exterior) para no solaparse con el panel que baja de opacidad.
-          const origin = hovered === lastIndex ? 'center' : 'right';
           return (
             <div key={b.id} className="flex flex-col">
-              <p className="font-black text-xl text-secondary mb-2 tracking-tighter text-center">{b.name}</p>
-              {b.desc && <p className="text-secondary-lighter text-xs mb-2 text-center min-h-[1rem]">{b.desc}</p>}
+              <p className="font-black text-xl text-secondary mb-3 tracking-tighter text-center">{b.name}</p>
 
               <div className="relative">
                 {b.bestValue && (
@@ -127,6 +131,8 @@ export default function StepBody({ c }: { c: CheckoutController }) {
                     {t.studio.body_types.best_value}
                   </div>
                 )}
+                {/* El panel sube en hover (translateY) sin escalar: la foto no
+                    cambia de tamaño y los bordes nunca se solapan. */}
                 <button
                   type="button"
                   onClick={() => selectBodyType(b.id)}
@@ -134,12 +140,11 @@ export default function StepBody({ c }: { c: CheckoutController }) {
                   onMouseLeave={() => setHovered(null)}
                   aria-label={ariaLabel(b.name, b.price)}
                   aria-pressed={selected.bodyType === b.id}
-                  className={`relative block w-full aspect-[4/5] overflow-hidden transition-all duration-200 ease-out outline-none focus-visible:ring-4 focus-visible:ring-primary/60 ${
+                  className={`relative block w-full aspect-square overflow-hidden transition-all duration-200 ease-out outline-none focus-visible:ring-4 focus-visible:ring-primary/60 ${
                     ringed ? 'ring-4 ring-primary z-10' : ''
                   } ${dimmed ? 'opacity-40' : 'opacity-100'} ${i === 0 ? 'rounded-l-xl' : ''} ${i === lastIndex ? 'rounded-r-xl' : ''}`}
                   style={{
-                    transform: lit ? 'scale(1.06)' : 'scale(1)',
-                    transformOrigin: origin,
+                    transform: lit ? 'translateY(-10px)' : 'translateY(0)',
                     boxShadow: lit ? GLOW : EDGE_SHADE,
                     zIndex: lit ? 10 : undefined,
                   }}
@@ -149,9 +154,6 @@ export default function StepBody({ c }: { c: CheckoutController }) {
               </div>
 
               <div className="mt-3">
-                {b.original && (
-                  <p className="text-xs text-secondary-lighter line-through text-center mb-1">{fmt(b.original)}</p>
-                )}
                 <button
                   type="button"
                   onClick={() => selectBodyType(b.id)}
@@ -183,7 +185,7 @@ export default function StepBody({ c }: { c: CheckoutController }) {
                 : 'border-primary-lighter bg-white'
             }`}
           >
-            <div className={`relative w-24 h-28 shrink-0 rounded-xl overflow-hidden ${showTap ? 'animate-breathe-twice' : ''}`}>
+            <div className={`relative w-24 h-24 shrink-0 rounded-xl overflow-hidden ${showTap ? 'animate-breathe-twice' : ''}`}>
               <Panel id={b.id} name={b.name} />
               {showTap && (
                 <span className="absolute bottom-1 right-1 z-10 w-6 h-6 rounded-full bg-white/90 text-primary flex items-center justify-center shadow">
@@ -198,8 +200,6 @@ export default function StepBody({ c }: { c: CheckoutController }) {
                 </span>
               )}
               <p className="font-black text-lg text-secondary tracking-tighter leading-tight">{b.name}</p>
-              {b.desc && <p className="text-secondary-lighter text-xs mb-1">{b.desc}</p>}
-              {b.original && <p className="text-xs text-secondary-lighter line-through">{fmt(b.original)}</p>}
               <p className="font-black text-lg text-primary">{fmt(b.price)}{t.studio.body_types.per_person}</p>
             </div>
           </button>
