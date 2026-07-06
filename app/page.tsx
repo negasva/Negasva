@@ -23,6 +23,9 @@ const GIFT_LINKS = [
   { href: '/gifts/anniversary', label: 'Anniversaries' },
   { href: '/gifts/valentines-day', label: "Valentine's Day" },
   { href: '/gifts/birthday', label: 'Birthdays' },
+  { href: '/gifts/mothers-day', label: "Mother's Day" },
+  { href: '/gifts/fathers-day', label: "Father's Day" },
+  { href: '/gifts/wedding', label: 'Weddings' },
   { href: '/hand-drawn-no-ai', label: 'No-AI believers' },
 ];
 
@@ -202,7 +205,7 @@ export default function Home() {
             Pick Your Cartoon Style
           </h2>
           <p className="text-center text-[17px] text-secondary-lighter mb-10">
-            8 hand-drawn styles — from Simpsons yellow to anime and Disney-Pixar
+            13 hand-drawn styles — from Simpsons yellow to anime, Ghibli-inspired and Disney-Pixar
           </p>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
             {STYLES_CONTENT.map((s) => (
@@ -281,7 +284,7 @@ export default function Home() {
               ))}
             </div>
             <Link
-              href={orderHref}
+              href="/products"
               className="inline-flex items-center gap-2 bg-primary text-white font-black text-[17px] px-8 py-4 rounded-xl shadow-[0_10px_26px_rgba(252,144,182,0.4)] hover:bg-primary-dark transition-all"
             >
               See products

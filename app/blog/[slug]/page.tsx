@@ -30,6 +30,12 @@ export function generateMetadata({ params }: { params: { slug: string } }): Meta
       publishedTime: post.date,
       images: [{ url: post.image, width: 819, height: 461, alt: post.imageAlt }],
     },
+    twitter: {
+      card: 'summary_large_image',
+      title: post.metaTitle,
+      description: post.metaDescription,
+      images: [post.image],
+    },
   };
 }
 
@@ -153,6 +159,25 @@ export default function BlogPostPage({ params }: { params: { slug: string } }) {
                   All styles
                   <ChevronRight className="w-4 h-4" />
                 </Link>
+              </div>
+            </div>
+          )}
+
+          {/* Enlaces internos a landings de intención */}
+          {post.relatedLandings && post.relatedLandings.length > 0 && (
+            <div className="rounded-2xl bg-primary-lighter/30 p-8 mb-10">
+              <h2 className="font-black text-xl text-secondary mb-4">Gift ideas from this article</h2>
+              <div className="flex flex-wrap gap-3">
+                {post.relatedLandings.map((l) => (
+                  <Link
+                    key={l.href}
+                    href={l.href}
+                    className="inline-flex items-center gap-1 rounded-xl border-2 border-primary bg-white px-4 py-2 font-bold text-primary hover:bg-primary hover:text-white transition-all text-sm"
+                  >
+                    {l.label}
+                    <ChevronRight className="w-4 h-4" />
+                  </Link>
+                ))}
               </div>
             </div>
           )}

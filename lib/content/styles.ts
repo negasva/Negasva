@@ -414,6 +414,251 @@ export const STYLES_CONTENT: StyleContent[] = [
     image: '/backgrounds/rm-4.webp',
     imageAlt: 'Disney-Pixar style custom family portrait hand drawn from photo with big warm eyes and soft shading',
   },
+  {
+    slug: 'futurama-style-portrait',
+    dbSlug: 'futurama',
+    name: 'Futurama Style',
+    h1: 'Futurama Style Custom Portrait from Your Photo',
+    metaTitle: 'Futurama Style Custom Portrait — Hand-Drawn in 48h, From $15',
+    metaDescription:
+      'Turn your photo into a Futurama style custom portrait — hand-drawn by a real artist, no AI. Retro-future backgrounds, couples and crews. Delivered in 48 hours, from $15.',
+    keywords: [
+      'futurama style portrait',
+      'futurama custom portrait',
+      'turn photo into futurama style',
+      'futurama style drawing from photo',
+      'retro future cartoon portrait',
+    ],
+    intro:
+      'A custom portrait style straight out of the year 3000: clean thick outlines, big expressive eyes, retro-future color palettes and backgrounds full of spaceships, tubes and neon city skylines — your photo redrawn as a crew member of a classic sci-fi comedy universe.',
+    whatIs: {
+      title: 'What is a Futurama style portrait?',
+      body:
+        'It is a digital illustration hand-drawn from your photo in the visual language of the beloved retro-future cartoon: rounded shapes, bold outlines, one-eyed squints and optimistic 31st-century backdrops. Every portrait is drawn from scratch by a real artist — no AI, no templates — so the result is instantly recognizable as you, just 1000 years ahead of schedule. This is a fan-art style tribute; we are not affiliated with the show.',
+    },
+    forWho: {
+      title: 'Who is it for?',
+      body:
+        'Perfect for sci-fi fans, coworkers who feel like a delivery crew, couples with nerdy humor and friend groups who grew up quoting the show. It shines in group scenes: everyone gets a role, a uniform and a spot on the ship.',
+    },
+    includes: {
+      title: 'What your portrait includes',
+      items: [
+        'Your face hand-drawn in Futurama style, keeping your real features',
+        'Torso or full body, up to 8 people and pets',
+        'Retro-future backgrounds: spaceship, neon city, space',
+        'High-resolution file ready to print or gift digitally',
+        'A revision round + delivery in 48 hours',
+      ],
+    },
+    process: {
+      title: 'How is it made?',
+      body:
+        'Upload a clear photo of each person, choose torso or full body and describe the scene. The artist redraws every face with the style\'s bold outlines and rounded volumes while keeping your real likeness, then inks, colors and delivers the final file within 48 hours.',
+    },
+    faq: [
+      { q: 'Can you draw our whole team as a delivery crew?', a: 'Yes. Group portraits up to 8 people are our specialty — everyone gets a role and a spot in the scene.' },
+      { q: 'Is this an official Futurama product?', a: 'No. It is a hand-drawn fan-art style tribute by an independent artist; we are not affiliated with the show.' },
+    ],
+    image: '/backgrounds/rm-4.webp',
+    imageAlt: 'Futurama style custom portrait hand drawn from photo with retro future space background',
+  },
+  {
+    slug: 'bobs-burgers-style-portrait',
+    dbSlug: 'bobs-burgers',
+    name: "Bob's Burgers Style",
+    h1: "Bob's Burgers Style Custom Portrait from Your Photo",
+    metaTitle: "Bob's Burgers Style Custom Portrait — Hand-Drawn in 48h, From $15",
+    metaDescription:
+      "Turn your photo into a Bob's Burgers style custom portrait — hand-drawn by a real artist, no AI. Cozy diner scenes for families and couples. Delivered in 48 hours, from $15.",
+    keywords: [
+      'bobs burgers style portrait',
+      'bobs burgers custom portrait',
+      'turn photo into bobs burgers style',
+      'bobs burgers style drawing from photo',
+      'family cartoon portrait diner',
+    ],
+    intro:
+      'A custom portrait style with small-business heart: simple lines, warm flat colors, oval eyes and that unmistakable awkward-family charm — your photo redrawn as if your household ran its own burger joint.',
+    whatIs: {
+      title: "What is a Bob's Burgers style portrait?",
+      body:
+        'It is a digital illustration hand-drawn from your photo in the visual language of the famous animated family sitcom: thin even outlines, muted warm palettes, understated expressions and cozy storefront or kitchen backdrops. A real artist draws every portrait from scratch — no AI, no filters — so your family\'s quirks survive the cartoonification. This is a fan-art style tribute; we are not affiliated with the show.',
+    },
+    forWho: {
+      title: 'Who is it for?',
+      body:
+        'Made for families with inside jokes, couples who cook together, restaurant owners and anyone whose household feels like a sitcom. It is the warmest of our adult-animation styles — funny without being loud.',
+    },
+    includes: {
+      title: 'What your portrait includes',
+      items: [
+        "Your face hand-drawn in Bob's Burgers style, keeping your real features",
+        'Torso or full body, up to 8 people and pets',
+        'Cozy backgrounds: diner counter, storefront, family kitchen',
+        'High-resolution file ready to print or gift digitally',
+        'A revision round + delivery in 48 hours',
+      ],
+    },
+    process: {
+      title: 'How is it made?',
+      body:
+        'Upload a clear photo of each person, pick torso or full body and tell us your scene — behind the counter, at the family table, in front of your own storefront sign. The artist redraws everyone by hand in the style\'s soft lines and warm palette and delivers within 48 hours.',
+    },
+    faq: [
+      { q: 'Can you put our family name on the restaurant sign?', a: 'Yes. Custom signs, aprons and menu boards are the most requested detail for this style.' },
+      { q: 'Is this an official product of the show?', a: 'No. It is a hand-drawn fan-art style tribute by an independent artist; we are not affiliated with the show.' },
+    ],
+    image: '/backgrounds/rm-6.webp',
+    imageAlt: "Bob's Burgers style custom family portrait hand drawn from photo with cozy diner background",
+  },
+  {
+    slug: 'american-dad-style-portrait',
+    dbSlug: 'american-dad',
+    name: 'American Dad Style',
+    h1: 'American Dad Style Custom Portrait from Your Photo',
+    metaTitle: 'American Dad Style Custom Portrait — Hand-Drawn in 48h, From $15',
+    metaDescription:
+      'Turn your photo into an American Dad style custom portrait — hand-drawn by a real artist, no AI. Sitcom living-room scenes for families and couples. Delivered in 48 hours, from $15.',
+    keywords: [
+      'american dad style portrait',
+      'american dad custom portrait',
+      'turn photo into american dad style',
+      'american dad style drawing from photo',
+      'adult cartoon family portrait',
+    ],
+    intro:
+      'A custom portrait style with sharp suburban satire: strong jaws, clean geometry, bright sitcom lighting and picture-perfect living rooms — your photo redrawn as the star of your own animated household.',
+    whatIs: {
+      title: 'What is an American Dad style portrait?',
+      body:
+        'It is a digital illustration hand-drawn from your photo in the visual language of the classic adult animated sitcom: crisp angular faces, bold chins, flat saturated colors and tidy suburban backdrops. Every portrait is drawn from scratch by a real artist — no AI, no templates — keeping the details that make you recognizable. This is a fan-art style tribute; we are not affiliated with the show.',
+    },
+    forWho: {
+      title: 'Who is it for?',
+      body:
+        'Great for dads who run the house like a mission, families with big personalities, and friend groups who want a portrait with sitcom energy. The angular style flatters strong features and works brilliantly for full-family scenes.',
+    },
+    includes: {
+      title: 'What your portrait includes',
+      items: [
+        'Your face hand-drawn in American Dad style, keeping your real features',
+        'Torso or full body, up to 8 people and pets',
+        'Sitcom backgrounds: living room, backyard, suburban street',
+        'High-resolution file ready to print or gift digitally',
+        'A revision round + delivery in 48 hours',
+      ],
+    },
+    process: {
+      title: 'How is it made?',
+      body:
+        'Upload a clear photo of each person, choose torso or full body and describe your scene. The artist rebuilds each face in the style\'s angular geometry while keeping the real likeness, then colors and delivers the final file within 48 hours.',
+    },
+    faq: [
+      { q: 'Does the style work for women and kids too?', a: 'Yes. The artist adapts the angular look to every age and face — the whole family fits in one scene.' },
+      { q: 'Is this an official product of the show?', a: 'No. It is a hand-drawn fan-art style tribute by an independent artist; we are not affiliated with the show.' },
+    ],
+    image: '/backgrounds/rm-5.webp',
+    imageAlt: 'American Dad style custom portrait hand drawn from photo with suburban sitcom living room background',
+  },
+  {
+    slug: 'king-of-the-hill-style-portrait',
+    dbSlug: 'king-of-the-hill',
+    name: 'King of the Hill Style',
+    h1: 'King of the Hill Style Custom Portrait from Your Photo',
+    metaTitle: 'King of the Hill Style Custom Portrait — Hand-Drawn in 48h, From $15',
+    metaDescription:
+      'Turn your photo into a King of the Hill style custom portrait — hand-drawn by a real artist, no AI. Backyard scenes for friends and family. Delivered in 48 hours, from $15.',
+    keywords: [
+      'king of the hill style portrait',
+      'king of the hill custom portrait',
+      'turn photo into king of the hill style',
+      'king of the hill style drawing from photo',
+      'realistic cartoon portrait from photo',
+    ],
+    intro:
+      'A custom portrait style with down-to-earth realism: naturalistic proportions, earthy palettes, subtle expressions and quiet suburban backdrops — your photo redrawn in the most grounded, true-to-life cartoon style we offer.',
+    whatIs: {
+      title: 'What is a King of the Hill style portrait?',
+      body:
+        'It is a digital illustration hand-drawn from your photo in the visual language of the iconic animated slice-of-life sitcom: realistic anatomy, understated linework, warm muted colors and everyday backdrops like backyards, porches and driveways. A real artist draws it from scratch — no AI — so the resemblance is closer to a stylized caricature than a loud cartoon. This is a fan-art style tribute; we are not affiliated with the show.',
+    },
+    forWho: {
+      title: 'Who is it for?',
+      body:
+        'The go-to style for friend groups who stand around talking in the driveway, dads and granddads, neighbors and anyone who wants a cartoon portrait that still looks unmistakably like them. Its realism makes it the best choice when likeness matters most.',
+    },
+    includes: {
+      title: 'What your portrait includes',
+      items: [
+        'Your face hand-drawn in King of the Hill style, keeping your real features',
+        'Torso or full body, up to 8 people and pets',
+        'Everyday backgrounds: backyard, porch, garage, alley',
+        'High-resolution file ready to print or gift digitally',
+        'A revision round + delivery in 48 hours',
+      ],
+    },
+    process: {
+      title: 'How is it made?',
+      body:
+        'Upload a clear photo of each person, choose torso or full body and pick your scene. The artist draws each face with the style\'s naturalistic proportions and muted palette, then delivers the final high-resolution file within 48 hours.',
+    },
+    faq: [
+      { q: 'Can you draw four of us standing by a fence?', a: 'Yes — that is the most requested scene for this style. Add a drink in every hand at no extra cost.' },
+      { q: 'Is this an official product of the show?', a: 'No. It is a hand-drawn fan-art style tribute by an independent artist; we are not affiliated with the show.' },
+    ],
+    image: '/backgrounds/rm-3.webp',
+    imageAlt: 'King of the Hill style custom portrait hand drawn from photo with backyard fence background',
+  },
+  {
+    slug: 'studio-ghibli-style-portrait',
+    dbSlug: 'studio-ghibli',
+    name: 'Studio Ghibli Style',
+    h1: 'Studio Ghibli Style Custom Portrait from Your Photo',
+    metaTitle: 'Studio Ghibli Style Custom Portrait — Hand-Drawn in 48h, From $15',
+    metaDescription:
+      'Turn your photo into a Studio Ghibli style custom portrait — hand-drawn by a real artist, no AI. Dreamy painterly scenes for couples and families. Delivered in 48 hours, from $15.',
+    keywords: [
+      'ghibli style portrait from photo',
+      'studio ghibli style portrait',
+      'turn photo into ghibli style',
+      'ghibli style drawing from photo',
+      'anime movie style custom portrait',
+    ],
+    intro:
+      'A custom portrait style of quiet wonder: soft painterly light, gentle faces, wind-swept hair and backgrounds that feel alive — rolling meadows, cluttered kitchens, night skies. Your photo redrawn as a frame from a hand-painted animated film.',
+    whatIs: {
+      title: 'What is a Studio Ghibli style portrait?',
+      body:
+        'It is a digital illustration hand-drawn from your photo in the visual language of beloved hand-painted animated films: delicate linework, watercolor-like backgrounds, warm natural light and expressive but subtle faces. Unlike the viral AI "ghiblification" filters, ours is drawn stroke by stroke by a real artist — which is exactly what this style deserves. This is a fan-art style tribute; we are not affiliated with any studio.',
+    },
+    forWho: {
+      title: 'Who is it for?',
+      body:
+        'Ideal for romantic couples, dreamers, book lovers, mums and anyone who wants a portrait that feels like a memory rather than a joke. It is our most painterly style and the strongest choice for emotional gifts and memorial portraits.',
+    },
+    includes: {
+      title: 'What your portrait includes',
+      items: [
+        'Your face hand-drawn in Ghibli-inspired style, keeping your real features',
+        'Torso or full body, up to 8 people and pets',
+        'Painterly backgrounds: meadow, sea town, starry night, cozy kitchen',
+        'High-resolution file ready to print or gift digitally',
+        'A revision round + delivery in 48 hours',
+      ],
+    },
+    process: {
+      title: 'How is it made?',
+      body:
+        'Upload a clear photo of each person, choose torso or full body and describe the mood you want. The artist paints your portrait with the style\'s soft light and painterly textures — no AI filters — and delivers the final file within 48 hours.',
+    },
+    faq: [
+      { q: 'How is this different from AI Ghibli filters?', a: 'Everything is hand-painted by a real artist: your real features stay, the light is composed on purpose, and no studio\'s work is fed into a model.' },
+      { q: 'Is this an official Studio Ghibli product?', a: 'No. It is a hand-drawn fan-art style tribute by an independent artist; we are not affiliated with any studio.' },
+    ],
+    image: '/backgrounds/rm-10.webp',
+    imageAlt: 'Studio Ghibli style custom couple portrait hand drawn from photo with painterly meadow background',
+  },
 ];
 
 export function getStyleBySlug(slug: string): StyleContent | undefined {

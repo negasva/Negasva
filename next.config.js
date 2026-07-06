@@ -33,6 +33,7 @@ const nextConfig = {
     { source: '/contacto', destination: '/contact', permanent: true },
     { source: '/seguimiento', destination: '/track-order', permanent: true },
     { source: '/track', destination: '/track-order', permanent: true },
+    { source: '/productos', destination: '/products', permanent: true },
     { source: '/estilos', destination: '/styles', permanent: true },
     { source: '/estilos/rick-y-morty', destination: '/styles/rick-and-morty-style-portrait', permanent: true },
     { source: '/estilos/simpsons', destination: '/styles/simpsons-style-portrait', permanent: true },

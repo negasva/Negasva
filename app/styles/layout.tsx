@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'Cartoon Portrait Styles — Simpsons, Family Guy, Anime & More',
-  description: 'Pick from 8 custom cartoon portrait styles: Simpsons, Rick and Morty, Family Guy, South Park, anime, Disney-Pixar, Gravity Falls or Fairly OddParents. Hand-drawn, no AI, from $15 USD.',
+  description: 'Pick from 13 custom cartoon portrait styles: Simpsons, Rick and Morty, Family Guy, South Park, Futurama, Bob\'s Burgers, American Dad, King of the Hill, anime, Studio Ghibli, Disney-Pixar and more. Hand-drawn, no AI, from $15 USD.',
   alternates: { canonical: '/styles' },
   openGraph: {
     title: 'Cartoon Portrait Styles — Negasva',
