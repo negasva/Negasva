@@ -16,6 +16,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { path: '/styles', priority: 0.8, changeFrequency: 'weekly' },
     { path: '/how-it-works', priority: 0.8, changeFrequency: 'monthly' },
     { path: '/cartoon-yourself', priority: 0.9, changeFrequency: 'weekly' },
+    { path: '/products', priority: 0.7, changeFrequency: 'monthly' },
     { path: '/pricing', priority: 0.8, changeFrequency: 'weekly' },
     { path: '/gallery', priority: 0.7, changeFrequency: 'weekly' },
     { path: '/about', priority: 0.5, changeFrequency: 'monthly' },

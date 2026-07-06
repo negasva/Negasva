@@ -284,7 +284,7 @@ export default function Home() {
               ))}
             </div>
             <Link
-              href={orderHref}
+              href="/products"
               className="inline-flex items-center gap-2 bg-primary text-white font-black text-[17px] px-8 py-4 rounded-xl shadow-[0_10px_26px_rgba(252,144,182,0.4)] hover:bg-primary-dark transition-all"
             >
               See products

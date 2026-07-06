@@ -141,6 +141,13 @@ export default function StylePage({ params }: { params: { slug: string } }) {
                 <ChevronRight className="w-5 h-5" />
               </Link>
               <p className="mt-3 text-sm text-secondary-lighter">From $15 USD · Delivered in 48h · Revision included</p>
+              <p className="mt-4 text-sm text-secondary-lighter">
+                Also available printed on{' '}
+                <Link href="/products" className="text-primary font-bold underline">
+                  canvas, mugs and t-shirts
+                </Link>
+                .
+              </p>
             </div>
             <div className="relative aspect-video rounded-2xl overflow-hidden border-2 border-primary-lighter shadow-lg">
               <Image
