@@ -1,19 +1,29 @@
-'use client';
-
-import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Navbar from '@/components/Navbar';
 import PageFooter from '@/components/PageFooter';
-import { cachedFetchJSON } from '@/lib/cache/clientCache';
-import { usePageText } from '@/lib/i18n/pageContent';
-import { useAutoTranslate } from '@/lib/i18n/useAutoTranslate';
+import { createAnonClient } from '@/lib/supabase/server';
 import { faqContent } from '@/lib/i18n/pages/faq';
 
-interface ApiFaq {
-  id: string;
-  question: string;
-  answer: string;
-}
+// Server component: las FAQs llegan en el HTML inicial + FAQPage JSON-LD (SEO).
+// ISR cada 5 min; si la BD no responde se sirve el contenido estático EN.
+export const revalidate = 300;
+
+const tx = faqContent.en;
+
+// ponytail: el contenido del admin se sirve tal cual (sin auto-traducción
+// cliente); el sitio es EN estático — las FAQs de BD deben escribirse en EN.
+const FALLBACK_FAQS: Array<{ q: string; a: string }> = [
+  { q: tx.faq1_q, a: tx.faq1_a },
+  { q: tx.faq2_q, a: tx.faq2_a },
+  { q: tx.faq3_q, a: tx.faq3_a },
+  { q: tx.faq4_q, a: tx.faq4_a },
+  { q: tx.faq5_q, a: tx.faq5_a },
+  { q: tx.faq6_q, a: tx.faq6_a },
+  { q: tx.faq7_q, a: tx.faq7_a },
+  { q: tx.faq8_q, a: tx.faq8_a },
+  { q: tx.faq9_q, a: tx.faq9_a },
+  { q: tx.faq10_q, a: `${tx.faq10_a_before} [${tx.faq10_a_link_label}](/track-order) ${tx.faq10_a_after}` },
+];
 
 // Render admin-written answers, supporting [texto](/ruta) links.
 function renderAnswer(answer: string) {
@@ -37,54 +47,38 @@ function renderAnswer(answer: string) {
   });
 }
 
-export default function FaqPage() {
-  const tx = usePageText('faq', faqContent);
-  const [apiFaqs, setApiFaqs] = useState<ApiFaq[] | null>(null);
+// Texto plano para el schema: quita la sintaxis [label](url) dejando el label.
+const plain = (s: string) => s.replace(/\[([^\]]+)\]\([^)]+\)/g, '$1');
 
-  useEffect(() => {
-    cachedFetchJSON<ApiFaq[]>('/api/faqs')
-      .then((data) => { if (Array.isArray(data) && data.length > 0) setApiFaqs(data); })
-      .catch(() => {});
-  }, []);
+async function fetchFaqs(): Promise<Array<{ q: string; a: string }>> {
+  const supabase = createAnonClient();
+  if (!supabase) return FALLBACK_FAQS;
+  const { data, error } = await supabase
+    .from('faqs')
+    .select('question, answer')
+    .eq('is_active', true)
+    .order('sort_order', { ascending: true })
+    .order('created_at', { ascending: true });
+  if (error || !data?.length) return FALLBACK_FAQS;
+  return data.map((f) => ({ q: f.question, a: f.answer }));
+}
 
-  // Fallback if /api/faqs is unavailable — admin manages the real content
-  const FALLBACK_FAQS: { q: string; a: React.ReactNode }[] = [
-    { q: tx.faq1_q, a: tx.faq1_a },
-    { q: tx.faq2_q, a: tx.faq2_a },
-    { q: tx.faq3_q, a: tx.faq3_a },
-    { q: tx.faq4_q, a: tx.faq4_a },
-    { q: tx.faq5_q, a: tx.faq5_a },
-    { q: tx.faq6_q, a: tx.faq6_a },
-    { q: tx.faq7_q, a: tx.faq7_a },
-    { q: tx.faq8_q, a: tx.faq8_a },
-    { q: tx.faq9_q, a: tx.faq9_a },
-    {
-      q: tx.faq10_q,
-      a: (
-        <>
-          {tx.faq10_a_before}{' '}
-          <Link href="/track-order" className="text-primary font-bold underline">
-            {tx.faq10_a_link_label}
-          </Link>{' '}
-          {tx.faq10_a_after}
-        </>
-      ),
-    },
-  ];
+export default async function FaqPage() {
+  const faqs = await fetchFaqs();
 
-  // Las FAQ del admin se escriben en español y se traducen solas al idioma activo.
-  const flatSrc = (apiFaqs ?? []).flatMap((f) => [f.question, f.answer]);
-  const { translated: flatTr } = useAutoTranslate(flatSrc);
-
-  const faqs: { q: string; a: React.ReactNode }[] = apiFaqs
-    ? apiFaqs.map((f, i) => ({
-        q: flatTr[i * 2] ?? f.question,
-        a: renderAnswer(flatTr[i * 2 + 1] ?? f.answer),
-      }))
-    : FALLBACK_FAQS;
+  const faqSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqs.map((f) => ({
+      '@type': 'Question',
+      name: f.q,
+      acceptedAnswer: { '@type': 'Answer', text: plain(f.a) },
+    })),
+  };
 
   return (
     <div className="min-h-screen bg-white">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
       <Navbar />
 
       <section className="bg-primary-lighter/30 py-20 px-4">
@@ -107,7 +101,7 @@ export default function FaqPage() {
             >
               <h2 className="font-bold text-secondary">{item.q}</h2>
               <div className="mt-3 text-secondary-lighter leading-relaxed">
-                {item.a}
+                {renderAnswer(item.a)}
               </div>
             </div>
           ))}
