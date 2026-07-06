@@ -27,6 +27,12 @@ const nextConfig = {
     // Rutas de estilos migradas a slugs EN keyword-exact (SEO).
     // Página del artista migrada a slug EN (SEO / E-E-A-T).
     { source: '/sobre', destination: '/about', permanent: true },
+    // Rutas ES restantes migradas a slugs EN (SEO). /track se consolida en /track-order.
+    { source: '/precios', destination: '/pricing', permanent: true },
+    { source: '/galeria', destination: '/gallery', permanent: true },
+    { source: '/contacto', destination: '/contact', permanent: true },
+    { source: '/seguimiento', destination: '/track-order', permanent: true },
+    { source: '/track', destination: '/track-order', permanent: true },
     { source: '/estilos', destination: '/styles', permanent: true },
     { source: '/estilos/rick-y-morty', destination: '/styles/rick-and-morty-style-portrait', permanent: true },
     { source: '/estilos/simpsons', destination: '/styles/simpsons-style-portrait', permanent: true },

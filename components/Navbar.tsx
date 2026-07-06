@@ -7,6 +7,15 @@ import Logo from '@/components/Logo';
 import CurrencySwitcher from '@/components/CurrencySwitcher';
 import { useLanguage } from '@/lib/i18n/LanguageContext';
 
+// Links SEO del sitio EN estático — texto fijo en inglés, sin i18n.
+const NAV_LINKS = [
+  { href: '/styles', label: 'Styles' },
+  { href: '/pricing', label: 'Pricing' },
+  { href: '/gallery', label: 'Gallery' },
+  { href: '/blog', label: 'Blog' },
+  { href: '/faq', label: 'FAQ' },
+];
+
 function Navbar() {
   const { t } = useLanguage();
   const [menuOpen, setMenuOpen] = useState(false);
@@ -19,6 +28,15 @@ function Navbar() {
 
           {/* Desktop: all controls inline */}
           <div className="hidden md:flex items-center gap-4">
+            {NAV_LINKS.map((l) => (
+              <Link
+                key={l.href}
+                href={l.href}
+                className="text-sm font-bold text-secondary hover:text-primary-dark transition-colors"
+              >
+                {l.label}
+              </Link>
+            ))}
             <CurrencySwitcher />
             <Link
               href="/order"
@@ -57,7 +75,17 @@ function Navbar() {
           donde el wizard sí traduce completo. */}
       {menuOpen && (
         <div className="md:hidden border-t border-primary-lighter bg-white">
-          <div className="mx-auto max-w-7xl px-4 py-4 flex items-center justify-between gap-4">
+          <div className="mx-auto max-w-7xl px-4 py-4 flex flex-col gap-4">
+            {NAV_LINKS.map((l) => (
+              <Link
+                key={l.href}
+                href={l.href}
+                onClick={() => setMenuOpen(false)}
+                className="text-sm font-bold text-secondary hover:text-primary-dark transition-colors"
+              >
+                {l.label}
+              </Link>
+            ))}
             <CurrencySwitcher />
           </div>
         </div>

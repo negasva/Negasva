@@ -63,7 +63,7 @@ export default function FaqPage() {
       a: (
         <>
           {tx.faq10_a_before}{' '}
-          <Link href="/seguimiento" className="text-primary font-bold underline">
+          <Link href="/track-order" className="text-primary font-bold underline">
             {tx.faq10_a_link_label}
           </Link>{' '}
           {tx.faq10_a_after}
