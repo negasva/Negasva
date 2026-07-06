@@ -16,7 +16,9 @@ export async function GET(request: Request) {
 
   if (error) return errorResponse('Failed to load faqs', 500, error);
 
+  // Contenido editable por el admin: sin caché en el edge para que los
+  // cambios se vean de inmediato en la web.
   return NextResponse.json(data ?? [], {
-    headers: { 'Cache-Control': 'public, s-maxage=120, stale-while-revalidate=600' },
+    headers: { 'Cache-Control': 'no-store, must-revalidate' },
   });
 }

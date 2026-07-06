@@ -3,6 +3,8 @@ import Image from 'next/image';
 import { Clock, RefreshCcw, PenTool } from 'lucide-react';
 import { POD_PRODUCTS } from '@/lib/pricing/products';
 import { STYLES_CONTENT } from '@/lib/content/styles';
+import { getHomeContent } from '@/lib/content/homeContent.server';
+import { loadPricingConfig } from '@/lib/pricing/server';
 import ProductIcon from '@/components/ProductIcon';
 import Navbar from '@/components/Navbar';
 import PageFooter from '@/components/PageFooter';
@@ -10,10 +12,17 @@ import TestimonialsScroll from '@/components/TestimonialsScroll';
 import { HeroPortraits, StepsPortraits, WeeklyOrdersBadge, HomeFaq, StickyOrderCta } from './home-islands';
 
 // Server component: la home llega como HTML estático en inglés (SEO).
-// Lo interactivo (fetch de config, FAQ, sticky CTA) vive en ./home-islands.tsx.
+// El contenido editable viene de landing_config ('home_content') vía
+// getHomeContent(); los precios de las tablas prices/body_types. ISR + los
+// endpoints del admin hacen revalidatePath('/') al guardar, así que los
+// cambios se ven de inmediato sin redeploy. Lo interactivo (fetch de config,
+// FAQ, sticky CTA) vive en ./home-islands.tsx.
+export const revalidate = 300;
 
 // Enlaces a las landings de sujeto/ocasión (lib/content/landings.ts) con
 // etiquetas cortas para chips — el h1 completo de cada landing es muy largo.
+// Se mantienen en código a propósito: son enlazado interno SEO acoplado a las
+// rutas, no copy de marketing.
 const GIFT_LINKS = [
   { href: '/custom-couple-portrait', label: 'Couples' },
   { href: '/custom-family-portrait', label: 'Families' },
@@ -29,11 +38,7 @@ const GIFT_LINKS = [
   { href: '/hand-drawn-no-ai', label: 'No-AI believers' },
 ];
 
-const STEPS = [
-  { step: 1, title: 'Choose your style', desc: 'Pick your favourite cartoon style, how many people or pets, and the background you want.' },
-  { step: 2, title: 'Upload your photos', desc: 'A clear photo of each person + your pose and detail instructions.' },
-  { step: 3, title: 'Receive it in 48h', desc: 'Your hand-drawn illustration arrives by email within 48 hours, ready to print and gift.' },
-];
+const usd = (n: number) => `$${Number.isInteger(n) ? n : n.toFixed(2)}`;
 
 function BrushDividerDown() {
   return (
@@ -59,8 +64,16 @@ function BrushDividerUp() {
   );
 }
 
-export default function Home() {
-  const orderHref = '/order';
+export default async function Home() {
+  const [content, pricing] = await Promise.all([getHomeContent(), loadPricingConfig()]);
+  const t = content.texts;
+  const torsoUsd = pricing.perPersonUsd.torso_only ?? 15;
+  const fullUsd = pricing.perPersonUsd.full_body ?? 25;
+  const trustIcons = [
+    <Clock key="c" className="w-5 h-5 text-primary" />,
+    <RefreshCcw key="r" className="w-5 h-5 text-primary" />,
+    <PenTool key="p" className="w-5 h-5 text-primary" />,
+  ];
 
   return (
     <div className="min-h-screen bg-white">
@@ -77,14 +90,14 @@ export default function Home() {
                 <path d="M3 11 L11 3 L20 3 L20 12 L12 20 Z" fill="none" stroke="#fff" strokeWidth="2" strokeLinejoin="round" />
                 <circle cx="15.5" cy="7.5" r="1.6" fill="#fff" />
               </svg>
-              Portraits from $15
+              {t.hero_badge}
             </div>
 
             {/* H1 with animated sketch underline */}
             <h1 className="font-black text-[30px] sm:text-[46px] md:text-[62px] leading-[1.08] md:leading-[1.02] mb-2 tracking-tight break-words">
-              Custom Cartoon Portrait,
+              {t.hero_headline}
               <span className="relative inline-block text-primary-dark ml-2">
-                Hand-Drawn
+                {t.hero_highlight}
                 <svg
                   className="sketch-anim"
                   viewBox="0 0 420 36"
@@ -95,34 +108,36 @@ export default function Home() {
                   <path d="M20 24 C 120 17, 260 15, 380 21" fill="none" stroke="#FC90B6" strokeWidth="5" strokeLinecap="round" opacity={0.7} />
                 </svg>
               </span>
-              <span className="block mt-3">from your photo — no AI.</span>
+              <span className="block mt-3">{t.hero_tail}</span>
             </h1>
 
             <p className="text-base sm:text-lg leading-relaxed text-secondary-lighter max-w-[480px] mt-6 sm:mt-9 mb-7 sm:mb-8">
-              Turn your photo into an iconic cartoon character — Simpsons style, Rick and Morty style and more.
-              100% hand-drawn by a real artist and delivered in 48 hours, from $15.
+              {t.hero_subheadline}
             </p>
 
             <div className="flex items-center gap-4 flex-wrap mb-7">
               <Link
-                href={orderHref}
+                href={t.hero_cta_href}
                 className="inline-flex items-center gap-2.5 bg-primary text-white font-black text-lg sm:text-xl px-8 sm:px-11 py-4 sm:py-5 rounded-[14px] shadow-[0_14px_34px_rgba(252,144,182,0.5)] hover:bg-primary-dark hover:scale-[1.03] transition-all"
               >
-                Order my portrait →
+                {t.hero_cta_label}
               </Link>
               <a
-                href="#pasos"
+                href={t.hero_cta2_href}
                 className="font-bold text-sm text-secondary underline underline-offset-4 decoration-primary decoration-2"
               >
-                See how it works
+                {t.hero_cta2_label}
               </a>
             </div>
 
             {/* Stats */}
             <div className="flex gap-8 items-baseline flex-wrap">
-              <span><span className="font-black text-[22px]">1.8M</span> <span className="text-[13px] text-secondary-lighter">TikTok</span></span>
-              <span><span className="font-black text-[22px]">50K</span> <span className="text-[13px] text-secondary-lighter">Instagram</span></span>
-              <span><span className="font-black text-[22px]">+1000</span> <span className="text-[13px] text-secondary-lighter">happy clients</span></span>
+              {content.stats.map((s) => (
+                <span key={`${s.value}-${s.label}`}>
+                  <span className="font-black text-[22px]">{s.value}</span>{' '}
+                  <span className="text-[13px] text-secondary-lighter">{s.label}</span>
+                </span>
+              ))}
             </div>
             <WeeklyOrdersBadge />
           </div>
@@ -131,20 +146,16 @@ export default function Home() {
           <div className="relative pt-4 md:pt-2 md:pb-10 order-first md:order-none flex justify-center md:block">
             <HeroPortraits />
             <span className="font-caveat font-bold text-[30px] text-green-600 rotate-[-4deg] hidden md:inline-block absolute bottom-0 left-1">
-              make them laugh!
+              {t.hero_note}
             </span>
           </div>
         </div>
 
         {/* Trust strip */}
         <div className="mx-auto max-w-[900px] mt-10 sm:mt-14 flex justify-center gap-x-6 gap-y-3 sm:gap-11 flex-wrap">
-          {[
-            { icon: <Clock className="w-5 h-5 text-primary" />, text: 'Delivered in 48 hours' },
-            { icon: <RefreshCcw className="w-5 h-5 text-primary" />, text: 'Unlimited revisions' },
-            { icon: <PenTool className="w-5 h-5 text-primary" />, text: '100% hand-drawn — no AI' },
-          ].map(({ icon, text }) => (
+          {content.trust.map((text, i) => (
             <span key={text} className="inline-flex items-center gap-2 font-bold text-[15px]">
-              {icon} {text}
+              {trustIcons[i % trustIcons.length]} {text}
             </span>
           ))}
         </div>
@@ -161,9 +172,9 @@ export default function Home() {
           {/* Right: headline + steps */}
           <div>
             <h2 className="font-black text-[30px] sm:text-[38px] md:text-[46px] leading-[1.1] md:leading-[1.08] mb-10">
-              Create your personalized gift portrait in{' '}
+              {t.steps_heading}{' '}
               <span className="relative inline-block px-2 py-1">
-                3 simple steps
+                {t.steps_highlight}
                 <svg viewBox="0 0 320 90" preserveAspectRatio="none" aria-hidden="true" style={{ position: 'absolute', inset: '-8px -12px', width: 'calc(100% + 24px)', height: 'calc(100% + 16px)', overflow: 'visible' }}>
                   <path d="M20 45 C 10 12, 150 2, 250 14 C 320 24, 316 66, 220 78 C 120 88, 18 80, 20 48" fill="none" stroke="#FC90B6" strokeWidth="5" strokeLinecap="round" opacity={0.85} />
                 </svg>
@@ -171,14 +182,14 @@ export default function Home() {
             </h2>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 gap-x-10">
-              {STEPS.map((step, i) => (
-                <div key={step.step}>
+              {content.steps.map((step, i) => (
+                <div key={i}>
                   <h3 className="flex items-center gap-2.5 font-black text-[19px] mb-2">
                     <span
                       className="w-[34px] h-[34px] rounded-full bg-primary text-white flex items-center justify-center text-base font-black"
                       style={{ transform: `rotate(${[-4, 3, -2][i] ?? 0}deg)` }}
                     >
-                      {step.step}
+                      {i + 1}
                     </span>
                     {step.title}
                   </h3>
@@ -187,10 +198,10 @@ export default function Home() {
               ))}
               <div className="flex items-center">
                 <Link
-                  href={orderHref}
+                  href={t.steps_cta_href}
                   className="inline-flex items-center gap-2 bg-secondary text-white font-black text-[15px] px-7 py-4 rounded-xl hover:bg-secondary-light transition-colors"
                 >
-                  Start now →
+                  {t.steps_cta_label}
                 </Link>
               </div>
             </div>
@@ -202,10 +213,10 @@ export default function Home() {
       <section className="bg-white py-16 md:py-20 px-6">
         <div className="mx-auto max-w-[1150px]">
           <h2 className="font-black text-[30px] sm:text-[38px] md:text-[46px] text-center mb-2">
-            Pick Your Cartoon Style
+            {t.styles_heading}
           </h2>
           <p className="text-center text-[17px] text-secondary-lighter mb-10">
-            13 hand-drawn styles — from Simpsons yellow to anime, Ghibli-inspired and Disney-Pixar
+            {t.styles_subtitle}
           </p>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
             {STYLES_CONTENT.map((s) => (
@@ -231,13 +242,13 @@ export default function Home() {
           </div>
           <p className="text-center mt-8">
             <Link href="/styles" className="font-black text-[15px] underline underline-offset-4 decoration-primary decoration-2">
-              See all styles →
+              {t.styles_see_all}
             </Link>
           </p>
 
           {/* Perfect gift for… — internal links to subject/occasion landings */}
           <div className="mt-14 text-center">
-            <h3 className="font-black text-[22px] sm:text-[26px] mb-6">The perfect gift for…</h3>
+            <h3 className="font-black text-[22px] sm:text-[26px] mb-6">{t.gifts_heading}</h3>
             <div className="flex flex-wrap justify-center gap-3">
               {GIFT_LINKS.map((l) => (
                 <Link
@@ -259,22 +270,22 @@ export default function Home() {
           {/* Left: sticky info */}
           <div className="md:sticky md:top-24">
             <span className="font-caveat font-bold text-[28px] text-primary-dark inline-block rotate-[-2deg] mb-2">
-              new
+              {t.pod_badge}
             </span>
             <h2 className="font-black text-[30px] sm:text-[38px] md:text-[46px] leading-[1.1] md:leading-[1.08] mb-5">
-              Your drawing, on anything{' '}
+              {t.pod_heading}{' '}
               <span className="relative inline-block text-primary-dark">
-                you want
+                {t.pod_highlight}
                 <svg className="sketch-anim" viewBox="0 0 300 24" aria-hidden="true" style={{ position: 'absolute', left: 0, bottom: '-14px', width: '100%', height: '24px', overflow: 'visible' }}>
                   <path d="M4 10 C 70 4, 180 2, 296 8" fill="none" stroke="#FC90B6" strokeWidth="5" strokeLinecap="round" />
                 </svg>
               </span>
             </h2>
             <p className="text-[17px] leading-relaxed text-secondary-lighter max-w-[420px] mt-8 mb-6">
-              Beyond the digital file, put your custom portrait on real printed products — mugs, t-shirts, canvas and more — shipped to your door.
+              {t.pod_body}
             </p>
             <div className="flex flex-col gap-2.5 mb-7">
-              {['Digital file always included', 'Print on demand', 'Shipped to your door'].map((text) => (
+              {content.pod_bullets.map((text) => (
                 <span key={text} className="inline-flex items-center gap-2.5 font-bold text-[15px]">
                   <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
                     <path d="M4 13 L10 19 L20 5" fill="none" stroke="#1FA971" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
@@ -284,10 +295,10 @@ export default function Home() {
               ))}
             </div>
             <Link
-              href="/products"
+              href={t.pod_cta_href}
               className="inline-flex items-center gap-2 bg-primary text-white font-black text-[17px] px-8 py-4 rounded-xl shadow-[0_10px_26px_rgba(252,144,182,0.4)] hover:bg-primary-dark transition-all"
             >
-              See products
+              {t.pod_cta_label}
             </Link>
           </div>
 
@@ -303,7 +314,9 @@ export default function Home() {
                   <ProductIcon productKey={p.key} className="w-9 h-9 text-primary" />
                 </div>
                 <p className="font-black text-secondary text-sm leading-tight">{p.name.en}</p>
-                <p className="text-xs text-primary-dark font-bold mt-1">from ${p.priceUsd}</p>
+                <p className="text-xs text-primary-dark font-bold mt-1">
+                  {t.pod_from_label} {usd(pricing.podProductsUsd[p.key] ?? p.priceUsd)}
+                </p>
               </div>
             ))}
           </div>
@@ -313,18 +326,18 @@ export default function Home() {
       {/* ══ PRICING ══ */}
       <section className="bg-white pb-24 px-6">
         <div className="mx-auto max-w-[900px]">
-          <h2 className="font-black text-[30px] sm:text-[38px] md:text-[46px] text-center mb-2">Transparent Pricing</h2>
-          <p className="text-center text-[17px] text-secondary-lighter mb-12">No surprises, no hidden fees</p>
+          <h2 className="font-black text-[30px] sm:text-[38px] md:text-[46px] text-center mb-2">{t.pricing_heading}</h2>
+          <p className="text-center text-[17px] text-secondary-lighter mb-12">{t.pricing_subtitle}</p>
 
           <div className="grid md:grid-cols-2 gap-9">
             {/* Torso */}
             <div className="caja-flotante">
               <div className="forma-cuadro1 bg-[#FFF1F7] px-9 pt-12 pb-10 text-center">
-                <h4 className="font-black text-[21px] mb-1">One Person — Torso</h4>
-                <p className="text-sm text-secondary-lighter mb-4">Bust up to the waist</p>
-                <p className="font-black text-[52px] text-primary-dark mb-6">$15</p>
-                <Link href={orderHref} className="block bg-secondary text-white font-black py-4 rounded-xl hover:bg-secondary-light transition-colors">
-                  Create My Portrait Now →
+                <h4 className="font-black text-[21px] mb-1">{t.pricing_torso_title}</h4>
+                <p className="text-sm text-secondary-lighter mb-4">{t.pricing_torso_sub}</p>
+                <p className="font-black text-[52px] text-primary-dark mb-6">{usd(torsoUsd)}</p>
+                <Link href={t.hero_cta_href} className="block bg-secondary text-white font-black py-4 rounded-xl hover:bg-secondary-light transition-colors">
+                  {t.pricing_cta_label}
                 </Link>
               </div>
             </div>
@@ -332,15 +345,15 @@ export default function Home() {
             {/* Full body — popular */}
             <div className="relative flota-suave">
               <span className="absolute -top-3 left-1/2 -translate-x-1/2 z-20 bg-primary text-white text-xs font-black px-4 py-1.5 rounded-full shadow-md whitespace-nowrap">
-                ★ Most popular
+                {t.pricing_popular_badge}
               </span>
               <div className="caja-flotante-glow">
                 <div className="forma-cuadro2 forma-varia bg-white px-9 pt-12 pb-10 text-center">
-                  <h4 className="font-black text-[21px] mb-1">One Person — Full Body</h4>
-                  <p className="text-sm text-secondary-lighter mb-4">Full body character</p>
-                  <p className="font-black text-[52px] text-primary-dark mb-6">$25</p>
-                  <Link href={orderHref} className="block bg-primary text-white font-black py-4 rounded-xl hover:bg-primary-dark transition-colors">
-                    Create My Portrait Now →
+                  <h4 className="font-black text-[21px] mb-1">{t.pricing_full_title}</h4>
+                  <p className="text-sm text-secondary-lighter mb-4">{t.pricing_full_sub}</p>
+                  <p className="font-black text-[52px] text-primary-dark mb-6">{usd(fullUsd)}</p>
+                  <Link href={t.hero_cta_href} className="block bg-primary text-white font-black py-4 rounded-xl hover:bg-primary-dark transition-colors">
+                    {t.pricing_cta_label}
                   </Link>
                 </div>
               </div>
@@ -348,16 +361,16 @@ export default function Home() {
           </div>
 
           <p className="text-center text-sm text-secondary-lighter mt-7">
-            Custom Background: +$15 · Custom scene or background
+            {t.pricing_bg_label}: +{usd(pricing.backgroundCustomUsd)} · {t.pricing_bg_desc}
           </p>
         </div>
       </section>
 
       {/* ══ TESTIMONIALS ══ */}
-      <TestimonialsScroll />
+      <TestimonialsScroll reviews={content.testimonials} />
 
       {/* ══ FAQ ══ */}
-      <HomeFaq />
+      <HomeFaq heading={t.faq_heading} seeAllLabel={t.faq_see_all} />
 
       {/* ══ BRUSH DIVIDER (above CTA/footer) ══ */}
       <BrushDividerUp />
@@ -366,24 +379,24 @@ export default function Home() {
       <section className="bg-[#FFF1F7] py-20 px-6 text-center">
         <div className="mx-auto max-w-[680px]">
           <h2 className="font-black text-[32px] sm:text-[40px] md:text-[48px] leading-[1.1] md:leading-[1.08] mb-5">
-            Ready to turn your photo into{' '}
+            {t.final_heading}{' '}
             <span className="relative inline-block text-primary-dark">
-              cartoon art
+              {t.final_highlight}
               <svg className="sketch-anim" viewBox="0 0 120 22" aria-hidden="true" style={{ position: 'absolute', left: '-2px', bottom: '-12px', width: '104%', height: '22px', overflow: 'visible' }}>
                 <path d="M4 10 C 30 4, 80 2, 116 8" fill="none" stroke="#FC90B6" strokeWidth="5" strokeLinecap="round" />
               </svg>
             </span>?
           </h2>
           <p className="text-[17px] leading-relaxed text-secondary-lighter mb-8">
-            Over 1,000 hand-drawn portraits delivered. Have a special idea not in the shop? Write to us — we are here to draw it.
+            {t.final_body}
           </p>
           <div className="inline-flex items-center bg-white rounded-[14px] p-1.5 shadow-[0_10px_26px_rgba(0,0,0,0.08)]">
-            <Link href={orderHref} className="bg-primary text-white font-black text-[17px] px-8 py-4 rounded-[10px] hover:bg-primary-dark transition-colors">
-              Order my portrait
+            <Link href={t.final_cta_href} className="bg-primary text-white font-black text-[17px] px-8 py-4 rounded-[10px] hover:bg-primary-dark transition-colors">
+              {t.final_cta_label}
             </Link>
-            <span className="text-[13px] text-secondary-lighter px-3">or</span>
-            <Link href="/contact" className="font-black text-[15px] px-5 py-4 underline underline-offset-4 decoration-primary">
-              Ask me!
+            <span className="text-[13px] text-secondary-lighter px-3">{t.final_or}</span>
+            <Link href={t.final_secondary_href} className="font-black text-[15px] px-5 py-4 underline underline-offset-4 decoration-primary">
+              {t.final_secondary_label}
             </Link>
           </div>
         </div>
@@ -392,7 +405,7 @@ export default function Home() {
       <PageFooter />
 
       {/* ══ STICKY CTA (mobile only) ══ */}
-      <StickyOrderCta />
+      <StickyOrderCta label={t.sticky_cta_label} href={t.hero_cta_href} />
     </div>
   );
 }

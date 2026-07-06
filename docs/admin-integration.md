@@ -1,215 +1,80 @@
-# Admin Panel — Guía de integración con el frontend
+# Admin ↔ Web — mapa de integración
 
-> **⚠️ Documento histórico (parcialmente desactualizado).** Las rutas
-> `app/precios/page.tsx` y `app/studio/page.tsx` ya no existen; los precios los
-> lee `/pricing` y `/order` desde las tablas `prices`/`body_types`, y los
-> paquetes se muestran en `/pricing`. Para el estado real de qué controla cada
-> panel, ver `AUDIT-ADMIN-LANDING.md`, `scripts/sync-landing-content.sql` y
-> `CLEANUP.sql`.
+Estado tras la reconexión de la landing (ver historial en
+`AUDIT-ADMIN-LANDING.md`, `scripts/sync-landing-content.sql` y `CLEANUP.sql`).
 
-Este documento describe qué partes del sitio público deben actualizarse para leer
-los datos dinámicamente desde Supabase en lugar de tener los valores hardcodeados.
+## Principio general
 
----
+- Los **defaults del código** (`lib/content/homeContent.ts`, fallbacks de
+  `lib/pricing/fallbacks.ts`, `DEFAULT_FOOTER` de `components/PageFooter.tsx`,
+  `lib/i18n/pages/*`) son SOLO fallback si la BD no responde. La fuente de
+  verdad es siempre lo que edita el admin en Supabase.
+- **Reflejo inmediato**: la home y `/pricing` son estáticas (ISR,
+  `revalidate = 300`), pero los endpoints del admin llaman a
+  `revalidatePath('/')` / `revalidatePath('/pricing')` al guardar, así que el
+  cambio se ve en la siguiente petición sin redeploy. Lo que se carga en
+  cliente (`/api/landing-config`, `/api/faqs`) responde con
+  `Cache-Control: no-store`.
 
-## 1. Precios
+## Mapa: sección de la landing → admin → API → Supabase
 
-### Situación actual
-Los precios están definidos de forma estática en los componentes de cada página
-(por ejemplo en `app/precios/page.tsx` o `app/studio/page.tsx`).
+| Sección de la landing (/) | Pantalla del admin | API | Tabla/clave |
+|---|---|---|---|
+| Hero: badge, titular, subtítulo, CTAs (texto y destino), nota manuscrita | `/adminlanding/landing` → Hero | `PATCH /api/landing-config` | `landing_config` · `home_content.texts` |
+| Hero: estadísticas (1.8M TikTok…) | `/adminlanding/landing` → Hero — estadísticas | ídem | `home_content.stats` |
+| Hero: franja de confianza (48h, revisiones, no-AI) | `/adminlanding/landing` → Hero — franja | ídem | `home_content.trust` |
+| Hero: fotos Before/After | `/admin/imagenes` → Landing → Hero | `PATCH /api/landing-config` | `landing_config` · `site_images.landing_hero_img1/2` |
+| Badge "N portraits ordered this week" | automático desde pedidos (`/admin/orders`) | `GET /api/public-stats` | `admin_orders` |
+| "3 simple steps": título, tarjetas, CTA | `/adminlanding/landing` → Pasos | `PATCH /api/landing-config` | `home_content.texts` + `home_content.steps` |
+| "3 simple steps": fotos | `/admin/imagenes` → Landing → 3 simple steps | ídem | `site_images.landing_paso_img1/2` |
+| Estilos: título, subtítulo, link "ver todos" | `/adminlanding/landing` → Estilos | ídem | `home_content.texts` |
+| Estilos: tarjetas del grid (nombre, imagen, URL) | — (código) | — | `lib/content/styles.ts` — copy SEO por estilo, acoplado a las rutas `/styles/*` (ver "hardcodeado a propósito") |
+| Chips "The perfect gift for…" (título) | `/adminlanding/landing` → Estilos | ídem | `home_content.texts.gifts_heading` |
+| Chips de regalo (los enlaces) | — (código) | — | `GIFT_LINKS` en `app/page.tsx` — enlazado interno SEO |
+| POD: textos, bullets, CTA | `/adminlanding/landing` → Productos | ídem | `home_content.texts` + `home_content.pod_bullets` |
+| POD: precio "from $X" de cada producto | `/admin/prices` (claves `pod_<key>`) | `PUT /api/admin/prices` | `prices` |
+| POD: nombre/icono de cada producto | — (código) | — | `lib/pricing/products.ts` (catálogo) |
+| Pricing: títulos y textos de las tarjetas | `/adminlanding/landing` → Precios | `PATCH /api/landing-config` | `home_content.texts` |
+| Pricing: importes $15 / $25 / +$15 | `/admin/body-types` y `/admin/prices` | `PUT/POST /api/admin/body-types`, `PUT /api/admin/prices` | `body_types.price_usd`, `prices.background_custom` |
+| Testimonios (nombre, comentario, foto) | `/adminlanding/landing` → Testimonios (subida vía `lib/admin/uploadImage.ts`) | `PATCH /api/landing-config` | `home_content.testimonials` |
+| FAQ (título y link "ver todas") | `/adminlanding/landing` → Testimonios y FAQ | ídem | `home_content.texts` |
+| FAQ (preguntas/respuestas, orden, visibilidad) | `/adminlanding/faqs` | `/api/admin/faqs` (lee `/api/faqs`, no-store) | `faqs` |
+| CTA final y CTA fija móvil | `/adminlanding/landing` → CTA final | `PATCH /api/landing-config` | `home_content.texts` |
+| Footer (tagline, redes, columnas) | `/adminlanding/landing` → Footer | ídem | `landing_config` · `footer` |
 
-### Qué cambiar
-1. Añadir una función de fetch en el servidor que lea la tabla `prices`:
+## Otras pantallas del sitio
 
-```ts
-// lib/data/prices.ts
-import { createServerClient } from '@/lib/supabase/server';
+| Página | Admin | Tabla |
+|---|---|---|
+| `/pricing` (precios + paquetes) | `/admin/prices`, `/admin/body-types`, `/adminlanding/packages` | `prices`, `body_types`, `packages` |
+| `/gallery` | `/adminlanding/galeria` | `gallery` |
+| `/order` (estilos, fondos, tipos de cuerpo, precios) | `/admin/estilos`, `/admin/backgrounds`, `/admin/body-types`, `/admin/prices` | `portrait_styles`, `backgrounds`, `body_types`, `prices` |
+| `/faq`, `/blog`, legales, seguimiento (textos es/en/fr) | `/adminlanding/contenido` | `page_content` |
+| Checkout (cupones) | `/adminlanding/discount-codes` | `discount_codes` |
 
-export async function getPrices(): Promise<Record<string, number>> {
-  const supabase = createServerClient();
-  const { data } = await supabase.from('prices').select('key, amount');
-  return Object.fromEntries((data ?? []).map((p) => [p.key, p.amount]));
-}
-```
+## Hardcodeado a propósito (y por qué)
 
-2. En cada Server Component que muestre precios, reemplazar el valor literal por la llamada:
+- **`GIFT_LINKS`** (`app/page.tsx`): enlaces internos a las landings de
+  ocasión. Son SEO estructural acoplado a rutas del código — cambiar un href
+  sin que exista la ruta rompería enlaces; se tocan junto con las landings.
+- **Grid de estilos** (`lib/content/styles.ts`): cada tarjeta enlaza a su
+  landing SEO `/styles/<slug>` con su copy largo; es contenido de código
+  versionado, no copy de marketing. El título/subtítulo de la sección sí son
+  editables.
+- **Nombres e iconos de productos POD** (`lib/pricing/products.ts`): catálogo
+  de producto (afecta al checkout); sus *precios* sí se editan en
+  `/admin/prices` (claves `pod_*`).
+- **Navbar** (`components/Navbar.tsx`): navegación estructural del sitio.
+- Los **"$15" incrustados en frases** (badge del hero, subtítulo, CTA fija)
+  forman parte de textos libres editables; si cambias los precios en
+  `/admin/prices`, recuerda actualizar también esas frases en
+  `/adminlanding/landing`.
 
-```ts
-// Antes
-const PRICE_SINGLE = 25;
+## Activación
 
-// Después
-import { getPrices } from '@/lib/data/prices';
-const prices = await getPrices();
-const PRICE_SINGLE = prices['portrait_single'] ?? 25; // fallback por si la tabla está vacía
-```
-
-3. Poblar la tabla `prices` desde el panel admin con las claves que uses en el código.
-   Convención de nombres sugerida:
-   - `portrait_single` — Retrato individual
-   - `portrait_couple` — Retrato pareja
-   - `portrait_family` — Retrato familiar
-   - `portrait_pet` — Retrato mascota
-   - `rush_fee` — Cargo por urgencia
-
----
-
-## 2. Paquetes
-
-### Situación actual
-Los paquetes (combos de productos) están definidos como arrays o constantes en
-`app/precios/page.tsx` o similar.
-
-### Qué cambiar
-1. Añadir un fetch de la tabla `packages`:
-
-```ts
-// lib/data/packages.ts
-import { createServerClient } from '@/lib/supabase/server';
-import type { Package } from '@/types/admin';
-
-export async function getActivePackages(): Promise<Package[]> {
-  const supabase = createServerClient();
-  const { data } = await supabase
-    .from('packages')
-    .select('*')
-    .eq('active', true)
-    .order('final_price');
-  return data ?? [];
-}
-```
-
-2. En el Server Component que renderiza los paquetes:
-
-```ts
-import { getActivePackages } from '@/lib/data/packages';
-const packages = await getActivePackages();
-```
-
-3. Mapear `packages` al JSX que actualmente usa el array hardcodeado.
-
----
-
-## 3. Fondos
-
-### Situación actual
-Los fondos disponibles para los retratos están guardados como archivos estáticos
-en `public/backgrounds/` o como un array de URLs hardcodeadas.
-
-### Qué cambiar
-1. Añadir un fetch de la tabla `backgrounds`:
-
-```ts
-// lib/data/backgrounds.ts
-import { createServerClient } from '@/lib/supabase/server';
-import type { Background } from '@/types/admin';
-
-export async function getActiveBackgrounds(): Promise<Background[]> {
-  const supabase = createServerClient();
-  const { data } = await supabase
-    .from('backgrounds')
-    .select('*')
-    .eq('active', true)
-    .order('created_at');
-  return data ?? [];
-}
-```
-
-2. En el componente de selección de fondo (probablemente en `app/studio/page.tsx`
-   o un selector del formulario de pedido), reemplazar el array estático:
-
-```ts
-// Antes
-const BACKGROUNDS = ['/backgrounds/playa.jpg', '/backgrounds/ciudad.jpg'];
-
-// Después
-import { getActiveBackgrounds } from '@/lib/data/backgrounds';
-const backgrounds = await getActiveBackgrounds(); // [{ id, name, image_url, ... }]
-```
-
-3. Si el componente es Client Component, hacer el fetch desde la API pública:
-
-```ts
-// En un Client Component
-const [backgrounds, setBackgrounds] = useState([]);
-useEffect(() => {
-  fetch('/api/backgrounds') // crea esta ruta pública que sólo devuelve active=true
-    .then(r => r.json())
-    .then(setBackgrounds);
-}, []);
-```
-
----
-
-## 4. Códigos de descuento
-
-### Situación actual
-El checkout (Stripe) puede no validar cupones o tenerlos hardcodeados.
-
-### Qué cambiar
-1. Crear una API route pública `/api/validate-discount`:
-
-```ts
-// app/api/validate-discount/route.ts
-import { NextResponse } from 'next/server';
-import { getSupabase } from '@/lib/supabase/client'; // o server client si es SSR
-
-export async function POST(request: Request) {
-  const { code } = await request.json();
-  const { data } = await getSupabase()
-    .from('discount_codes')
-    .select('*')
-    .eq('code', code.toUpperCase())
-    .eq('active', true)
-    .maybeSingle();
-
-  if (!data) return NextResponse.json({ valid: false });
-
-  const expired = data.expires_at && new Date(data.expires_at) < new Date();
-  const exhausted = data.max_uses !== null && data.current_uses >= data.max_uses;
-  if (expired || exhausted) return NextResponse.json({ valid: false });
-
-  return NextResponse.json({ valid: true, type: data.type, value: data.value });
-}
-```
-
-2. En el formulario de checkout, llamar a `/api/validate-discount` cuando el usuario
-   aplique un código, y ajustar el total antes de crear la sesión de Stripe.
-
-3. Al confirmar el pago, incrementar `current_uses` del código usado:
-
-```ts
-await supabase
-  .from('discount_codes')
-  .update({ current_uses: supabase.rpc('increment', { x: 1 }) })
-  .eq('code', code);
-```
-
----
-
-## 5. Pasos para activar el panel
-
-1. Ejecutar la migración SQL en Supabase:
-   `supabase/migrations/006_admin_tables.sql`
-
-2. Crear el bucket de Storage en Supabase Dashboard:
-   - Nombre: `backgrounds`
-   - Acceso: privado (o público según preferencia)
-   - Configurar CORS si es necesario
-
-3. Crear el usuario admin en Supabase Auth:
-   - Dashboard → Authentication → Users → Invite user
-   - Tras crear el usuario, editar su `user_metadata` y añadir `{ "role": "admin" }`
-
-4. Poblar la tabla `prices` con las claves iniciales:
-
-```sql
-INSERT INTO public.prices (key, label, amount, currency) VALUES
-  ('portrait_single', 'Retrato individual', 25.00, 'USD'),
-  ('portrait_couple', 'Retrato pareja',     35.00, 'USD'),
-  ('portrait_family', 'Retrato familiar',   45.00, 'USD'),
-  ('portrait_pet',    'Retrato mascota',    20.00, 'USD'),
-  ('rush_fee',        'Cargo por urgencia', 10.00, 'USD');
-```
-
-5. Acceder al panel en `negasva.shop/admin`
+1. Variables de entorno: `NEXT_PUBLIC_SUPABASE_URL`,
+   `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`,
+   `ADMIN_PASSWORD` (ver `.env.example`).
+2. Ejecutar `scripts/sync-landing-content.sql` (footer + precios + poda de
+   `site_images`) y después `CLEANUP.sql`.
+3. Panel de contenido en `/adminlanding`; panel de operación en `/admin`.

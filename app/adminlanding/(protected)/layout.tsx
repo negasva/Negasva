@@ -6,7 +6,7 @@ export const dynamic = 'force-dynamic';
 // Same single password as /admin (shared signed cookie). Content panels only.
 const NAV: NavItem[] = [
   { href: '/adminlanding',               label: 'Resumen'      },
-  { href: '/adminlanding/landing',       label: 'Footer'       },
+  { href: '/adminlanding/landing',       label: 'Landing Page' },
   { href: '/adminlanding/galeria',       label: 'Galería'      },
   { href: '/adminlanding/faqs',          label: 'FAQ'          },
   { href: '/adminlanding/discount-codes',label: 'Descuentos'   },

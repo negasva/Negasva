@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import { createServiceClient } from '@/lib/supabase/server';
 import { requireAdminRoute } from '@/lib/admin/auth';
 import { AdminPriceUpdateSchema } from '@/lib/validation/schemas';
@@ -58,5 +59,10 @@ export async function PUT(request: Request) {
     .eq('id', parsed.data.id);
 
   if (error) return errorResponse('Failed to update price', 500, error);
+
+  // La home y /pricing renderizan estos precios en el servidor (ISR):
+  // regenerarlas ya para que el cambio se vea sin redeploy.
+  revalidatePath('/');
+  revalidatePath('/pricing');
   return NextResponse.json({ ok: true });
 }
