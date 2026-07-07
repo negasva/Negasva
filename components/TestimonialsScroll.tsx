@@ -39,7 +39,7 @@ const ReviewCard = memo(function ReviewCard({ name, comment, photo, rating, titl
         {!!photo && (
           <Image
             src={photo}
-            alt={`Retrato entregado a ${name}`}
+            alt={`Portrait delivered to ${name}`}
             fill
             className="object-cover"
             sizes="400px"

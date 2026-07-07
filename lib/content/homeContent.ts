@@ -65,7 +65,7 @@ export const HOME_TEXT_SECTIONS: Array<{ section: string; fields: HomeTextField[
     section: 'Estilos',
     fields: [
       { key: 'styles_heading', label: 'Título', value: 'Pick Your Cartoon Style' },
-      { key: 'styles_subtitle', label: 'Subtítulo', long: true, value: '13 hand-drawn styles — from Simpsons yellow to anime, Ghibli-inspired and Disney-Pixar' },
+      { key: 'styles_subtitle', label: 'Subtítulo', long: true, value: 'Our most popular hand-drawn styles — see all of them on the styles page' },
       { key: 'styles_see_all', label: 'Link "ver todos"', value: 'See all styles →' },
       { key: 'gifts_heading', label: 'Título chips de regalo', value: 'The perfect gift for…' },
     ],

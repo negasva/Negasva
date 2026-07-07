@@ -4,7 +4,7 @@ export default function BreadcrumbSchema({ name, path }: { name: string; path: s
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
     itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'Inicio', item: 'https://negasva.shop' },
+      { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://negasva.shop' },
       { '@type': 'ListItem', position: 2, name, item: `https://negasva.shop${path}` },
     ],
   };
