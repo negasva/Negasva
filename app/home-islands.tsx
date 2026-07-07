@@ -51,8 +51,9 @@ export function HeroPortraits() {
           Before
         </span>
         {img1 ? (
-          <div className="relative w-[240px] h-[317px] rounded-[120px] sm:w-[360px] sm:h-[475px] sm:rounded-[180px] overflow-hidden shadow-[0_18px_40px_rgba(0,0,0,0.14)]">
-            <Image src={img1} alt="Original photo before being turned into a custom cartoon portrait" fill priority quality={90} className="object-cover" sizes="(max-width: 640px) 480px, 720px" />
+          <div className="w-[240px] h-[317px] rounded-[120px] sm:w-[360px] sm:h-[475px] sm:rounded-[180px] overflow-hidden shadow-[0_18px_40px_rgba(0,0,0,0.14)]">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={img1} alt="Original photo before being turned into a custom cartoon portrait" className="w-full h-full object-cover" fetchPriority="high" />
           </div>
         ) : (
           <ImgSlot className="w-[240px] h-[317px] rounded-[120px] sm:w-[360px] sm:h-[475px] sm:rounded-[180px] shadow-[0_18px_40px_rgba(0,0,0,0.14)]" />
@@ -63,8 +64,9 @@ export function HeroPortraits() {
           After
         </span>
         {img2 ? (
-          <div className="relative w-[214px] h-[283px] rounded-[107px] sm:w-[317px] sm:h-[418px] sm:rounded-[159px] overflow-hidden shadow-[0_18px_40px_rgba(0,0,0,0.14)]">
-            <Image src={img2} alt="Custom cartoon portrait hand drawn from photo by a real artist" fill priority quality={90} className="object-cover" sizes="(max-width: 640px) 428px, 634px" />
+          <div className="w-[214px] h-[283px] rounded-[107px] sm:w-[317px] sm:h-[418px] sm:rounded-[159px] overflow-hidden shadow-[0_18px_40px_rgba(0,0,0,0.14)]">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={img2} alt="Custom cartoon portrait hand drawn from photo by a real artist" className="w-full h-full object-cover" fetchPriority="high" />
           </div>
         ) : (
           <ImgSlot className="w-[214px] h-[283px] rounded-[107px] sm:w-[317px] sm:h-[418px] sm:rounded-[159px] shadow-[0_18px_40px_rgba(0,0,0,0.14)]" />
