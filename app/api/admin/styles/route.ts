@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import { createServiceClient } from '@/lib/supabase/server';
 import { requireAdminRoute } from '@/lib/admin/auth';
 import { AdminStyleCreateSchema, AdminStyleUpdateSchema, DeleteByIdSchema } from '@/lib/validation/schemas';
@@ -40,6 +41,7 @@ export async function POST(request: Request) {
 
   const { data, error } = await db.from('portrait_styles').insert(parsed.data).select().single();
   if (error) return errorResponse('Failed to create style', 500, error);
+  revalidatePath('/');
   return NextResponse.json(data, { status: 201 });
 }
 
@@ -62,6 +64,7 @@ export async function PUT(request: Request) {
 
   const { error } = await db.from('portrait_styles').update(fields).eq('id', id);
   if (error) return errorResponse('Failed to update style', 500, error);
+  revalidatePath('/');
   return NextResponse.json({ ok: true });
 }
 
@@ -80,5 +83,6 @@ export async function DELETE(request: Request) {
 
   const { error } = await db.from('portrait_styles').delete().eq('id', parsed.data.id);
   if (error) return errorResponse('Failed to delete style', 500, error);
+  revalidatePath('/');
   return NextResponse.json({ ok: true });
 }
