@@ -22,6 +22,8 @@ export default function AdminGaleriaPage() {
   const [saving, setSaving] = useState(false);
   const [toast, setToast] = useState('');
   const [showForm, setShowForm] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editingTitle, setEditingTitle] = useState('');
 
   const [title, setTitle] = useState('');
   const [style, setStyle] = useState('');
@@ -145,6 +147,18 @@ export default function AdminGaleriaPage() {
     }
   }
 
+  async function saveTitle(item: GalleryItem) {
+    const newTitle = editingTitle.trim();
+    setEditingId(null);
+    if (!newTitle || newTitle === item.title) return;
+    await fetch('/api/admin/gallery', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id: item.id, title: newTitle }),
+    });
+    setItems((prev) => prev.map((i) => i.id === item.id ? { ...i, title: newTitle } : i));
+  }
+
   async function toggle(item: GalleryItem) {
     await fetch('/api/admin/gallery', {
       method: 'PUT',
@@ -260,29 +274,43 @@ export default function AdminGaleriaPage() {
               <div className="relative aspect-square bg-gray-100 overflow-hidden">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={item.image_url} alt={item.title} loading="lazy" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
-                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                  <button
-                    onClick={() => toggle(item)}
-                    className={`text-xs font-bold px-3 py-1.5 rounded-full ${item.is_active ? 'bg-yellow-400 text-yellow-900' : 'bg-green-400 text-green-900'}`}
-                  >
-                    {item.is_active ? 'Desactivar' : 'Activar'}
-                  </button>
-                </div>
                 {item.before_url && (
                   <span className="absolute top-2 left-2 text-[10px] font-bold px-2 py-0.5 rounded-full bg-primary text-white shadow">
                     antes ✓
                   </span>
                 )}
               </div>
-              <div className="p-3 flex items-center justify-between gap-2">
-                <div className="min-w-0 flex-1">
-                  <p className="text-xs font-bold text-secondary truncate">{item.title}</p>
-                  {item.style && <p className="text-[10px] text-primary font-semibold truncate">{item.style}</p>}
-                  <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${item.is_active ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}`}>
-                    {item.is_active ? 'Activo' : 'Inactivo'}
-                  </span>
+              <div className="p-3 flex flex-col gap-2">
+                <div className="flex items-start justify-between gap-2">
+                  <div className="min-w-0 flex-1">
+                    {editingId === item.id ? (
+                      <input
+                        autoFocus
+                        className="w-full text-xs font-bold text-secondary border border-primary rounded px-1.5 py-0.5 outline-none"
+                        value={editingTitle}
+                        onChange={(e) => setEditingTitle(e.target.value)}
+                        onBlur={() => saveTitle(item)}
+                        onKeyDown={(e) => { if (e.key === 'Enter') saveTitle(item); if (e.key === 'Escape') setEditingId(null); }}
+                      />
+                    ) : (
+                      <p
+                        className="text-xs font-bold text-secondary truncate cursor-pointer hover:text-primary transition-colors"
+                        title="Clic para editar nombre"
+                        onClick={() => { setEditingId(item.id); setEditingTitle(item.title); }}
+                      >
+                        ✏️ {item.title}
+                      </p>
+                    )}
+                    {item.style && <p className="text-[10px] text-primary font-semibold truncate mt-0.5">{item.style}</p>}
+                  </div>
+                  <button onClick={() => remove(item)} className="text-red-400 hover:text-red-600 text-xs font-bold flex-shrink-0 transition-colors mt-0.5">✕</button>
                 </div>
-                <button onClick={() => remove(item)} className="text-red-400 hover:text-red-600 text-xs font-bold flex-shrink-0 transition-colors">✕</button>
+                <button
+                  onClick={() => toggle(item)}
+                  className={`w-full text-[11px] font-bold py-1 rounded-lg transition-colors ${item.is_active ? 'bg-yellow-100 text-yellow-800 hover:bg-yellow-200' : 'bg-green-100 text-green-800 hover:bg-green-200'}`}
+                >
+                  {item.is_active ? 'Desactivar' : 'Activar'}
+                </button>
               </div>
             </div>
           ))}
