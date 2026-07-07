@@ -1,6 +1,14 @@
 import { NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import { createServiceClient } from '@/lib/supabase/server';
 import { requireAdminRoute } from '@/lib/admin/auth';
+
+// La galería aparece en / (marquee) y en /gallery (ISR). Regenerar ambas al
+// mutar para que las subidas se vean sin esperar al revalidate periódico.
+function revalidateGallery() {
+  revalidatePath('/');
+  revalidatePath('/gallery');
+}
 import {
   AdminGalleryCreateSchema,
   AdminGalleryUpdateSchema,
@@ -18,7 +26,7 @@ async function guard(request: Request, mutating: boolean) {
   if (mutating && !validateSameOrigin(request)) {
     return errorResponse('Invalid origin', 403);
   }
-  return await rateLimitByIp(request, { prefix: 'admin-gallery', max: 60, windowMs: 60_000 });
+  return await rateLimitByIp(request, { prefix: 'admin-gallery', max: 150, windowMs: 60_000 });
 }
 
 export async function GET(request: Request) {
@@ -67,6 +75,7 @@ export async function POST(request: Request) {
     .single();
 
   if (error) return errorResponse('Failed to create item', 500, error);
+  revalidateGallery();
   return NextResponse.json(data, { status: 201 });
 }
 
@@ -94,6 +103,7 @@ export async function PUT(request: Request) {
     .eq('id', id);
 
   if (error) return errorResponse('Failed to update item', 500, error);
+  revalidateGallery();
   return NextResponse.json({ ok: true });
 }
 
@@ -113,5 +123,6 @@ export async function DELETE(request: Request) {
 
   const { error } = await db.from('gallery_items').delete().eq('id', parsed.data.id);
   if (error) return errorResponse('Failed to delete item', 500, error);
+  revalidateGallery();
   return NextResponse.json({ ok: true });
 }

@@ -13,7 +13,8 @@ const MIME = ['image/jpeg', 'image/png', 'image/webp'];
 
 export async function POST(request: Request) {
   if (!validateSameOrigin(request)) return errorResponse('Invalid origin', 403);
-  const rl = await rateLimitByIp(request, { prefix: 'admin-upload', max: 30, windowMs: 60_000 });
+  // Límite alto: la subida masiva de la galería dispara muchas subidas seguidas.
+  const rl = await rateLimitByIp(request, { prefix: 'admin-upload', max: 120, windowMs: 60_000 });
   if (rl) return rl;
 
   const db = await requireAdminRoute();

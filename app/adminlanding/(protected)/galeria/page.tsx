@@ -105,7 +105,7 @@ export default function AdminGaleriaPage() {
   async function handleBulk(files: FileList) {
     const arr = Array.from(files);
     if (arr.length === 0) return;
-    let done = 0;
+    let done = 0, ok = 0, fail = 0;
     setBulk({ done: 0, total: arr.length });
     let idx = 0;
     const worker = async () => {
@@ -114,11 +114,14 @@ export default function AdminGaleriaPage() {
         const url = await uploadFile(file);
         if (url) {
           const title = (file.name.replace(/\.[^.]+$/, '').trim() || 'gallery').slice(0, 120);
-          await fetch('/api/admin/gallery', {
+          const res = await fetch('/api/admin/gallery', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ title, style: null, image_url: url }),
           });
+          if (res.ok) ok++; else fail++;
+        } else {
+          fail++; // upload rechazado (tipo no permitido, muy grande, etc.)
         }
         setBulk({ done: ++done, total: arr.length });
       }
@@ -127,7 +130,7 @@ export default function AdminGaleriaPage() {
     if (bulkRef.current) bulkRef.current.value = '';
     setBulk(null);
     await load();
-    showToast(`${done} imágenes subidas`);
+    showToast(fail === 0 ? `${ok} imágenes subidas` : `${ok} subidas, ${fail} fallaron (tipo/tamaño)`);
   }
 
   async function toggle(item: GalleryItem) {
