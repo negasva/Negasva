@@ -98,7 +98,7 @@ a {
   to { transform: translateX(0); }
 }
 .animate-marquee-left {
-  animation: marquee-left 40s linear infinite;
+  animation: marquee-left 80s linear infinite;
 }
 .animate-marquee-right {
   animation: marquee-right 40s linear infinite;
