@@ -62,8 +62,15 @@ export default function GalleryMarquee() {
   }, []);
 
   const list = items && items.length > 0 ? items : PLACEHOLDERS;
-  // Duplicamos la lista para que el marquee de -50% haga loop sin cortes.
-  const track = [...list, ...list];
+  // Loop infinito real: el track son DOS mitades idénticas y la animación
+  // desplaza exactamente -50% (una mitad), así al terminar ya está el mismo
+  // contenido en su sitio y no hay salto ni hueco. Cada mitad se repite hasta
+  // tener suficientes tarjetas para superar el ancho de viewport aun con pocas
+  // imágenes (3-4 placeholders) — con muchas ya sobra.
+  const half = list.length >= 12
+    ? list
+    : Array.from({ length: Math.ceil(12 / list.length) }, () => list).flat();
+  const track = [...half, ...half];
 
   return (
     <section className="bg-[#FFF1F7] py-14 md:py-16 overflow-hidden">

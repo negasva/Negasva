@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200" role="img" aria-label="Product mockup placeholder">
+  <rect width="200" height="200" rx="16" fill="#EEEEEE"/>
+  <rect x="52" y="46" width="96" height="96" rx="10" fill="none" stroke="#BDBDBD" stroke-width="4"/>
+  <path d="M74 118 L94 92 L110 112 L122 98 L138 118" fill="none" stroke="#BDBDBD" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="122" cy="72" r="7" fill="#BDBDBD"/>
+  <text x="100" y="168" text-anchor="middle" font-family="system-ui, sans-serif" font-size="15" font-weight="700" fill="#9E9E9E">Product mockup</text>
+</svg>

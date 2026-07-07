@@ -29,6 +29,8 @@ export default function AdminGaleriaPage() {
   const [mode, setMode] = useState<'file' | 'url'>('file');
   const fileRef = useRef<HTMLInputElement>(null);
   const beforeRef = useRef<HTMLInputElement>(null);
+  const bulkRef = useRef<HTMLInputElement>(null);
+  const [bulk, setBulk] = useState<{ done: number; total: number } | null>(null);
 
   function showToast(msg: string) {
     setToast(msg);
@@ -98,6 +100,36 @@ export default function AdminGaleriaPage() {
     setSaving(false);
   }
 
+  // Subida masiva: N archivos a la vez, cada uno crea una obra (título = nombre
+  // de archivo, editable después). Pool de concurrencia 3 para no timeoutear.
+  async function handleBulk(files: FileList) {
+    const arr = Array.from(files);
+    if (arr.length === 0) return;
+    let done = 0;
+    setBulk({ done: 0, total: arr.length });
+    let idx = 0;
+    const worker = async () => {
+      while (idx < arr.length) {
+        const file = arr[idx++];
+        const url = await uploadFile(file);
+        if (url) {
+          const title = (file.name.replace(/\.[^.]+$/, '').trim() || 'gallery').slice(0, 120);
+          await fetch('/api/admin/gallery', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ title, style: null, image_url: url }),
+          });
+        }
+        setBulk({ done: ++done, total: arr.length });
+      }
+    };
+    await Promise.all(Array.from({ length: Math.min(3, arr.length) }, worker));
+    if (bulkRef.current) bulkRef.current.value = '';
+    setBulk(null);
+    await load();
+    showToast(`${done} imágenes subidas`);
+  }
+
   async function toggle(item: GalleryItem) {
     await fetch('/api/admin/gallery', {
       method: 'PUT',
@@ -125,12 +157,29 @@ export default function AdminGaleriaPage() {
           <h1 className="text-xl lg:text-2xl font-black text-secondary mb-0.5">Galería</h1>
           <p className="text-sm text-secondary-lighter">Portafolio real que se muestra en /galeria.</p>
         </div>
-        <button
-          onClick={() => setShowForm(!showForm)}
-          className="bg-primary hover:bg-primary-dark text-white font-bold px-4 py-2.5 rounded-xl text-sm transition-colors"
-        >
-          + Nueva obra
-        </button>
+        <div className="flex gap-2">
+          <input
+            ref={bulkRef}
+            type="file"
+            accept="image/jpeg,image/png,image/webp"
+            multiple
+            className="hidden"
+            onChange={(e) => { if (e.target.files?.length) handleBulk(e.target.files); }}
+          />
+          <button
+            onClick={() => bulkRef.current?.click()}
+            disabled={!!bulk}
+            className="border-2 border-primary text-primary hover:bg-primary-lighter font-bold px-4 py-2.5 rounded-xl text-sm transition-colors disabled:opacity-60"
+          >
+            {bulk ? `Subiendo ${bulk.done}/${bulk.total}…` : '⇪ Subida masiva'}
+          </button>
+          <button
+            onClick={() => setShowForm(!showForm)}
+            className="bg-primary hover:bg-primary-dark text-white font-bold px-4 py-2.5 rounded-xl text-sm transition-colors"
+          >
+            + Nueva obra
+          </button>
+        </div>
       </div>
 
       {showForm && (

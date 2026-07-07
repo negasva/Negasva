@@ -4,8 +4,8 @@ import { Clock, RefreshCcw, PenTool } from 'lucide-react';
 import { getHomeContent } from '@/lib/content/homeContent.server';
 import { getHomeStyles } from '@/lib/content/stylesDb';
 import { getPodProductsConfig } from '@/lib/content/podProducts.server';
+import { POD_PLACEHOLDER_IMG } from '@/lib/content/podProducts';
 import { loadPricingConfig } from '@/lib/pricing/server';
-import ProductIcon from '@/components/ProductIcon';
 import Navbar from '@/components/Navbar';
 import PageFooter from '@/components/PageFooter';
 import TestimonialsScroll from '@/components/TestimonialsScroll';
@@ -321,17 +321,13 @@ export default async function Home() {
                 style={{ transform: `rotate(${[0, -1.2, 1, -0.8, 1.4, -0.6][i % 6] ?? 0}deg)` }}
               >
                 <div className="flex justify-center items-center mb-3 h-16">
-                  {p.image ? (
-                    <Image
-                      src={p.image}
-                      alt={p.name}
-                      width={64}
-                      height={64}
-                      className="w-16 h-16 object-contain rounded-lg"
-                    />
-                  ) : (
-                    <ProductIcon productKey={p.key} className="w-9 h-9 text-primary" />
-                  )}
+                  <Image
+                    src={p.image || POD_PLACEHOLDER_IMG}
+                    alt={p.name}
+                    width={64}
+                    height={64}
+                    className="w-16 h-16 object-contain rounded-lg"
+                  />
                 </div>
                 <p className="font-black text-secondary text-sm leading-tight">{p.name}</p>
                 <p className="text-xs text-primary-dark font-bold mt-1">

@@ -1,5 +1,10 @@
 import { POD_PRODUCTS, FALLBACK_POD_PRICE_USD } from '@/lib/pricing/products';
 
+// TODO: reemplazar con imágenes reales de mockup de Printful (una por producto).
+// Placeholder gris genérico mientras tanto; el admin de productos puede subir la
+// imagen real por producto (pod_products.image), que tiene prioridad sobre esto.
+export const POD_PLACEHOLDER_IMG = '/products/placeholder.svg';
+
 // Presentación editable de los productos POD ("Your drawing, on anything").
 // Fuente de verdad: landing_config, clave 'pod_products'. El precio que se
 // guarda aquí también lo lee lib/pricing/server.ts (loadPricingConfig) para que

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useLanguage } from '@/lib/i18n/LanguageContext';
 import { useCurrency } from '@/lib/currency/CurrencyContext';
 import { cachedFetchJSON } from '@/lib/cache/clientCache';
@@ -82,16 +82,19 @@ function withTimeout<T>(p: Promise<T>, ms: number): Promise<T> {
 }
 
 // Nombres propios (anti copyright): la BD puede traer todavía los nombres
-// reales de las series, así que en la UI siempre se muestran estas versiones.
-const SAFE_STYLE_NAMES: Record<string, string> = {
-  'rick-morty':    'Cartoon sci-fi',
-  'gravity-falls': 'Misterio del bosque',
-  'simpsons':      'Familia amarilla clásica',
-  'fairly-odd':    'Fantasía brillante',
-  'negasva':       'Estilo NEGASVA',
+// reales de las series, así que en la UI siempre se muestran estas versiones,
+// traducidas por idioma (default EN).
+const SAFE_STYLE_NAMES: Record<string, { es: string; en: string; fr: string }> = {
+  'rick-morty':    { es: 'Cartoon sci-fi',            en: 'Cartoon sci-fi',       fr: 'Cartoon sci-fi' },
+  'gravity-falls': { es: 'Misterio del bosque',       en: 'Forest mystery',       fr: 'Mystère de la forêt' },
+  'simpsons':      { es: 'Familia amarilla clásica',  en: 'Classic yellow family', fr: 'Famille jaune classique' },
+  'fairly-odd':    { es: 'Fantasía brillante',        en: 'Bright fantasy',       fr: 'Fantaisie éclatante' },
+  'negasva':       { es: 'Estilo NEGASVA',            en: 'NEGASVA Style',        fr: 'Style NEGASVA' },
 };
 
-const FALLBACK_STYLES = Object.entries(SAFE_STYLE_NAMES).map(([id, name]) => ({ id, name }));
+const FALLBACK_STYLE_SLUGS = Object.keys(SAFE_STYLE_NAMES);
+const safeStyleName = (slug: string, lang: 'es' | 'en' | 'fr', dbName = ''): string =>
+  SAFE_STYLE_NAMES[slug]?.[lang] ?? dbName ?? slug;
 
 // País estimado para cotizar envío antes de conocer la dirección real
 // (la definitiva se captura en el checkout de Stripe).
@@ -125,7 +128,15 @@ export function useCheckout() {
     productUnits: {},
   });
   const [dynamicBgs, setDynamicBgs] = useState<Record<string, BgItem[]>>({});
-  const [styles, setStyles] = useState<{ id: string; name: string }[]>(FALLBACK_STYLES);
+  // Estilos crudos (slug + nombre BD); el nombre visible se resuelve por idioma
+  // en un memo para que cambiar de idioma actualice la grilla sin re-fetch.
+  const [rawStyles, setRawStyles] = useState<{ slug: string; name: string }[]>(
+    FALLBACK_STYLE_SLUGS.map((slug) => ({ slug, name: '' })),
+  );
+  const styles = useMemo(
+    () => rawStyles.map((s) => ({ id: s.slug, name: safeStyleName(s.slug, lang, s.name) })),
+    [rawStyles, lang],
+  );
   const [bodyTypes, setBodyTypes] = useState<BodyTypeItem[]>(FALLBACK_BODY_TYPES);
   const [priceMap, setPriceMap] = useState<Record<string, number>>(FALLBACK_PRICES);
   const [discountCodeInput, setDiscountCodeInput] = useState('');
@@ -178,7 +189,7 @@ export function useCheckout() {
     cachedFetchJSON<Array<{ slug: string; name: string }>>('/api/styles')
       .then((data) => {
         if (data && data.length > 0) {
-          setStyles(data.map(s => ({ id: s.slug, name: SAFE_STYLE_NAMES[s.slug] ?? s.name })));
+          setRawStyles(data.map(s => ({ slug: s.slug, name: s.name })));
         }
       })
       .catch(() => null);
