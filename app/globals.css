@@ -98,7 +98,7 @@ a {
   to { transform: translateX(0); }
 }
 .animate-marquee-left {
-  animation: marquee-left 80s linear infinite;
+  animation: marquee-left 25s linear infinite;
 }
 .animate-marquee-right {
   animation: marquee-right 40s linear infinite;
@@ -231,8 +231,20 @@ a {
   0%, 100% { transform: translateY(0) rotate(-2deg); }
   50%       { transform: translateY(-6px) rotate(-2deg); }
 }
-.flota-retrato-a { animation: flota-retrato-a 5s ease-in-out infinite; }
-.flota-retrato-b { animation: flota-retrato-b 6s ease-in-out infinite; }
+.flota-retrato-a {
+  animation: flota-retrato-a 5s ease-in-out infinite;
+  will-change: transform;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  transform: translateZ(0);
+}
+.flota-retrato-b {
+  animation: flota-retrato-b 6s ease-in-out infinite;
+  will-change: transform;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  transform: translateZ(0);
+}
 
 @media (prefers-reduced-motion: reduce) {
   .sketch-anim path,

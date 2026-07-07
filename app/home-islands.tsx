@@ -53,7 +53,7 @@ export function HeroPortraits() {
         {img1 ? (
           <div className="w-[240px] h-[317px] rounded-[120px] sm:w-[360px] sm:h-[475px] sm:rounded-[180px] overflow-hidden shadow-[0_18px_40px_rgba(0,0,0,0.14)]">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={img1} alt="Original photo before being turned into a custom cartoon portrait" className="w-full h-full object-cover" fetchPriority="high" />
+            <img src={img1} alt="Original photo before being turned into a custom cartoon portrait" className="w-full h-full object-cover" fetchPriority="high" style={{ imageRendering: 'high-quality' }} />
           </div>
         ) : (
           <ImgSlot className="w-[240px] h-[317px] rounded-[120px] sm:w-[360px] sm:h-[475px] sm:rounded-[180px] shadow-[0_18px_40px_rgba(0,0,0,0.14)]" />
@@ -66,7 +66,7 @@ export function HeroPortraits() {
         {img2 ? (
           <div className="w-[214px] h-[283px] rounded-[107px] sm:w-[317px] sm:h-[418px] sm:rounded-[159px] overflow-hidden shadow-[0_18px_40px_rgba(0,0,0,0.14)]">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={img2} alt="Custom cartoon portrait hand drawn from photo by a real artist" className="w-full h-full object-cover" fetchPriority="high" />
+            <img src={img2} alt="Custom cartoon portrait hand drawn from photo by a real artist" className="w-full h-full object-cover" fetchPriority="high" style={{ imageRendering: 'high-quality' }} />
           </div>
         ) : (
           <ImgSlot className="w-[214px] h-[283px] rounded-[107px] sm:w-[317px] sm:h-[418px] sm:rounded-[159px] shadow-[0_18px_40px_rgba(0,0,0,0.14)]" />
