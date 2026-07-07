@@ -56,7 +56,8 @@ export default function GalleryMarquee() {
   const [items, setItems] = useState<Item[] | null>(null);
 
   useEffect(() => {
-    cachedFetchJSON<Item[]>('/api/gallery')
+    // Sin caché de sesión: las obras las sube el admin y deben verse al instante.
+    cachedFetchJSON<Item[]>('/api/gallery', { ttlMs: 0, init: { cache: 'no-store' } })
       .then((d) => setItems(Array.isArray(d) ? d : []))
       .catch(() => setItems([]));
   }, []);
