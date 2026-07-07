@@ -74,7 +74,10 @@ export async function POST(request: Request) {
     .select()
     .single();
 
-  if (error) return errorResponse('Failed to create item', 500, error);
+  if (error) {
+    const hint = error.code === '42P01' ? ' (tabla gallery_items no existe — ejecuta migraciones 020 y 021 en Supabase)' : '';
+    return errorResponse(`Failed to create item${hint}`, 500, error);
+  }
   revalidateGallery();
   return NextResponse.json(data, { status: 201 });
 }

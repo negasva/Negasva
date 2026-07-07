@@ -95,7 +95,8 @@ export default function AdminGaleriaPage() {
       await load();
       showToast('Obra añadida');
     } else {
-      showToast('Error al guardar');
+      const errData = await res.json().catch(() => ({}));
+      showToast(errData.error || 'Error al guardar');
     }
     setSaving(false);
   }
@@ -121,7 +122,11 @@ export default function AdminGaleriaPage() {
             body: JSON.stringify({ title, style: null, image_url: result.url }),
           });
           if (res.ok) ok++;
-          else { fail++; lastError = 'Error al guardar en base de datos'; }
+          else {
+            fail++;
+            const errData = await res.json().catch(() => ({}));
+            lastError = errData.error || `HTTP ${res.status}`;
+          }
         } else {
           fail++;
           lastError = result.error;
