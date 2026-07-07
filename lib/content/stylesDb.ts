@@ -28,7 +28,11 @@ export interface HomeStyleCard {
   imageAlt: string;
 }
 
-/** Tarjetas de estilo para la grilla de la home (show_in_home = true). */
+/**
+ * Tarjetas de la grilla "Pick your style" de la home: SOLO los estilos
+ * realmente disponibles en /order (is_active = true). El resto sigue accesible
+ * vía "See all styles" (/styles) y conserva su landing SEO.
+ */
 export async function getHomeStyles(): Promise<HomeStyleCard[]> {
   const db = createAnonClient();
   if (db) {
@@ -36,7 +40,7 @@ export async function getHomeStyles(): Promise<HomeStyleCard[]> {
       const { data } = await db
         .from('portrait_styles')
         .select('slug, landing_slug, name, example_image_url')
-        .eq('show_in_home', true)
+        .eq('is_active', true)
         .order('sort_order', { ascending: true })
         .order('name');
       if (data && data.length > 0) {

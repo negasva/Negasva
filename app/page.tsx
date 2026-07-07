@@ -9,6 +9,7 @@ import ProductIcon from '@/components/ProductIcon';
 import Navbar from '@/components/Navbar';
 import PageFooter from '@/components/PageFooter';
 import TestimonialsScroll from '@/components/TestimonialsScroll';
+import GalleryMarquee from '@/components/GalleryMarquee';
 import { HeroPortraits, StepsPortraits, WeeklyOrdersBadge, HomeFaq, StickyOrderCta } from './home-islands';
 
 // Server component: la home llega como HTML estático en inglés (SEO).
@@ -214,6 +215,9 @@ export default async function Home() {
           </div>
         </div>
       </section>
+
+      {/* ══ GALLERY MARQUEE (below the fold, lazy) ══ */}
+      <GalleryMarquee />
 
       {/* ══ STYLES + GIFT LANDINGS (server-rendered internal links, SEO) ══ */}
       <section className="bg-white py-16 md:py-20 px-6">

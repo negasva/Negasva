@@ -51,11 +51,11 @@ export function HeroPortraits() {
           Before
         </span>
         {img1 ? (
-          <div className="relative w-[200px] h-[264px] rounded-[100px] sm:w-[300px] sm:h-[396px] sm:rounded-[150px] overflow-hidden shadow-[0_18px_40px_rgba(0,0,0,0.14)]">
-            <Image src={img1} alt="Original photo before being turned into a custom cartoon portrait" fill priority className="object-cover" sizes="(max-width: 640px) 200px, 300px" />
+          <div className="relative w-[240px] h-[317px] rounded-[120px] sm:w-[360px] sm:h-[475px] sm:rounded-[180px] overflow-hidden shadow-[0_18px_40px_rgba(0,0,0,0.14)]">
+            <Image src={img1} alt="Original photo before being turned into a custom cartoon portrait" fill priority className="object-cover" sizes="(max-width: 640px) 240px, 360px" />
           </div>
         ) : (
-          <ImgSlot className="w-[200px] h-[264px] rounded-[100px] sm:w-[300px] sm:h-[396px] sm:rounded-[150px] shadow-[0_18px_40px_rgba(0,0,0,0.14)]" />
+          <ImgSlot className="w-[240px] h-[317px] rounded-[120px] sm:w-[360px] sm:h-[475px] sm:rounded-[180px] shadow-[0_18px_40px_rgba(0,0,0,0.14)]" />
         )}
       </div>
       <div className="relative z-0 -ml-6 sm:-ml-9 mt-[48px] sm:mt-[70px] flota-retrato-b">
@@ -63,11 +63,11 @@ export function HeroPortraits() {
           After
         </span>
         {img2 ? (
-          <div className="relative w-[178px] h-[236px] rounded-[89px] sm:w-[264px] sm:h-[348px] sm:rounded-[132px] overflow-hidden shadow-[0_18px_40px_rgba(0,0,0,0.14)]">
-            <Image src={img2} alt="Custom cartoon portrait hand drawn from photo by a real artist" fill priority className="object-cover" sizes="(max-width: 640px) 178px, 264px" />
+          <div className="relative w-[214px] h-[283px] rounded-[107px] sm:w-[317px] sm:h-[418px] sm:rounded-[159px] overflow-hidden shadow-[0_18px_40px_rgba(0,0,0,0.14)]">
+            <Image src={img2} alt="Custom cartoon portrait hand drawn from photo by a real artist" fill priority className="object-cover" sizes="(max-width: 640px) 214px, 317px" />
           </div>
         ) : (
-          <ImgSlot className="w-[178px] h-[236px] rounded-[89px] sm:w-[264px] sm:h-[348px] sm:rounded-[132px] shadow-[0_18px_40px_rgba(0,0,0,0.14)]" />
+          <ImgSlot className="w-[214px] h-[283px] rounded-[107px] sm:w-[317px] sm:h-[418px] sm:rounded-[159px] shadow-[0_18px_40px_rgba(0,0,0,0.14)]" />
         )}
       </div>
     </div>

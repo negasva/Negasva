@@ -22,19 +22,19 @@ export function generateMetadata({ params }: { params: { slug: string } }): Meta
     description: post.metaDescription,
     keywords: post.keywords,
     alternates: { canonical: `/blog/${post.slug}` },
+    // Sin imagen por post: la OG global del sitio (app/opengraph-image.tsx)
+    // aplica por defecto.
     openGraph: {
       type: 'article',
       title: post.metaTitle,
       description: post.metaDescription,
       url: `https://negasva.shop/blog/${post.slug}`,
       publishedTime: post.date,
-      images: [{ url: post.image, width: 819, height: 461, alt: post.imageAlt }],
     },
     twitter: {
       card: 'summary_large_image',
       title: post.metaTitle,
       description: post.metaDescription,
-      images: [post.image],
     },
   };
 }
@@ -53,7 +53,7 @@ export default function BlogPostPage({ params }: { params: { slug: string } }) {
     description: post.metaDescription,
     datePublished: post.date,
     dateModified: post.date,
-    image: `https://negasva.shop${post.image}`,
+    image: 'https://negasva.shop/opengraph-image',
     author: {
       '@type': 'Person',
       name: 'Negasva',
@@ -108,16 +108,18 @@ export default function BlogPostPage({ params }: { params: { slug: string } }) {
       {/* Artículo */}
       <article className="py-16 px-4">
         <div className="mx-auto max-w-3xl">
-          <div className="relative aspect-video rounded-2xl overflow-hidden border-2 border-primary-lighter mb-10">
-            <Image
-              src={post.image}
-              alt={post.imageAlt}
-              fill
-              className="object-cover"
-              sizes="(max-width: 768px) 100vw, 768px"
-              priority
-            />
-          </div>
+          {post.image && (
+            <div className="relative aspect-video rounded-2xl overflow-hidden border-2 border-primary-lighter mb-10">
+              <Image
+                src={post.image}
+                alt={post.imageAlt}
+                fill
+                className="object-cover"
+                sizes="(max-width: 768px) 100vw, 768px"
+                priority
+              />
+            </div>
+          )}
 
           <p className="text-lg text-secondary-lighter leading-relaxed mb-10">{post.intro}</p>
 
