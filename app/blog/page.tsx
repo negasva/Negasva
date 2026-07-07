@@ -23,15 +23,17 @@ export default function BlogPage() {
             href={`/blog/${post.slug}`}
             className="group rounded-2xl border-2 border-primary-lighter hover:border-primary hover:shadow-lg transition-all p-6 md:p-8 bg-white flex items-start gap-6"
           >
-            <div className="relative hidden sm:block w-36 h-24 flex-shrink-0 rounded-xl overflow-hidden border border-primary-lighter">
-              <Image
-                src={post.image}
-                alt={post.imageAlt}
-                fill
-                className="object-cover group-hover:scale-105 transition-transform"
-                sizes="144px"
-              />
-            </div>
+            {post.image && (
+              <div className="relative hidden sm:block w-36 h-24 flex-shrink-0 rounded-xl overflow-hidden border border-primary-lighter">
+                <Image
+                  src={post.image}
+                  alt={post.imageAlt}
+                  fill
+                  className="object-cover group-hover:scale-105 transition-transform"
+                  sizes="144px"
+                />
+              </div>
+            )}
             <div className="flex-1">
               <span className="inline-block bg-primary-lighter px-3 py-1 rounded-full text-xs font-bold text-primary mb-3">
                 {post.category}

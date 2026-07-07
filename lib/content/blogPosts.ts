@@ -38,7 +38,7 @@ export const BLOG_POSTS: BlogPost[] = [
     excerpt:
       'Boyfriends are famously hard to shop for. Here are personalized gift ideas he will actually keep — led by a custom cartoon portrait that turns your inside jokes into art.',
     keywords: ['personalized gift ideas for boyfriend', 'custom gift for boyfriend', 'personalized boyfriend gift', 'cartoon portrait gift for him', 'anniversary gift for boyfriend'],
-    image: '/backgrounds/rm-1.webp',
+    image: '',
     imageAlt: 'Personalized cartoon portrait gift idea for a boyfriend, hand drawn from photo',
     intro:
       'Every gift guide for boyfriends recycles the same list: a watch, a wallet, a gadget he already researched and bought himself. The gifts that actually land are the personal ones — the ones that reference something only the two of you share. This guide focuses on personalized gift ideas for your boyfriend that feel thought-through, starting with the one we are admittedly biased about: a custom cartoon portrait hand-drawn from your photo.',
@@ -101,7 +101,7 @@ export const BLOG_POSTS: BlogPost[] = [
     excerpt:
       'Dads are the hardest people to shop for because they buy what they need. The loophole is personalization — starting with a custom cartoon portrait of him as the character he already is.',
     keywords: ['personalized gift ideas for dad', 'custom gift for dad', 'personalized dad gift', "father's day cartoon portrait", 'gift for dad who wants nothing'],
-    image: '/backgrounds/rm-3.webp',
+    image: '',
     imageAlt: 'Personalized cartoon portrait gift idea for a dad, hand drawn from photo',
     intro:
       'The dad problem is universal: ask what he wants and he says "nothing." He buys his own tools, replaces his own gadgets, and returns anything he does not need. The way around it is not spending more — it is getting personal. These personalized gift ideas for dad work precisely because he would never buy them for himself, led by a custom cartoon portrait that drops him into the world he already loves.',
@@ -163,7 +163,7 @@ export const BLOG_POSTS: BlogPost[] = [
     excerpt:
       'When the couple already owns everything on the registry, the winning wedding gift is the one thing no store sells: themselves, hand-drawn as a custom cartoon portrait.',
     keywords: ['unique wedding gifts', 'wedding gift for couple who has everything', 'wedding cartoon portrait', 'unique wedding gift couple', 'personalized wedding gift'],
-    image: '/backgrounds/rm-10.webp',
+    image: '',
     imageAlt: 'Unique wedding gift idea: custom cartoon portrait of a couple hand drawn from photo',
     intro:
       'Some couples register for the blender, receive the blender, and have three blenders by the reception. When the pair already owns everything, the registry is a trap — every gift on it is efficient and forgettable. The unique wedding gift is the one thing no store stocks: the couple themselves, hand-drawn as a custom cartoon portrait. Here is why it works and how to get it right.',
@@ -225,7 +225,7 @@ export const BLOG_POSTS: BlogPost[] = [
     excerpt:
       'AI apps, filters or a real artist? Every method to turn a photo into a cartoon compared — costs, turnaround and how to get the best result.',
     keywords: ['turn photo into cartoon', 'photo to cartoon', 'cartoon from photo', 'cartoonize photo', 'custom cartoon portrait'],
-    image: '/backgrounds/rm-4.webp',
+    image: '',
     imageAlt: 'Photo turned into a hand-drawn cartoon portrait, before and after comparison',
     intro:
       'Turning a photo into a cartoon is one of the most searched creative requests on the internet, and in 2026 you have three real options: free AI filters, one-click cartoonizer apps, and a hand-drawn commission from an actual artist. Each one produces a very different result, at a very different price, in a very different amount of time. This guide walks through all three honestly — what each method is good at, where it falls apart, and how to prepare your photo so the final cartoon actually looks like you.',
@@ -292,7 +292,7 @@ export const BLOG_POSTS: BlogPost[] = [
     excerpt:
       'We compared the main places to order a custom cartoon portrait — pricing, real turnaround, styles and revision policies — so you don\'t have to.',
     keywords: ['best custom cartoon portrait sites', 'custom cartoon portrait comparison', 'cartoon portrait website', 'where to order cartoon portrait'],
-    image: '/backgrounds/rm-6.webp',
+    image: '',
     imageAlt: 'Comparison of custom cartoon portrait styles from different commission options',
     intro:
       'Searching "custom cartoon portrait" returns dozens of sites that all promise the same thing, so the useful comparison is not who claims the prettiest gallery — it is price, real turnaround (finished file, not preview), style range and what happens when you want a change. Here is an honest 2026 rundown of the main options: dedicated portrait studios like Negasva and Turned Yellow, marketplace artists on Etsy and Fiverr, and AI generators. We run one of these sites, so judge the framing for yourself — but every factual claim below is verifiable on the linked services\' own pages.',
@@ -363,7 +363,7 @@ export const BLOG_POSTS: BlogPost[] = [
     excerpt:
       'Turned Yellow charges $25-56 and its 2-3 day estimate covers only the preview. Here are five alternatives, compared honestly on price and speed.',
     keywords: ['turned yellow alternatives', 'sites like turned yellow', 'turned yellow vs', 'cheaper than turned yellow', 'turn yellow portrait'],
-    image: '/backgrounds/rm-1.webp',
+    image: '',
     imageAlt: 'Yellow cartoon style couple portrait, a popular Turned Yellow alternative result',
     intro:
       'Turned Yellow earned its reputation: it popularized turning people into yellow cartoon characters and has served customers for years. But it is not the only option anymore, and depending on what you value — price, total turnaround, style variety — it may not be the best one. Their portraits list from about $25 up to $56, and the advertised 2-3 day turnaround covers the preview stage rather than the finished file. If either of those numbers made you search for alternatives, here are the five real ones, with the trade-offs stated plainly.',
@@ -427,7 +427,7 @@ export const BLOG_POSTS: BlogPost[] = [
     excerpt:
       'From picking the right cartoon style to prepping your photo and choosing between apps and artists — the full guide to cartooning yourself.',
     keywords: ['cartoon yourself', 'cartoonize yourself', 'make yourself a cartoon', 'cartoon avatar from photo', 'turn yourself into a cartoon character'],
-    image: '/backgrounds/rm-5.webp',
+    image: '',
     imageAlt: 'Person cartooned into multiple cartoon styles from a single photo',
     intro:
       'Cartooning yourself went from novelty to normal: cartoon avatars front profiles on Discord, Instagram, LinkedIn and dating apps, and cartoon portraits hang framed in living rooms. But "cartoon yourself" covers everything from a ten-second filter to a hand-drawn commission, and picking wrong wastes either your money or your face. This guide covers the decisions in order: what you will use it for, which style fits, which method to use, and how to prep the photo so the result actually looks like you.',
@@ -491,7 +491,7 @@ export const BLOG_POSTS: BlogPost[] = [
     excerpt:
       'The two most-ordered cartoon portrait styles, head to head: visual differences, who each one suits, and how to decide in 30 seconds.',
     keywords: ['simpsons style portrait', 'rick and morty style portrait', 'simpsons vs rick and morty', 'yellow cartoon portrait', 'cartoon style comparison'],
-    image: '/backgrounds/rm-3.webp',
+    image: '',
     imageAlt: 'Side by side comparison of Simpsons style and Rick and Morty style custom portraits',
     intro:
       'They are the two most-ordered custom portrait styles, and the most common question before a first order: do I go yellow, or do I go interdimensional? Both are instantly iconic and both print beautifully, but they are opposites in almost every visual and emotional register. Here is the honest comparison, so you can pick based on what actually matters: who is in the portrait, who is going to see it, and where it will hang.',
@@ -549,7 +549,7 @@ export const BLOG_POSTS: BlogPost[] = [
     dateLabel: '10 de Junio, 2026',
     excerpt: 'Cumpleaños, aniversarios, Navidad... ideas originales para sorprender con un retrato animado que nadie más puede repetir.',
     keywords: ['regalar retrato animado', 'regalo original personalizado', 'ideas de regalo caricatura', 'regalo aniversario original'],
-    image: '/backgrounds/rm-1.webp',
+    image: '',
     imageAlt: 'Retrato animado personalizado estilo cartoon sci-fi como idea de regalo',
     intro:
       'Encontrar un regalo que sea original, personal y que de verdad emocione es cada vez más difícil. Todo el mundo tiene de todo, y los regalos genéricos se olvidan en una semana. Un retrato animado personalizado resuelve exactamente ese problema: es único por definición — está dibujado a partir de la foto de la persona — y combina humor, nostalgia y cariño en una sola pieza. Aquí van 10 ideas concretas para regalarlo según la ocasión y la persona.',
@@ -629,7 +629,7 @@ export const BLOG_POSTS: BlogPost[] = [
     dateLabel: '5 de Junio, 2026',
     excerpt: 'Descubre cuál de nuestros 4 estilos se adapta mejor a tu personalidad y al uso que le darás a tu retrato.',
     keywords: ['como elegir estilo retrato', 'estilos de caricatura', 'mejor estilo retrato animado', 'tipos de retrato personalizado'],
-    image: '/backgrounds/rm-4.webp',
+    image: '',
     imageAlt: 'Comparación de estilos de retrato animado personalizados',
     intro:
       'Elegir el estilo es la decisión más importante de tu pedido — y la más divertida. Cada uno de nuestros cuatro estilos tiene una personalidad visual propia, y el que mejor funciona depende de tres cosas: quién aparece en el retrato, qué uso le vas a dar y qué serie conecta más contigo. Esta guía te ayuda a decidir en cinco minutos.',
@@ -683,7 +683,7 @@ export const BLOG_POSTS: BlogPost[] = [
     dateLabel: '28 de Mayo, 2026',
     excerpt: 'Los dos estilos más pedidos, frente a frente: diferencias visuales, usos ideales y cómo decidir entre ellos.',
     keywords: ['comparacion estilos caricatura', 'retrato cartoon sci fi o familiar', 'que estilo de retrato elegir', 'retrato personalizado para regalo'],
-    image: '/backgrounds/rm-6.webp',
+    image: '',
     imageAlt: 'Comparativa entre retrato estilo cartoon sci-fi y estilo familia amarilla clasica',
     intro:
       'Son nuestros dos estilos más pedidos y la duda más frecuente entre quienes hacen su primer pedido: ¿me dibujo como personaje de cartoon sci-fi o como habitante de una ciudad animada? Los dos son icónicos, los dos quedan increíbles — pero son muy diferentes entre sí. Aquí va la comparativa honesta para que decidas en función de lo que de verdad importa.',
@@ -755,7 +755,7 @@ export const BLOG_POSTS: BlogPost[] = [
     dateLabel: '20 de Mayo, 2026',
     excerpt: 'Luz, ángulo, resolución y los errores más comunes: todo lo que necesitas saber antes de subir tu foto.',
     keywords: ['foto para retrato animado', 'como tomar foto para caricatura', 'consejos foto retrato personalizado'],
-    image: '/backgrounds/rm-5.webp',
+    image: '',
     imageAlt: 'Ejemplo de foto bien iluminada para convertir en retrato animado',
     intro:
       'Nuestros ilustradores dibujan cada retrato a mano partiendo de tu foto. Eso significa que cuanto mejor sea la foto, más fiel y detallado será el resultado: captamos mejor tus rasgos, tu peinado, tu expresión. La buena noticia es que no necesitas cámara profesional — solo seguir estas reglas simples con tu celular.',
@@ -805,7 +805,7 @@ export const BLOG_POSTS: BlogPost[] = [
     dateLabel: '12 de Mayo, 2026',
     excerpt: 'Del análisis de tu foto al dibujo a mano y la entrega final: así trabaja nuestro equipo en cada encargo.',
     keywords: ['como se hace un retrato animado', 'retrato dibujado a mano', 'proceso ilustracion personalizada'],
-    image: '/backgrounds/rm-3.webp',
+    image: '',
     imageAlt: 'Proceso de ilustración de un retrato animado personalizado',
     intro:
       'Una de las preguntas que más nos hacen: "¿esto lo hace una IA?". No. Cada retrato de NEGASVA lo dibuja un ilustrador real, a mano, en tableta digital. Por eso los resultados capturan cosas que ningún filtro automático logra: tu gesto característico, el detalle de tus gafas, la postura de tu mascota. Aquí te contamos el proceso completo, paso a paso.',
@@ -849,7 +849,7 @@ export const BLOG_POSTS: BlogPost[] = [
     dateLabel: '2 de Mayo, 2026',
     excerpt: 'Por qué un retrato familiar animado es el regalo perfecto para cualquier ocasión especial, y cómo pedirlo bien.',
     keywords: ['retrato familiar personalizado', 'regalo familiar original', 'caricatura familiar personalizada', 'retrato para familia'],
-    image: '/backgrounds/rm-10.webp',
+    image: '',
     imageAlt: 'Retrato familiar animado personalizado con varias personas y mascota',
     intro:
       'Hay una razón por la que los retratos familiares son nuestro encargo más emotivo: son el único formato donde caben todos. Los abuelos, los niños, el perro que es un miembro más, el primo que vive lejos. Un retrato familiar animado convierte a tu familia en el elenco de una serie — y a diferencia de la típica foto familiar acartonada, este cuadro saca sonrisas cada vez que alguien lo mira.',
