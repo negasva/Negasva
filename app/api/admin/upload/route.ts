@@ -9,7 +9,10 @@ import { errorResponse, rateLimitByIp, validateSameOrigin } from '@/lib/security
 
 const BUCKET = 'backgrounds';
 const MAX_BYTES = 10 * 1024 * 1024; // matches the bucket's 10 MB limit
-const MIME = ['image/jpeg', 'image/png', 'image/webp'];
+// 'image/jpg' is a non-standard alias some browsers/OS report for JPEG files.
+const MIME = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+// Supabase storage requires the canonical type; normalise before uploading.
+const MIME_NORM: Record<string, string> = { 'image/jpg': 'image/jpeg' };
 
 export async function POST(request: Request) {
   if (!validateSameOrigin(request)) return errorResponse('Invalid origin', 403);
@@ -32,15 +35,18 @@ export async function POST(request: Request) {
   if (!MIME.includes(file.type)) return errorResponse('Tipo no permitido (JPG, PNG, WEBP)', 400);
   if (file.size > MAX_BYTES) return errorResponse('Archivo muy grande (max 10MB)', 400);
 
+  const contentType = MIME_NORM[file.type] ?? file.type;
   const folderRaw = form.get('folder');
   const folder = (typeof folderRaw === 'string' ? folderRaw : 'uploads').replace(/[^a-z0-9_-]/gi, '') || 'uploads';
-  const ext = (file.name.split('.').pop() || 'jpg').replace(/[^a-z0-9]/gi, '').toLowerCase() || 'jpg';
+  // Normalise extension so .jpg files are stored consistently.
+  const rawExt = (file.name.split('.').pop() || 'jpg').replace(/[^a-z0-9]/gi, '').toLowerCase() || 'jpg';
+  const ext = rawExt === 'jpg' ? 'jpg' : rawExt;
   const path = `${folder}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
 
   const buffer = Buffer.from(await file.arrayBuffer());
   const { error } = await db.storage
     .from(BUCKET)
-    .upload(path, buffer, { contentType: file.type, cacheControl: '3600', upsert: false });
+    .upload(path, buffer, { contentType, cacheControl: '3600', upsert: false });
   if (error) return errorResponse('Error al subir imagen', 500, error);
 
   const { data } = db.storage.from(BUCKET).getPublicUrl(path);

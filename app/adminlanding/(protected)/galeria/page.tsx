@@ -164,7 +164,7 @@ export default function AdminGaleriaPage() {
           <input
             ref={bulkRef}
             type="file"
-            accept="image/jpeg,image/png,image/webp"
+            accept="image/jpeg,image/jpg,image/png,image/webp,.jpg,.jpeg,.png,.webp"
             multiple
             className="hidden"
             onChange={(e) => { if (e.target.files?.length) handleBulk(e.target.files); }}
@@ -208,7 +208,7 @@ export default function AdminGaleriaPage() {
           </div>
 
           {mode === 'file' ? (
-            <input ref={fileRef} required type="file" accept="image/jpeg,image/png,image/webp"
+            <input ref={fileRef} required type="file" accept="image/jpeg,image/jpg,image/png,image/webp,.jpg,.jpeg,.png,.webp"
               className="w-full text-sm text-secondary-lighter file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-primary-lighter file:text-secondary file:font-bold file:text-xs file:cursor-pointer cursor-pointer" />
           ) : (
             <input required className={inputCls} value={urlInput} onChange={(e) => setUrlInput(e.target.value)} placeholder="https://... o /samples/after-1.svg" />
@@ -217,7 +217,7 @@ export default function AdminGaleriaPage() {
           <div className="mt-4">
             <label className={labelCls}>Foto antes (opcional)</label>
             <p className="text-[11px] text-secondary-lighter mb-1.5">Sube la foto original para activar el slider antes/después en la landing.</p>
-            <input ref={beforeRef} type="file" accept="image/jpeg,image/png,image/webp"
+            <input ref={beforeRef} type="file" accept="image/jpeg,image/jpg,image/png,image/webp,.jpg,.jpeg,.png,.webp"
               className="w-full text-sm text-secondary-lighter file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-primary-lighter file:text-secondary file:font-bold file:text-xs file:cursor-pointer cursor-pointer" />
           </div>
 
