@@ -2,7 +2,6 @@ import Image from 'next/image';
 import Link from 'next/link';
 import Navbar from '@/components/Navbar';
 import PageFooter from '@/components/PageFooter';
-import BeforeAfterSlider from '@/components/BeforeAfterSlider';
 import { createAnonClient } from '@/lib/supabase/server';
 
 // Server component: la galería llega en el HTML inicial (SEO). ISR cada 5 min.
@@ -48,24 +47,6 @@ export default async function GalleryPage() {
           <p className="text-lg text-secondary-lighter max-w-2xl">
             Discover the portraits our customers have created
           </p>
-        </div>
-      </section>
-
-      {/* Before/After showcase */}
-      <section className="py-16 px-4 bg-white">
-        <div className="mx-auto max-w-3xl">
-          <div className="text-center mb-8">
-            <h2 className="font-black text-3xl md:text-4xl tracking-tighter text-secondary mb-2">
-              Drag to see the transformation
-            </h2>
-            <p className="text-secondary-lighter">From real photo to cartoon character</p>
-          </div>
-          <BeforeAfterSlider
-            beforeSrc="/samples/before-1.svg"
-            afterSrc="/samples/after-1.svg"
-            beforeLabel="Before"
-            afterLabel="After"
-          />
         </div>
       </section>
 
