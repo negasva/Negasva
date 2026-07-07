@@ -86,45 +86,45 @@ export function StepsPortraits() {
       <div className="flex md:hidden justify-center items-end">
         <div className="relative z-10 rotate-[-3deg]">
           {img1 ? (
-            <div className="w-[150px] h-[200px] rounded-[75px] overflow-hidden shadow-[0_16px_36px_rgba(0,0,0,0.13)] bg-white">
+            <div className="w-[188px] h-[250px] rounded-[94px] overflow-hidden shadow-[0_16px_36px_rgba(0,0,0,0.13)] bg-white">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={img1} alt="Custom cartoon style portrait hand drawn from photo" className="w-full h-full object-cover" />
             </div>
           ) : (
-            <ImgSlot className="w-[150px] h-[200px] rounded-[75px] shadow-[0_16px_36px_rgba(0,0,0,0.13)]" />
+            <ImgSlot className="w-[188px] h-[250px] rounded-[94px] shadow-[0_16px_36px_rgba(0,0,0,0.13)]" />
           )}
         </div>
         <div className="relative z-0 -ml-5 mt-8 rotate-[2deg]">
           {img2 ? (
-            <div className="w-[135px] h-[180px] rounded-[68px] overflow-hidden shadow-[0_16px_36px_rgba(0,0,0,0.13)] bg-white">
+            <div className="w-[169px] h-[225px] rounded-[85px] overflow-hidden shadow-[0_16px_36px_rgba(0,0,0,0.13)] bg-white">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={img2} alt="Custom cartoon couple portrait hand drawn from photo" className="w-full h-full object-cover" />
             </div>
           ) : (
-            <ImgSlot className="w-[135px] h-[180px] rounded-[68px] shadow-[0_16px_36px_rgba(0,0,0,0.13)]" />
+            <ImgSlot className="w-[169px] h-[225px] rounded-[85px] shadow-[0_16px_36px_rgba(0,0,0,0.13)]" />
           )}
         </div>
       </div>
       {/* Desktop */}
-      <div className="relative min-h-[360px] hidden md:block">
+      <div className="relative min-h-[450px] hidden md:block">
         <div className="absolute top-0 left-[4%] rotate-[-3deg] z-10">
           {img1 ? (
-            <div className="w-[240px] h-[320px] rounded-[120px] overflow-hidden shadow-[0_16px_36px_rgba(0,0,0,0.13)] bg-white">
+            <div className="w-[300px] h-[400px] rounded-[150px] overflow-hidden shadow-[0_16px_36px_rgba(0,0,0,0.13)] bg-white">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={img1} alt="Custom cartoon style portrait hand drawn from photo" className="w-full h-full object-cover" />
             </div>
           ) : (
-            <ImgSlot style={{ width: 240, height: 320, borderRadius: 120, boxShadow: '0 16px 36px rgba(0,0,0,0.13)' }} />
+            <ImgSlot style={{ width: 300, height: 400, borderRadius: 150, boxShadow: '0 16px 36px rgba(0,0,0,0.13)' }} />
           )}
         </div>
-        <div className="absolute top-[110px] left-[46%] rotate-[2deg] z-0">
+        <div className="absolute top-[138px] left-[46%] rotate-[2deg] z-0">
           {img2 ? (
-            <div className="w-[220px] h-[300px] rounded-[110px] overflow-hidden shadow-[0_16px_36px_rgba(0,0,0,0.13)] bg-white">
+            <div className="w-[275px] h-[375px] rounded-[137px] overflow-hidden shadow-[0_16px_36px_rgba(0,0,0,0.13)] bg-white">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={img2} alt="Custom cartoon couple portrait hand drawn from photo" className="w-full h-full object-cover" />
             </div>
           ) : (
-            <ImgSlot style={{ width: 220, height: 300, borderRadius: 110, boxShadow: '0 16px 36px rgba(0,0,0,0.13)' }} />
+            <ImgSlot style={{ width: 275, height: 375, borderRadius: 137, boxShadow: '0 16px 36px rgba(0,0,0,0.13)' }} />
           )}
         </div>
       </div>
