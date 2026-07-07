@@ -1,9 +1,9 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { Clock, RefreshCcw, PenTool } from 'lucide-react';
-import { POD_PRODUCTS } from '@/lib/pricing/products';
-import { STYLES_CONTENT } from '@/lib/content/styles';
 import { getHomeContent } from '@/lib/content/homeContent.server';
+import { getHomeStyles } from '@/lib/content/stylesDb';
+import { getPodProductsConfig } from '@/lib/content/podProducts.server';
 import { loadPricingConfig } from '@/lib/pricing/server';
 import ProductIcon from '@/components/ProductIcon';
 import Navbar from '@/components/Navbar';
@@ -65,8 +65,14 @@ function BrushDividerUp() {
 }
 
 export default async function Home() {
-  const [content, pricing] = await Promise.all([getHomeContent(), loadPricingConfig()]);
+  const [content, pricing, homeStyles, podProducts] = await Promise.all([
+    getHomeContent(),
+    loadPricingConfig(),
+    getHomeStyles(),
+    getPodProductsConfig(),
+  ]);
   const t = content.texts;
+  const visibleProducts = podProducts.filter((p) => p.visible);
   const torsoUsd = pricing.perPersonUsd.torso_only ?? 15;
   const fullUsd = pricing.perPersonUsd.full_body ?? 25;
   const trustIcons = [
@@ -219,10 +225,10 @@ export default async function Home() {
             {t.styles_subtitle}
           </p>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
-            {STYLES_CONTENT.map((s) => (
+            {homeStyles.map((s) => (
               <Link
-                key={s.slug}
-                href={`/styles/${s.slug}`}
+                key={s.key}
+                href={s.href}
                 className="group rounded-2xl border-2 border-primary-lighter bg-white overflow-hidden hover:border-primary hover:shadow-md transition-all"
               >
                 <div className="relative aspect-[4/3] bg-[#FFF1F7]">
@@ -302,18 +308,28 @@ export default async function Home() {
             </Link>
           </div>
 
-          {/* Right: product grid — icon cards */}
+          {/* Right: product grid — editable image cards */}
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-            {POD_PRODUCTS.map((p, i) => (
+            {visibleProducts.map((p, i) => (
               <div
                 key={p.key}
                 className="rounded-2xl border-2 border-primary-lighter bg-white p-5 text-center hover:border-primary hover:shadow-md transition-all"
                 style={{ transform: `rotate(${[0, -1.2, 1, -0.8, 1.4, -0.6][i % 6] ?? 0}deg)` }}
               >
-                <div className="flex justify-center mb-3">
-                  <ProductIcon productKey={p.key} className="w-9 h-9 text-primary" />
+                <div className="flex justify-center items-center mb-3 h-16">
+                  {p.image ? (
+                    <Image
+                      src={p.image}
+                      alt={p.name}
+                      width={64}
+                      height={64}
+                      className="w-16 h-16 object-contain rounded-lg"
+                    />
+                  ) : (
+                    <ProductIcon productKey={p.key} className="w-9 h-9 text-primary" />
+                  )}
                 </div>
-                <p className="font-black text-secondary text-sm leading-tight">{p.name.en}</p>
+                <p className="font-black text-secondary text-sm leading-tight">{p.name}</p>
                 <p className="text-xs text-primary-dark font-bold mt-1">
                   {t.pod_from_label} {usd(pricing.podProductsUsd[p.key] ?? p.priceUsd)}
                 </p>

@@ -29,13 +29,14 @@ function gradientFor(name: string) {
   return AVATAR_GRADIENTS[Math.abs(hash) % AVATAR_GRADIENTS.length];
 }
 
-const ReviewCard = memo(function ReviewCard({ name, comment, photo }: { name: string; comment: string; photo: string | null }) {
+const ReviewCard = memo(function ReviewCard({ name, comment, photo, rating, title }: HomeTestimonial) {
+  const stars = Math.max(1, Math.min(5, Math.round(rating ?? 5)));
   return (
     <div className="w-[340px] sm:w-[400px] flex-shrink-0 snap-start rounded-2xl border-2 border-primary-lighter bg-white overflow-hidden shadow-sm">
-      {/* Foto del retrato entregado — espacio reservado si aún no hay imagen */}
-      {!!photo && (
-        <div className="relative h-44 w-full bg-primary-lighter/40 flex items-center justify-center">
-          <Camera className="w-8 h-8 text-primary/40" aria-hidden />
+      {/* Foto del retrato entregado — placeholder si aún no hay imagen */}
+      <div className="relative h-44 w-full bg-primary-lighter/40 flex items-center justify-center">
+        <Camera className="w-8 h-8 text-primary/40" aria-hidden />
+        {!!photo && (
           <Image
             src={photo}
             alt={`Retrato entregado a ${name}`}
@@ -44,14 +45,15 @@ const ReviewCard = memo(function ReviewCard({ name, comment, photo }: { name: st
             sizes="400px"
             onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
           />
-        </div>
-      )}
+        )}
+      </div>
       <div className="p-6">
         <div className="flex gap-1 mb-3">
-          {Array.from({ length: 5 }).map((_, i) => (
+          {Array.from({ length: stars }).map((_, i) => (
             <span key={i} className="text-primary text-xl">★</span>
           ))}
         </div>
+        {!!title && <p className="font-black text-secondary text-lg mb-1">{title}</p>}
         <p className="text-secondary text-base font-semibold mb-4 whitespace-nowrap overflow-hidden text-ellipsis">
           "{comment}"
         </p>
@@ -102,7 +104,7 @@ function TestimonialsScroll({ reviews = DEFAULT_HOME_CONTENT.testimonials }: { r
           ref={trackRef}
           className="reviews-track flex gap-5 overflow-x-auto snap-x snap-mandatory scroll-smooth pb-3 sm:mx-8"
         >
-          {reviews.map((r) => (
+          {reviews.filter((r) => r.visible !== false).map((r) => (
             <ReviewCard key={r.name} {...r} />
           ))}
         </div>

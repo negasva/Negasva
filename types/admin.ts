@@ -40,10 +40,13 @@ export interface Background {
 export interface DrawingStyle {
   id: string;
   slug: string;
+  landing_slug: string | null;
   name: string;
   description: string | null;
   example_image_url: string | null;
   is_active: boolean;
+  show_in_home: boolean;
+  sort_order?: number;
   created_at: string;
 }
 

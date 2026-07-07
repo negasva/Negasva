@@ -150,12 +150,18 @@ export const AdminOrderUpdateSchema = z.object({
   delivered_at: z.string().datetime({ offset: true }).optional().nullable(),
 });
 
+const LandingSlugSchema = z.string().trim().min(1).max(120)
+  .regex(/^[a-z0-9-]+$/, 'Only lowercase letters, numbers and hyphens')
+  .optional().nullable();
+
 export const AdminStyleCreateSchema = z.object({
   slug: z.string().trim().min(1).max(100).regex(/^[a-z0-9-]+$/, 'Only lowercase letters, numbers and hyphens'),
   name: z.string().trim().min(1).max(100),
   description: z.string().trim().max(2000).optional().nullable(),
   example_image_url: SafeImageSchema.optional().nullable(),
-  is_active: z.boolean().default(true),
+  landing_slug: LandingSlugSchema,
+  is_active: z.boolean().default(false),
+  show_in_home: z.boolean().default(true),
 });
 
 export const AdminStyleUpdateSchema = z.object({
@@ -163,7 +169,9 @@ export const AdminStyleUpdateSchema = z.object({
   name: z.string().trim().min(1).max(100).optional(),
   description: z.string().trim().max(2000).optional().nullable(),
   example_image_url: SafeImageSchema.optional().nullable(),
+  landing_slug: LandingSlugSchema,
   is_active: z.boolean().optional(),
+  show_in_home: z.boolean().optional(),
   sort_order: z.number().int().optional(),
 });
 
