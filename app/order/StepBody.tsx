@@ -118,9 +118,11 @@ export default function StepBody({ c }: { c: CheckoutController }) {
         style={{ gridTemplateColumns: `repeat(${options.length}, minmax(0, 1fr))` }}
       >
         {options.map((b, i) => {
-          const lit = hovered !== null && i <= hovered;
           const dimmed = hovered !== null && i > hovered;
           const ringed = selectedIndex >= 0 && i <= selectedIndex;
+          // Panel activo (elevado + glow): al pasar el cursor o al quedar
+          // seleccionado. La selección lo mantiene sin necesidad del hover.
+          const lit = (hovered !== null && i <= hovered) || ringed;
           return (
             <div key={b.id} className="flex flex-col">
               <p className="font-black text-xl text-secondary mb-3 tracking-tighter text-center">{b.name}</p>
