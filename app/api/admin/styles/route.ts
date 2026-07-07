@@ -17,7 +17,7 @@ export async function GET(request: Request) {
 
   const { data, error } = await supabase
     .from('portrait_styles')
-    .select('id, slug, name, description, example_image_url, is_active, sort_order, created_at')
+    .select('id, slug, landing_slug, name, description, example_image_url, is_active, show_in_home, sort_order, created_at')
     .order('sort_order', { ascending: true })
     .order('name');
 
@@ -57,7 +57,7 @@ export async function PUT(request: Request) {
   if (!parsed.success) return errorResponse(parsed.error.issues[0]?.message ?? 'Invalid input', 400);
 
   const { id } = parsed.data;
-  const fields = pickFields(parsed.data, ['name', 'description', 'example_image_url', 'is_active', 'sort_order']);
+  const fields = pickFields(parsed.data, ['name', 'description', 'example_image_url', 'landing_slug', 'is_active', 'show_in_home', 'sort_order']);
   if (Object.keys(fields).length === 0) return errorResponse('No fields to update', 400);
 
   const { error } = await db.from('portrait_styles').update(fields).eq('id', id);

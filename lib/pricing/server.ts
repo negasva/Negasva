@@ -42,9 +42,10 @@ export async function loadPricingConfig(): Promise<PricingConfig> {
 
   try {
     const db = createServiceClient();
-    const [pricesRes, bodyTypesRes] = await Promise.all([
+    const [pricesRes, bodyTypesRes, podRes] = await Promise.all([
       db.from('prices').select('key, amount'),
       db.from('body_types').select('slug, price_usd').eq('is_active', true),
+      db.from('landing_config').select('value').eq('key', 'pod_products').limit(1),
     ]);
 
     for (const row of bodyTypesRes.data ?? []) {
@@ -76,6 +77,20 @@ export async function loadPricingConfig(): Promise<PricingConfig> {
             config.podProductsUsd[row.key.slice(4)] = amount;
           }
           break;
+      }
+    }
+
+    // landing_config 'pod_products' is the admin's editable POD panel: its
+    // priceUsd overrides the prices table so the home card, the wizard and the
+    // checkout all charge the same amount.
+    const podConfig = podRes.data?.[0]?.value;
+    if (Array.isArray(podConfig)) {
+      for (const row of podConfig) {
+        const key = row?.key;
+        const price = Number(row?.priceUsd);
+        if (typeof key === 'string' && Number.isFinite(price) && price >= 0) {
+          config.podProductsUsd[key] = price;
+        }
       }
     }
   } catch (err) {

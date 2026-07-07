@@ -8,7 +8,14 @@
 
 export interface HomeStat { value: string; label: string }
 export interface HomeStep { title: string; desc: string }
-export interface HomeTestimonial { name: string; comment: string; photo: string | null }
+export interface HomeTestimonial {
+  name: string;
+  comment: string;
+  photo: string | null;
+  rating?: number;      // 1–5 estrellas (default 5)
+  title?: string;       // titular corto opcional
+  visible?: boolean;    // oculta la reseña en la home si es false (default true)
+}
 
 export interface HomeContent {
   texts: Record<string, string>;

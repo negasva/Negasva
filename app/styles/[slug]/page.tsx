@@ -5,16 +5,52 @@ import { notFound } from 'next/navigation';
 import { ChevronRight, Check } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import PageFooter from '@/components/PageFooter';
-import { STYLES_CONTENT, getStyleBySlug } from '@/lib/content/styles';
+import { STYLES_CONTENT, getStyleBySlug, type StyleContent } from '@/lib/content/styles';
+import { getLandingStyle, type DbStyle } from '@/lib/content/stylesDb';
 
-// Server component estático: el HTML llega con todo el contenido para SEO.
+// Server component (ISR): el copy SEO vive en lib/content/styles.ts y la fila de
+// portrait_styles (admin) aporta imagen/nombre/descripción editables. Los estilos
+// creados solo en el admin renderizan una landing mínima desde la BD.
+export const revalidate = 300;
+export const dynamicParams = true;
 
 export function generateStaticParams() {
   return STYLES_CONTENT.map((s) => ({ slug: s.slug }));
 }
 
-export function generateMetadata({ params }: { params: { slug: string } }): Metadata {
-  const style = getStyleBySlug(params.slug);
+// Fusiona el copy en código con la fila editable de BD, o sintetiza una landing
+// mínima para estilos que solo existen en el admin.
+function mergeStyle(code: StyleContent | undefined, db: DbStyle | null, slug: string): StyleContent | null {
+  if (code) {
+    return {
+      ...code,
+      name: db?.name || code.name,
+      image: db?.example_image_url || code.image,
+      intro: db?.description || code.intro,
+    };
+  }
+  if (!db) return null;
+  return {
+    slug,
+    dbSlug: db.slug,
+    name: db.name,
+    h1: `${db.name} Custom Portrait from Your Photo`,
+    metaTitle: `${db.name} Custom Portrait`,
+    metaDescription: db.description ?? `${db.name} custom portrait, hand-drawn from your photo.`,
+    keywords: [],
+    intro: db.description ?? '',
+    whatIs: { title: '', body: '' },
+    forWho: { title: '', body: '' },
+    includes: { title: '', items: [] },
+    process: { title: '', body: '' },
+    faq: [],
+    image: db.example_image_url || '/backgrounds/rm-1.webp',
+    imageAlt: `${db.name} custom portrait`,
+  };
+}
+
+export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
+  const style = mergeStyle(getStyleBySlug(params.slug), await getLandingStyle(params.slug), params.slug);
   if (!style) return {};
   return {
     title: style.metaTitle,
@@ -36,8 +72,8 @@ export function generateMetadata({ params }: { params: { slug: string } }): Meta
   };
 }
 
-export default function StylePage({ params }: { params: { slug: string } }) {
-  const style = getStyleBySlug(params.slug);
+export default async function StylePage({ params }: { params: { slug: string } }) {
+  const style = mergeStyle(getStyleBySlug(params.slug), await getLandingStyle(params.slug), params.slug);
   if (!style) notFound();
 
   const others = STYLES_CONTENT.filter((s) => s.slug !== style.slug);
@@ -166,34 +202,43 @@ export default function StylePage({ params }: { params: { slug: string } }) {
       {/* Contenido SEO */}
       <section className="py-16 px-4">
         <div className="mx-auto max-w-3xl space-y-12">
-          <div>
-            <h2 className="font-black text-3xl tracking-tighter text-secondary mb-4">{style.whatIs.title}</h2>
-            <p className="text-secondary-lighter leading-relaxed">{style.whatIs.body}</p>
-          </div>
+          {style.whatIs.body && (
+            <div>
+              <h2 className="font-black text-3xl tracking-tighter text-secondary mb-4">{style.whatIs.title}</h2>
+              <p className="text-secondary-lighter leading-relaxed">{style.whatIs.body}</p>
+            </div>
+          )}
 
-          <div>
-            <h2 className="font-black text-3xl tracking-tighter text-secondary mb-4">{style.forWho.title}</h2>
-            <p className="text-secondary-lighter leading-relaxed">{style.forWho.body}</p>
-          </div>
+          {style.forWho.body && (
+            <div>
+              <h2 className="font-black text-3xl tracking-tighter text-secondary mb-4">{style.forWho.title}</h2>
+              <p className="text-secondary-lighter leading-relaxed">{style.forWho.body}</p>
+            </div>
+          )}
 
-          <div>
-            <h2 className="font-black text-3xl tracking-tighter text-secondary mb-4">{style.includes.title}</h2>
-            <ul className="space-y-3">
-              {style.includes.items.map((item) => (
-                <li key={item} className="flex items-start gap-3 text-secondary-lighter">
-                  <Check className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
-                  {item}
-                </li>
-              ))}
-            </ul>
-          </div>
+          {style.includes.items.length > 0 && (
+            <div>
+              <h2 className="font-black text-3xl tracking-tighter text-secondary mb-4">{style.includes.title}</h2>
+              <ul className="space-y-3">
+                {style.includes.items.map((item) => (
+                  <li key={item} className="flex items-start gap-3 text-secondary-lighter">
+                    <Check className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
 
-          <div>
-            <h2 className="font-black text-3xl tracking-tighter text-secondary mb-4">{style.process.title}</h2>
-            <p className="text-secondary-lighter leading-relaxed">{style.process.body}</p>
-          </div>
+          {style.process.body && (
+            <div>
+              <h2 className="font-black text-3xl tracking-tighter text-secondary mb-4">{style.process.title}</h2>
+              <p className="text-secondary-lighter leading-relaxed">{style.process.body}</p>
+            </div>
+          )}
 
           {/* FAQ del estilo */}
+          {style.faq.length > 0 && (
           <div>
             <h2 className="font-black text-3xl tracking-tighter text-secondary mb-6">Frequently asked questions</h2>
             <div className="space-y-4">
@@ -205,6 +250,7 @@ export default function StylePage({ params }: { params: { slug: string } }) {
               ))}
             </div>
           </div>
+          )}
         </div>
       </section>
 

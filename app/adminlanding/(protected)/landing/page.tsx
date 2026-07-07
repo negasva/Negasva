@@ -219,7 +219,7 @@ export default function AdminLandingPage() {
             onDelete={() => setHome({ ...home, testimonials: home.testimonials.filter((_, j) => j !== i) })}
           />
         ))}
-        <button className={`${addCls} mr-3`} onClick={() => setHome({ ...home, testimonials: [...home.testimonials, { name: '', comment: '', photo: null }] })}>
+        <button className={`${addCls} mr-3`} onClick={() => setHome({ ...home, testimonials: [...home.testimonials, { name: '', comment: '', photo: null, rating: 5, title: '', visible: true }] })}>
           + Añadir testimonio
         </button>
         <button className={saveCls} disabled={saving === 'testimonials'} onClick={() => saveHome('testimonials')}>
@@ -345,12 +345,31 @@ function TestimonialRow({
           <input className={inputCls} value={item.name} onChange={(e) => onChange({ ...item, name: e.target.value })} />
         </div>
         <div className="flex-1">
-          <label className={labelCls}>Comentario</label>
-          <input className={inputCls} value={item.comment} onChange={(e) => onChange({ ...item, comment: e.target.value })} />
+          <label className={labelCls}>Título (opcional)</label>
+          <input className={inputCls} value={item.title ?? ''} onChange={(e) => onChange({ ...item, title: e.target.value })} />
+        </div>
+        <div className="w-24">
+          <label className={labelCls}>Estrellas</label>
+          <select className={inputCls} value={item.rating ?? 5} onChange={(e) => onChange({ ...item, rating: Number(e.target.value) })}>
+            {[5, 4, 3, 2, 1].map((n) => <option key={n} value={n}>{n} ★</option>)}
+          </select>
         </div>
         <button className={delCls} onClick={onDelete}>×</button>
       </div>
-      <div className="flex gap-2 items-center">
+      <div className="mb-2">
+        <label className={labelCls}>Comentario</label>
+        <input className={inputCls} value={item.comment} onChange={(e) => onChange({ ...item, comment: e.target.value })} />
+      </div>
+      <div className="flex gap-4 items-center">
+        <label className="flex items-center gap-2 cursor-pointer text-sm text-secondary">
+          <input
+            type="checkbox"
+            checked={item.visible !== false}
+            onChange={(e) => onChange({ ...item, visible: e.target.checked })}
+            className="accent-primary w-4 h-4"
+          />
+          Visible en la home
+        </label>
         {item.photo && (
           // eslint-disable-next-line @next/next/no-img-element
           <img src={item.photo} alt={item.name} className="w-10 h-10 rounded-lg object-cover border border-gray-200" />

@@ -7,6 +7,7 @@ export const dynamic = 'force-dynamic';
 const NAV: NavItem[] = [
   { href: '/adminlanding',               label: 'Resumen'      },
   { href: '/adminlanding/landing',       label: 'Landing Page' },
+  { href: '/adminlanding/productos',     label: 'Productos'    },
   { href: '/adminlanding/galeria',       label: 'Galería'      },
   { href: '/adminlanding/faqs',          label: 'FAQ'          },
   { href: '/adminlanding/discount-codes',label: 'Descuentos'   },

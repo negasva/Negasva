@@ -6,10 +6,12 @@ import type { DrawingStyle } from '@/types/admin';
 
 const EMPTY_FORM = {
   slug: '',
+  landing_slug: '',
   name: '',
   description: '',
   example_image_url: '',
-  is_active: true,
+  is_active: false,
+  show_in_home: true,
 };
 
 export default function EstilosAdminPage() {
@@ -49,10 +51,12 @@ export default function EstilosAdminPage() {
     setEditId(s.id);
     setForm({
       slug: s.slug,
+      landing_slug: s.landing_slug ?? '',
       name: s.name,
       description: s.description ?? '',
       example_image_url: s.example_image_url ?? '',
       is_active: s.is_active,
+      show_in_home: s.show_in_home,
     });
     setImageMode('url');
     if (fileRef.current) fileRef.current.value = '';
@@ -82,6 +86,7 @@ export default function EstilosAdminPage() {
       ...form,
       description: form.description || null,
       example_image_url: imageUrl || null,
+      landing_slug: form.landing_slug || null,
     };
 
     if (editId) {
@@ -196,6 +201,18 @@ export default function EstilosAdminPage() {
               />
             </div>
             <div className="sm:col-span-2">
+              <label className={labelCls}>Slug de la landing SEO (/styles/…)</label>
+              <input
+                className={inputCls}
+                value={form.landing_slug}
+                onChange={(e) => setForm({ ...form, landing_slug: e.target.value.toLowerCase().replace(/\s+/g, '-') })}
+                placeholder="rick-and-morty-style-portrait"
+                pattern="[a-z0-9\-]*"
+                title="Solo letras minusculas, numeros y guiones"
+              />
+              <p className="text-xs text-secondary-lighter mt-1">La URL de la landing. Vacio = se usa el slug.</p>
+            </div>
+            <div className="sm:col-span-2">
               <label className={labelCls}>Descripcion</label>
               <textarea
                 rows={2}
@@ -239,7 +256,7 @@ export default function EstilosAdminPage() {
               )}
             </div>
             <div>
-              <label className={labelCls}>Estado</label>
+              <label className={labelCls}>Visibilidad</label>
               <label className="flex items-center gap-2 cursor-pointer mt-1">
                 <input
                   type="checkbox"
@@ -247,7 +264,16 @@ export default function EstilosAdminPage() {
                   onChange={(e) => setForm({ ...form, is_active: e.target.checked })}
                   className="accent-primary w-4 h-4"
                 />
-                <span className="text-sm text-secondary">Activo (visible en el studio)</span>
+                <span className="text-sm text-secondary">Disponible en /order (wizard)</span>
+              </label>
+              <label className="flex items-center gap-2 cursor-pointer mt-2">
+                <input
+                  type="checkbox"
+                  checked={form.show_in_home}
+                  onChange={(e) => setForm({ ...form, show_in_home: e.target.checked })}
+                  className="accent-primary w-4 h-4"
+                />
+                <span className="text-sm text-secondary">Visible en la home</span>
               </label>
             </div>
           </div>

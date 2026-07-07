@@ -8,7 +8,7 @@ import { errorResponse, rateLimitByIp, readJson, validateSameOrigin } from '@/li
 // home, server component), 'footer' (PageFooter) y 'site_images' (fotos de la
 // landing y de /order). Las claves antiguas (hero, how_it_works,
 // gallery_images, stats) se retiran — ver CLEANUP.sql.
-const ALLOWED_KEYS = ['home_content', 'footer', 'site_images'];
+const ALLOWED_KEYS = ['home_content', 'footer', 'site_images', 'pod_products'];
 
 export async function GET(request: Request) {
   const rl = await rateLimitByIp(request, { prefix: 'pub-landing', max: 60, windowMs: 60_000 });
