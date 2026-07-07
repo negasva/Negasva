@@ -1,12 +1,8 @@
 'use client';
 
 import Image from 'next/image';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { cachedFetchJSON } from '@/lib/cache/clientCache';
-
-// Carrusel auto-scroll (marquee) de la galería, editable desde el admin
-// (/adminlanding/galeria → gallery_items). Below-the-fold y lazy-load: no
-// afecta al LCP. Reutiliza el mismo endpoint y datos que /gallery.
 
 interface Item {
   id: string;
@@ -15,11 +11,9 @@ interface Item {
   image_url: string | null;
 }
 
-// Alt pattern SEO pedido: "{estilo} style custom portrait hand drawn from photo".
 const altFor = (i: Item) =>
   `${i.style ? `${i.style} style ` : ''}custom portrait hand drawn from photo`;
 
-// Placeholders mientras no haya obras reales cargadas desde el admin.
 const PLACEHOLDERS: Item[] = [
   { id: 'ph-1', title: 'Sample 1', style: 'Rick and Morty', image_url: null },
   { id: 'ph-2', title: 'Sample 2', style: 'Simpsons', image_url: null },
@@ -27,16 +21,28 @@ const PLACEHOLDERS: Item[] = [
   { id: 'ph-4', title: 'Sample 4', style: 'Studio Ghibli', image_url: null },
 ];
 
-function Card({ item }: { item: Item }) {
+function shuffle<T>(arr: T[]): T[] {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function Card({ item, onClick }: { item: Item; onClick?: () => void }) {
   return (
-    <div className="relative w-[220px] sm:w-[260px] aspect-square flex-shrink-0 rounded-2xl overflow-hidden border-2 border-primary-lighter bg-primary-lighter/30">
+    <div
+      className={`relative w-[220px] sm:w-[260px] aspect-square flex-shrink-0 rounded-2xl overflow-hidden border-2 border-primary-lighter bg-primary-lighter/30 ${item.image_url ? 'cursor-pointer' : ''}`}
+      onClick={item.image_url ? onClick : undefined}
+    >
       {item.image_url ? (
         <Image
           src={item.image_url}
           alt={altFor(item)}
           fill
           loading="lazy"
-          className="object-cover"
+          className="object-cover hover:scale-105 transition-transform duration-300"
           sizes="260px"
         />
       ) : (
@@ -52,41 +58,74 @@ function Card({ item }: { item: Item }) {
   );
 }
 
+function Lightbox({ item, onClose }: { item: Item; onClose: () => void }) {
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [onClose]);
+
+  return (
+    <div
+      ref={ref}
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4"
+      onClick={(e) => { if (e.target === ref.current) onClose(); }}
+    >
+      <button
+        onClick={onClose}
+        aria-label="Cerrar"
+        className="absolute top-4 right-4 text-white text-2xl font-black leading-none w-10 h-10 flex items-center justify-center rounded-full"
+        style={{ textShadow: '0 0 12px #FC90B6, 0 0 24px #FC90B6' }}
+      >
+        ✕
+      </button>
+      <div className="relative max-w-[90vw] max-h-[90vh] rounded-2xl overflow-hidden shadow-2xl">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={item.image_url!}
+          alt={altFor(item)}
+          className="block max-w-[90vw] max-h-[90vh] object-contain"
+        />
+      </div>
+    </div>
+  );
+}
+
 export default function GalleryMarquee() {
   const [items, setItems] = useState<Item[] | null>(null);
+  const [lightbox, setLightbox] = useState<Item | null>(null);
 
   useEffect(() => {
-    // Sin caché de sesión: las obras las sube el admin y deben verse al instante.
     cachedFetchJSON<Item[]>('/api/gallery', { ttlMs: 0, init: { cache: 'no-store' } })
-      .then((d) => setItems(Array.isArray(d) ? d : []))
+      .then((d) => setItems(Array.isArray(d) ? shuffle(d) : []))
       .catch(() => setItems([]));
   }, []);
 
   const list = items && items.length > 0 ? items : PLACEHOLDERS;
-  // Loop infinito real: el track son DOS mitades idénticas y la animación
-  // desplaza exactamente -50% (una mitad), así al terminar ya está el mismo
-  // contenido en su sitio y no hay salto ni hueco. Cada mitad se repite hasta
-  // tener suficientes tarjetas para superar el ancho de viewport aun con pocas
-  // imágenes (3-4 placeholders) — con muchas ya sobra.
   const half = list.length >= 12
     ? list
     : Array.from({ length: Math.ceil(12 / list.length) }, () => list).flat();
   const track = [...half, ...half];
 
   return (
-    <section className="bg-[#FFF1F7] py-14 md:py-16 overflow-hidden">
-      <div className="mx-auto max-w-[1150px] px-6 mb-8 text-center">
-        <h2 className="font-black text-[26px] sm:text-[34px] md:text-[40px] leading-tight">
-          Real portraits, hand-drawn
-        </h2>
-      </div>
-      <div className="group relative w-full overflow-hidden">
-        <div className="flex gap-5 w-max animate-marquee-left group-hover:[animation-play-state:paused]">
-          {track.map((item, i) => (
-            <Card key={`${item.id}-${i}`} item={item} />
-          ))}
+    <>
+      <section className="bg-[#FFF1F7] py-14 md:py-16 overflow-hidden">
+        <div className="mx-auto max-w-[1150px] px-6 mb-8 text-center">
+          <h2 className="font-black text-[26px] sm:text-[34px] md:text-[40px] leading-tight">
+            Real portraits, hand-drawn
+          </h2>
         </div>
-      </div>
-    </section>
+        <div className="group relative w-full overflow-hidden">
+          <div className="flex gap-5 w-max animate-marquee-left group-hover:[animation-play-state:paused]">
+            {track.map((item, i) => (
+              <Card key={`${item.id}-${i}`} item={item} onClick={() => setLightbox(item)} />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {lightbox && <Lightbox item={lightbox} onClose={() => setLightbox(null)} />}
+    </>
   );
 }
