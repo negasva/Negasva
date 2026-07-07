@@ -47,7 +47,17 @@ export async function POST(request: Request) {
   const { error } = await db.storage
     .from(BUCKET)
     .upload(path, buffer, { contentType, cacheControl: '3600', upsert: false });
-  if (error) return errorResponse('Error al subir imagen', 500, error);
+  if (error) {
+    const msg = typeof error.message === 'string' ? error.message : '';
+    const publicMsg = msg.includes('mime') || msg.includes('type')
+      ? 'Tipo de archivo rechazado por el bucket de storage'
+      : msg.includes('size') || msg.includes('limit')
+      ? 'Archivo demasiado grande para el bucket de storage'
+      : msg.includes('not found') || msg.includes('bucket')
+      ? 'Bucket de storage no encontrado — ejecuta la migración 009'
+      : 'Error al subir imagen al storage';
+    return errorResponse(publicMsg, 500, error);
+  }
 
   const { data } = db.storage.from(BUCKET).getPublicUrl(path);
   return NextResponse.json({ url: data.publicUrl });
