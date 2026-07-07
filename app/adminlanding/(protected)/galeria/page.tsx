@@ -46,12 +46,12 @@ export default function AdminGaleriaPage() {
 
   useEffect(() => { load(); }, [load]);
 
-  async function uploadFile(file: File): Promise<string | null> {
+  async function uploadFile(file: File): Promise<{ url: string } | { error: string }> {
     try {
-      return await uploadAdminImage(file, 'gallery');
+      const url = await uploadAdminImage(file, 'gallery');
+      return { url };
     } catch (err) {
-      showToast(err instanceof Error ? err.message : 'Error al subir imagen');
-      return null;
+      return { error: err instanceof Error ? err.message : 'Error al subir imagen' };
     }
   }
 
@@ -64,9 +64,9 @@ export default function AdminGaleriaPage() {
     if (mode === 'file') {
       const file = fileRef.current?.files?.[0];
       if (!file) { setSaving(false); return; }
-      const url = await uploadFile(file);
-      if (!url) { setSaving(false); return; }
-      imageUrl = url;
+      const result = await uploadFile(file);
+      if ('error' in result) { showToast(result.error); setSaving(false); return; }
+      imageUrl = result.url;
     } else {
       if (!urlInput.trim()) { setSaving(false); return; }
       imageUrl = urlInput.trim();
@@ -76,9 +76,9 @@ export default function AdminGaleriaPage() {
     let beforeUrl: string | null = null;
     const beforeFile = beforeRef.current?.files?.[0];
     if (beforeFile) {
-      const url = await uploadFile(beforeFile);
-      if (!url) { setSaving(false); return; }
-      beforeUrl = url;
+      const result = await uploadFile(beforeFile);
+      if ('error' in result) { showToast(result.error); setSaving(false); return; }
+      beforeUrl = result.url;
     }
 
     const res = await fetch('/api/admin/gallery', {
@@ -106,22 +106,25 @@ export default function AdminGaleriaPage() {
     const arr = Array.from(files);
     if (arr.length === 0) return;
     let done = 0, ok = 0, fail = 0;
+    let lastError = '';
     setBulk({ done: 0, total: arr.length });
     let idx = 0;
     const worker = async () => {
       while (idx < arr.length) {
         const file = arr[idx++];
-        const url = await uploadFile(file);
-        if (url) {
+        const result = await uploadFile(file);
+        if ('url' in result) {
           const title = (file.name.replace(/\.[^.]+$/, '').trim() || 'gallery').slice(0, 120);
           const res = await fetch('/api/admin/gallery', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ title, style: null, image_url: url }),
+            body: JSON.stringify({ title, style: null, image_url: result.url }),
           });
-          if (res.ok) ok++; else fail++;
+          if (res.ok) ok++;
+          else { fail++; lastError = 'Error al guardar en base de datos'; }
         } else {
-          fail++; // upload rechazado (tipo no permitido, muy grande, etc.)
+          fail++;
+          lastError = result.error;
         }
         setBulk({ done: ++done, total: arr.length });
       }
@@ -130,7 +133,11 @@ export default function AdminGaleriaPage() {
     if (bulkRef.current) bulkRef.current.value = '';
     setBulk(null);
     await load();
-    showToast(fail === 0 ? `${ok} imágenes subidas` : `${ok} subidas, ${fail} fallaron (tipo/tamaño)`);
+    if (fail === 0) {
+      showToast(`${ok} imágenes subidas`);
+    } else {
+      showToast(`${ok} subidas, ${fail} fallaron${lastError ? `: ${lastError}` : ''}`);
+    }
   }
 
   async function toggle(item: GalleryItem) {
