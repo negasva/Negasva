@@ -4,7 +4,6 @@
 // aquí; el resto de la página es un server component estático (SEO).
 
 import Link from 'next/link';
-import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { ChevronRight, ChevronDown, Flame } from 'lucide-react';
 import { useAutoTranslate } from '@/lib/i18n/useAutoTranslate';
@@ -87,8 +86,9 @@ export function StepsPortraits() {
       <div className="flex md:hidden justify-center items-end">
         <div className="relative z-10 rotate-[-3deg]">
           {img1 ? (
-            <div className="relative w-[150px] h-[200px] rounded-[75px] overflow-hidden shadow-[0_16px_36px_rgba(0,0,0,0.13)] bg-white">
-              <Image src={img1} alt="Custom cartoon style portrait hand drawn from photo" fill className="object-cover" sizes="150px" />
+            <div className="w-[150px] h-[200px] rounded-[75px] overflow-hidden shadow-[0_16px_36px_rgba(0,0,0,0.13)] bg-white">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={img1} alt="Custom cartoon style portrait hand drawn from photo" className="w-full h-full object-cover" />
             </div>
           ) : (
             <ImgSlot className="w-[150px] h-[200px] rounded-[75px] shadow-[0_16px_36px_rgba(0,0,0,0.13)]" />
@@ -96,8 +96,9 @@ export function StepsPortraits() {
         </div>
         <div className="relative z-0 -ml-5 mt-8 rotate-[2deg]">
           {img2 ? (
-            <div className="relative w-[135px] h-[180px] rounded-[68px] overflow-hidden shadow-[0_16px_36px_rgba(0,0,0,0.13)] bg-white">
-              <Image src={img2} alt="Custom cartoon couple portrait hand drawn from photo" fill className="object-cover" sizes="135px" />
+            <div className="w-[135px] h-[180px] rounded-[68px] overflow-hidden shadow-[0_16px_36px_rgba(0,0,0,0.13)] bg-white">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={img2} alt="Custom cartoon couple portrait hand drawn from photo" className="w-full h-full object-cover" />
             </div>
           ) : (
             <ImgSlot className="w-[135px] h-[180px] rounded-[68px] shadow-[0_16px_36px_rgba(0,0,0,0.13)]" />
@@ -108,8 +109,9 @@ export function StepsPortraits() {
       <div className="relative min-h-[360px] hidden md:block">
         <div className="absolute top-0 left-[4%] rotate-[-3deg] z-10">
           {img1 ? (
-            <div className="relative w-[240px] h-[320px] rounded-[120px] overflow-hidden shadow-[0_16px_36px_rgba(0,0,0,0.13)] bg-white">
-              <Image src={img1} alt="Custom cartoon style portrait hand drawn from photo" fill className="object-cover" sizes="240px" />
+            <div className="w-[240px] h-[320px] rounded-[120px] overflow-hidden shadow-[0_16px_36px_rgba(0,0,0,0.13)] bg-white">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={img1} alt="Custom cartoon style portrait hand drawn from photo" className="w-full h-full object-cover" />
             </div>
           ) : (
             <ImgSlot style={{ width: 240, height: 320, borderRadius: 120, boxShadow: '0 16px 36px rgba(0,0,0,0.13)' }} />
@@ -117,8 +119,9 @@ export function StepsPortraits() {
         </div>
         <div className="absolute top-[110px] left-[46%] rotate-[2deg] z-0">
           {img2 ? (
-            <div className="relative w-[220px] h-[300px] rounded-[110px] overflow-hidden shadow-[0_16px_36px_rgba(0,0,0,0.13)] bg-white">
-              <Image src={img2} alt="Custom cartoon couple portrait hand drawn from photo" fill className="object-cover" sizes="220px" />
+            <div className="w-[220px] h-[300px] rounded-[110px] overflow-hidden shadow-[0_16px_36px_rgba(0,0,0,0.13)] bg-white">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={img2} alt="Custom cartoon couple portrait hand drawn from photo" className="w-full h-full object-cover" />
             </div>
           ) : (
             <ImgSlot style={{ width: 220, height: 300, borderRadius: 110, boxShadow: '0 16px 36px rgba(0,0,0,0.13)' }} />
