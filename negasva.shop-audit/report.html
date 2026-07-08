@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>SEO Audit — negasva.shop</title>
+<style>
+  @page { size: A4; margin: 2cm 1.8cm; }
+  body { font-family: -apple-system, Segoe UI, Helvetica, Arial, sans-serif; color: #1a1a1a; line-height: 1.5; font-size: 11px; }
+  h1 { font-size: 26px; margin-bottom: 4px; }
+  h2 { font-size: 17px; margin-top: 28px; border-bottom: 2px solid #2563eb; padding-bottom: 4px; color: #1e3a8a; }
+  h3 { font-size: 13px; margin-top: 18px; color: #1e3a8a; }
+  .cover { text-align: center; padding-top: 30vh; }
+  .cover h1 { font-size: 34px; }
+  .cover .sub { color: #555; font-size: 13px; margin-top: 8px; }
+  .score-badge { display:inline-block; margin-top: 30px; font-size: 56px; font-weight:700; color:#2563eb; border:6px solid #2563eb; border-radius:50%; width:140px; height:140px; line-height:128px; }
+  table { border-collapse: collapse; width: 100%; margin: 10px 0; font-size: 10.5px; }
+  th, td { border: 1px solid #ddd; padding: 6px 8px; text-align: left; }
+  th { background: #f1f5f9; }
+  .sev-Critical { color: #b91c1c; font-weight: 700; }
+  .sev-High { color: #c2410c; font-weight: 700; }
+  .sev-Medium { color: #a16207; font-weight: 600; }
+  .sev-Low, .sev-Info { color: #555; }
+  ul { margin: 6px 0; padding-left: 20px; }
+  .pagebreak { page-break-before: always; }
+  .meta { color:#555; font-size: 10.5px; }
+  .finding { margin-bottom: 10px; padding: 8px 10px; background: #f8fafc; border-left: 3px solid #cbd5e1; }
+  .finding.Critical { border-left-color: #b91c1c; }
+  .finding.High { border-left-color: #c2410c; }
+  .finding.Medium { border-left-color: #a16207; }
+  .checklist li { margin-bottom: 4px; }
+  .phase { margin-top: 14px; }
+</style>
+</head>
+<body>
+
+<div class="cover">
+  <h1>SEO Audit Report</h1>
+  <div class="sub">negasva.shop — 2026-06-23</div>
+  <div class="sub">E-commerce / personalized digital service (custom cartoon-style photo portraits)</div>
+  <div class="score-badge">62</div>
+  <div class="sub" style="margin-top:10px;">Overall SEO Health Score / 100</div>
+</div>
+
+<div class="pagebreak"></div>
+
+<h1>Executive Summary</h1>
+<p>negasva.shop has solid technical bones — fully SSR'd Next.js content, strong security headers, fast TTFB, and good schema infrastructure — but several <b>bugs are actively suppressing the site's own search visibility</b>: wrong canonical tags on most non-homepage pages, broken hreflang claims pointing to nonexistent locales, and duplicate/competing Product schema entities. None of these require new content or design work — they are metadata bugs with outsized impact, and they are the highest-leverage fixes available.</p>
+<p>Content depth is the second-biggest gap: the blog is critically thin (one comparison post measured at ~89 words), and the four style pages appear templated rather than genuinely differentiated, evidenced by identical hardcoded pricing in their schema.</p>
+
+<h2>Top 5 Critical Issues</h2>
+<ol>
+<li>Canonical tags on /precios, /order, /galeria, /sobre, /contacto, /faq all point to the homepage instead of self.</li>
+<li>hreflang tags claim en/fr versions exist; they all resolve to the same Spanish homepage.</li>
+<li>Competing Product schema entities on style pages, plus generic Product/Offer schema leaking onto non-product pages.</li>
+<li>/order (checkout) is indexed with no canonical/noindex; /order?style=* variants are crawlable duplicate-content risk.</li>
+<li>Blog posts are critically thin — the site's own templating proves 500+ word pages are achievable elsewhere.</li>
+</ol>
+
+<h2>Top 5 Quick Wins</h2>
+<ol>
+<li>Fix canonical tags to self-reference (hours, high impact).</li>
+<li>Remove broken en/fr hreflang claims (hours).</li>
+<li>Redirect www.negasva.shop to apex (minutes).</li>
+<li>Add llms.txt for AI crawler readiness (1-2 hours).</li>
+<li>Render all FAQ answers in visible DOM text instead of a collapsed accordion (half day).</li>
+</ol>
+
+<h2>Category Scores</h2>
+<table>
+<tr><th>Category</th><th>Score</th><th>Weight</th></tr>
+<tr><td>Technical SEO</td><td>64/100</td><td>22%</td></tr>
+<tr><td>Content Quality</td><td>55/100</td><td>23%</td></tr>
+<tr><td>On-Page / Search Experience</td><td>63/100</td><td>20%</td></tr>
+<tr><td>Schema / Structured Data</td><td>58/100</td><td>10%</td></tr>
+<tr><td>Performance (CWV)</td><td>73/100</td><td>10%</td></tr>
+<tr><td>AI Search Readiness (GEO)</td><td>64/100</td><td>10%</td></tr>
+<tr><td>Images</td><td>65/100</td><td>5%</td></tr>
+</table>
+<p class="meta">Supplementary specialist scores (not part of the weighted total): SXO/page-intent fit 62/100, E-commerce signals 64/100, Blog content architecture 42/100, Visual/mobile 68/100. Backlinks: not scored — zero measured footprint in free data sources (domain too new for Common Crawl).</p>
+
+<div class="pagebreak"></div>
+
+<h1>Detailed Findings</h1>
+
+<h2>Technical SEO — 64/100</h2>
+<p><b>Works well:</b> full SSR/SSG (no SPA shell), strong security headers (HSTS preload, full CSP, COOP/CORP), clean robots.txt, valid sitemap, correctly prioritized LCP image loading.</p>
+<div class="finding Critical"><span class="sev-Critical">CRITICAL</span> — Canonical tags on /precios, /order, /galeria, /sobre, /contacto, /faq all point to the homepage instead of self. Likely suppressing these pages from search results entirely.</div>
+<div class="finding Critical"><span class="sev-Critical">CRITICAL</span> — hreflang tags advertise en/fr/x-default locales that don't exist, all resolving to the Spanish root URL.</div>
+<div class="finding High"><span class="sev-High">HIGH</span> — www.negasva.shop returns 200 instead of redirecting to apex.</div>
+<div class="finding High"><span class="sev-High">HIGH</span> — /seguimiento is noindex,nofollow, blocking link equity unnecessarily.</div>
+<div class="finding Medium"><span class="sev-Medium">MEDIUM</span> — Every sitemap URL shares an identical lastmod timestamp (a build-time stamp, not real content tracking).</div>
+
+<h2>Content Quality — 55/100</h2>
+<p><b>Works well:</b> pricing and 48h turnaround stated clearly and consistently; style detail pages run substantial (~538 words with FAQ).</p>
+<div class="finding Critical"><span class="sev-Critical">CRITICAL</span> — The blog is severely thin: a comparison post measured at ~89 words, far below what's needed to rank for comparison-intent queries.</div>
+<div class="finding High"><span class="sev-High">HIGH</span> — The four style pages show signs of templated, copy-paste-and-swap-name content (identical hardcoded pricing across all four in schema).</div>
+<div class="finding High"><span class="sev-High">HIGH</span> — Using third-party trademarked character names as the core keyword strategy carries a business risk worth a deliberate decision.</div>
+<div class="finding High"><span class="sev-High">HIGH</span> — Testimonials aren't linked to a verifiable review platform.</div>
+<div class="finding Medium"><span class="sev-Medium">MEDIUM</span> — 2 of 4 styles have zero supporting blog content; no gift-occasion content despite the gift-driven business model.</div>
+
+<h2>On-Page / Search Experience — 63/100</h2>
+<p>/estilos/rick-y-morty is a well-built hybrid product page (price, FAQ, breadcrumbs) that competes well for gift-intent keywords. But for tool-intent keywords like "convertir foto en caricatura simpsons," the SERP is dominated by free instant AI generators (7/10 results) — a paid, 48h hand-drawn product page cannot satisfy that intent.</p>
+<div class="finding High"><span class="sev-High">HIGH</span> — Page-type mismatch for tool-intent keywords; will not rank without a free-preview entry point.</div>
+<div class="finding Medium"><span class="sev-Medium">MEDIUM</span> — Missing gift-occasion framing on style pages that competitors use prominently.</div>
+<div class="finding Medium"><span class="sev-Medium">MEDIUM</span> — No reviews/ratings visible on style detail pages themselves.</div>
+
+<h2>Schema / Structured Data — 58/100</h2>
+<p><b>Works well:</b> Product+AggregateOffer and FAQPage JSON-LD present sitewide with clean, citable facts; BreadcrumbList on key pages.</p>
+<div class="finding Critical"><span class="sev-Critical">CRITICAL</span> — Competing Product schema entities on the same page (generic + style-specific).</div>
+<div class="finding Critical"><span class="sev-Critical">CRITICAL</span> — Generic Product/Offer schema bleeds onto non-product pages (home, /order, /precios index).</div>
+<div class="finding High"><span class="sev-High">HIGH</span> — No Review/AggregateRating schema despite visible testimonials.</div>
+<div class="finding High"><span class="sev-High">HIGH</span> — Identical lowPrice/highPrice hardcoded across all 4 styles' schema.</div>
+
+<h2>Performance / Core Web Vitals — 73/100</h2>
+<div class="finding High"><span class="sev-High">HIGH</span> — LCP fails the "Good" threshold on all 4 tested pages (2.33s-2.94s), driven by render-blocking CSS and an under-optimized hero image (~41KB savings available).</div>
+<div class="finding High"><span class="sev-High">HIGH</span> — /estilos fails CLS (0.245, "poor") due to a dynamically-rendered grid card shifting layout after load.</div>
+<div class="finding Medium"><span class="sev-Medium">MEDIUM</span> — ~11KB wasted on an unnecessary legacy JS polyfill (Array.prototype.at).</div>
+<div class="finding Medium"><span class="sev-Medium">MEDIUM</span> — Stripe's checkout JS (236KB) loads globally rather than only on /order.</div>
+
+<h2>AI Search Readiness (GEO) — 64/100</h2>
+<p><b>Works well:</b> pricing/turnaround stated as clean, repeatable facts; fully SSR'd content directly crawlable by GPTBot/ClaudeBot/PerplexityBot.</p>
+<div class="finding High"><span class="sev-High">HIGH</span> — 9 of 10 FAQ answers are hidden inside a collapsed accordion, invisible to plain-text DOM extraction.</div>
+<div class="finding Medium"><span class="sev-Medium">MEDIUM</span> — llms.txt is missing (404).</div>
+<div class="finding Medium"><span class="sev-Medium">MEDIUM</span> — No English content despite English search demand for "Rick and Morty portrait"-type queries.</div>
+<div class="finding Medium"><span class="sev-Medium">MEDIUM</span> — Weak authority signals (Instagram/TikTok only vs. higher-correlating YouTube/Reddit).</div>
+
+<h2>Images — 65/100</h2>
+<div class="finding Medium"><span class="sev-Medium">MEDIUM</span> — Hero image has ~41KB of unrealized compression savings.</div>
+<p class="meta">Alt-text coverage and image-SERP visibility weren't deeply audited this pass — recommend a follow-up.</p>
+
+<h2>Backlinks</h2>
+<p>No Moz/Bing/DataForSEO API keys configured. Common Crawl shows zero record of negasva.shop — consistent with a brand-new, small domain not yet captured by quarterly web-graph snapshots. Recommended tactics: Etsy listings, fandom forum/subreddit presence, Pinterest, gift-guide outreach, UGC incentive program.</p>
+
+<div class="pagebreak"></div>
+
+<h1>Action Plan</h1>
+
+<div class="phase">
+<h2>Phase 1: Critical Fixes — Week 1</h2>
+<ul class="checklist">
+<li>Fix canonical tags on /precios, /order, /galeria, /sobre, /contacto, /faq to self-reference</li>
+<li>Remove broken en/fr hreflang claims (or commit to building real locales)</li>
+<li>Remove competing/duplicate Product schema nodes on style pages</li>
+<li>Scope generic Product/Offer schema off non-product pages</li>
+<li>Add canonical/noindex handling for /order?style=* variants</li>
+</ul>
+</div>
+
+<div class="phase">
+<h2>Phase 2: High-Impact Improvements — Weeks 2-3</h2>
+<ul class="checklist">
+<li>Redirect www.negasva.shop to apex domain</li>
+<li>Remove noindex,nofollow from /seguimiento if unintentional</li>
+<li>Render all FAQ answers in visible DOM text instead of hidden accordion content</li>
+<li>Fix LCP (render-blocking CSS, hero image compression) and /estilos CLS root cause</li>
+<li>Add Review/AggregateRating schema using real, verifiable review data</li>
+<li>Fix hardcoded identical pricing across the 4 style pages' schema</li>
+</ul>
+</div>
+
+<div class="phase">
+<h2>Phase 3: Content & Authority — Month 2</h2>
+<ul class="checklist">
+<li>Expand all 6 blog posts to 800-1500 words, starting with the thinnest comparison post</li>
+<li>Differentiate the 4 style pages beyond name-swapping</li>
+<li>Add llms.txt and consider an English locale for /precios, /faq, /estilos</li>
+<li>Decide deliberately on trademark/IP framing strategy for character-name keywords</li>
+<li>Link visible testimonials to a verifiable review platform</li>
+</ul>
+</div>
+
+<div class="phase">
+<h2>Phase 4: Monitoring & Iteration — Ongoing</h2>
+<ul class="checklist">
+<li>Track Core Web Vitals post-fix via PageSpeed Insights / CrUX</li>
+<li>Build YouTube/Reddit presence for AI-citation authority signals</li>
+<li>Re-run backlink check once domain accrues Common Crawl/Moz coverage</li>
+<li>Monitor whether tool-intent keywords warrant a free-preview entry point</li>
+</ul>
+</div>
+
+</body>
+</html>
