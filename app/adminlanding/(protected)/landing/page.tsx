@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useCallback, useRef } from 'react';
+import { useEffect, useState, useCallback, useRef, DragEvent } from 'react';
 import { uploadAdminImage } from '@/lib/admin/uploadImage';
 import {
   HOME_TEXT_SECTIONS,
@@ -206,26 +206,12 @@ export default function AdminLandingPage() {
       </section>
 
       {/* TESTIMONIOS */}
-      <section className={cardCls}>
-        <h2 className="font-black text-xl text-secondary mb-1">Testimonios</h2>
-        <p className="text-xs text-gray-500 mb-4">
-          Las reseñas del carrusel. La foto (opcional) es el retrato entregado; sin foto la tarjeta se muestra sin imagen.
-        </p>
-        {home.testimonials.map((r: HomeTestimonial, i) => (
-          <TestimonialRow
-            key={i}
-            item={r}
-            onChange={(next) => setHome({ ...home, testimonials: home.testimonials.map((x, j) => j === i ? next : x) })}
-            onDelete={() => setHome({ ...home, testimonials: home.testimonials.filter((_, j) => j !== i) })}
-          />
-        ))}
-        <button className={`${addCls} mr-3`} onClick={() => setHome({ ...home, testimonials: [...home.testimonials, { name: '', comment: '', photo: null, rating: 5, title: '', visible: true }] })}>
-          + Añadir testimonio
-        </button>
-        <button className={saveCls} disabled={saving === 'testimonials'} onClick={() => saveHome('testimonials')}>
-          {saving === 'testimonials' ? 'Guardando…' : 'Guardar Testimonios'}
-        </button>
-      </section>
+      <TestimonialsSection
+        testimonials={home.testimonials}
+        onChange={(testimonials) => setHome({ ...home, testimonials })}
+        saving={saving}
+        onSave={() => saveHome('testimonials')}
+      />
 
       {/* FOOTER */}
       <section className={cardCls}>
@@ -312,6 +298,81 @@ export default function AdminLandingPage() {
         </button>
       </section>
     </div>
+  );
+}
+
+function TestimonialsSection({
+  testimonials,
+  onChange,
+  saving,
+  onSave,
+}: {
+  testimonials: HomeTestimonial[];
+  onChange: (next: HomeTestimonial[]) => void;
+  saving: string;
+  onSave: () => void;
+}) {
+  const dragIdx = useRef<number | null>(null);
+
+  function handleDragStart(e: DragEvent<HTMLDivElement>, i: number) {
+    dragIdx.current = i;
+    e.dataTransfer.effectAllowed = 'move';
+  }
+
+  function handleDrop(e: DragEvent<HTMLDivElement>, i: number) {
+    e.preventDefault();
+    const from = dragIdx.current;
+    if (from === null || from === i) return;
+    const next = [...testimonials];
+    const [moved] = next.splice(from, 1);
+    next.splice(i, 0, moved);
+    onChange(next);
+    dragIdx.current = null;
+  }
+
+  function handleDragOver(e: DragEvent<HTMLDivElement>) {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+  }
+
+  return (
+    <section className={cardCls}>
+      <h2 className="font-black text-xl text-secondary mb-1">Testimonios</h2>
+      <p className="text-xs text-gray-500 mb-4">
+        Las reseñas del carrusel. La foto (opcional) es el retrato entregado; sin foto la tarjeta se muestra sin imagen.
+        <span className="ml-1 font-semibold text-primary">Arrastra ⠿ para reordenar.</span>
+      </p>
+      {testimonials.map((r, i) => (
+        <div
+          key={i}
+          draggable
+          onDragStart={(e) => handleDragStart(e, i)}
+          onDrop={(e) => handleDrop(e, i)}
+          onDragOver={handleDragOver}
+          className="flex gap-2 items-start"
+        >
+          <div className="mt-5 cursor-grab active:cursor-grabbing text-gray-400 select-none text-lg leading-none pt-1" title="Arrastrar para reordenar">
+            ⠿
+          </div>
+          <div className="flex-1">
+            <TestimonialRow
+              item={r}
+              onChange={(next) => onChange(testimonials.map((x, j) => j === i ? next : x))}
+              onDelete={() => onChange(testimonials.filter((_, j) => j !== i))}
+            />
+          </div>
+        </div>
+      ))}
+      <button
+        className={`${addCls} mr-3`}
+        onClick={() => onChange([...testimonials, { name: '', comment: '', photo: null, rating: 5, title: '', visible: true }])}
+      >
+        + Añadir testimonio
+      </button>
+      <button className={saveCls} disabled={saving === 'testimonials'} onClick={onSave}>
+        {saving === 'testimonials' ? 'Guardando…' : 'Guardar Testimonios'}
+      </button>
+    </section>
   );
 }
 
