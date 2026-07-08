@@ -27,9 +27,20 @@ async function fetchGallery(): Promise<GalleryItem[]> {
   return error ? [] : (data ?? []);
 }
 
+const TITLE_MAP: Record<string, string> = {
+  'digital-portrait-rick-and-morty': 'Rick and Morty Style Portrait comission',
+  'digital-portrait-fairly-odd-parents': 'Fiarly odd arents  Style Portrait comission',
+  'digital-portrait-the-simpsons': 'The Simpsons Style Portrait comission',
+};
+
+function displayTitle(raw: string): string {
+  if (!raw || raw.trim() === '') return 'Personalized Negasva Art Comission portrait';
+  return TITLE_MAP[raw.trim()] ?? raw;
+}
+
 // Alt pattern keyword para image SEO.
 const altFor = (item: GalleryItem) =>
-  `${item.style ? `${item.style} style ` : ''}custom portrait hand drawn from photo — ${item.title}`;
+  `${item.style ? `${item.style} style ` : ''}custom portrait hand drawn from photo — ${displayTitle(item.title)}`;
 
 export default async function GalleryPage() {
   const items = await fetchGallery();
@@ -71,7 +82,7 @@ export default async function GalleryPage() {
                     />
                   </div>
                   <div className="p-6 bg-white">
-                    <h3 className="font-bold text-secondary mb-2">{item.title}</h3>
+                    <h3 className="font-bold text-secondary mb-2">{displayTitle(item.title)}</h3>
                     {item.style && <p className="text-sm text-primary font-semibold">{item.style}</p>}
                   </div>
                 </div>
