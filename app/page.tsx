@@ -9,6 +9,7 @@ import { loadPricingConfig } from '@/lib/pricing/server';
 import Navbar from '@/components/Navbar';
 import PageFooter from '@/components/PageFooter';
 import TestimonialsScroll from '@/components/TestimonialsScroll';
+ claude/gallery-portraits-reviews-wlg2yt
 import GalleryMarquee from '@/components/GalleryMarquee';
 import { HeroPortraits, StepsPortraits, WeeklyOrdersBadge, HomeFaq, StickyOrderCta } from './home-islands';
 
@@ -38,6 +39,9 @@ const GIFT_LINKS = [
   { href: '/gifts/wedding', label: 'Weddings' },
   { href: '/hand-drawn-no-ai', label: 'No-AI believers' },
 ];
+
+import { PRINT_PRODUCTS } from '@/lib/content/printProducts';
+ main
 
 const usd = (n: number) => `$${Number.isInteger(n) ? n : n.toFixed(2)}`;
 
@@ -274,6 +278,7 @@ export default async function Home() {
         </div>
       </section>
 
+ claude/gallery-portraits-reviews-wlg2yt
       {/* ══ YOUR DRAWING ON ANYTHING (POD) ══ */}
       <section className="bg-white py-20 md:py-24 px-6">
         <div className="mx-auto max-w-[1150px] grid md:grid-cols-[1fr_1.15fr] gap-16 items-start">
@@ -290,6 +295,47 @@ export default async function Home() {
                   <path d="M4 10 C 70 4, 180 2, 296 8" fill="none" stroke="#FC90B6" strokeWidth="5" strokeLinecap="round" />
                 </svg>
               </span>
+
+      {/* Print products */}
+      <section className="py-20 px-4 bg-white">
+        <div className="mx-auto max-w-7xl">
+          <div className="text-center mb-10">
+            <h2 className="font-black text-4xl md:text-5xl tracking-tighter text-secondary">
+              Your drawing, on anything you want
+            </h2>
+            <p className="text-lg text-secondary-lighter mt-3">
+              Choose a print add-on for your portrait.
+            </p>
+          </div>
+          <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5">
+            {PRINT_PRODUCTS.map((product) => (
+              <div key={product.name} className="rounded-3xl border-2 border-primary-lighter bg-white p-3 md:p-4 shadow-sm">
+                <div className="relative aspect-square rounded-2xl overflow-hidden bg-primary-lighter">
+                  <Image src={product.image} alt={product.name} fill className="object-cover" sizes="(max-width: 1024px) 50vw, 33vw" />
+                </div>
+                <div className="flex items-end justify-between gap-3 mt-3">
+                  <div>
+                    <p className="font-black text-secondary leading-tight">{product.name}</p>
+                    <p className="text-sm text-secondary-lighter">{product.price}</p>
+                  </div>
+                  <span className="h-9 w-9 rounded-full border-2 border-primary text-primary flex items-center justify-center font-black">+</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* D — Testimonios */}
+      <TestimonialsScroll />
+
+      {/* E — Precios */}
+      <section className="bg-primary-lighter py-20 px-4">
+        <div className="mx-auto max-w-4xl">
+          <div className="text-center mb-12">
+            <h2 className="font-black text-4xl md:text-5xl tracking-tighter text-secondary mb-4">
+              {t.home.pricing.title}
+ main
             </h2>
             <p className="text-[17px] leading-relaxed text-secondary-lighter max-w-[420px] mt-8 mb-6">
               {t.pod_body}
