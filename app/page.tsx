@@ -12,6 +12,7 @@ import { cachedFetchJSON } from '@/lib/cache/clientCache';
 import Navbar from '@/components/Navbar';
 import PageFooter from '@/components/PageFooter';
 import TestimonialsScroll from '@/components/TestimonialsScroll';
+import { PRINT_PRODUCTS } from '@/lib/content/printProducts';
 
 // ── Tipos y defaults (fallback si /api/landing-config no responde) ──────────
 
@@ -337,6 +338,36 @@ export default function Home() {
               </span>
             </div>
           ))}
+        </div>
+      </section>
+
+      {/* Print products */}
+      <section className="py-20 px-4 bg-white">
+        <div className="mx-auto max-w-7xl">
+          <div className="text-center mb-10">
+            <h2 className="font-black text-4xl md:text-5xl tracking-tighter text-secondary">
+              Your drawing, on anything you want
+            </h2>
+            <p className="text-lg text-secondary-lighter mt-3">
+              Choose a print add-on for your portrait.
+            </p>
+          </div>
+          <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5">
+            {PRINT_PRODUCTS.map((product) => (
+              <div key={product.name} className="rounded-3xl border-2 border-primary-lighter bg-white p-3 md:p-4 shadow-sm">
+                <div className="relative aspect-square rounded-2xl overflow-hidden bg-primary-lighter">
+                  <Image src={product.image} alt={product.name} fill className="object-cover" sizes="(max-width: 1024px) 50vw, 33vw" />
+                </div>
+                <div className="flex items-end justify-between gap-3 mt-3">
+                  <div>
+                    <p className="font-black text-secondary leading-tight">{product.name}</p>
+                    <p className="text-sm text-secondary-lighter">{product.price}</p>
+                  </div>
+                  <span className="h-9 w-9 rounded-full border-2 border-primary text-primary flex items-center justify-center font-black">+</span>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 

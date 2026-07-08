@@ -1,0 +1,181 @@
+{
+  "summary": {
+    "health_score": 62,
+    "business_type": "E-commerce / personalized digital service (custom cartoon-style photo portraits, Stripe checkout, Next.js on Vercel, Supabase backend)",
+    "top_findings": [
+      "Canonical tags on /precios, /order, /galeria, /sobre, /contacto, /faq all incorrectly point to the homepage instead of self, likely suppressing these pages from search results",
+      "hreflang tags advertise en/fr/x-default versions that all resolve to the same Spanish-only homepage URL — broken locale signaling with no real English content behind it",
+      "Competing/duplicate Product schema nodes on style pages, plus generic Product/Offer schema bleeding onto non-product pages (home, /order, /precios index)",
+      "/order checkout page is indexed at sitemap priority 0.9 with no canonical/noindex, and /order?style=* variants are crawlable — real duplicate-content risk on a transactional page",
+      "Blog posts are critically thin (one comparison post measured at ~89 words) despite the site's templating proving capable of 500+ word pages elsewhere",
+      "LCP fails Core Web Vitals threshold on all 4 tested pages (2.33s-2.94s); /estilos also fails CLS (0.245, 'poor') due to a dynamically-rendered grid card"
+    ],
+    "quick_wins": [
+      "Fix canonical tags to self-reference each page (hours, high impact)",
+      "Remove the broken en/fr hreflang claims until real localized pages exist (hours)",
+      "Redirect www.negasva.shop to the apex domain (minutes)",
+      "Add llms.txt summarizing the business, pricing, and turnaround for AI crawlers (1-2 hours)",
+      "Render all FAQ answers in visible DOM text instead of hiding 9 of 10 inside a collapsed accordion (half day)",
+      "Remove noindex,nofollow from /seguimiento unless intentional (minutes)"
+    ]
+  },
+  "categories": [
+    {
+      "name": "Technical SEO",
+      "score": 64,
+      "what_works": [
+        "Full SSR/SSG via Next.js — raw HTML contains complete content, no SPA shell",
+        "Strong security headers: HSTS preload, full CSP, COOP/CORP, X-Frame-Options DENY",
+        "Clean robots.txt and valid 23-URL sitemap with no crawl-blocking conflicts",
+        "LCP image correctly uses fetchPriority=\"high\" and is eagerly loaded"
+      ],
+      "findings": [
+        {"title": "Canonical tags point to homepage on 6+ pages", "severity": "Critical", "description": "/precios, /order, /galeria, /sobre, /contacto, /faq all emit a canonical tag pointing to https://negasva.shop instead of their own URL.", "recommendation": "Fix the metadata defaults so each page self-canonicalizes; audit the Next.js metadata/layout logic likely responsible for the shared default."},
+        {"title": "Broken hreflang claims", "severity": "Critical", "description": "hreflang en/fr/x-default tags exist on /precios and /estilos but all point to the Spanish root URL — no actual English or French content exists.", "recommendation": "Remove the en/fr hreflang entries until real localized pages exist, or build the locales."},
+        {"title": "www subdomain not redirected", "severity": "High", "description": "www.negasva.shop returns 200 instead of redirecting to the apex domain.", "recommendation": "Add a permanent redirect from www to apex at the Vercel/DNS layer."},
+        {"title": "/seguimiento is noindex,nofollow", "severity": "High", "description": "This order-tracking page blocks all link equity unnecessarily.", "recommendation": "Confirm intent; if accidental, remove the noindex directive."},
+        {"title": "Identical sitemap lastmod timestamps", "severity": "Medium", "description": "All 23 URLs share the exact same lastmod to the millisecond, including evergreen blog/legal pages — a build-time stamp, not real content tracking.", "recommendation": "Generate lastmod from actual content modification time, or omit the field."},
+        {"title": "No IndexNow implementation", "severity": "Medium", "description": "Faster re-crawl signaling unused.", "recommendation": "Low priority; implement once other critical fixes ship."}
+      ]
+    },
+    {
+      "name": "Content Quality",
+      "score": 55,
+      "what_works": [
+        "Pricing and 48h turnaround are stated clearly and consistently in both prose and schema",
+        "Style detail pages (e.g. /estilos/rick-y-morty) run substantial at ~538 words with FAQ and process sections",
+        "Visible customer testimonials with verified-purchase badges build some trust signal"
+      ],
+      "findings": [
+        {"title": "Blog posts critically thin", "severity": "Critical", "description": "A comparison post (rick-y-morty-vs-simpsons) renders only ~89 words of body text even with full JS rendering — far below what a comparison post needs to rank or answer the query.", "recommendation": "Expand all 6 blog posts to 800-1500 words with real comparative substance; prioritize the confirmed-thinnest, highest-intent post first."},
+        {"title": "Likely templated/duplicate style-page content", "severity": "High", "description": "All four style pages share identical hardcoded pricing in schema, suggesting copy-paste-and-swap-name patterning rather than genuinely differentiated content.", "recommendation": "Differentiate each style page with unique example imagery, unique FAQ answers, and accurate per-style pricing if it varies."},
+        {"title": "Trademark/IP exposure in core keyword strategy", "severity": "High", "description": "Primary keywords and URL slugs are built on third-party copyrighted character names (Rick y Morty, Los Simpsons, Gravity Falls, Padrinos Mágicos/Fairly OddParents).", "recommendation": "This is a business decision, not purely an SEO one — flagged so it's made deliberately. Consider parody/fan-art framing and a non-trademarked descriptive fallback alongside character names."},
+        {"title": "Testimonials unverifiable, not platform-linked", "severity": "Medium", "description": "\"1000+ clientes felices\" has no link-out to a verifiable review platform (Trustpilot, Google Reviews).", "recommendation": "Link to a real review platform if the claim is genuine; this also unlocks Review/AggregateRating schema."},
+        {"title": "Uneven blog topic coverage", "severity": "Medium", "description": "2 of 4 product styles (Gravity Falls, Padrinos Mágicos) have zero supporting blog content; no gift-occasion content despite a gift-driven business model.", "recommendation": "Add occasion-based content (birthdays, anniversaries) and close the per-style coverage gap."}
+      ]
+    },
+    {
+      "name": "On-Page / Search Experience",
+      "score": 63,
+      "what_works": [
+        "/estilos/rick-y-morty is a well-built hybrid product page: price range, FAQ, breadcrumbs, cross-links — strong fit for gift/commerce-intent searches",
+        "/precios server-renders real worked pricing examples in plain HTML, good for both users and citation"
+      ],
+      "findings": [
+        {"title": "Page-type mismatch for tool-intent keywords", "severity": "High", "description": "\"Convertir foto en caricatura simpsons\"-style queries are dominated (7/10 SERP results) by free instant AI generators. negasva's paid, 48h hand-drawn product page cannot satisfy that intent.", "recommendation": "Either build a free-preview/instant-generator entry point to capture tool-intent traffic, or deliberately deprioritize these verb-phrase keywords in favor of gift-phrase variants where the site already competes well."},
+        {"title": "Missing gift-occasion framing on style pages", "severity": "Medium", "description": "Competitors (donutamarillo, mortyme, yellowme) prominently frame products as birthday/anniversary gifts; negasva's style pages don't.", "recommendation": "Add occasion-based framing and cross-sell prompts on style detail pages."},
+        {"title": "No reviews/ratings visible on style detail pages", "severity": "Medium", "description": "Authority signal gap identified in gap-scoring (5/15).", "recommendation": "Surface testimonials or aggregate rating directly on style pages, not just the homepage."}
+      ]
+    },
+    {
+      "name": "Schema / Structured Data",
+      "score": 58,
+      "what_works": [
+        "OnlineStore + Product + AggregateOffer present sitewide",
+        "FAQPage JSON-LD covers all 10 Q&A pairs with clean, citable facts",
+        "BreadcrumbList present on /precios, /estilos, and style detail pages"
+      ],
+      "findings": [
+        {"title": "Competing Product entities on the same page", "severity": "Critical", "description": "Style pages emit both a generic sitewide Product node and a style-specific Product node, leaving no clear canonical entity for rich results.", "recommendation": "Remove the generic Product node from style detail pages; keep only the style-specific one."},
+        {"title": "Generic Product/Offer schema on non-product pages", "severity": "Critical", "description": "Home, /precios index, /estilos index, and /order all carry Product/Offer schema that doesn't belong there.", "recommendation": "Scope Product schema injection to actual product/style pages only."},
+        {"title": "No Review/AggregateRating schema", "severity": "High", "description": "Visible testimonials with verified-purchase badges aren't marked up, missing rich-result eligibility.", "recommendation": "Add Review/AggregateRating schema sourced from real, verifiable review data only — fabricated ratings risk a manual action."},
+        {"title": "Identical lowPrice/highPrice across all 4 styles", "severity": "High", "description": "Schema pricing (20/160) is hardcoded identically across styles, suggesting copy-paste rather than per-style data.", "recommendation": "Derive schema pricing from the same source /precios uses."},
+        {"title": "No WebSite + SearchAction schema", "severity": "Medium", "description": "Homepage lacks sitelinks-search-box eligibility markup.", "recommendation": "Add only if a real on-site search endpoint exists."}
+      ]
+    },
+    {
+      "name": "Performance (Core Web Vitals)",
+      "score": 73,
+      "what_works": [
+        "LCP image correctly uses fetchPriority=\"high\", eager loading, and is discoverable in the initial document",
+        "CLS passes on home, /galeria, and /estilos/rick-y-morty",
+        "TTFB is fast at 304ms"
+      ],
+      "findings": [
+        {"title": "LCP fails CWV threshold on all 4 tested pages", "severity": "High", "description": "Measured 2.33s-2.94s ('Needs Improvement') on home, /estilos, /galeria, and /estilos/rick-y-morty.", "recommendation": "Address render-blocking CSS (9KB, ~178ms) and optimize the hero image further (~41KB available savings)."},
+        {"title": "/estilos fails CLS (0.245, 'poor')", "severity": "High", "description": "Root cause confirmed as a dynamically-rendered grid card, not an unsized image or font issue.", "recommendation": "Reserve layout space for the grid card before its content loads, or render it server-side."},
+        {"title": "Unnecessary legacy JS polyfill", "severity": "Medium", "description": "~11KB wasted on an Array.prototype.at polyfill likely from an overly conservative build target.", "recommendation": "Adjust the JS build target/browserslist to drop unneeded polyfills."},
+        {"title": "Stripe JS loads globally", "severity": "Medium", "description": "236KB / 73ms of main-thread time from Stripe's JS loads on pages where checkout isn't yet needed.", "recommendation": "Lazy-load Stripe JS only on /order or at the point of checkout."}
+      ]
+    },
+    {
+      "name": "AI Search Readiness (GEO)",
+      "score": 64,
+      "what_works": [
+        "Pricing and turnaround are stated as clean, repeatable, extractable facts in both prose and schema",
+        "Fully SSR'd content is directly crawlable by GPTBot, ClaudeBot, PerplexityBot without JS execution",
+        "robots.txt wildcard implicitly allows all major AI crawlers with no blocking rules"
+      ],
+      "findings": [
+        {"title": "9 of 10 FAQ answers invisible outside JSON-LD", "severity": "High", "description": "Only the first FAQ answer renders in visible DOM text; the rest are inside a collapsed accordion using the hidden attribute, removing them from the accessibility tree and plain-text extraction.", "recommendation": "Use CSS-only collapse (max-height/aria-hidden styling) rather than DOM removal, so all answers remain extractable as plain text."},
+        {"title": "llms.txt missing (404)", "severity": "Medium", "description": "No llms.txt file exists to summarize the business for AI systems.", "recommendation": "Add a minimal llms.txt linking to /precios, /faq, /estilos with key facts."},
+        {"title": "No English content despite English search demand", "severity": "Medium", "description": "Site is Spanish-only; queries like \"Rick and Morty portrait\" have no dedicated indexable English page.", "recommendation": "Build at minimum English versions of /precios, /faq, /estilos if international/English-speaking demand is a target market."},
+        {"title": "Weak authority/brand signals for AI citation", "severity": "Medium", "description": "sameAs schema links only to Instagram/TikTok — platforms with low LLM-citation correlation compared to YouTube/Reddit/Wikipedia.", "recommendation": "Build YouTube (process videos, before/after reveals) or organic Reddit presence over further generic backlink work."}
+      ]
+    },
+    {
+      "name": "Images",
+      "score": 65,
+      "what_works": [
+        "next/image used with responsive srcset (640w, 750w, etc.) for the hero background",
+        "Image delivery infrastructure (Vercel image optimization) is in place and functioning"
+      ],
+      "findings": [
+        {"title": "Hero image has unrealized savings", "severity": "Medium", "description": "Lighthouse flagged ~41KB of available savings on the LCP hero image despite correct fetchPriority/eager-load setup.", "recommendation": "Re-encode or further compress the hero image; verify the served format (WebP/AVIF) and quality setting."},
+        {"title": "Alt text and image SEO not deeply audited this pass", "severity": "Info", "description": "Full alt-text coverage and image-SERP visibility weren't independently verified across all pages.", "recommendation": "Follow-up audit recommended before treating this category score as final."}
+      ]
+    }
+  ],
+  "action_plan": {
+    "phases": [
+      {
+        "name": "Phase 1: Critical Fixes",
+        "timeframe": "Week 1",
+        "items": [
+          "Fix canonical tags on /precios, /order, /galeria, /sobre, /contacto, /faq to self-reference",
+          "Remove broken en/fr hreflang claims (or commit to building real locales)",
+          "Remove competing/duplicate Product schema nodes on style pages",
+          "Scope generic Product/Offer schema off non-product pages (home, /order, /precios index)",
+          "Add canonical/noindex handling for /order?style=* variants to prevent duplicate-content indexing"
+        ]
+      },
+      {
+        "name": "Phase 2: High-Impact Improvements",
+        "timeframe": "Weeks 2-3",
+        "items": [
+          "Redirect www.negasva.shop to apex domain",
+          "Remove noindex,nofollow from /seguimiento if unintentional",
+          "Render all FAQ answers in visible DOM text instead of hidden accordion content",
+          "Fix LCP (render-blocking CSS, hero image compression) and /estilos CLS root cause",
+          "Add Review/AggregateRating schema using real, verifiable review data",
+          "Fix hardcoded identical pricing across the 4 style pages' schema"
+        ]
+      },
+      {
+        "name": "Phase 3: Content & Authority",
+        "timeframe": "Month 2",
+        "items": [
+          "Expand all 6 blog posts to substantive length (800-1500 words), starting with the confirmed-thinnest comparison post",
+          "Differentiate the 4 style pages beyond name-swapping (unique imagery, FAQ, pricing accuracy)",
+          "Add llms.txt and consider an English locale for /precios, /faq, /estilos",
+          "Decide deliberately on trademark/IP framing strategy for character-name keywords",
+          "Link visible testimonials to a verifiable review platform"
+        ]
+      },
+      {
+        "name": "Phase 4: Monitoring & Iteration",
+        "timeframe": "Ongoing",
+        "items": [
+          "Track Core Web Vitals (LCP/CLS) post-fix via PageSpeed Insights or CrUX once available",
+          "Build YouTube/Reddit presence for AI-citation authority signals",
+          "Re-run a backlink check once the domain accrues Common Crawl/Moz coverage (currently zero footprint — too new to measure)",
+          "Monitor whether \"convertir foto en X\" tool-intent keywords are worth a dedicated free-preview entry point"
+        ]
+      }
+    ]
+  },
+  "artifacts": {
+    "findings_dir": "findings/",
+    "screenshots_dir": "screenshots/"
+  }
+}
