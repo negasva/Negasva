@@ -246,7 +246,7 @@ export default function StudioPage() {
     t, lang, fmt, currency,
     step, setStep, selected, priceMap,
     showError,
-    checkoutLoading, checkoutError, checkoutParams,
+    checkoutLoading, checkoutError, setCheckoutError, checkoutParams,
     canAdvance, totalPrice, getProducts,
     nextStep, prevStep, createPayPalOrder, capturePayPalOrder, createMpOrder, handlePhotoUpload,
     toggleExpress, toggleRecording, setSpecialRequests,
@@ -628,11 +628,23 @@ export default function StudioPage() {
                           style={{ layout: 'vertical', shape: 'rect' }}
                           createOrder={createPayPalOrder}
                           onApprove={async ({ orderID }) => capturePayPalOrder(orderID)}
+                          // Si el SDK cierra la ventana por un fallo (incluida la
+                          // orden que no se pudo crear), mostramos el error.
+                          onError={() => setCheckoutError(t.studio.errors.payment)}
+                          // Cancelar no es un error: se limpia el mensaje.
+                          onCancel={() => setCheckoutError('')}
                         />
                       </PayPalScriptProvider>
                     )}
                   </div>
                 </div>
+                {/* El error del pago también debe verse en el paso 5 (la barra de
+                    navegación con checkoutError solo existe en los pasos 1–4). */}
+                {checkoutError && (
+                  <p className="max-w-xl mx-auto mt-4 text-center text-sm font-bold text-red-500">
+                    {checkoutError}
+                  </p>
+                )}
                 <div className="mt-6 text-center">
                   <button onClick={() => setStep(4)} className="text-secondary-lighter hover:text-primary text-sm font-bold transition-colors">
                     {t.studio.pay.back}
