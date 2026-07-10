@@ -9,7 +9,7 @@ import ProductIcon from '@/components/ProductIcon';
 import { mergePodProducts, POD_PLACEHOLDER_IMG } from '@/lib/content/podProducts';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
 import CurrencySwitcher from '@/components/CurrencySwitcher';
-import { PayPalProvider, PayPalOneTimePaymentButton } from '@paypal/react-paypal-js/sdk-v6';
+import { PayPalProvider, PayPalOneTimePaymentButton, PayPalGuestPaymentButton } from '@paypal/react-paypal-js/sdk-v6';
 import RecaptchaScript from '@/components/RecaptchaScript';
 import MercadoPagoBrick from '@/components/MercadoPagoBrick';
 import { nextFamilyTier } from '@/lib/pricing/calc';
@@ -652,6 +652,19 @@ export default function StudioPage() {
                           // Cancelar no es un error: se limpia el mensaje.
                           onCancel={() => setCheckoutError('')}
                         />
+                        {/* Botón de pago con tarjeta (guest checkout / BCDC):
+                            el equivalente en SDK v6 al botón "Débito o crédito"
+                            que el layout vertical de PayPalButtons (v5) mostraba
+                            junto al de PayPal. Reutiliza la misma orden y
+                            callbacks que el botón de PayPal. */}
+                        <div className="mt-2">
+                          <PayPalGuestPaymentButton
+                            createOrder={async () => ({ orderId: await createPayPalOrder() })}
+                            onApprove={async ({ orderId }) => capturePayPalOrder(orderId)}
+                            onError={() => setCheckoutError(t.studio.errors.payment)}
+                            onCancel={() => setCheckoutError('')}
+                          />
+                        </div>
                       </PayPalProvider>
                     )}
                   </div>
