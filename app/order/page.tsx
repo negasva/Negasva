@@ -1,9 +1,12 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
+import { useEffect, useState } from 'react';
 import { Lock, ShieldCheck, Plus, Minus, Check, X, Info, Video } from 'lucide-react';
 import Logo from '@/components/Logo';
 import ProductIcon from '@/components/ProductIcon';
+import { mergePodProducts, POD_PLACEHOLDER_IMG } from '@/lib/content/podProducts';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
 import CurrencySwitcher from '@/components/CurrencySwitcher';
 import { PayPalScriptProvider, PayPalButtons } from '@paypal/react-paypal-js';
@@ -252,6 +255,20 @@ export default function StudioPage() {
 
   const STEPS = t.studio.steps as unknown as string[];
 
+  // Misma foto por producto que la landing: imagen editable de pod_products
+  // (landing_config), con POD_PLACEHOLDER_IMG como fallback.
+  const [podImages, setPodImages] = useState<Record<string, string | null>>({});
+  useEffect(() => {
+    fetch('/api/landing-config')
+      .then((r) => r.json())
+      .then((d) => {
+        const map: Record<string, string | null> = {};
+        for (const p of mergePodProducts(d.pod_products)) map[p.key] = p.image;
+        setPodImages(map);
+      })
+      .catch(() => null);
+  }, []);
+
   return (
     <div className="min-h-screen bg-white">
       <RecaptchaScript />
@@ -395,8 +412,14 @@ export default function StudioPage() {
                               aria-pressed={isSelected}
                               className="block w-full text-left focus:outline-none"
                             >
-                              <div className="aspect-square w-full rounded-xl bg-primary-lighter/40 flex items-center justify-center">
-                                <ProductIcon productKey={p.key} className="w-10 h-10 text-primary" />
+                              <div className="aspect-square w-full rounded-xl overflow-hidden bg-primary-lighter/40">
+                                <Image
+                                  src={podImages[p.key] || POD_PLACEHOLDER_IMG}
+                                  alt={p.name[lang]}
+                                  width={200}
+                                  height={200}
+                                  className="w-full h-full object-cover"
+                                />
                               </div>
                             </button>
                             <div className="mt-3 flex items-end justify-between gap-2">
