@@ -49,13 +49,17 @@ export function HeroPortraits() {
         <span className="absolute -top-3 left-1/2 -translate-x-1/2 z-30 bg-primary text-white font-black text-xs px-4 py-1.5 rounded-full rotate-[-3deg] shadow-md whitespace-nowrap">
           Before
         </span>
+        {/* En móvil los dos retratos escalan con el viewport (proporción
+            240:214 y solape -ml-6 intactos) para que el par quepa completo
+            entre los px-6 de la sección. El radio escala igual (mitad del
+            ancho) para conservar la forma de cápsula. */}
         {img1 ? (
-          <div className="w-[240px] h-[317px] rounded-[120px] sm:w-[360px] sm:h-[475px] sm:rounded-[180px] overflow-hidden shadow-[0_18px_40px_rgba(0,0,0,0.14)]">
+          <div className="w-[min(240px,52.9vw-12.7px)] aspect-[240/317] h-auto rounded-[min(120px,26.45vw-6.35px)] sm:w-[360px] sm:h-[475px] sm:rounded-[180px] overflow-hidden shadow-[0_18px_40px_rgba(0,0,0,0.14)]">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={img1} alt="Original photo before being turned into a custom cartoon portrait" className="w-full h-full object-cover" fetchPriority="high" />
           </div>
         ) : (
-          <ImgSlot className="w-[240px] h-[317px] rounded-[120px] sm:w-[360px] sm:h-[475px] sm:rounded-[180px] shadow-[0_18px_40px_rgba(0,0,0,0.14)]" />
+          <ImgSlot className="w-[min(240px,52.9vw-12.7px)] aspect-[240/317] h-auto rounded-[min(120px,26.45vw-6.35px)] sm:w-[360px] sm:h-[475px] sm:rounded-[180px] shadow-[0_18px_40px_rgba(0,0,0,0.14)]" />
         )}
       </div>
       <div className="relative z-0 -ml-6 sm:-ml-9 mt-[48px] sm:mt-[70px] flota-retrato-b">
@@ -63,12 +67,12 @@ export function HeroPortraits() {
           After
         </span>
         {img2 ? (
-          <div className="w-[214px] h-[283px] rounded-[107px] sm:w-[317px] sm:h-[418px] sm:rounded-[159px] overflow-hidden shadow-[0_18px_40px_rgba(0,0,0,0.14)]">
+          <div className="w-[min(214px,47.1vw-11.3px)] aspect-[214/283] h-auto rounded-[min(107px,23.55vw-5.65px)] sm:w-[317px] sm:h-[418px] sm:rounded-[159px] overflow-hidden shadow-[0_18px_40px_rgba(0,0,0,0.14)]">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={img2} alt="Custom cartoon portrait hand drawn from photo by a real artist" className="w-full h-full object-cover" fetchPriority="high" />
           </div>
         ) : (
-          <ImgSlot className="w-[214px] h-[283px] rounded-[107px] sm:w-[317px] sm:h-[418px] sm:rounded-[159px] shadow-[0_18px_40px_rgba(0,0,0,0.14)]" />
+          <ImgSlot className="w-[min(214px,47.1vw-11.3px)] aspect-[214/283] h-auto rounded-[min(107px,23.55vw-5.65px)] sm:w-[317px] sm:h-[418px] sm:rounded-[159px] shadow-[0_18px_40px_rgba(0,0,0,0.14)]" />
         )}
       </div>
     </div>
@@ -85,23 +89,25 @@ export function StepsPortraits() {
       {/* Mobile */}
       <div className="flex md:hidden justify-center items-end">
         <div className="relative z-10 rotate-[-3deg]">
+          {/* Mismo tratamiento que el hero: escala con el viewport (188:169,
+              solape -ml-5) para no desbordar los px-6 de la sección. */}
           {img1 ? (
-            <div className="w-[188px] h-[250px] rounded-[94px] overflow-hidden shadow-[0_16px_36px_rgba(0,0,0,0.13)] bg-white">
+            <div className="w-[min(188px,52.7vw-14.8px)] aspect-[188/250] rounded-[min(94px,26.35vw-7.4px)] overflow-hidden shadow-[0_16px_36px_rgba(0,0,0,0.13)] bg-white">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={img1} alt="Custom cartoon style portrait hand drawn from photo" className="w-full h-full object-cover" />
             </div>
           ) : (
-            <ImgSlot className="w-[188px] h-[250px] rounded-[94px] shadow-[0_16px_36px_rgba(0,0,0,0.13)]" />
+            <ImgSlot className="w-[min(188px,52.7vw-14.8px)] aspect-[188/250] rounded-[min(94px,26.35vw-7.4px)] shadow-[0_16px_36px_rgba(0,0,0,0.13)]" />
           )}
         </div>
         <div className="relative z-0 -ml-5 mt-8 rotate-[2deg]">
           {img2 ? (
-            <div className="w-[169px] h-[225px] rounded-[85px] overflow-hidden shadow-[0_16px_36px_rgba(0,0,0,0.13)] bg-white">
+            <div className="w-[min(169px,47.3vw-13.2px)] aspect-[169/225] rounded-[min(84.5px,23.65vw-6.6px)] overflow-hidden shadow-[0_16px_36px_rgba(0,0,0,0.13)] bg-white">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={img2} alt="Custom cartoon couple portrait hand drawn from photo" className="w-full h-full object-cover" />
             </div>
           ) : (
-            <ImgSlot className="w-[169px] h-[225px] rounded-[85px] shadow-[0_16px_36px_rgba(0,0,0,0.13)]" />
+            <ImgSlot className="w-[min(169px,47.3vw-13.2px)] aspect-[169/225] rounded-[min(84.5px,23.65vw-6.6px)] shadow-[0_16px_36px_rgba(0,0,0,0.13)]" />
           )}
         </div>
       </div>
