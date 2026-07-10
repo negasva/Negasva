@@ -130,11 +130,11 @@ export function useCheckout() {
   const [dynamicBgs, setDynamicBgs] = useState<Record<string, BgItem[]>>({});
   // Estilos crudos (slug + nombre BD); el nombre visible se resuelve por idioma
   // en un memo para que cambiar de idioma actualice la grilla sin re-fetch.
-  const [rawStyles, setRawStyles] = useState<{ slug: string; name: string }[]>(
+  const [rawStyles, setRawStyles] = useState<{ slug: string; name: string; image?: string }[]>(
     FALLBACK_STYLE_SLUGS.map((slug) => ({ slug, name: '' })),
   );
   const styles = useMemo(
-    () => rawStyles.map((s) => ({ id: s.slug, name: safeStyleName(s.slug, lang, s.name) })),
+    () => rawStyles.map((s) => ({ id: s.slug, name: safeStyleName(s.slug, lang, s.name), image: s.image })),
     [rawStyles, lang],
   );
   const [bodyTypes, setBodyTypes] = useState<BodyTypeItem[]>(FALLBACK_BODY_TYPES);
@@ -186,10 +186,10 @@ export function useCheckout() {
   }, []);
 
   useEffect(() => {
-    cachedFetchJSON<Array<{ slug: string; name: string }>>('/api/styles')
+    cachedFetchJSON<Array<{ slug: string; name: string; image?: string }>>('/api/styles')
       .then((data) => {
         if (data && data.length > 0) {
-          setRawStyles(data.map(s => ({ slug: s.slug, name: s.name })));
+          setRawStyles(data.map(s => ({ slug: s.slug, name: s.name, image: s.image })));
         }
       })
       .catch(() => null);

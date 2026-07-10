@@ -1,5 +1,7 @@
 'use client';
 
+import Image from 'next/image';
+import { ImageIcon } from 'lucide-react';
 import type { CheckoutController } from './useCheckout';
 
 /** Step 1 — pick the cartoon style. */
@@ -17,13 +19,30 @@ export default function StepStyle({ c }: { c: CheckoutController }) {
           <button
             key={s.id}
             onClick={() => selectStyle(s.id)}
-            className={`rounded-2xl border-2 p-8 text-center transition-all focus:outline-none ${
+            className={`rounded-2xl border-2 overflow-hidden text-center transition-all focus:outline-none ${
               selected.style === s.id
                 ? 'border-primary bg-primary-lighter ring-2 ring-primary shadow-lg'
                 : 'border-primary-lighter bg-white hover:border-primary hover:shadow-md'
             }`}
           >
-            <p className="font-bold text-secondary">{s.name}</p>
+            {/* Placeholder rosa con icono (como StepBody); la imagen real —
+                resuelta en /api/styles igual que en la home — encima cuando existe. */}
+            <div className="relative aspect-[4/3]">
+              <div className="absolute inset-0 flex items-center justify-center bg-primary-lighter/50 text-primary/60">
+                <ImageIcon className="w-8 h-8" aria-hidden />
+              </div>
+              {s.image && (
+                <Image
+                  src={s.image}
+                  alt={s.name}
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 768px) 50vw, 20vw"
+                  onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
+                />
+              )}
+            </div>
+            <p className="font-bold text-secondary px-2 py-3">{s.name}</p>
           </button>
         ))}
       </div>
