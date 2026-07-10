@@ -28,19 +28,22 @@ function ImgSlot({ className, style }: { className?: string; style?: React.CSSPr
   );
 }
 
-function useSiteImages(): SiteImages | undefined {
-  const [images, setImages] = useState<SiteImages | undefined>();
+// El primer paint usa `initial` (viene del servidor en el HTML), así que
+// cuando hay imagen configurada nunca se ve el placeholder. El fetch cliente
+// queda solo como revalidación, nunca como fuente del primer render.
+function useSiteImages(initial?: SiteImages): SiteImages | undefined {
+  const [images, setImages] = useState<SiteImages | undefined>(initial);
   useEffect(() => {
     cachedFetchJSON<{ site_images?: SiteImages }>('/api/landing-config', { ttlMs: 0, init: { cache: 'no-store' } })
-      .then((data) => setImages(data?.site_images))
+      .then((data) => { if (data?.site_images) setImages(data.site_images); })
       .catch(() => null);
   }, []);
   return images;
 }
 
 // ── Hero: fotos antes/después configurables desde el admin ──────────────────
-export function HeroPortraits() {
-  const si = useSiteImages();
+export function HeroPortraits({ initialImages }: { initialImages?: SiteImages }) {
+  const si = useSiteImages(initialImages);
   const img1 = siteImg(si, 'landing_hero_img1', undefined);
   const img2 = siteImg(si, 'landing_hero_img2', undefined);
   return (
@@ -80,8 +83,8 @@ export function HeroPortraits() {
 }
 
 // ── Sección pasos: fotos configurables ───────────────────────────────────────
-export function StepsPortraits() {
-  const si = useSiteImages();
+export function StepsPortraits({ initialImages }: { initialImages?: SiteImages }) {
+  const si = useSiteImages(initialImages);
   const img1 = siteImg(si, 'landing_paso_img1', undefined);
   const img2 = siteImg(si, 'landing_paso_img2', undefined);
   return (
