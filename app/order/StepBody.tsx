@@ -70,12 +70,24 @@ export default function StepBody({ c }: { c: CheckoutController }) {
     try { sessionStorage.setItem('body_tap_hint', 'done'); } catch { /* no-op */ }
   };
 
+  // Traduce el nombre del tipo de cuerpo al idioma activo. Los tipos vienen de
+  // la BD con un único nombre (español), así que traducimos por slug; el tipo
+  // "cabeza" lo creó el admin y su slug puede variar, por eso lo detectamos por
+  // slug o nombre (evita que "Solo Cabeza" aparezca en la web en inglés).
+  const translateName = (bt: { slug: string; name: string }) => {
+    if (bt.slug === 'torso_only') return t.studio.body_types.torso_name;
+    if (bt.slug === 'full_body') return t.studio.body_types.full_name;
+    const hint = `${bt.slug} ${bt.name}`.toLowerCase();
+    if (hint.includes('cabeza') || hint.includes('head') || hint.includes('tête') || hint.includes('tete')) {
+      return t.studio.body_types.head_name;
+    }
+    return bt.name;
+  };
+
   // Opciones normalizadas (mismo mapeo de copy que el diseño anterior).
   const options = bodyTypes.map((bt) => ({
     id: bt.slug,
-    name: bt.slug === 'torso_only' ? t.studio.body_types.torso_name
-        : bt.slug === 'full_body' ? t.studio.body_types.full_name
-        : bt.name,
+    name: translateName(bt),
     price: bt.price_usd,
     bestValue: bt.is_best_value,
   }));
@@ -168,7 +180,7 @@ export default function StepBody({ c }: { c: CheckoutController }) {
                   onMouseEnter={() => setHovered(i)}
                   onMouseLeave={() => setHovered(null)}
                   tabIndex={-1}
-                  className={`block w-full bg-gradient-to-r from-primary to-primary-dark text-white rounded-xl px-3 py-3 font-black text-base sm:text-lg ${b.bestValue ? 'shadow-lg shadow-primary/40' : ''}`}
+                  className={`block w-full bg-gradient-to-r from-primary to-primary-dark text-white rounded-xl border border-primary-dark/40 px-3 py-3 font-black text-base sm:text-lg ${b.bestValue ? 'shadow-lg shadow-primary/40' : ''}`}
                 >
                   <FitText className="leading-tight">{fmt(b.price)}{t.studio.body_types.per_person}</FitText>
                 </button>
