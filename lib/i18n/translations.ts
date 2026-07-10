@@ -193,6 +193,7 @@ export const translations = {
         torso_desc: 'Bust up to the waist',
         full_name: 'Full Body',
         full_desc: 'Full body character',
+        head_name: 'Head Only',
         best_value: 'Best Value',
       },
       backgrounds: {
@@ -508,6 +509,7 @@ export const translations = {
         torso_desc: 'Busto hasta la cintura',
         full_name: 'Cuerpo Completo',
         full_desc: 'Personaje de cuerpo entero',
+        head_name: 'Solo Cabeza',
         best_value: 'Mejor Valor',
       },
       backgrounds: {
@@ -823,6 +825,7 @@ export const translations = {
         torso_desc: 'Buste jusqu\'à la taille',
         full_name: 'Corps Entier',
         full_desc: 'Personnage en pied',
+        head_name: 'Tête Seulement',
         best_value: 'Meilleure Valeur',
       },
       backgrounds: {
