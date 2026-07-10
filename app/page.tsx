@@ -4,6 +4,7 @@ import { Clock, RefreshCcw, PenTool } from 'lucide-react';
 import { getHomeContent } from '@/lib/content/homeContent.server';
 import { getHomeStyles } from '@/lib/content/stylesDb';
 import { getPodProductsConfig } from '@/lib/content/podProducts.server';
+import { getSiteImages } from '@/lib/siteImages.server';
 import { POD_PLACEHOLDER_IMG } from '@/lib/content/podProducts';
 import { loadPricingConfig } from '@/lib/pricing/server';
 import Navbar from '@/components/Navbar';
@@ -66,11 +67,12 @@ function BrushDividerUp() {
 }
 
 export default async function Home() {
-  const [content, pricing, homeStyles, podProducts] = await Promise.all([
+  const [content, pricing, homeStyles, podProducts, siteImages] = await Promise.all([
     getHomeContent(),
     loadPricingConfig(),
     getHomeStyles(),
     getPodProductsConfig(),
+    getSiteImages(),
   ]);
   const t = content.texts;
   const visibleProducts = podProducts.filter((p) => p.visible);
@@ -151,7 +153,7 @@ export default async function Home() {
 
           {/* Right (desktop) / Above H1 (mobile): floating portrait photos */}
           <div className="relative pt-4 md:pt-2 md:pb-10 order-first md:order-none flex justify-center md:block">
-            <HeroPortraits />
+            <HeroPortraits initialImages={siteImages} />
             <span className="font-caveat font-bold text-[30px] text-green-600 rotate-[-4deg] hidden md:inline-block absolute bottom-0 left-1">
               {t.hero_note}
             </span>
@@ -174,7 +176,7 @@ export default async function Home() {
       {/* ══ 3 SIMPLE STEPS ══ */}
       <section id="pasos" className="bg-[#FFF1F7] pt-10 pb-14 sm:py-16 md:py-20 px-6">
         <div className="mx-auto max-w-[1150px] grid md:grid-cols-[1fr_1.1fr] gap-10 md:gap-16 items-center">
-          <StepsPortraits />
+          <StepsPortraits initialImages={siteImages} />
 
           {/* Right: headline + steps */}
           <div>
