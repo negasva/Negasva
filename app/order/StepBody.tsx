@@ -22,6 +22,9 @@ const GLOW = '0 0 30px 4px rgba(252,144,182,0.55)';
 // Sombra sutil en los bordes internos: divide los paneles sin romper la
 // continuidad del dibujo.
 const EDGE_SHADE = 'inset 9px 0 12px -9px rgba(0,0,0,0.14), inset -9px 0 12px -9px rgba(0,0,0,0.14)';
+// Variante vertical (móvil): los paneles se apilan, así que la sombra divide
+// por los bordes horizontales (arriba/abajo).
+const EDGE_SHADE_V = 'inset 0 9px 12px -9px rgba(0,0,0,0.14), inset 0 -9px 12px -9px rgba(0,0,0,0.14)';
 
 /** Step 2 — body type + number of people. */
 export default function StepBody({ c }: { c: CheckoutController }) {
@@ -172,40 +175,46 @@ export default function StepBody({ c }: { c: CheckoutController }) {
         })}
       </div>
 
-      {/* ── MÓVIL: ítems independientes apilados (ilustración izq · texto der) ─ */}
-      <div className={`sm:hidden space-y-3 max-w-2xl mx-auto mb-8 ${errorRing} ${errorShake}`}>
-        {options.map((b) => (
-          <button
-            key={b.id}
-            type="button"
-            onClick={() => { dismissTap(); selectBodyType(b.id); }}
-            aria-label={ariaLabel(b.name, b.price)}
-            aria-pressed={selected.bodyType === b.id}
-            className={`flex items-center gap-4 w-full text-left rounded-2xl border-2 p-3 transition-all outline-none focus-visible:ring-4 focus-visible:ring-primary/60 ${
-              selected.bodyType === b.id
-                ? 'border-primary bg-primary-lighter ring-2 ring-primary'
-                : 'border-primary-lighter bg-white'
-            }`}
-          >
-            <div className={`relative w-24 h-24 shrink-0 rounded-xl overflow-hidden ${showTap ? 'animate-breathe-twice' : ''}`}>
-              <Panel id={b.id} name={b.name} />
-              {showTap && (
-                <span className="absolute bottom-1 right-1 z-10 w-6 h-6 rounded-full bg-white/90 text-primary flex items-center justify-center shadow">
-                  <Hand className="w-3.5 h-3.5" aria-hidden />
-                </span>
-              )}
+      {/* ── MÓVIL: la misma ilustración continua del desktop, apilada en
+          vertical (panel izq · nombre/precio der). Ring acumulativo y sombras
+          de borde como en desktop, adaptadas a la orientación. */}
+      <div
+        onAnimationEnd={onShakeEnd}
+        className={`sm:hidden max-w-2xl mx-auto mb-8 ${errorRing} ${errorShake}`}
+      >
+        {options.map((b, i) => {
+          const ringed = selectedIndex >= 0 && i <= selectedIndex;
+          return (
+            <div key={b.id} className="flex items-center gap-4">
+              <button
+                type="button"
+                onClick={() => { dismissTap(); selectBodyType(b.id); }}
+                aria-label={ariaLabel(b.name, b.price)}
+                aria-pressed={selected.bodyType === b.id}
+                className={`relative block w-36 aspect-square shrink-0 overflow-hidden outline-none focus-visible:ring-4 focus-visible:ring-primary/60 ${
+                  ringed ? 'ring-4 ring-primary z-10' : ''
+                } ${i === 0 ? 'rounded-t-xl' : ''} ${i === lastIndex ? 'rounded-b-xl' : ''} ${showTap ? 'animate-breathe-twice' : ''}`}
+                style={{ boxShadow: ringed ? GLOW : EDGE_SHADE_V }}
+              >
+                <Panel id={b.id} name={b.name} />
+                {showTap && (
+                  <span className="absolute bottom-1 right-1 z-10 w-6 h-6 rounded-full bg-white/90 text-primary flex items-center justify-center shadow">
+                    <Hand className="w-3.5 h-3.5" aria-hidden />
+                  </span>
+                )}
+              </button>
+              <div className="flex-1 min-w-0">
+                {b.bestValue && (
+                  <span className="inline-flex items-center gap-1 bg-primary text-white px-2.5 py-0.5 rounded-full text-[11px] font-black mb-1 shadow ring-1 ring-primary-light">
+                    {t.studio.body_types.best_value}
+                  </span>
+                )}
+                <p className="font-black text-lg text-secondary tracking-tighter leading-tight">{b.name}</p>
+                <p className="font-black text-lg text-primary">{fmt(b.price)}{t.studio.body_types.per_person}</p>
+              </div>
             </div>
-            <div className="flex-1 min-w-0">
-              {b.bestValue && (
-                <span className="inline-flex items-center gap-1 bg-primary text-white px-2.5 py-0.5 rounded-full text-[11px] font-black mb-1 shadow ring-1 ring-primary-light">
-                  {t.studio.body_types.best_value}
-                </span>
-              )}
-              <p className="font-black text-lg text-secondary tracking-tighter leading-tight">{b.name}</p>
-              <p className="font-black text-lg text-primary">{fmt(b.price)}{t.studio.body_types.per_person}</p>
-            </div>
-          </button>
-        ))}
+          );
+        })}
       </div>
 
       {/* Stepper de personas — visible al seleccionar un tipo de cuerpo. */}
