@@ -66,7 +66,7 @@ const ReviewCard = memo(function ReviewCard({ name, comment, photo, rating, titl
           </span>
           <div>
             <p className="font-bold text-secondary text-base leading-tight">{name}</p>
-            <p className="text-xs text-secondary-lighter">✓ Compra verificada</p>
+            <p className="text-xs text-secondary-lighter">✓ Verified purchase</p>
           </div>
         </div>
       </div>
