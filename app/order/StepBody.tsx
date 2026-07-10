@@ -161,7 +161,7 @@ export default function StepBody({ c }: { c: CheckoutController }) {
                   onMouseLeave={() => setHovered(null)}
                   aria-label={ariaLabel(b.name, b.price)}
                   aria-pressed={selected.bodyType === b.id}
-                  className={`relative block w-full aspect-square overflow-hidden transition-all duration-200 ease-out outline-none focus-visible:ring-4 focus-visible:ring-primary/60 ${
+                  className={`relative block w-full aspect-square overflow-hidden border border-black/20 transition-all duration-200 ease-out outline-none focus-visible:ring-4 focus-visible:ring-primary/60 ${
                     ringed ? 'ring-4 ring-primary z-10' : ''
                   } ${dimmed ? 'opacity-40' : 'opacity-100'} ${i === 0 ? 'rounded-l-xl' : ''} ${i === lastIndex ? 'rounded-r-xl' : ''}`}
                   style={{
@@ -207,7 +207,7 @@ export default function StepBody({ c }: { c: CheckoutController }) {
                 onClick={() => { dismissTap(); selectBodyType(b.id); }}
                 aria-label={ariaLabel(b.name, b.price)}
                 aria-pressed={selected.bodyType === b.id}
-                className={`relative block w-36 aspect-square shrink-0 overflow-hidden outline-none focus-visible:ring-4 focus-visible:ring-primary/60 ${
+                className={`relative block w-36 aspect-square shrink-0 overflow-hidden border border-black/20 outline-none focus-visible:ring-4 focus-visible:ring-primary/60 ${
                   ringed ? 'ring-4 ring-primary z-10' : ''
                 } ${i === 0 ? 'rounded-t-xl' : ''} ${i === lastIndex ? 'rounded-b-xl' : ''} ${showTap ? 'animate-breathe-twice' : ''}`}
                 style={{ boxShadow: ringed ? GLOW : EDGE_SHADE_V }}
