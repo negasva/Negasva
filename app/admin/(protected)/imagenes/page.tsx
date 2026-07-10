@@ -11,6 +11,9 @@ export default function SiteImagesPage() {
   const [loading, setLoading] = useState(true);
   const [savingKey, setSavingKey] = useState('');
   const [toast, setToast] = useState('');
+  // Error de guardado: banner PERSISTENTE (no se va solo) con la causa real del
+  // servidor, para que un fallo nunca se lea como éxito.
+  const [saveError, setSaveError] = useState('');
 
   function showToast(msg: string) {
     setToast(msg);
@@ -23,6 +26,8 @@ export default function SiteImagesPage() {
       fetch('/api/landing-config').then((r) => r.json()).catch(() => ({})),
       fetch('/api/admin/body-types').then((r) => r.json()).catch(() => []),
     ]);
+    // Si el GET falló (env/migración), muéstralo explícito en vez de asumir {}.
+    if (cfgRes && typeof cfgRes.error === 'string') setSaveError(cfgRes.error);
     setSiteImages(cfgRes.site_images ?? {});
     // Slots dinámicos: un slot por cada tipo de cuerpo creado en el admin
     // que no esté ya en el registro estático.
@@ -46,16 +51,24 @@ export default function SiteImagesPage() {
 
   async function saveSiteImages(next: SiteImages, key: string) {
     setSavingKey(key);
-    const res = await fetch('/api/landing-config', {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ key: 'site_images', value: next }),
-    });
-    if (res.ok) {
-      setSiteImages(next);
-      showToast('Imagen guardada');
-    } else {
-      showToast('Error al guardar');
+    setSaveError('');
+    try {
+      const res = await fetch('/api/landing-config', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ key: 'site_images', value: next }),
+      });
+      if (res.ok) {
+        setSiteImages(next);
+        showToast('Imagen guardada');
+      } else {
+        // Muestra la causa real del servidor y NO actualiza la UI: así el admin
+        // sabe que NO se guardó (antes: toast de 2.5s indistinguible de éxito).
+        const data = await res.json().catch(() => ({}));
+        setSaveError(data.error || `No se pudo guardar (HTTP ${res.status})`);
+      }
+    } catch {
+      setSaveError('No se pudo contactar el servidor al guardar.');
     }
     setSavingKey('');
   }
@@ -76,6 +89,23 @@ export default function SiteImagesPage() {
           Todas las fotos fijas de la web, con vista previa y su ubicación exacta. Sube un archivo o pega una URL y guarda.
         </p>
       </div>
+
+      {saveError && (
+        <div className="mb-5 flex items-start justify-between gap-3 rounded-xl border-2 border-red-500 bg-red-50 px-4 py-3">
+          <div>
+            <p className="font-black text-red-600 text-sm">No se guardó — la imagen NO quedó persistida</p>
+            <p className="text-red-600 text-xs mt-0.5 break-all">{saveError}</p>
+          </div>
+          <button
+            type="button"
+            onClick={() => setSaveError('')}
+            className="shrink-0 text-red-600 font-black text-lg leading-none hover:opacity-70"
+            aria-label="Cerrar"
+          >
+            ×
+          </button>
+        </div>
+      )}
 
       {loading ? (
         <div className="text-center py-16 text-secondary-lighter text-sm">Cargando...</div>

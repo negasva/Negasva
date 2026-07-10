@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { revalidatePath } from 'next/cache';
-import { createServerClient, createServiceClient } from '@/lib/supabase/server';
+import { createAnonClient, createServiceClient } from '@/lib/supabase/server';
 import { requireAdminRoute } from '@/lib/admin/auth';
 import { errorResponse, rateLimitByIp, readJson, validateSameOrigin } from '@/lib/security/apiHelpers';
 
@@ -14,12 +14,16 @@ export async function GET(request: Request) {
   const rl = await rateLimitByIp(request, { prefix: 'pub-landing', max: 60, windowMs: 60_000 });
   if (rl) return rl;
 
-  const supabase = createServerClient();
+  const supabase = createAnonClient();
+  if (!supabase) return errorResponse('Supabase no configurado: falta NEXT_PUBLIC_SUPABASE_URL/ANON_KEY', 503);
+
   const { data, error } = await supabase
     .from('landing_config')
     .select('key, value');
 
-  if (error) return errorResponse('Failed to load landing config', 500, error);
+  // El detalle real (p. ej. "relation landing_config does not exist" → falta la
+  // migración 015) viaja al cliente, no solo a los logs del servidor.
+  if (error) return errorResponse(`No se pudo leer landing_config: ${error.message}`, 500, error);
 
   const config: Record<string, unknown> = {};
   for (const row of data ?? []) config[row.key] = row.value;
@@ -45,12 +49,21 @@ export async function PATCH(request: Request) {
   if (!key || !ALLOWED_KEYS.includes(key)) return errorResponse('Invalid key', 400);
   if (value === undefined || value === null) return errorResponse('Missing value', 400);
 
-  const db = createServiceClient();
+  let db;
+  try {
+    db = createServiceClient();
+  } catch (e) {
+    // Env de Supabase incompleta: mensaje explícito de qué falta configurar.
+    return errorResponse(e instanceof Error ? e.message : 'Supabase no configurado', 503, e);
+  }
+
   const { error } = await db
     .from('landing_config')
     .upsert({ key, value, updated_at: new Date().toISOString() }, { onConflict: 'key' });
 
-  if (error) return errorResponse('Failed to save landing config', 500, error);
+  // El detalle real (tabla inexistente, permisos, etc.) va al cliente para que
+  // el admin vea la causa y NO crea que se guardó.
+  if (error) return errorResponse(`No se pudo guardar: ${error.message}`, 500, error);
 
   // La home es estática (ISR): regenerarla ya para que el cambio del admin se
   // vea en la siguiente petición sin esperar al revalidate periódico.

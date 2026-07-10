@@ -20,7 +20,13 @@ export async function POST(request: Request) {
   const rl = await rateLimitByIp(request, { prefix: 'admin-upload', max: 120, windowMs: 60_000 });
   if (rl) return rl;
 
-  const db = await requireAdminRoute();
+  let db;
+  try {
+    db = await requireAdminRoute();
+  } catch (e) {
+    // Env de Supabase incompleta: mensaje explícito en vez de un 500 opaco.
+    return errorResponse(e instanceof Error ? e.message : 'Supabase no configurado', 503, e);
+  }
   if (!db) return errorResponse('Unauthorized', 401);
 
   let form: FormData;
