@@ -9,7 +9,7 @@ import ProductIcon from '@/components/ProductIcon';
 import { mergePodProducts, POD_PLACEHOLDER_IMG } from '@/lib/content/podProducts';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
 import CurrencySwitcher from '@/components/CurrencySwitcher';
-import { PayPalScriptProvider, PayPalButtons } from '@paypal/react-paypal-js';
+import { PayPalProvider, PayPalOneTimePaymentButton } from '@paypal/react-paypal-js/sdk-v6';
 import RecaptchaScript from '@/components/RecaptchaScript';
 import MercadoPagoBrick from '@/components/MercadoPagoBrick';
 import { nextFamilyTier } from '@/lib/pricing/calc';
@@ -20,6 +20,14 @@ import StepBody from './StepBody';
 import StepBackground from './StepBackground';
 
 const PAYPAL_CLIENT_ID = process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID ?? '';
+// El SDK v6 exige declarar el entorno explícitamente (el client id ya no lo
+// selecciona). Se toma de NEXT_PUBLIC_PAYPAL_ENV (igual criterio que el
+// PAYPAL_ENV del servidor: 'live' → producción); si falta, se deduce de
+// NODE_ENV para no exigir una variable nueva en desarrollo.
+const PAYPAL_ENVIRONMENT: 'production' | 'sandbox' =
+  (process.env.NEXT_PUBLIC_PAYPAL_ENV ?? (process.env.NODE_ENV === 'production' ? 'live' : 'sandbox')) === 'live'
+    ? 'production'
+    : 'sandbox';
 
 type Lang = 'es' | 'en' | 'fr';
 const pick3 = (lang: Lang, es: string, en: string, fr: string) =>
@@ -623,18 +631,28 @@ export default function StudioPage() {
                         PayPal no está configurado (falta NEXT_PUBLIC_PAYPAL_CLIENT_ID).
                       </p>
                     ) : (
-                      <PayPalScriptProvider options={{ clientId: PAYPAL_CLIENT_ID, currency, intent: 'capture' }}>
-                        <PayPalButtons
-                          style={{ layout: 'vertical', shape: 'rect' }}
-                          createOrder={createPayPalOrder}
-                          onApprove={async ({ orderID }) => capturePayPalOrder(orderID)}
-                          // Si el SDK cierra la ventana por un fallo (incluida la
+                      // SDK v6 con presentationMode="modal": el checkout se abre
+                      // SIEMPRE como overlay dentro de la página, nunca en una
+                      // ventana externa (que a veces quedaba en about:blank).
+                      // La moneda e intent viajan en la orden creada por el
+                      // servidor (/api/checkout), no en el proveedor.
+                      <PayPalProvider
+                        clientId={PAYPAL_CLIENT_ID}
+                        environment={PAYPAL_ENVIRONMENT}
+                        components={['paypal-payments']}
+                        pageType="checkout"
+                      >
+                        <PayPalOneTimePaymentButton
+                          presentationMode="modal"
+                          createOrder={async () => ({ orderId: await createPayPalOrder() })}
+                          onApprove={async ({ orderId }) => capturePayPalOrder(orderId)}
+                          // Si el SDK cierra el modal por un fallo (incluida la
                           // orden que no se pudo crear), mostramos el error.
                           onError={() => setCheckoutError(t.studio.errors.payment)}
                           // Cancelar no es un error: se limpia el mensaje.
                           onCancel={() => setCheckoutError('')}
                         />
-                      </PayPalScriptProvider>
+                      </PayPalProvider>
                     )}
                   </div>
                 </div>
