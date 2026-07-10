@@ -443,17 +443,43 @@ export function useCheckout() {
   // persiste el pedido pending y devuelve el orderID para los botones.
   const createPayPalOrder = useCallback(async (): Promise<string> => {
     if (!checkoutParams) throw new Error('no checkout params');
-    // Token reCAPTCHA fresco por request (son de un solo uso y expiran).
-    const recaptchaToken = await getRecaptchaToken('checkout');
-    const res = await fetch('/api/checkout', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ ...checkoutParams, recaptchaToken }),
-    });
-    const data = await res.json().catch(() => null);
-    if (!data?.paypal?.orderID) throw new Error('checkout failed');
-    return data.paypal.orderID;
-  }, [checkoutParams]);
+    setCheckoutError('');
+    try {
+      // Token reCAPTCHA fresco por request (son de un solo uso y expiran). Es
+      // best-effort: si tarda o falla, seguimos sin token (el backend no
+      // bloquea cuando falta) en vez de dejar el pago colgado.
+      let recaptchaToken: string | undefined;
+      try {
+        recaptchaToken = await withTimeout(getRecaptchaToken('checkout'), 8000);
+      } catch {
+        recaptchaToken = undefined;
+      }
+
+      // Abortamos si /api/checkout no responde: sin esto la promesa de
+      // createOrder nunca resuelve y PayPal deja el popup en about:blank.
+      const controller = new AbortController();
+      const abortTimer = setTimeout(() => controller.abort(), 20000);
+      let data: { paypal?: { orderID?: string } } | null;
+      try {
+        const res = await fetch('/api/checkout', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ ...checkoutParams, recaptchaToken }),
+          signal: controller.signal,
+        });
+        data = await res.json().catch(() => null);
+      } finally {
+        clearTimeout(abortTimer);
+      }
+      if (!data?.paypal?.orderID) throw new Error('checkout failed');
+      return data.paypal.orderID;
+    } catch (err) {
+      // Mensaje visible al usuario y re-lanzado para que el SDK de PayPal
+      // rechace createOrder y cierre la ventana en vez de dejarla en blanco.
+      setCheckoutError(t.studio.errors.payment);
+      throw err instanceof Error ? err : new Error('checkout failed');
+    }
+  }, [checkoutParams, t]);
 
   // Captura la orden aprobada y redirige al success con la referencia.
   const capturePayPalOrder = useCallback(async (orderID: string) => {
@@ -599,7 +625,7 @@ export function useCheckout() {
     appliedCode, codeStatus,
     applyDiscountCode, removeDiscountCode,
     showError, errorRing, errorShake, onShakeEnd,
-    checkoutLoading, checkoutError, checkoutParams,
+    checkoutLoading, checkoutError, setCheckoutError, checkoutParams,
     // derived
     canAdvance, priceBreakdown, totalPrice, getBgName, getStyleBgs, getProducts,
     // actions
