@@ -5,12 +5,16 @@ import Navbar from '@/components/Navbar';
 import PageFooter from '@/components/PageFooter';
 import BreadcrumbSchema from '@/components/BreadcrumbSchema';
 import { STYLES_CONTENT } from '@/lib/content/styles';
+import { getStyleImageMap } from '@/lib/content/stylesDb';
 
-// Server component estático: el catálogo canónico de 8 estilos (lib/content/styles.ts)
-// llega en el HTML inicial (SEO). Sin fetch cliente — es el mismo contenido que
-// alimenta las landings /styles/[slug].
+// Server component (ISR): el copy viene del catálogo en código
+// (lib/content/styles.ts) y la imagen se resuelve igual que en la home —
+// example_image_url de BD con fallback a la imagen del contenido.
 
-export default function StylesPage() {
+export const revalidate = 300;
+
+export default async function StylesPage() {
+  const dbImage = await getStyleImageMap();
   return (
     <div className="min-h-screen bg-white">
       <BreadcrumbSchema name="Styles" path="/styles" />
@@ -37,7 +41,7 @@ export default function StylesPage() {
               <div key={style.slug} className="group rounded-2xl overflow-hidden border-2 border-primary-lighter hover:border-primary hover:shadow-xl transition-all flex flex-col">
                 <Link href={`/styles/${style.slug}`} className="relative aspect-[16/9] block overflow-hidden">
                   <Image
-                    src={style.image}
+                    src={dbImage[style.slug] ?? style.image}
                     alt={style.imageAlt}
                     fill
                     sizes="(max-width: 768px) 100vw, 50vw"

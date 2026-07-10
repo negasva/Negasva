@@ -20,6 +20,30 @@ export function landingUrlFor(s: Pick<DbStyle, 'slug' | 'landing_slug'>): string
   return s.landing_slug || DB_SLUG_TO_URL[s.slug] || s.slug;
 }
 
+/**
+ * Imagen canónica de un estilo — la MISMA en home, /styles y wizard:
+ * example_image_url de BD → imagen del contenido en código → fallback.
+ */
+export function styleImageFor(
+  s: Pick<DbStyle, 'slug' | 'landing_slug' | 'example_image_url'>,
+): string {
+  return s.example_image_url || getStyleBySlug(landingUrlFor(s))?.image || '/backgrounds/rm-1.webp';
+}
+
+/** Mapa slug-de-landing → imagen resuelta (todas las filas de BD), para /styles. */
+export async function getStyleImageMap(): Promise<Record<string, string>> {
+  const db = createAnonClient();
+  if (!db) return {};
+  try {
+    const { data } = await db
+      .from('portrait_styles')
+      .select('slug, landing_slug, example_image_url');
+    return Object.fromEntries((data ?? []).map((s) => [landingUrlFor(s), styleImageFor(s)]));
+  } catch {
+    return {};
+  }
+}
+
 export interface HomeStyleCard {
   key: string;
   name: string;
@@ -46,13 +70,12 @@ export async function getHomeStyles(): Promise<HomeStyleCard[]> {
       if (data && data.length > 0) {
         return data.map((s) => {
           const url = landingUrlFor(s);
-          const content = getStyleBySlug(url);
           return {
             key: s.slug,
             name: s.name,
             href: `/styles/${url}`,
-            image: s.example_image_url || content?.image || '/backgrounds/rm-1.webp',
-            imageAlt: content?.imageAlt || `${s.name} custom portrait`,
+            image: styleImageFor(s),
+            imageAlt: getStyleBySlug(url)?.imageAlt || `${s.name} custom portrait`,
           };
         });
       }
