@@ -106,6 +106,28 @@ export const CURRENCY_COUNTRY: Record<string, string> = {
 // ("Rick & Morty — Portal"); se muestra solo la parte descriptiva.
 const safeBgName = (name: string) => name.replace(/^[^—]*—\s*/, '');
 
+// Claves de localStorage para el carrito persistente (retomar tras cerrar la
+// pestaña) y su id estable (para el guardado en servidor / recuperación).
+const CART_STORAGE_KEY = 'negasva_cart_v1';
+const CART_ID_KEY = 'negasva_cart_id';
+
+// Genera/recupera el id estable del carrito de este navegador.
+function loadCartId(): string {
+  if (typeof window === 'undefined') return '';
+  try {
+    let id = localStorage.getItem(CART_ID_KEY);
+    if (!id) {
+      id = (typeof crypto !== 'undefined' && crypto.randomUUID)
+        ? crypto.randomUUID()
+        : `c-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
+      localStorage.setItem(CART_ID_KEY, id);
+    }
+    return id;
+  } catch {
+    return '';
+  }
+}
+
 /**
  * All state and logic for the multi-step order wizard. Extracted from the
  * page so the step components stay presentational. Behaviour is identical to
@@ -116,6 +138,22 @@ export function useCheckout() {
   const { fmt, currency, rates } = useCurrency();
 
   const [step, setStep] = useState(1);
+  // Contacto del cliente (se captura en el paso de pago). Sin nombre + email
+  // no se muestran los botones de pago: así siempre sabemos quién compra.
+  const [contact, setContact] = useState<{ name: string; email: string; phone: string }>({
+    name: '', email: '', phone: '',
+  });
+  const setContactField = useCallback((field: 'name' | 'email' | 'phone', value: string) => {
+    setContact(prev => ({ ...prev, [field]: value }));
+  }, []);
+  const contactValid = useMemo(() => {
+    const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contact.email.trim());
+    return contact.name.trim().length >= 2 && emailOk;
+  }, [contact]);
+  // Id estable del carrito (server sync + recuperación). Vacío en SSR.
+  const [cartId] = useState<string>(loadCartId);
+  // Evita guardar/sincronizar antes de rehidratar el estado guardado.
+  const [hydrated, setHydrated] = useState(false);
   const [selected, setSelected] = useState<CheckoutSelection>({
     style: '',
     bodyType: '',
@@ -184,6 +222,43 @@ export function useCheckout() {
       setSelected(prev => (prev.style ? prev : { ...prev, style: preselected }));
     }
   }, []);
+
+  // Rehidratar el carrito guardado para retomar el pedido tras cerrar la
+  // pestaña. Las fotos (File) no son serializables, así que no se restauran.
+  // Si la URL trae ?style=, es una entrada NUEVA al embudo y no se restaura.
+  useEffect(() => {
+    try {
+      const hasStyleParam = new URLSearchParams(window.location.search).has('style');
+      if (!hasStyleParam) {
+        const raw = localStorage.getItem(CART_STORAGE_KEY);
+        if (raw) {
+          const saved = JSON.parse(raw) as {
+            selected?: Partial<CheckoutSelection>;
+            step?: number;
+            contact?: { name: string; email: string; phone: string };
+          };
+          if (saved.selected) {
+            setSelected(prev => ({ ...prev, ...saved.selected, photos: [] }));
+          }
+          if (saved.contact) setContact(saved.contact);
+          // Nunca se retoma directo en el pago (paso 5): las fotos y los
+          // params del checkout se generan de nuevo. Se vuelve como mucho al 4.
+          if (typeof saved.step === 'number') setStep(Math.min(Math.max(saved.step, 1), 4));
+        }
+      }
+    } catch { /* no-op */ }
+    setHydrated(true);
+  }, []);
+
+  // Guardado local continuo (sin fotos): permite retomar donde se quedó.
+  useEffect(() => {
+    if (!hydrated) return;
+    try {
+      const { photos: _photos, ...rest } = selected;
+      void _photos;
+      localStorage.setItem(CART_STORAGE_KEY, JSON.stringify({ selected: rest, step, contact }));
+    } catch { /* no-op */ }
+  }, [selected, step, contact, hydrated]);
 
   useEffect(() => {
     cachedFetchJSON<Array<{ slug: string; name: string; image?: string }>>('/api/styles')
@@ -312,6 +387,43 @@ export function useCheckout() {
   const selectShipping = useCallback((option: ShippingOption | null, address?: ShippingAddress) => {
     setShippingSelection(option && address ? { option, address } : null);
   }, []);
+
+  // Sync al servidor del carrito (recuperación de carritos abandonados). Es
+  // best-effort y debounced: si el cliente cierra el proceso a mitad, en el
+  // admin queda guardado lo que llevaba y en qué paso iba, con su contacto si
+  // llegó a escribirlo. No corre hasta tener al menos un estilo elegido.
+  useEffect(() => {
+    if (!hydrated || !cartId || !selected.style) return;
+    const timer = setTimeout(() => {
+      const { photos: _photos, ...state } = selected;
+      void _photos;
+      const styleName = styles.find(s => s.id === selected.style)?.name ?? selected.style;
+      const summary = [
+        styleName,
+        selected.bodyType ? (selected.bodyType === 'full_body' ? 'Cuerpo completo' : 'Torso') : '',
+        `${selected.peopleCount} pers.`,
+        selected.express ? 'Exprés' : '',
+        selected.recording ? 'Video' : '',
+      ].filter(Boolean).join(' · ').slice(0, 500);
+      fetch('/api/cart', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          cartId,
+          step,
+          state,
+          summary,
+          amountUsd: quote.total || undefined,
+          currency: currency.toLowerCase(),
+          ...(contact.name.trim() ? { customerName: contact.name.trim() } : {}),
+          ...(contact.email.trim() ? { customerEmail: contact.email.trim() } : {}),
+          ...(contact.phone.trim() ? { customerPhone: contact.phone.trim() } : {}),
+        }),
+        keepalive: true,
+      }).catch(() => null);
+    }, 1200);
+    return () => clearTimeout(timer);
+  }, [hydrated, cartId, selected, step, contact, quote.total, currency, styles]);
 
   // Aplica el código escrito: se manda con el próximo quote y el servidor decide.
   const applyDiscountCode = () => {
@@ -464,7 +576,14 @@ export function useCheckout() {
         const res = await fetch('/api/checkout', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ ...checkoutParams, recaptchaToken }),
+          body: JSON.stringify({
+            ...checkoutParams,
+            customerName: contact.name.trim(),
+            customerEmail: contact.email.trim(),
+            customerPhone: contact.phone.trim() || undefined,
+            ...(cartId ? { cartId } : {}),
+            recaptchaToken,
+          }),
           signal: controller.signal,
         });
         data = await res.json().catch(() => null);
@@ -479,7 +598,7 @@ export function useCheckout() {
       setCheckoutError(t.studio.errors.payment);
       throw err instanceof Error ? err : new Error('checkout failed');
     }
-  }, [checkoutParams, t]);
+  }, [checkoutParams, t, contact, cartId]);
 
   // Captura la orden aprobada y redirige al success con la referencia.
   const capturePayPalOrder = useCallback(async (orderID: string) => {
@@ -490,6 +609,11 @@ export function useCheckout() {
     });
     const data = await res.json().catch(() => null);
     if (!res.ok || data?.status !== 'COMPLETED') throw new Error('capture failed');
+    // Pago hecho: se descarta el carrito guardado para empezar limpio.
+    try {
+      localStorage.removeItem(CART_STORAGE_KEY);
+      localStorage.removeItem(CART_ID_KEY);
+    } catch { /* no-op */ }
     const ref = data.reference ? `?ref=${encodeURIComponent(data.reference)}&status=APPROVED` : '';
     window.location.href = `/checkout/success${ref}`;
   }, []);
@@ -502,11 +626,18 @@ export function useCheckout() {
     const res = await fetch('/api/checkout', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ ...checkoutParams, recaptchaToken }),
+      body: JSON.stringify({
+        ...checkoutParams,
+        customerName: contact.name.trim(),
+        customerEmail: contact.email.trim(),
+        customerPhone: contact.phone.trim() || undefined,
+        ...(cartId ? { cartId } : {}),
+        recaptchaToken,
+      }),
     });
     const data = await res.json().catch(() => null);
     return data?.mp ?? null;
-  }, [checkoutParams]);
+  }, [checkoutParams, contact, cartId]);
 
   const prevStep = () => {
     if (step > 1) setStep(step - 1);
@@ -620,6 +751,7 @@ export function useCheckout() {
     // state
     step, setStep,
     selected,
+    contact, setContactField, contactValid,
     styles, bodyTypes, priceMap, shippingEstimate, shippingSelection, selectShipping, setShippingRequired,
     discountCodeInput, onDiscountInput,
     appliedCode, codeStatus,

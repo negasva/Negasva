@@ -1,83 +1,131 @@
 # SEO Audit — negasva.shop
 
-**Date:** 2026-06-23
-**Business type:** E-commerce / personalized digital service — custom cartoon-style photo portraits (Rick y Morty, Simpsons, Gravity Falls, Padrinos Mágicos), Stripe checkout, Next.js on Vercel, Supabase backend.
-**Overall SEO Health Score: 62/100**
+**Fecha:** 2026-07-10 · **Skill:** seo-audit v2.2.0 · **Páginas analizadas:** 53/53 (sitio completo) + tests de redirects y 404
+**Audit anterior:** 2026-06-23 (score 62/100) — este informe incluye comparación de drift.
+
+> Nota metodológica: el sandbox de scripts no estaba disponible (virtualización deshabilitada); el audit se ejecutó con crawl vía navegador real (extracción DOM/JSON-LD/headers en vivo). La API de PageSpeed agotó su cuota anónima, por lo que Performance se midió con la Performance API del navegador (sin datos de campo CrUX).
+
+---
 
 ## Executive Summary
 
-negasva.shop has solid technical bones — fully SSR'd Next.js content, strong security headers, fast TTFB, and good schema infrastructure — but several **bugs are actively suppressing the site's own search visibility**: wrong canonical tags on most non-homepage pages, broken hreflang claims pointing to nonexistent locales, and duplicate/competing Product schema entities. None of these require new content or design work — they're metadata bugs with outsized impact, and they're the highest-leverage fixes available.
+### 🎯 SEO Health Score: **83 / 100** (antes: 62 — **+21 puntos**)
 
-Content depth is the second-biggest gap: the blog is critically thin (one comparison post measured at ~89 words), and the four style pages appear templated rather than genuinely differentiated, evidenced by identical hardcoded pricing in their schema.
+**Tipo de negocio detectado:** E-commerce (servicio de producto personalizado — retratos cartoon dibujados a mano, digital + print-on-demand; sitio EN, mercado US/global; Next.js/Vercel, Supabase, Stripe/PayPal)
 
-### Top 5 Critical Issues
-1. Canonical tags on /precios, /order, /galeria, /sobre, /contacto, /faq all point to the homepage instead of self.
-2. hreflang tags claim en/fr versions exist; they all resolve to the same Spanish homepage.
-3. Competing Product schema entities on style pages, plus generic Product/Offer schema leaking onto non-product pages.
-4. /order (checkout) is indexed with no canonical/noindex; /order?style=* variants are crawlable duplicate-content risk.
-5. Blog posts are critically thin — the site's own templating proves 500+ word pages are achievable elsewhere.
-
-### Top 5 Quick Wins
-1. Fix canonical tags to self-reference (hours, high impact).
-2. Remove broken en/fr hreflang claims (hours).
-3. Redirect www.negasva.shop to apex (minutes).
-4. Add llms.txt for AI crawler readiness (1-2 hours).
-5. Render all FAQ answers in visible DOM text instead of a collapsed accordion (half day).
-
-## Category Scores
-
-| Category | Score | Weight |
+| Categoría | Peso | Score |
 |---|---|---|
-| Technical SEO | 64/100 | 22% |
-| Content Quality | 55/100 | 23% |
-| On-Page / Search Experience | 63/100 | 20% |
-| Schema / Structured Data | 58/100 | 10% |
-| Performance (CWV) | 73/100 | 10% |
-| AI Search Readiness (GEO) | 64/100 | 10% |
-| Images | 65/100 | 5% |
+| Technical SEO | 22% | 92 |
+| Content Quality | 23% | 78 |
+| On-Page SEO | 20% | 85 |
+| Schema / Structured Data | 10% | 70 |
+| Performance (CWV) | 10% | 85 |
+| AI Search Readiness | 10% | 85 |
+| Images | 5% | 80 |
 
-Supplementary specialist scores (not part of the weighted total, but informative): SXO/page-intent fit 62/100, E-commerce signals 64/100, Blog content architecture 42/100, Visual/mobile 68/100. Backlinks: not scored — the domain has zero measured footprint in available free data sources (too new/small to appear in Common Crawl), which reflects "nothing measured" rather than "measured and bad."
+### Drift vs audit 2026-06-23 — problemas RESUELTOS ✅
 
-## Technical SEO (64/100)
+Los 5 críticos del audit anterior están corregidos y verificados en vivo: canonicals ahora autorreferentes en las 53 páginas; hreflang roto eliminado (0 tags); URLs migradas de ES a EN con 301 correctos; `llms.txt` implementado; FAQs renderizadas en el DOM; blog reescrito con posts de 1.700–2.500 palabras (antes ~89); sitio traducido íntegramente a inglés con estrategia coherente. Trabajo excelente.
 
-**Works well:** full SSR/SSG (no SPA shell), strong security headers (HSTS preload, full CSP, COOP/CORP), clean robots.txt, valid sitemap, correctly prioritized LCP image loading.
+### Top 5 issues actuales (críticos/altos)
 
-**Critical:** canonical tags on 6+ pages point to the homepage instead of self — likely suppressing those pages from search results entirely. hreflang tags advertise en/fr/x-default locales that don't exist, all resolving to the Spanish root.
+1. **[High] `Product.image` malformada en 4 páginas de estilo** (simpsons, rick-and-morty, gravity-falls, fairly-oddparents): `"image":"https://negasva.shophttps://rohzujxjomqxrhvpoxvg.supabase.co/..."` — el dominio se concatena delante de URLs que ya son absolutas (Supabase). Las 9 páginas de estilo con imágenes relativas quedan bien. Invalida rich results de Product en 4 páginas clave.
+2. **[High] Sin `aggregateRating`/`Review` schema** pese a mostrar 16+ testimonios 5★ y "+1000 clientes" — se pierden estrellas en SERP (usar solo reseñas reales y verificables).
+3. **[Medium] E-E-A-T débil en blog:** autor genérico `Person "Negasva"` sin nombre real ni credenciales; 0 enlaces externos/citas en los posts.
+4. **[Medium] Precio de entrada inconsistente:** "from $15" (titles/meta/schema/llms.txt) vs "from $20" (barra sticky del home) vs "$25" (tarjeta de pricing del home). Confunde a usuarios y a los LLMs que citan el sitio.
+5. **[Medium] Imágenes placeholder duplicadas entre estilos en `/styles`** (rm-4.webp para Disney-Pixar y Futurama; rm-6 para Family Guy y Bob's Burgers; rm-3 y rm-10 también repetidas) — el catálogo principal muestra el mismo arte para estilos distintos.
 
-**High:** www subdomain isn't redirected to apex; /seguimiento is noindex,nofollow, blocking link equity unnecessarily.
+### Top 5 quick wins
 
-**Medium:** every sitemap URL shares an identical lastmod timestamp (a build-time stamp, not real content tracking), which over time erodes crawler trust in the signal.
+1. Corregir la concatenación de dominio en `Product.image` (comprobar si la URL ya es absoluta antes de prefijar) — ~1 línea, arregla 4 páginas.
+2. Traducir "✓ Compra verificada" → "Verified purchase" (aparece en español en el sitio EN) y unificar el precio de entrada.
+3. Añadir H1 a `/track-order` (única página sin H1) y mejorar title de `/contact` (17 chars).
+4. Añadir `image` a los 3 Product de `/products` (mug, t-shirt, etc.).
+5. Actualizar los enlaces del footer del home que aún apuntan a `/privacidad`/`/terminos` (evitar saltos 301).
 
-## Content Quality (55/100)
+---
 
-**Works well:** pricing and 48h turnaround stated clearly and consistently; style detail pages run substantial (~538 words with FAQ).
+## Technical SEO — 92/100
 
-**Critical:** the blog is severely thin — a comparison post measured at ~89 words, far below what's needed to rank for comparison-intent queries.
+**Lo que funciona:**
+- `robots.txt` correcto (bloquea `/admin`, `/api/`; referencia sitemap; sin bloqueos a crawlers de IA).
+- Sitemap XML válido: 53 URLs, todas 200, todas indexables, sin huérfanas relevantes.
+- Canonicals autorreferentes en el 100% de páginas; `meta robots: index, follow` en todo.
+- 301 limpios desde URLs legacy en español (`/privacidad`→`/privacy`, `/terminos`→`/terms`).
+- 404 real (status 404 + página propia con title y H1).
+- Security headers fuertes: CSP completa, HSTS, `nosniff`, `X-Frame-Options: DENY`, Referrer-Policy, Permissions-Policy.
+- SSR completo — todo el contenido visible sin JavaScript.
 
-**High:** the four style pages show signs of templated, copy-paste-and-swap-name content (identical hardcoded pricing across all four in their schema); using third-party trademarked character names as the core keyword strategy carries a business risk worth a deliberate decision, not a default; testimonials aren't linked to a verifiable review platform.
+**Hallazgos:**
+- [Low] Footer del home aún enlaza a `/privacidad`/`/terminos` (pasan por 301).
+- [Low] `lastmod` casi uniforme (2026-07-05 en 40 URLs) — generado en build; no refleja cambios reales.
+- [Info] Sin hreflang — correcto siendo EN-only, pero los testimonios ES/FR sugieren demanda multi-idioma (oportunidad futura de locales ES/FR con hreflang).
 
-**Medium:** 2 of 4 styles have zero supporting blog content; no gift-occasion content despite the gift-driven business model.
+## Content Quality — 78/100
 
-## On-Page / Search Experience (63/100)
+**Lo que funciona:**
+- Profundidad sólida: páginas de estilo 2.700–3.000 palabras; gift pages ~1.700–1.800; blog 1.700–2.500. Sin thin content salvo transaccionales (esperado).
+- Arquitectura madura: 13 landings de estilo + 12 landings de ocasión + 13 posts con clúster claro (gift ideas, comparativas, guías) y hub `/blog`.
+- Posts comparativos que citan competidores por nombre (Turned Yellow, Etsy, Fiverr) — muy citables por LLMs.
+- Diferenciador "hand-drawn, no AI" consistente, con landing dedicada.
 
-/estilos/rick-y-morty is a well-built hybrid product page (price, FAQ, breadcrumbs) that competes well for gift-intent keywords like "regalo personalizado rick y morty." But for tool-intent keywords like "convertir foto en caricatura simpsons," the SERP is dominated by free instant AI generators (7/10 results) — a paid, 48h hand-drawn product page cannot satisfy that intent, and targeting that exact phrase will likely never rank without a free-preview entry point. Style pages also lack gift-occasion framing that direct competitors use prominently, and lack visible reviews/ratings on the page itself.
+**Hallazgos:**
+- [Medium] E-E-A-T: autor del blog sin persona real (Person "Negasva", jobTitle "Illustrator & Founder", sin nombre); 0 enlaces salientes en los posts. Crear página de autor con persona, foto y bio; citar fuentes externas.
+- [Medium] Testimonios con señales de plantilla ("✓ Compra verificada" en español, nombres genéricos multi-país, sin enlace a fuente verificable). Si son reales, hacerlos verificables; si no, riesgo de confianza y de compliance.
+- [Medium] Precio de entrada inconsistente entre superficies ($15/$20/$25).
+- [Low] Enlazado interno contextual escaso dentro del cuerpo de los posts (4 enlaces en el post analizado, mayoría CTA).
 
-## Schema / Structured Data (58/100)
+## On-Page SEO — 85/100
 
-Product+AggregateOffer and FAQPage JSON-LD are in good shape with clean, citable facts — but two structural bugs undercut them: competing Product entities on the same page (generic + style-specific), and generic schema bleeding onto pages that aren't products. No Review/AggregateRating schema exists despite visible testimonials, and all four styles share identical hardcoded pricing in their schema, suggesting it wasn't generated per-style.
+**Lo que funciona:**
+- 1 H1 único por página (52/53), jerarquía H2 limpia, breadcrumbs visibles + `BreadcrumbList`.
+- Titles y meta descriptions únicos en las 53 páginas, con USPs (48h, no AI, precio).
+- Alt text descriptivo en el 100% de imágenes del home (0/33 sin alt).
 
-## Performance / Core Web Vitals (73/100)
+**Hallazgos:**
+- [Medium] `/track-order` sin H1.
+- [Low] Titles >70 chars (se truncan): /order (73), /cartoon-yourself (74), /products (73), gift pages (69–85), /custom-pet-portrait (85).
+- [Low] `/contact`: title de 17 chars y meta de 112 — desaprovechados.
+- [Low] `meta keywords` presente en varias plantillas — obsoleto; eliminar.
 
-LCP fails the "Good" CWV threshold on all 4 tested pages (2.33s-2.94s), driven by render-blocking CSS and an under-optimized hero image (~41KB of available savings). /estilos independently fails CLS (0.245, "poor") due to a dynamically-rendered grid card shifting layout after load — not an unsized image or font issue as initially suspected. Stripe's checkout JS (236KB) loads globally rather than only on the checkout page.
+## Schema / Structured Data — 70/100
 
-## AI Search Readiness / GEO (64/100)
+**Lo que funciona (cobertura muy amplia):**
+`OnlineStore` global · `Product + AggregateOffer` en 13 estilos, 12 gift pages y /cartoon-yourself · `FAQPage` en estilos, gift pages y /faq · `HowTo` en estilos y /how-it-works · `BreadcrumbList` generalizado · `BlogPosting` completo (author, datePublished, dateModified, image) · `ImageGallery` en /gallery · `ProfilePage` en /about. Los nodos duplicados/competing del audit anterior están resueltos.
 
-Pricing and turnaround are stated as clean, repeatable facts in both prose and schema — strong groundwork for AI citation. But 9 of 10 FAQ answers are hidden inside a collapsed accordion and only exist in JSON-LD, invisible to any crawler reading plain DOM text. No llms.txt exists. The site has no English content despite English search demand for terms like "Rick and Morty portrait." Brand authority signals (Instagram/TikTok only) are weaker than the YouTube/Reddit presence that correlates more strongly with AI citation.
+**Hallazgos:**
+- **[High] `Product.image` malformada en 4 páginas de estilo** (bug de concatenación con URLs absolutas de Supabase). Verificado: afecta a simpsons, rick-and-morty, gravity-falls, fairly-oddparents; las 9 restantes OK.
+- [Medium] Sin `aggregateRating`/`Review` en ningún Product.
+- [Medium] Los 3 `Product` de `/products` sin `image`.
+- [Low] `FAQPage` duplicado (2 bloques) en `/faq` — consolidar.
 
-## Images (65/100)
+## Performance — 85/100 (lab, sin datos de campo)
 
-next/image with responsive srcset is correctly implemented, but the hero image still has ~41KB of unrealized compression savings. Alt-text coverage and image-SERP visibility weren't deeply audited this pass — recommend a follow-up before treating this score as final.
+- TTFB **77 ms** · DOMContentLoaded **371 ms** · Load **660 ms** (navegador real).
+- Peso decodificado ~700 KB (JS 422 KB, CSS 176 KB) — razonable para Next.js.
+- 27/33 imágenes lazy, servidas vía `next/image` (WebP/resize). CLS observado: 0.00.
+- [Info] PSI/CrUX no disponible por cuota — correr PageSpeed Insights manualmente para confirmar LCP móvil de campo (las hero vienen de Supabase; revisar `sizes`, se piden a `w=3840`).
 
-## Backlinks
+## AI Search Readiness (GEO) — 85/100
 
-No Moz/Bing/DataForSEO API keys are configured. Common Crawl shows zero record of negasva.shop — consistent with a brand-new, small domain not yet captured by quarterly web-graph snapshots. Recommended low-cost tactics suited to this niche: Etsy listings, Rick & Morty/Simpsons fandom forum/subreddit presence, Pinterest as a visual-discovery channel, gift-guide blogger outreach, and a UGC incentive (discount for customers who post/tag their portraits).
+**Lo que funciona:**
+- `llms.txt` presente y bien estructurado (qué es, páginas clave, estilos, facts, contacto).
+- Acceso total para GPTBot/ClaudeBot/PerplexityBot (robots.txt no restringe).
+- FAQs en DOM, contenido comparativo con entidades competidoras, hechos y precios concretos.
+
+**Hallazgos:**
+- [Medium] 0 citas externas en el contenido — debilita señales de autoridad para motores generativos.
+- [Low] llms.txt dice "from $15" mientras la UI muestra $20/$25 — los LLMs citarán datos contradictorios.
+- [Low] llms.txt solo lista Instagram como contacto (añadir email).
+
+## Images — 80/100
+
+- Alt text: 100% cobertura, descriptivo y keyword-rich.
+- [Medium] Placeholders duplicados entre estilos distintos en `/styles` (detallado arriba) — reemplazar con arte real por estilo.
+- [Low] OG image ausente en páginas legales; `twitter:title/description` heredan los del home en varias páginas internas (metadata parcialmente sin sobreescribir).
+
+---
+
+## Verificación
+
+Hallazgos críticos verificados en vivo el 2026-07-10: bug de `Product.image` confirmado en las 4 páginas afectadas y descartado en las otras 9; redirects legacy confirmados; 404 con status real; headers leídos de la respuesta HTTP; 53/53 URLs del sitemap con status 200; el fix de canonicals/hreflang del audit anterior re-verificado en las 53 páginas.

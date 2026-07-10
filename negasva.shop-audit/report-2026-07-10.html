@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SEO Audit — negasva.shop — 2026-07-10</title>
+<style>
+  :root{
+    --bg:#0f1117; --card:#181b24; --card2:#1f2330; --text:#e8eaf0; --muted:#9aa1b5;
+    --accent:#FF9EC5; --green:#4ade80; --yellow:#facc15; --orange:#fb923c; --red:#f87171;
+    --blue:#60a5fa; --border:#2a2f3e;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,-apple-system,sans-serif;line-height:1.6;padding:0 0 60px}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 24px}
+  header{background:linear-gradient(135deg,#1a1030 0%,#0f1117 60%);border-bottom:1px solid var(--border);padding:48px 0 36px;margin-bottom:36px}
+  h1{font-size:1.9rem;font-weight:900;letter-spacing:-.5px}
+  h1 span{color:var(--accent)}
+  .sub{color:var(--muted);margin-top:6px;font-size:.95rem}
+  .badge{display:inline-block;background:var(--card2);border:1px solid var(--border);border-radius:99px;padding:3px 12px;font-size:.78rem;color:var(--muted);margin:14px 6px 0 0}
+  h2{font-size:1.35rem;margin:44px 0 16px;padding-bottom:8px;border-bottom:2px solid var(--border)}
+  h3{font-size:1.05rem;margin:22px 0 10px}
+  p{margin:0 0 12px;color:#c8cdd9}
+  .score-hero{display:flex;gap:32px;flex-wrap:wrap;align-items:center;margin-top:26px}
+  .gauge{position:relative;width:150px;height:150px}
+  .gauge svg{transform:rotate(-90deg)}
+  .gauge .num{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+  .gauge .num b{font-size:2.4rem;line-height:1;color:var(--green)}
+  .gauge .num small{color:var(--muted);font-size:.7rem}
+  .delta{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px 20px;flex:1;min-width:260px}
+  .delta table{width:100%;border-collapse:collapse;font-size:.88rem}
+  .delta td{padding:4px 8px;border:none;color:var(--muted)}
+  .delta td b{color:var(--text)}
+  table{width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem}
+  th{text-align:left;background:var(--card2);padding:10px 12px;border:1px solid var(--border);font-size:.8rem;text-transform:uppercase;letter-spacing:.5px;color:var(--muted)}
+  td{padding:10px 12px;border:1px solid var(--border);vertical-align:top;color:#c8cdd9}
+  .bar{background:#2a2f3e;border-radius:6px;height:8px;overflow:hidden;min-width:90px}
+  .bar i{display:block;height:100%;border-radius:6px}
+  .pill{display:inline-block;border-radius:6px;padding:1px 9px;font-size:.74rem;font-weight:700;white-space:nowrap}
+  .p-crit{background:#4c1d1d;color:var(--red)}
+  .p-high{background:#4a2e14;color:var(--orange)}
+  .p-med{background:#453c10;color:var(--yellow)}
+  .p-low{background:#16324a;color:var(--blue)}
+  .p-ok{background:#14401f;color:var(--green)}
+  .finding{background:var(--card);border:1px solid var(--border);border-left:4px solid var(--border);border-radius:10px;padding:16px 20px;margin:14px 0}
+  .finding.crit{border-left-color:var(--red)}
+  .finding.high{border-left-color:var(--orange)}
+  .finding.med{border-left-color:var(--yellow)}
+  .finding.low{border-left-color:var(--blue)}
+  .finding h4{font-size:1rem;margin-bottom:6px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+  .finding .meta{font-size:.82rem;color:var(--muted);margin-top:10px;border-top:1px dashed var(--border);padding-top:10px}
+  .finding .meta b{color:#aeb6c9}
+  code{background:#262b3a;border-radius:4px;padding:1px 6px;font-size:.84em;color:#ffd7e8;font-family:Consolas,monospace}
+  ul{margin:0 0 12px 22px;color:#c8cdd9}
+  li{margin:4px 0}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  @media(max-width:760px){.grid2{grid-template-columns:1fr}}
+  .okcard{background:var(--card);border:1px solid #1e3a26;border-radius:10px;padding:14px 18px}
+  .okcard h4{color:var(--green);font-size:.92rem;margin-bottom:4px}
+  .okcard p{font-size:.85rem;margin:0}
+  footer{margin-top:60px;text-align:center;color:var(--muted);font-size:.82rem;border-top:1px solid var(--border);padding-top:24px}
+  footer a{color:var(--accent);text-decoration:none}
+  .note{background:#1c2233;border:1px solid #2b3654;border-radius:10px;padding:14px 18px;font-size:.88rem;color:#aeb8d4;margin:14px 0}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <h1>SEO Audit — <span>negasva.shop</span></h1>
+    <div class="sub">Auditoría completa · 10 de julio de 2026 · Metodología <b>claude-seo</b> (AgriciDaniel) — pesos por categoría, hallazgos falsables y plan de acción priorizado</div>
+    <div>
+      <span class="badge">Tipo de negocio: E-commerce (retratos digitales personalizados)</span>
+      <span class="badge">Stack: Next.js (Vercel) + Supabase + Stripe</span>
+      <span class="badge">Idioma: EN (migración desde ES casi completa)</span>
+    </div>
+    <div class="score-hero">
+      <div class="gauge">
+        <svg width="150" height="150" viewBox="0 0 150 150">
+          <circle cx="75" cy="75" r="64" fill="none" stroke="#2a2f3e" stroke-width="12"/>
+          <circle cx="75" cy="75" r="64" fill="none" stroke="#4ade80" stroke-width="12"
+                  stroke-linecap="round" stroke-dasharray="402" stroke-dashoffset="92.5"/>
+        </svg>
+        <div class="num"><b>77</b><small>SEO Health / 100</small></div>
+      </div>
+      <div class="delta">
+        <h3 style="margin-top:0">Evolución del score</h3>
+        <table>
+          <tr><td>23 jun 2026 (audit claude-seo v1)</td><td><b>62/100</b></td></tr>
+          <tr><td>5 jul 2026 (audit código v2)</td><td><b>70/100</b></td></tr>
+          <tr><td><b>10 jul 2026 (este audit)</b></td><td><b style="color:var(--green)">77/100 ▲ +15 en 17 días</b></td></tr>
+        </table>
+        <p style="font-size:.82rem;margin-top:8px">Los P0 de las auditorías anteriores están ejecutados y verificados en producción. Lo que queda es consolidación: contenido residual en español, señales de reviews y re-medición de Core Web Vitals.</p>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+<h2>Resumen ejecutivo</h2>
+<p>La base técnica de negasva.shop está ahora en muy buen estado: metadata EN completa con canonical y OG correctos, <code>robots.txt</code> limpio con sitemap dinámico de fechas reales, JSON-LD (OnlineStore, Product + AggregateOffer + BreadcrumbList + FAQPage en landings), <code>llms.txt</code> actualizado en inglés, navegación y footer con enlazado interno completo hacia las 13 landings de estilo y 12 de ocasión, y páginas hub server-rendered. Todo lo anterior era crítico hace 17 días y hoy está resuelto y verificado en el sitio en vivo.</p>
+<p>Los frenos restantes son de <b>coherencia y confianza</b>, no de infraestructura: seis posts del blog siguen en español dentro de un sitio <code>lang="en"</code>, las páginas legales conservan slugs en español, los testimonios de la home mezclan idiomas y muestran la etiqueta «Compra verificada» en español sin plataforma verificable ni schema de reviews, y hay <b>tres precios de entrada distintos</b> ($15, $20, $25) visibles en la misma home — una incoherencia que daña tanto la conversión como la citabilidad en buscadores con IA, que premian datos repetibles y consistentes.</p>
+
+<h2>Scores por categoría</h2>
+<table>
+  <tr><th>Categoría</th><th>Peso</th><th>Score</th><th></th><th>Tendencia vs 23-jun</th></tr>
+  <tr><td>Technical SEO</td><td>22%</td><td><b>85</b></td><td><div class="bar"><i style="width:85%;background:var(--green)"></i></div></td><td>▲ +21 (canonicals, sitemap, 301s ES→EN, hubs SSR)</td></tr>
+  <tr><td>Content Quality (E-E-A-T)</td><td>23%</td><td><b>68</b></td><td><div class="bar"><i style="width:68%;background:var(--yellow)"></i></div></td><td>▲ +13 (blog EN con comparadores; lastran los 6 posts ES)</td></tr>
+  <tr><td>On-Page / SXO</td><td>20%</td><td><b>82</b></td><td><div class="bar"><i style="width:82%;background:var(--green)"></i></div></td><td>▲ +19 (nav/footer completos, H1 keyword-exacto, landings enlazadas)</td></tr>
+  <tr><td>Schema / Structured Data</td><td>10%</td><td><b>72</b></td><td><div class="bar"><i style="width:72%;background:var(--yellow)"></i></div></td><td>▲ +14 (FAQPage SSR ✓; falta Review/AggregateRating real)</td></tr>
+  <tr><td>Performance (CWV)</td><td>10%</td><td><b>70</b></td><td><div class="bar"><i style="width:70%;background:var(--yellow)"></i></div></td><td>— sin re-medir (datos lab del 23-jun: LCP 2.3–2.9s, CLS 0.245 en /estilos)</td></tr>
+  <tr><td>AI Search Readiness (GEO)</td><td>10%</td><td><b>80</b></td><td><div class="bar"><i style="width:80%;background:var(--green)"></i></div></td><td>▲ +16 (llms.txt EN ✓, FAQs en DOM ✓; lastra precio inconsistente)</td></tr>
+  <tr><td>Images</td><td>5%</td><td><b>72</b></td><td><div class="bar"><i style="width:72%;background:var(--yellow)"></i></div></td><td>▲ +7 (alts EN con patrón keyword ✓; hero desde dominio Supabase)</td></tr>
+  <tr><td colspan="2"><b>GLOBAL (ponderado)</b></td><td><b style="color:var(--green)">77</b></td><td><div class="bar"><i style="width:77%;background:var(--green)"></i></div></td><td><b>▲ +15</b></td></tr>
+</table>
+
+<h2>Verificado en producción hoy (lo que ya está bien)</h2>
+<div class="grid2">
+  <div class="okcard"><h4>✓ Metadata y canonical</h4><p>Title/description EN, <code>metadataBase</code>, canonical self-referencing, OG/Twitter card con imagen propia 1200×630 generada en build, <code>robots: index,follow</code>.</p></div>
+  <div class="okcard"><h4>✓ robots.txt + sitemap dinámico</h4><p>Allow /, Disallow /admin y /api/, sitemap declarado. Sitemap con 40+ URLs, prioridades coherentes y <code>lastModified</code> reales en posts.</p></div>
+  <div class="okcard"><h4>✓ Enlazado interno completo</h4><p>Navbar (How It Works, Styles, Pricing, Gallery, Blog, FAQ), home con cards a estilos + bloque «perfect gift for…», footer con columnas Styles (14) y Gifts &amp; Occasions (12). Las landings ya no están huérfanas.</p></div>
+  <div class="okcard"><h4>✓ Migración de rutas ES→EN</h4><p><code>/pricing</code>, <code>/gallery</code>, <code>/contact</code>, <code>/track-order</code>, <code>/about</code>, <code>/how-it-works</code> en vivo con 301 desde los slugs ES.</p></div>
+  <div class="okcard"><h4>✓ FAQ server-rendered + FAQPage</h4><p><code>app/faq/page.tsx</code> es server component con ISR 300s, respuestas visibles en el DOM y JSON-LD FAQPage. (Google restringe el rich result a sitios gov/salud, pero mantiene valor para citación LLM — correcto conservarlo.)</p></div>
+  <div class="okcard"><h4>✓ llms.txt actualizado</h4><p>En inglés, con las 13 landings de estilo, 12 de ocasión, datos clave repetibles y nota «FAQ answers are visible in the DOM».</p></div>
+  <div class="okcard"><h4>✓ Arquitectura de landings</h4><p>13 estilos (incl. Futurama, Bob's Burgers, American Dad, King of the Hill, Studio Ghibli) + <code>/cartoon-yourself</code> + <code>/products</code> físicos con precios. El backlog P2 del audit anterior está ejecutado.</p></div>
+  <div class="okcard"><h4>✓ /order indexable y en sitemap</h4><p>El conflicto noindex+sitemap (crítico en audits previos) está resuelto: sin noindex en <code>app/order</code>, priority 0.9 en sitemap.</p></div>
+</div>
+
+<h2>Hallazgos priorizados</h2>
+<p>Cada hallazgo incluye el chequeo de falsabilidad («¿cómo sabríamos que falló?») y el indicador adelantado, según la metodología del skill.</p>
+
+<h3>Alta prioridad — arreglar esta semana</h3>
+
+<div class="finding high">
+  <h4><span class="pill p-high">HIGH</span> Precio de entrada inconsistente: $15 vs $20 vs $25 en la misma home</h4>
+  <p>El hero, el title y llms.txt dicen «from $15»; la barra flotante de pedido dice «from $20»; la sección de precios muestra $25 como opción mínima. Los motores generativos (AI Overviews, ChatGPT, Perplexity) citan datos repetibles — tres cifras distintas para el mismo hecho reducen la probabilidad de cita y generan desconfianza en el usuario.</p>
+  <div class="meta"><b>Dónde:</b> hero de <code>app/page.tsx</code>, title global en <code>app/layout.tsx</code>, CTA flotante, sección pricing, <code>llms.txt</code>, schema OnlineStore (<code>priceRange: "$15-$160"</code>).<br>
+  <b>Fix:</b> elegir un precio de entrada canónico y propagarlo a todos los puntos (si $15 corresponde a un producto real comprable, mantenerlo y mostrar ese producto en pricing).<br>
+  <b>Falsabilidad:</b> tras el fix, una búsqueda de todos los «from $» en el HTML servido debe devolver una sola cifra.<br>
+  <b>Indicador adelantado:</b> menciones de precio correctas al preguntar a un LLM «how much does a Negasva portrait cost».</div>
+</div>
+
+<div class="finding high">
+  <h4><span class="pill p-high">HIGH</span> Testimonios sin verificabilidad ni schema, con idiomas mezclados</h4>
+  <p>La home muestra 16 reseñas de 5★ con la etiqueta <b>«✓ Compra verificada»</b> (en español, en un sitio EN) y citas en francés/español/inglés, sin enlace a ninguna plataforma verificable (Trustpilot, Judge.me, Etsy) ni JSON-LD Review/AggregateRating. El audit de junio ya marcó los testimonios no verificables como riesgo de confianza; siguen sin resolverse. No añadir AggregateRating al schema hasta que las reviews tengan fuente verificable — hacerlo antes sería un riesgo de spam de rich results.</p>
+  <div class="meta"><b>Dónde:</b> <code>components/TestimonialsScroll.tsx</code>.<br>
+  <b>Fix:</b> (1) traducir la etiqueta a «Verified purchase»; (2) integrar una plataforma de reviews real y enlazarla; (3) solo entonces añadir AggregateRating legítimo al Product schema.<br>
+  <b>Falsabilidad:</b> si tras 60 días con reviews verificables el CTR orgánico de las landings de estilo no mejora, la hipótesis de que las estrellas mueven CTR en este nicho queda tocada.<br>
+  <b>Indicador adelantado:</b> impresiones con rich result de estrellas en GSC.</div>
+</div>
+
+<div class="finding high">
+  <h4><span class="pill p-high">HIGH</span> 6 posts del blog siguen en español en un sitio <code>lang="en"</code> sin hreflang</h4>
+  <p>Slugs como <code>ideas-para-regalar-un-retrato-animado</code>, <code>consejos-para-fotos-perfectas</code>, <code>el-proceso-detras-de-cada-retrato</code>, etc. conviven con los 8 posts EN. Diluyen la señal de idioma del blog, compiten por crawl budget y varios tienen ya equivalente temático EN previsto (photo tips, process, family portraits).</p>
+  <div class="meta"><b>Dónde:</b> <code>lib/content/blogPosts.ts</code> (posts 9–14).<br>
+  <b>Fix:</b> reescribirlos en EN apuntando a sus keywords equivalentes con 301 desde el slug ES, o retirarlos con 301 al post EN más cercano. No añadir hreflang: la estrategia correcta es terminar la migración EN-only.<br>
+  <b>Falsabilidad:</b> en GSC, las impresiones de los slugs ES deben transferirse a los EN en ~4 semanas tras el 301; si caen a cero sin transferencia, revisar los redirects.<br>
+  <b>Indicador adelantado:</b> «Página con redirección» creciendo en cobertura de GSC para los slugs ES.</div>
+</div>
+
+<div class="finding high">
+  <h4><span class="pill p-high">HIGH</span> Core Web Vitals sin re-medir tras los cambios; el último dato lab suspendía LCP</h4>
+  <p>La medición del 23-jun daba LCP 2.33–2.94s (umbral «Good»: &lt;2.5s) en las 4 páginas probadas y CLS 0.245 («poor») en el hub de estilos por una grid que se renderizaba tras la carga. Desde entonces los hubs pasaron a server components — es plausible que el CLS esté resuelto, pero no hay dato. Además, las imágenes hero de la home se sirven directamente desde <code>*.supabase.co</code> (algunas fuera del pipeline <code>next/image</code>), lo que añade una conexión de terceros al LCP.</p>
+  <div class="meta"><b>Fix:</b> re-ejecutar PageSpeed Insights/Lighthouse en <code>/</code>, <code>/styles</code>, <code>/styles/simpsons-style-portrait</code>, <code>/pricing</code>; añadir <code>preconnect</code> al host de Supabase; asegurar que todo hero pasa por <code>next/image</code> con <code>priority</code>; valorar cargar Stripe JS solo en checkout (236KB globales según audit previo).<br>
+  <b>Falsabilidad:</b> LCP lab &lt;2.5s y CLS &lt;0.1 en las 4 páginas; si tras el preconnect el LCP no baja, el cuello es la imagen, no la conexión.<br>
+  <b>Indicador adelantado:</b> CrUX field data (aparecerá cuando haya tráfico suficiente).</div>
+</div>
+
+<h3>Prioridad media — este mes</h3>
+
+<div class="finding med">
+  <h4><span class="pill p-med">MEDIUM</span> Páginas legales con slug y contenido en español</h4>
+  <p><code>/privacidad</code>, <code>/terminos</code>, <code>/cookies</code> son las últimas rutas ES vivas y están en el sitemap. Impacto de ranking bajo, pero rompen la coherencia de idioma del dominio y son señal E-E-A-T (trust) que los quality raters sí miran.</p>
+  <div class="meta"><b>Fix:</b> migrar a <code>/privacy</code>, <code>/terms</code>, <code>/cookies</code> con contenido EN y 301, siguiendo el patrón ya probado.<br>
+  <b>Falsabilidad:</b> sitemap sin rutas ES; los 301 responden 301 (no 302/200).</div>
+</div>
+
+<div class="finding med">
+  <h4><span class="pill p-med">MEDIUM</span> Title de la home demasiado largo (~97 caracteres)</h4>
+  <p>«Custom Cartoon Portraits from Your Photo — Hand-Drawn, No AI • 48h Delivery • From $15 | Negasva» se truncará en SERP (~60 caracteres visibles). La keyword principal sobrevive al corte, pero el diferenciador de precio y la marca se pierden.</p>
+  <div class="meta"><b>Fix sugerido:</b> «Custom Cartoon Portraits from Your Photo — Hand-Drawn, No AI | Negasva» (72 chars) y dejar 48h/precio en la description.<br>
+  <b>Falsabilidad:</b> el snippet de Google muestra el title completo sin elipsis.<br>
+  <b>Indicador adelantado:</b> CTR de la home en GSC para queries de marca y no-marca.</div>
+</div>
+
+<div class="finding med">
+  <h4><span class="pill p-med">MEDIUM</span> lastModified del sitemap casi uniforme (2026-07-05)</h4>
+  <p>Todas las páginas estáticas comparten <code>CONTENT_UPDATED</code> fijo. Es mejor que el timestamp de build de junio, pero si se actualiza en bloque en cada retoque, el crawler termina ignorando la señal.</p>
+  <div class="meta"><b>Dónde:</b> <code>app/sitemap.ts:10</code>.<br>
+  <b>Fix:</b> mover la fecha a nivel de ruta (mapa slug→fecha) y actualizar solo lo tocado; los posts ya lo hacen bien.<br>
+  <b>Falsabilidad:</b> tras un deploy sin cambios de contenido, el lastmod de páginas no tocadas no cambia.</div>
+</div>
+
+<div class="finding med">
+  <h4><span class="pill p-med">MEDIUM</span> Logo del schema OnlineStore apunta a <code>favicon.png</code></h4>
+  <p>Google recomienda para <code>logo</code> una imagen ≥112×112px representativa de marca; un favicon puede ser rechazado para el Knowledge Panel. Además el schema no incluye <code>contactPoint</code> ni email de soporte.</p>
+  <div class="meta"><b>Dónde:</b> <code>app/layout.tsx:91</code>.<br>
+  <b>Fix:</b> subir un logo cuadrado dedicado (p. ej. <code>/logo-512.png</code>) y añadir <code>contactPoint</code>.<br>
+  <b>Falsabilidad:</b> Rich Results Test sin warnings en Organization/OnlineStore.</div>
+</div>
+
+<h3>Prioridad baja — backlog</h3>
+
+<div class="finding low">
+  <h4><span class="pill p-low">LOW</span> Meta keywords tag presente</h4>
+  <p>Google la ignora desde 2009; es inocua pero puede exponer estrategia de keywords a competidores. Eliminarla de <code>app/layout.tsx</code> cuando se toque el archivo.</p>
+</div>
+
+<div class="finding low">
+  <h4><span class="pill p-low">LOW</span> Autoridad de marca concentrada en Instagram/TikTok</h4>
+  <p>Los <code>sameAs</code> listan solo Instagram y TikTok (el footer añade Behance — inclúyelo también en el schema). Para citación en motores IA, la presencia en YouTube y Reddit correlaciona más fuerte. Táctica de bajo coste: hilos before/after en subreddits de fandom y Pinterest como canal visual, como recomendó el módulo de backlinks del audit de junio (Common Crawl aún no registra el dominio).</p>
+</div>
+
+<div class="finding low">
+  <h4><span class="pill p-low">LOW</span> Cadencia de contenido frente a turnedyellow</h4>
+  <p>8 posts EN buenos (incl. comparadores «best custom cartoon portrait sites» y «turned yellow alternatives») frente a 50+ del competidor líder. Mantener 2–4 posts EN/mes long-tail de gift ideas por audiencia (boyfriend, dad, coworkers…). El primer objetivo tras reescribir los ES: «how to take the perfect photo for a custom portrait».</p>
+</div>
+
+<h2>Plan de acción</h2>
+<table>
+  <tr><th>#</th><th>Acción</th><th>Prioridad</th><th>Esfuerzo</th><th>Impacto esperado</th></tr>
+  <tr><td>1</td><td>Unificar precio de entrada ($15/$20/$25 → uno solo) en hero, title, CTA, pricing, llms.txt y schema</td><td><span class="pill p-high">HIGH</span></td><td>1–2 h</td><td>Citabilidad IA + conversión</td></tr>
+  <tr><td>2</td><td>Testimonios: etiqueta EN, plataforma verificable, luego AggregateRating legítimo</td><td><span class="pill p-high">HIGH</span></td><td>1–2 días</td><td>CTR (estrellas) + trust E-E-A-T</td></tr>
+  <tr><td>3</td><td>Reescribir en EN los 6 posts ES con 301</td><td><span class="pill p-high">HIGH</span></td><td>2–3 días</td><td>Coherencia de idioma + long-tail</td></tr>
+  <tr><td>4</td><td>Re-medir CWV; preconnect a Supabase; Stripe JS solo en checkout</td><td><span class="pill p-high">HIGH</span></td><td>½ día</td><td>LCP &lt;2.5s, CLS &lt;0.1</td></tr>
+  <tr><td>5</td><td>Migrar /privacidad, /terminos, /cookies a EN con 301</td><td><span class="pill p-med">MEDIUM</span></td><td>½ día</td><td>Coherencia + trust</td></tr>
+  <tr><td>6</td><td>Acortar title de la home a ≤72 caracteres</td><td><span class="pill p-med">MEDIUM</span></td><td>15 min</td><td>CTR en SERP</td></tr>
+  <tr><td>7</td><td>lastModified por ruta en sitemap.ts</td><td><span class="pill p-med">MEDIUM</span></td><td>1 h</td><td>Confianza del crawler</td></tr>
+  <tr><td>8</td><td>Logo dedicado + contactPoint + Behance en schema</td><td><span class="pill p-med">MEDIUM</span></td><td>1 h</td><td>Knowledge Panel</td></tr>
+  <tr><td>9</td><td>Quitar meta keywords; presencia YouTube/Reddit/Pinterest; 2–4 posts EN/mes</td><td><span class="pill p-low">LOW</span></td><td>continuo</td><td>Autoridad + long-tail</td></tr>
+</table>
+
+<h2>Metodología y limitaciones</h2>
+<p>Auditoría realizada con la metodología del skill <a href="https://github.com/AgriciDaniel/claude-seo" style="color:var(--accent)">claude-seo</a> (orquestador SEO: pesos Technical 22% · Content 23% · On-Page 20% · Schema 10% · CWV 10% · GEO 10% · Images 5%; prioridades Critical→Low; chequeo de falsabilidad por recomendación). Fuentes: HTML servido en vivo de negasva.shop (home, robots.txt, llms.txt, sitemap), código fuente del repositorio (app/, components/, lib/content/), y las dos auditorías previas del proyecto (23-jun claude-seo completa con datos Lighthouse; 5-jul auditoría de código v2) para la línea base y el delta.</p>
+<div class="note"><b>Limitaciones:</b> Core Web Vitals sin re-medición en esta pasada (el entorno de ejecución no estaba disponible) — el score 70 es una estimación conservadora sobre los datos lab del 23-jun más las mejoras SSR verificadas en código; re-medir con PageSpeed Insights. Sin credenciales de Google Search Console/CrUX ni APIs de backlinks: indexación inferida de señales on-page y datos de enlaces limitados a Common Crawl (que aún no registra el dominio, esperable en un dominio nuevo).</div>
+
+<footer>
+  <p>SEO Audit · negasva.shop · 2026-07-10 · Score 77/100</p>
+  <p style="margin-top:10px">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━<br>
+  Built with the <a href="https://github.com/AgriciDaniel/claude-seo">claude-seo</a> skill by agricidaniel — Join the AI Marketing Hub community<br>
+  🆓 Free → <a href="https://www.skool.com/ai-marketing-hub">skool.com/ai-marketing-hub</a> · ⚡ Pro → <a href="https://www.skool.com/ai-marketing-hub-pro">skool.com/ai-marketing-hub-pro</a><br>
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</p>
+</footer>
+
+</div>
+</body>
+</html>

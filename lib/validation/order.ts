@@ -49,6 +49,15 @@ export const OrderSelectionSchema = PricingSelectionSchema.extend({
   specialRequests: z.string().max(500).default(''),
 });
 
+// Datos de contacto del cliente, capturados en el checkout: necesarios para
+// saber QUIÉN compra y CÓMO contactarlo (email/WhatsApp). El nombre y el email
+// son obligatorios; el teléfono/WhatsApp es opcional pero muy recomendado.
+export const ContactSchema = z.object({
+  customerName: z.string().trim().min(2, 'Nombre requerido').max(120),
+  customerEmail: z.string().trim().toLowerCase().email('Email inválido').max(255),
+  customerPhone: z.string().trim().max(40).optional().or(z.literal('')),
+});
+
 // Envío elegido en el calculador del carrito. Solo viaja el ID de la tarifa y
 // la dirección cotizada — el precio SIEMPRE se re-cotiza en el servidor con
 // Printful antes de cobrar (nunca se confía en un monto del cliente).
@@ -60,7 +69,7 @@ export const ShippingSelectionSchema = z.object({
   zip: z.string().trim().max(16).optional(),
 });
 
-export const CheckoutSchema = OrderSelectionSchema.extend({
+export const CheckoutSchema = OrderSelectionSchema.merge(ContactSchema).extend({
   currency: CURRENCY,
   // Método de envío elegido para los productos físicos (opcional: sin él se
   // mantiene el comportamiento anterior — envío cotizado al preparar el pedido).
@@ -71,6 +80,8 @@ export const CheckoutSchema = OrderSelectionSchema.extend({
   uploadId: z.string().max(80).optional(),
   // Tasa de cambio del cliente — solo para display; el cobro es en la moneda dada.
   rate: z.number().positive().finite().max(10_000),
+  // Id del carrito (localStorage) para marcarlo convertido al llegar al pago.
+  cartId: z.string().trim().max(64).optional(),
 });
 
 // Consulta de seguimiento de pedido (/seguimiento).
@@ -83,6 +94,23 @@ export const TrackOrderSchema = z.object({
   email: z.string().trim().toLowerCase().email('Invalid email').max(255),
 });
 
+// Upsert de carrito (guardado progresivo del wizard). Permisivo a propósito:
+// es un snapshot best-effort para seguimiento/recuperación, nunca cobra nada.
+export const CartSchema = z.object({
+  cartId: z.string().trim().min(8).max(64).regex(/^[A-Za-z0-9-]+$/, 'Invalid cart id'),
+  step: z.number().int().min(1).max(5).default(1),
+  state: z.record(z.string(), z.unknown()).default({}),
+  summary: z.string().max(500).optional(),
+  amountUsd: z.number().nonnegative().finite().max(1_000_000).optional(),
+  currency: CURRENCY.optional(),
+  customerName: z.string().trim().max(120).optional(),
+  customerEmail: z.string().trim().toLowerCase().max(255).optional(),
+  customerPhone: z.string().trim().max(40).optional(),
+  // Marcar convertido cuando el pago se completa (lo hace el checkout).
+  status: z.enum(['active', 'converted', 'abandoned']).optional(),
+});
+
 export type PricingSelection = z.infer<typeof PricingSelectionSchema>;
 export type OrderSelection = z.infer<typeof OrderSelectionSchema>;
 export type CheckoutInput = z.infer<typeof CheckoutSchema>;
+export type CartInput = z.infer<typeof CartSchema>;

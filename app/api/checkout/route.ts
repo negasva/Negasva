@@ -118,10 +118,18 @@ export async function POST(request: Request) {
         special_requests: composedRequests || null,
         photo_paths: d.photoPaths ?? [],
         upload_id: d.uploadId ?? null,
+        // Contacto del cliente (quién compra y cómo escribirle).
+        customer_name: d.customerName,
+        customer_email: d.customerEmail,
+        customer_phone: d.customerPhone || null,
         // Stored so the webhook can credit the code AFTER payment is approved.
         discount_code: appliedCode?.code ?? null,
         status: 'pending',
       });
+      // Best-effort: el carrito que llegó al pago deja de ser "abandonado".
+      if (d.cartId) {
+        await supabase.from('carts').update({ status: 'converted' }).eq('cart_id', d.cartId);
+      }
     } catch (err) {
       // Sin BD no se puede cotejar el pago con el pedido — se aborta el checkout.
       return errorResponse('Could not create order', 500, err);
@@ -272,10 +280,18 @@ export async function POST(request: Request) {
       special_requests: composedRequests || null,
       photo_paths: d.photoPaths ?? [],
       upload_id: d.uploadId ?? null,
+      // Contacto del cliente (quién compra y cómo escribirle).
+      customer_name: d.customerName,
+      customer_email: d.customerEmail,
+      customer_phone: d.customerPhone || null,
       // Stored so the webhook can credit the code AFTER payment is captured.
       discount_code: appliedCode?.code ?? null,
       status: 'pending',
     });
+    // Best-effort: el carrito que llegó al pago deja de ser "abandonado".
+    if (d.cartId) {
+      await supabase.from('carts').update({ status: 'converted' }).eq('cart_id', d.cartId);
+    }
   } catch (err) {
     // Sin BD no se puede cotejar el pago con el pedido — se aborta el checkout.
     return errorResponse('Could not create order', 500, err);

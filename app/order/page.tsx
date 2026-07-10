@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
-import { Lock, ShieldCheck, Plus, Minus, Check, X, Info, Video } from 'lucide-react';
+import { Lock, ShieldCheck, Plus, Minus, Check, X, Info, Video, ShoppingBag } from 'lucide-react';
 import Logo from '@/components/Logo';
 import ProductIcon from '@/components/ProductIcon';
 import { mergePodProducts, POD_PLACEHOLDER_IMG } from '@/lib/content/podProducts';
@@ -99,6 +99,70 @@ function DiscountCode({ c }: { c: CheckoutController }) {
       {codeStatus === 'invalid' && (
         <p className="text-xs text-red-500 font-bold mt-2">{t.studio.discount.invalid}</p>
       )}
+    </div>
+  );
+}
+
+// Datos de contacto — se piden en el paso de pago para saber quién compra y
+// cómo contactarlo (email + WhatsApp). Sin nombre + email válido no se
+// muestran los botones de pago.
+function ContactForm({ c }: { c: CheckoutController }) {
+  const { lang, contact, setContactField } = c;
+  const l = lang as Lang;
+  return (
+    <div className="rounded-2xl border-2 border-primary-lighter bg-white p-5 space-y-4">
+      <div>
+        <p className="font-black text-secondary text-base tracking-tighter">
+          {pick3(l, 'Tus datos', 'Your details', 'Tes coordonnées')}
+        </p>
+        <p className="text-sm text-secondary-lighter">
+          {pick3(l,
+            'Para enviarte tu retrato y avisarte cuando esté listo.',
+            'So we can send your portrait and let you know when it’s ready.',
+            'Pour t’envoyer ton portrait et te prévenir quand il est prêt.')}
+        </p>
+      </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <label className="block sm:col-span-2">
+          <span className="block text-xs font-bold text-secondary-lighter mb-1">
+            {pick3(l, 'Nombre completo', 'Full name', 'Nom complet')} *
+          </span>
+          <input
+            value={contact.name}
+            onChange={(e) => setContactField('name', e.target.value)}
+            placeholder={pick3(l, 'María García', 'Jane Doe', 'Marie Dupont')}
+            maxLength={120}
+            autoComplete="name"
+            className="w-full rounded-lg border-2 border-primary-lighter px-4 py-3 text-sm font-medium text-secondary focus:border-primary focus:outline-none"
+          />
+        </label>
+        <label className="block">
+          <span className="block text-xs font-bold text-secondary-lighter mb-1">Email *</span>
+          <input
+            value={contact.email}
+            onChange={(e) => setContactField('email', e.target.value)}
+            placeholder="tucorreo@email.com"
+            type="email"
+            maxLength={255}
+            autoComplete="email"
+            className="w-full rounded-lg border-2 border-primary-lighter px-4 py-3 text-sm font-medium text-secondary focus:border-primary focus:outline-none"
+          />
+        </label>
+        <label className="block">
+          <span className="block text-xs font-bold text-secondary-lighter mb-1">
+            WhatsApp <span className="font-normal">({pick3(l, 'opcional', 'optional', 'facultatif')})</span>
+          </span>
+          <input
+            value={contact.phone}
+            onChange={(e) => setContactField('phone', e.target.value)}
+            placeholder="+57 300 123 4567"
+            type="tel"
+            maxLength={40}
+            autoComplete="tel"
+            className="w-full rounded-lg border-2 border-primary-lighter px-4 py-3 text-sm font-medium text-secondary focus:border-primary focus:outline-none"
+          />
+        </label>
+      </div>
     </div>
   );
 }
@@ -253,6 +317,7 @@ export default function StudioPage() {
   const {
     t, lang, fmt, currency,
     step, setStep, selected, priceMap,
+    contact, setContactField, contactValid,
     showError,
     checkoutLoading, checkoutError, setCheckoutError, checkoutParams,
     canAdvance, totalPrice, getProducts,
@@ -262,6 +327,17 @@ export default function StudioPage() {
   } = c;
 
   const STEPS = t.studio.steps as unknown as string[];
+
+  // Drawer del carrito (móvil): da la sensación de "carrito" tipo turnedyellow
+  // reutilizando el resumen del pedido. En desktop ya existe el sidebar fijo.
+  const [cartOpen, setCartOpen] = useState(false);
+  // Nº de artículos/extras en el carrito para el badge del botón flotante.
+  const cartCount =
+    (selected.bodyType ? selected.peopleCount : 0) +
+    (selected.background && selected.background !== 'none' ? 1 : 0) +
+    (selected.express ? 1 : 0) +
+    (selected.recording ? 1 : 0) +
+    Object.values(selected.productUnits).reduce((n, list) => n + list.length, 0);
 
   // Misma foto por producto que la landing: imagen editable de pod_products
   // (landing_config), con POD_PLACEHOLDER_IMG como fallback.
@@ -366,7 +442,7 @@ export default function StudioPage() {
                       <span className="font-black text-secondary text-xl whitespace-nowrap">+{Math.round(priceMap.express_surcharge_pct ?? 30)}%</span>
                     </div>
                   </button>
- claude/gallery-portraits-reviews-wlg2yt
+
                   {/* 1b · Video del proceso de dibujo */}
                   <button
                     type="button"
@@ -613,6 +689,11 @@ export default function StudioPage() {
                   <OrderSummary c={c} sticky={false} />
                 </div>
 
+                {/* Datos de contacto — obligatorios antes de pagar */}
+                <div className="max-w-xl mx-auto mb-6">
+                  <ContactForm c={c} />
+                </div>
+
                 <div className="max-w-xl mx-auto bg-white rounded-2xl border-2 border-primary-lighter shadow-lg overflow-hidden">
                   <div className="bg-primary-lighter px-6 py-4 flex items-center justify-between">
                     <span className="font-black text-secondary text-sm">Total: {fmt(totalPrice())}</span>
@@ -622,7 +703,14 @@ export default function StudioPage() {
                     </div>
                   </div>
                   <div className="p-4">
-                    {currency === 'COP' ? (
+                    {!contactValid ? (
+                      <p className="text-center text-sm font-bold text-secondary-lighter py-6">
+                        {pick3(lang as Lang,
+                          'Completa tu nombre y email arriba para continuar con el pago.',
+                          'Fill in your name and email above to continue to payment.',
+                          'Renseigne ton nom et ton email ci-dessus pour continuer.')}
+                      </p>
+                    ) : currency === 'COP' ? (
                       <MercadoPagoBrick lang={lang as Lang} createOrder={createMpOrder} />
                     ) : !PAYPAL_CLIENT_ID ? (
                       // Sin client id el SDK de PayPal falla mudo y el recuadro
@@ -750,6 +838,56 @@ export default function StudioPage() {
           )}
         </div>
       </main>
+
+      {/* Carrito flotante (móvil): botón + panel deslizante que reutiliza el
+          resumen del pedido, para dar sensación de carrito estilo turnedyellow.
+          En desktop (lg) ya está el sidebar fijo, así que se oculta. */}
+      {step > 1 && step < 5 && selected.style && (
+        <>
+          <button
+            type="button"
+            onClick={() => setCartOpen(true)}
+            className="lg:hidden fixed bottom-20 right-4 z-40 flex items-center gap-2 rounded-full bg-secondary text-white pl-4 pr-5 py-3 shadow-xl hover:bg-secondary-light transition-colors"
+            aria-label={pick3(lang as Lang, 'Ver carrito', 'View cart', 'Voir le panier')}
+          >
+            <span className="relative">
+              <ShoppingBag className="w-5 h-5" />
+              {cartCount > 0 && (
+                <span className="absolute -top-2 -right-2 min-w-4 h-4 px-1 flex items-center justify-center rounded-full bg-primary text-white text-[10px] font-black">
+                  {cartCount}
+                </span>
+              )}
+            </span>
+            <span className="font-black text-sm">{fmt(totalPrice())}</span>
+          </button>
+
+          {cartOpen && (
+            <div className="lg:hidden fixed inset-0 z-[70]">
+              <div
+                className="absolute inset-0 bg-black/50"
+                onClick={() => setCartOpen(false)}
+              />
+              <div className="absolute right-0 top-0 h-full w-[88%] max-w-sm bg-white shadow-2xl overflow-y-auto p-4 pb-24">
+                <div className="flex items-center justify-between mb-4">
+                  <span className="font-black text-secondary text-lg tracking-tighter">
+                    {pick3(lang as Lang, 'Tu carrito', 'Your cart', 'Ton panier')}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => setCartOpen(false)}
+                    className="w-9 h-9 rounded-full flex items-center justify-center hover:bg-primary-lighter transition-colors"
+                    aria-label={pick3(lang as Lang, 'Cerrar', 'Close', 'Fermer')}
+                  >
+                    <X className="w-5 h-5 text-secondary" />
+                  </button>
+                </div>
+                <OrderSummary c={c} sticky={false} />
+                <DiscountCode c={c} />
+              </div>
+            </div>
+          )}
+        </>
+      )}
     </div>
   );
 }
