@@ -616,6 +616,12 @@ export default function StudioPage() {
                   <div className="p-4">
                     {currency === 'COP' ? (
                       <MercadoPagoBrick lang={lang as Lang} createOrder={createMpOrder} />
+                    ) : !PAYPAL_CLIENT_ID ? (
+                      // Sin client id el SDK de PayPal falla mudo y el recuadro
+                      // queda vacío — mejor decir explícitamente qué falta.
+                      <p className="text-center text-sm font-bold text-red-500 py-6">
+                        PayPal no está configurado (falta NEXT_PUBLIC_PAYPAL_CLIENT_ID).
+                      </p>
                     ) : (
                       <PayPalScriptProvider options={{ clientId: PAYPAL_CLIENT_ID, currency, intent: 'capture' }}>
                         <PayPalButtons
