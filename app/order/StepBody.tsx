@@ -21,9 +21,10 @@ const BODY_TYPE_IMAGES: Record<string, string> = {
 const GLOW = '0 0 30px 4px rgba(252,144,182,0.55)';
 // Sombra sutil en los bordes internos: divide los paneles sin romper la
 // continuidad del dibujo.
-// Borde 1px sutil (inset ring) para separar el panel del fondo blanco sin
-// romper el glow (que reemplaza el boxShadow) ni el estado seleccionado.
-const PANEL_BORDER = 'inset 0 0 0 1px rgba(0,0,0,0.08)';
+// Borde 1px sutil (inset ring) para separar el panel del fondo blanco, ya sin
+// hover ni selección. Se sube la opacidad (0.08 → 0.18) para que el borde se
+// perciba en reposo sin romper el glow ni el estado seleccionado.
+const PANEL_BORDER = 'inset 0 0 0 1px rgba(0,0,0,0.18)';
 const EDGE_SHADE = `${PANEL_BORDER}, inset 9px 0 12px -9px rgba(0,0,0,0.14), inset -9px 0 12px -9px rgba(0,0,0,0.14)`;
 // Variante vertical (móvil): los paneles se apilan, así que la sombra divide
 // por los bordes horizontales (arriba/abajo).
