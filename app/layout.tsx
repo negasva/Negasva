@@ -33,23 +33,11 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://negasva.shop"),
   title: {
     default:
-      "Custom Cartoon Portraits from Your Photo — Hand-Drawn, No AI • 48h Delivery • From $15 | Negasva",
+      "Custom Cartoon Portraits from Your Photo — Hand-Drawn, No AI | Negasva",
     template: "%s | Negasva",
   },
   description:
     "Turn your photo into a custom cartoon portrait, 100% hand-drawn by a real artist — no AI. Simpsons, Rick and Morty & more styles. Delivered in 48 hours, from $15.",
-  keywords: [
-    "custom cartoon portrait",
-    "turn photo into cartoon",
-    "hand drawn portrait from photo",
-    "simpsons style portrait",
-    "rick and morty custom portrait",
-    "custom couple portrait",
-    "custom family portrait",
-    "personalized gift portrait",
-    "cartoon yourself",
-    "no AI portrait",
-  ],
   alternates: {
     canonical: "/",
   },
@@ -88,13 +76,36 @@ const ORGANIZATION_SCHEMA = {
   "@type": "OnlineStore",
   name: "Negasva",
   url: "https://negasva.shop",
-  logo: "https://negasva.shop/favicon.png",
+  logo: "https://negasva.shop/logo-512.png",
   description:
     "Custom cartoon portraits hand-drawn from your photo by a real artist — no AI. Digital delivery in 48 hours, from $15.",
   areaServed: ["United States", "Europe", "Colombia", "Mexico"],
   priceRange: "$15-$160",
-  sameAs: ["https://instagram.com/negasva", "https://tiktok.com/@negasva"],
+  contactPoint: {
+    "@type": "ContactPoint",
+    contactType: "customer support",
+    email: "hola@negasva.com",
+    availableLanguage: ["English"],
+  },
+  sameAs: [
+    "https://instagram.com/negasva",
+    "https://tiktok.com/@negasva",
+    "https://www.behance.net/negasva",
+  ],
 };
+
+// Host de Supabase Storage (de donde salen las fotos del hero servidas por
+// <img>, fuera del optimizador de next/image). El preconnect abre la conexión
+// TLS antes de que el navegador descubra la imagen, recortando el LCP.
+const SUPABASE_ORIGIN = (() => {
+  try {
+    return process.env.NEXT_PUBLIC_SUPABASE_URL
+      ? new URL(process.env.NEXT_PUBLIC_SUPABASE_URL).origin
+      : null;
+  } catch {
+    return null;
+  }
+})();
 
 export default function RootLayout({
   children,
@@ -104,6 +115,12 @@ export default function RootLayout({
   return (
     <html lang="en" className="scroll-smooth">
       <head>
+        {SUPABASE_ORIGIN && (
+          <>
+            <link rel="preconnect" href={SUPABASE_ORIGIN} />
+            <link rel="dns-prefetch" href={SUPABASE_ORIGIN} />
+          </>
+        )}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(ORGANIZATION_SCHEMA) }}

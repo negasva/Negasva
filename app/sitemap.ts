@@ -5,9 +5,18 @@ import { LANDINGS } from '@/lib/content/landings';
 
 const BASE = 'https://negasva.shop';
 
-// Fecha del último cambio real de contenido de las páginas estáticas
-// (migración EN + reescritura SEO). Actualizar al tocar el contenido.
-const CONTENT_UPDATED = new Date('2026-07-05');
+// Fecha de última modificación real POR RUTA. En lugar de un único timestamp
+// global (que el crawler termina ignorando cuando se mueve en bloque), cada
+// ruta lleva la fecha de su último cambio de contenido real; solo se actualiza
+// la ruta que se toca. Las rutas no listadas caen al baseline de la última
+// reescritura SEO. Los posts del blog ya usan su propia `date` (ver abajo).
+const DEFAULT_LAST_MODIFIED = new Date('2026-07-05');
+const ROUTE_LAST_MODIFIED: Record<string, Date> = {
+  // Páginas legales reescritas a EN en la migración EN-only.
+  '/privacy': new Date('2026-07-10'),
+  '/terms': new Date('2026-07-10'),
+  '/cookies': new Date('2026-07-10'),
+};
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const routes: Array<{ path: string; priority: number; changeFrequency: 'daily' | 'weekly' | 'monthly'; lastModified?: Date }> = [
@@ -50,7 +59,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   return routes.map((r) => ({
     url: `${BASE}${r.path}`,
-    lastModified: r.lastModified ?? CONTENT_UPDATED,
+    lastModified: r.lastModified ?? ROUTE_LAST_MODIFIED[r.path] ?? DEFAULT_LAST_MODIFIED,
     changeFrequency: r.changeFrequency,
     priority: r.priority,
   }));
