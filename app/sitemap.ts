@@ -24,8 +24,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { path: '/contact', priority: 0.5, changeFrequency: 'monthly' },
     { path: '/faq', priority: 0.7, changeFrequency: 'weekly' },
     { path: '/track-order', priority: 0.3, changeFrequency: 'monthly' },
-    { path: '/privacidad', priority: 0.2, changeFrequency: 'monthly' },
-    { path: '/terminos', priority: 0.2, changeFrequency: 'monthly' },
+    { path: '/privacy', priority: 0.2, changeFrequency: 'monthly' },
+    { path: '/terms', priority: 0.2, changeFrequency: 'monthly' },
     { path: '/cookies', priority: 0.2, changeFrequency: 'monthly' },
     // Landing individual por estilo — páginas de captación SEO
     ...STYLES_CONTENT.map((s) => ({

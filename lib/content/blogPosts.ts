@@ -539,349 +539,306 @@ export const BLOG_POSTS: BlogPost[] = [
     relatedStyleSlugs: ['simpsons-style-portrait', 'rick-and-morty-style-portrait'],
   },
   {
-    slug: 'ideas-para-regalar-un-retrato-animado',
-    title: '10 ideas para regalar un retrato animado personalizado',
-    metaTitle: '10 Ideas para Regalar un Retrato Animado Personalizado',
+    slug: 'cartoon-portrait-gift-ideas',
+    title: '10 Cartoon Portrait Gift Ideas for Every Occasion',
+    metaTitle: '10 Custom Cartoon Portrait Gift Ideas (2026)',
     metaDescription:
-      'Cumpleaños, aniversarios, Navidad o San Valentín: descubre 10 ideas originales para regalar un retrato animado personalizado que nadie olvidará.',
-    category: 'Inspiración',
+      'Original ways to gift a custom cartoon portrait: anniversaries, birthdays, Christmas, Valentine\'s and more. Hand-drawn from a photo, no AI, delivered in 48h from $15.',
+    category: 'Gift Ideas',
     date: '2026-06-10',
-    dateLabel: '10 de Junio, 2026',
-    excerpt: 'Cumpleaños, aniversarios, Navidad... ideas originales para sorprender con un retrato animado que nadie más puede repetir.',
-    keywords: ['regalar retrato animado', 'regalo original personalizado', 'ideas de regalo caricatura', 'regalo aniversario original'],
+    dateLabel: 'June 10, 2026',
+    excerpt:
+      'Birthdays, anniversaries, Christmas... original ways to surprise someone with a custom cartoon portrait no one else can copy.',
+    keywords: ['cartoon portrait gift ideas', 'custom portrait gift', 'personalized cartoon gift', 'original gift from photo', 'anniversary portrait gift'],
     image: '',
-    imageAlt: 'Retrato animado personalizado estilo cartoon sci-fi como idea de regalo',
+    imageAlt: 'Custom cartoon portrait gift idea hand drawn from a photo',
     intro:
-      'Encontrar un regalo que sea original, personal y que de verdad emocione es cada vez más difícil. Todo el mundo tiene de todo, y los regalos genéricos se olvidan en una semana. Un retrato animado personalizado resuelve exactamente ese problema: es único por definición — está dibujado a partir de la foto de la persona — y combina humor, nostalgia y cariño en una sola pieza. Aquí van 10 ideas concretas para regalarlo según la ocasión y la persona.',
+      'Finding a gift that is original, personal and genuinely moving keeps getting harder. Everyone already owns everything, and generic gifts are forgotten within a week. A custom cartoon portrait solves exactly that problem: it is one of a kind by definition — hand-drawn from a photo of the person — and it folds humor, nostalgia and affection into a single piece. Here are 10 concrete ways to give one, sorted by occasion and by the person on your list.',
     sections: [
       {
-        h2: '1. Aniversario de pareja: ustedes dos como personajes de su serie favorita',
+        h2: '1. Anniversary: the two of you as characters from your favorite show',
         paragraphs: [
-          'El clásico que nunca falla. Si ven cartoon sci-fi juntos, un retrato de los dos con el portal de fondo es el regalo de aniversario perfecto. Si su serie es de la infancia, el estilo fantasia brillante como personaje magico y personaje magico es el encargo romántico-friki más pedido que tenemos: pelo verde y rosa, coronas flotantes y varitas incluidas.',
+          'The classic that never misses. If you watch a chaotic sci-fi cartoon together, a portrait of you both with the interdimensional portal in the background is the perfect anniversary gift. If your shared show is from childhood, a bright 90s-fantasy style with fairy crowns and wands is our most-requested romantic-but-nerdy commission — green and pink hair included.',
         ],
       },
       {
-        h2: '2. Cumpleaños: el retrato individual con sus hobbies',
+        h2: '2. Birthday: the solo portrait loaded with their hobbies',
         paragraphs: [
-          'Un retrato individual donde la persona aparece con los elementos que la definen: su instrumento, su consola, su balón, su mascota. Las indicaciones especiales del pedido sirven exactamente para esto — cuéntanos qué hace única a esa persona y lo integramos al dibujo.',
+          'A single-person portrait where they appear with the things that define them: their instrument, their console, their ball, their pet. The special instructions field on the order exists precisely for this — tell us what makes that person unique and we draw it into the scene.',
         ],
       },
       {
-        h2: '3. Día de la madre o del padre: la familia completa estilo familia amarilla',
+        h2: "3. Mother's or Father's Day: the whole family in classic yellow-family style",
         paragraphs: [
-          'El retrato familiar amarillo en el sofá de una ciudad animada es nuestro encargo más popular para padres y abuelos. Funciona porque mezcla la nostalgia de una serie que toda la familia conoce con la emoción de verse todos juntos en un cuadro. Impreso en lienzo y enmarcado, es de esos regalos que terminan presidiendo la sala.',
+          'The yellow family on the couch in an animated city is our most popular commission for parents and grandparents. It works because it mixes the nostalgia of a show the whole family knows with the joy of seeing everyone together in one frame. Printed on canvas and framed, it is the kind of gift that ends up presiding over the living room.',
         ],
       },
       {
-        h2: '4. Navidad: un retrato grupal de toda la familia',
+        h2: '4. Christmas: a group portrait of the entire family',
         paragraphs: [
-          'En diciembre los retratos de grupo (hasta 8 personas y mascotas) son los protagonistas. Consejo: pídelo con tiempo — aunque entregamos en 48 horas, en temporada alta conviene asegurar el margen para imprimirlo y enmarcarlo antes del 24.',
+          'In December, group portraits (up to 8 people and pets) are the stars. Tip: order early — even though we deliver in 48 hours, in peak season it is worth the margin to print and frame it before the 24th.',
         ],
       },
       {
-        h2: '5. San Valentín: el antes y después de la relación',
+        h2: '5. Valentine\'s Day: the before-and-after of your relationship',
         paragraphs: [
-          'Una idea que pocos conocen: usar la primera foto que se tomaron juntos como base del retrato. El resultado es una pieza que cuenta la historia de la relación con el filtro del humor de su caricatura favorita.',
+          'An idea few people think of: use the very first photo you ever took together as the base for the portrait. The result is a piece that tells the story of your relationship through the lens of your favorite cartoon\'s humor.',
         ],
       },
       {
-        h2: '6. Para tu mejor amigo: el dúo dinámico',
+        h2: '6. For your best friend: the dynamic duo',
         paragraphs: [
-          'Los retratos de mejores amigos al estilo misterio del bosque — la referencia de duo de hermanos aventureros es perfecta para hermanos o amigos inseparables — son un regalo de amistad que supera a cualquier objeto comprado en tienda.',
+          'Best-friend portraits in a cozy-mystery style — the two-adventurous-siblings reference is perfect for siblings or inseparable friends — make a friendship gift that beats anything bought off a shelf.',
         ],
       },
       {
-        h2: '7. Para gamers y streamers: el avatar definitivo',
+        h2: '7. For gamers and streamers: the ultimate avatar',
         paragraphs: [
-          'Un retrato animado en alta resolución funciona como foto de perfil en Discord, Twitch, Instagram o TikTok. Es un regalo útil de verdad para alguien que vive online: identidad visual única que nadie más puede copiar.',
+          'A high-resolution cartoon portrait works as a profile picture on Discord, Twitch, Instagram or TikTok. It is a genuinely useful gift for someone who lives online: a unique visual identity nobody else can copy.',
         ],
       },
       {
-        h2: '8. Para quien tiene mascota: el retrato con su compañero',
+        h2: '8. For pet people: the portrait with their companion',
         paragraphs: [
-          'Dibujamos perros, gatos y cualquier mascota con el mismo estilo de la serie elegida. Para los amantes de los animales, un retrato junto a su mascota suele emocionar más que cualquier otro regalo.',
+          'We draw dogs, cats and any pet in the same style as the chosen show. For animal lovers, a portrait next to their pet usually lands harder than any other gift.',
         ],
       },
       {
-        h2: '9. Despedidas y mudanzas: el recuerdo del grupo',
+        h2: '9. Farewells and moves: the group keepsake',
         paragraphs: [
-          'Cuando un amigo se muda de ciudad o de país, un retrato de todo el grupo es el recuerdo perfecto para que se lleve a su nueva casa. Lo digital tiene aquí una ventaja: cada miembro del grupo puede imprimir su propia copia.',
+          'When a friend moves to another city or country, a portrait of the whole group is the perfect keepsake to take to their new home. Digital has an advantage here: every member of the group can print their own copy.',
         ],
       },
       {
-        h2: '10. Para ti: porque sí',
+        h2: '10. For yourself: just because',
         paragraphs: [
-          'No todo regalo necesita ocasión. Muchos de nuestros clientes piden su retrato simplemente porque quieren verse como personaje de su serie favorita. Y honestamente, es razón suficiente.',
-          'Cualquiera de estas ideas empieza igual: eliges el estilo, subes la foto y en 48 horas tienes el retrato en tu correo, listo para imprimir o regalar en digital. Desde $15 USD.',
+          'Not every gift needs an occasion. Plenty of our customers order their portrait simply because they want to see themselves as a character in their favorite show. And honestly, that is reason enough.',
+          'Any of these ideas starts the same way: pick the style, upload the photo, and in 48 hours the portrait lands in your inbox, ready to print or gift digitally. From $15 USD.',
         ],
       },
     ],
     relatedStyleSlugs: ['rick-and-morty-style-portrait', 'simpsons-style-portrait', 'fairly-oddparents-style-portrait'],
+    relatedLandings: [
+      { label: 'Custom Couple Portrait', href: '/custom-couple-portrait' },
+      { label: 'Custom Family Portrait', href: '/custom-family-portrait' },
+      { label: 'Christmas Gift', href: '/gifts/christmas' },
+    ],
   },
   {
-    slug: 'como-elegir-el-estilo-de-tu-retrato',
-    title: 'Cómo elegir el estilo de tu retrato animado: guía completa',
-    metaTitle: 'Cómo Elegir el Estilo de tu Retrato Animado — Guía Completa',
+    slug: 'how-to-choose-your-portrait-style',
+    title: 'How to Choose Your Cartoon Portrait Style: A Complete Guide',
+    metaTitle: 'How to Choose Your Cartoon Portrait Style — Full Guide',
     metaDescription:
-      '¿cartoon sci-fi, familia amarilla, misterio del bosque o fantasia brillante? Guía completa para elegir el estilo de caricatura que mejor va contigo y con el uso que le darás.',
-    category: 'Guías',
+      'Chaotic sci-fi, classic yellow-family, cozy-mystery or bright 90s-fantasy? A complete guide to choosing the cartoon portrait style that fits you and how you will use it.',
+    category: 'Guides',
     date: '2026-06-05',
-    dateLabel: '5 de Junio, 2026',
-    excerpt: 'Descubre cuál de nuestros 4 estilos se adapta mejor a tu personalidad y al uso que le darás a tu retrato.',
-    keywords: ['como elegir estilo retrato', 'estilos de caricatura', 'mejor estilo retrato animado', 'tipos de retrato personalizado'],
+    dateLabel: 'June 5, 2026',
+    excerpt:
+      'Find out which of our core styles fits your personality best — and the use you have in mind for your portrait.',
+    keywords: ['how to choose portrait style', 'cartoon portrait styles', 'best cartoon portrait style', 'types of custom portrait'],
     image: '',
-    imageAlt: 'Comparación de estilos de retrato animado personalizados',
+    imageAlt: 'Comparison of custom cartoon portrait styles',
     intro:
-      'Elegir el estilo es la decisión más importante de tu pedido — y la más divertida. Cada uno de nuestros cuatro estilos tiene una personalidad visual propia, y el que mejor funciona depende de tres cosas: quién aparece en el retrato, qué uso le vas a dar y qué serie conecta más contigo. Esta guía te ayuda a decidir en cinco minutos.',
+      'Choosing the style is the most important decision of your order — and the most fun. Each of our core styles has its own visual personality, and the one that works best depends on three things: who appears in the portrait, what you will use it for, and which show connects most with you. This guide helps you decide in five minutes.',
     sections: [
       {
-        h2: 'cartoon sci-fi: para los que quieren humor y ciencia ficción',
+        h2: 'Chaotic sci-fi cartoon style: for humor and science fiction',
         paragraphs: [
-          'Es nuestro estilo más pedido. Trazos irregulares, ojos saltones con pupilas pequeñas y fondos interdimensionales: portales verdes, garajes llenos de inventos, planetas alienígenas. Funciona especialmente bien en retratos de parejas y grupos de amigos con humor ácido.',
-          'Elígelo si: ves la serie, quieres un resultado divertido antes que tierno, o buscas un fondo espectacular (el portal verde es nuestro fondo estrella).',
+          'This is our most-requested style. Loose, irregular linework, bulging eyes with tiny pupils, and interdimensional backgrounds: green portals, garages full of inventions, alien planets. It works especially well for couples and groups of friends with a sharp sense of humor.',
+          'Pick it if: you watch the show, you want a result that is funny before it is sweet, or you are after a spectacular background (the green portal is our signature backdrop).',
         ],
       },
       {
-        h2: 'familia amarilla clasica: el clásico familiar',
+        h2: 'Classic yellow-family style: the family favorite',
         paragraphs: [
-          'Piel amarilla, contornos gruesos y la estética más reconocible de la historia de la televisión. Es el estilo favorito para retratos familiares — la escena del sofá con tu familia es un encargo recurrente — y para regalos a padres y abuelos, porque absolutamente todo el mundo reconoce la referencia.',
-          'Elígelo si: el retrato es de familia, el regalo es para alguien de otra generación, o quieres el efecto nostalgia más universal posible.',
+          'Yellow skin, thick outlines, and the most recognizable look in television history. It is the favorite for family portraits — the couch scene with your own family is a recurring commission — and for gifts to parents and grandparents, because absolutely everyone recognizes the reference.',
+          'Pick it if: the portrait is of a family, the gift is for someone of another generation, or you want the most universal nostalgia effect possible.',
         ],
       },
       {
-        h2: 'misterio del bosque: tierno con un toque de misterio',
+        h2: 'Cozy-mystery style: sweet with a hint of mystery',
         paragraphs: [
-          'Ojos grandes y brillantes, proporciones adorables y paleta de colores cálidos de bosque. Es el estilo más expresivo de los cuatro y el que mejor funciona en tamaño pequeño, lo que lo convierte en el favorito para avatares de redes sociales. La referencia de duo de hermanos aventureros lo hace ideal para retratos de hermanos.',
-          'Elígelo si: quieres algo tierno sin ser cursi, el retrato será tu foto de perfil, o es un regalo entre hermanos o mejores amigos.',
+          'Big, bright eyes, adorable proportions, and a warm forest color palette. It is the most expressive of our styles and the one that reads best at small sizes, which makes it the favorite for social-media avatars. The two-adventurous-siblings reference makes it ideal for portraits of siblings.',
+          'Pick it if: you want something sweet without being saccharine, the portrait will be your profile picture, or it is a gift between siblings or best friends.',
         ],
       },
       {
-        h2: 'fantasia brillante: nostalgia noventera en colores eléctricos',
+        h2: 'Bright 90s-fantasy style: nostalgia in electric colors',
         paragraphs: [
-          'Siluetas angulosas, colores planos súper saturados y la energía caótica de animacion noventera. Es el estilo que más destaca impreso en una pared por la intensidad de sus colores. Para parejas existe el encargo clásico: ustedes dos como personaje magico y personaje magico, coronas y varitas incluidas.',
-          'Elígelo si: creciste con animacion noventera, quieres los colores más vibrantes, o buscas el retrato de pareja más original.',
+          'Angular silhouettes, super-saturated flat colors, and the chaotic energy of 90s animation. It is the style that stands out most printed on a wall thanks to the intensity of its colors. For couples there is the classic commission: the two of you as a fairy pairing, crowns and wands included.',
+          'Pick it if: you grew up with 90s animation, you want the most vibrant colors, or you are after the most original couple portrait.',
         ],
       },
       {
-        h2: 'La pregunta clave: ¿dónde va a vivir tu retrato?',
+        h2: 'The key question: where will your portrait live?',
         paragraphs: [
-          'Si va impreso en grande para una pared: fantasia brillante y cartoon sci-fi lucen espectaculares por sus fondos y colores. Si es para foto de perfil: misterio del bosque gana por expresividad en tamaño pequeño. Si es un regalo familiar: familia amarilla es apuesta segura por reconocimiento universal.',
-          'Y si sigues sin decidirte: en las indicaciones especiales del pedido puedes contarnos tu duda y te recomendamos el estilo según tus fotos. Sea cual sea tu elección, todos los estilos incluyen revisión, alta resolución y entrega en 48 horas.',
+          'If it is going to be printed large for a wall: bright 90s-fantasy and chaotic sci-fi look spectacular thanks to their backgrounds and colors. If it is for a profile picture: cozy-mystery wins on expressiveness at small sizes. If it is a family gift: classic yellow-family is the safe bet for universal recognition.',
+          'And if you still cannot decide: use the special instructions field on your order to tell us your doubt, and we will recommend a style based on your photos. Whatever you choose, every style includes a revision, high resolution, and 48-hour delivery.',
         ],
       },
     ],
     relatedStyleSlugs: ['rick-and-morty-style-portrait', 'simpsons-style-portrait', 'gravity-falls-style-portrait', 'fairly-oddparents-style-portrait'],
-  },
-  {
-    slug: 'rick-y-morty-vs-simpsons-que-estilo-elegir',
-    title: 'cartoon sci-fi vs familia amarilla clasica: ¿qué estilo de retrato elegir?',
-    metaTitle: 'cartoon sci-fi vs familia amarilla — ¿Qué Estilo de Retrato Elegir?',
-    metaDescription:
-      'Comparamos los dos estilos de retrato animado más pedidos: cartoon sci-fi vs familia amarilla clasica. Diferencias, para quién es cada uno y cuál elegir según el uso.',
-    category: 'Comparativas',
-    date: '2026-05-28',
-    dateLabel: '28 de Mayo, 2026',
-    excerpt: 'Los dos estilos más pedidos, frente a frente: diferencias visuales, usos ideales y cómo decidir entre ellos.',
-    keywords: ['comparacion estilos caricatura', 'retrato cartoon sci fi o familiar', 'que estilo de retrato elegir', 'retrato personalizado para regalo'],
-    image: '',
-    imageAlt: 'Comparativa entre retrato estilo cartoon sci-fi y estilo familia amarilla clasica',
-    intro:
-      'Son nuestros dos estilos más pedidos y la duda más frecuente entre quienes hacen su primer pedido: ¿me dibujo como personaje de cartoon sci-fi o como habitante de una ciudad animada? Los dos son icónicos, los dos quedan increíbles — pero son muy diferentes entre sí. Aquí va la comparativa honesta para que decidas en función de lo que de verdad importa.',
-    sections: [
-      {
-        h2: 'Diferencias visuales: caos interdimensional vs clásico atemporal',
-        paragraphs: [
-          'cartoon sci-fi se caracteriza por trazos finos e irregulares, ojos enormes con pupilas diminutas y una paleta saturada con predominio de verdes y azules. El resultado transmite energía caótica y humor ácido. Los fondos son su gran fortaleza: portales, garajes de inventor, planetas alienígenas.',
-          'familia amarilla clasica, en cambio, usa contornos gruesos y limpios, la icónica piel amarilla y colores planos cálidos. Es un estilo más "ordenado" visualmente, con un reconocimiento instantáneo que ninguna otra serie puede igualar: más de 30 temporadas en pantalla lo convirtieron en lenguaje visual universal.',
-        ],
-      },
-      {
-        h2: '¿Quién gana para retratos de pareja?',
-        paragraphs: [
-          'cartoon sci-fi, en general. El estilo tiene un punto irreverente que funciona muy bien en parejas jóvenes, y el fondo del portal da un resultado espectacular para imprimir. Dicho esto, si su plan favorito es ver familia amarilla clasica en el sofá, la respuesta es obvia.',
-        ],
-      },
-      {
-        h2: '¿Quién gana para retratos familiares?',
-        paragraphs: [
-          'familia amarilla clasica, sin discusión. La familia amarilla es el arquetipo del retrato familiar animado, y la escena del sofá con tu propia familia es un regalo que emociona a tres generaciones a la vez. Los abuelos reconocen la referencia igual que los nietos — eso no pasa con ninguna otra serie.',
-        ],
-      },
-      {
-        h2: '¿Quién gana como foto de perfil?',
-        paragraphs: [
-          'Empate técnico, depende de tu comunidad. En Discord, Twitch y comunidades gamer, cartoon sci-fi encaja con el tono. En un perfil más general (Instagram, WhatsApp), el amarillo familia amarilla llama la atención al instante en una pantalla pequeña.',
-        ],
-      },
-      {
-        h2: 'El veredicto',
-        paragraphs: [
-          'Elige cartoon sci-fi si: el retrato es de pareja o amigos, quieres fondos espectaculares, y el humor ácido va contigo.',
-          'Elige familia amarilla clasica si: el retrato es familiar, es un regalo para alguien de otra generación, o quieres el estilo más reconocible que existe.',
-          'Y recuerda que no tienes que casarte con uno para siempre: muchos clientes piden su primer retrato en un estilo y vuelven por el otro. Ambos cuestan lo mismo, desde $15 USD con entrega en 48 horas.',
-        ],
-      },
-      {
-        h2: 'Cuando NO conviene cartoon sci-fi',
-        paragraphs: [
-          'Si la persona que recibirá el regalo no conoce la serie, puede perder parte del efecto. También puede quedarse corto si buscas algo tierno o familiar: cartoon sci-fi destaca por humor negro, caos visual y una vibra más adulta. Para abuelos, padres o un retrato multigeneracional, normalmente familia amarilla funciona mejor.',
-        ],
-      },
-      {
-        h2: 'Cuando NO conviene familia amarilla clasica',
-        paragraphs: [
-          'Si quieres algo más moderno, más rebelde o con un fondo espectacular, familia amarilla puede sentirse demasiado clásico. También pasa que, en perfiles gamer o de humor más irreverente, cartoon sci-fi conecta mejor con la estética del cliente. No es un problema del dibujo: es pura intención de uso.',
-        ],
-      },
-      {
-        h2: 'Resumen rápido para decidir en 30 segundos',
-        paragraphs: [
-          'Pareja friki, amigos, avatar con energía caótica: cartoon sci-fi.',
-          'Familia, generaciones mezcladas, regalo universal: familia amarilla clasica.',
-          'Si aún dudas, piensa en quién va a ver el retrato primero y dónde va a vivir: pared, escritorio, Instagram o WhatsApp. Ese contexto casi siempre te dice el estilo correcto.',
-        ],
-      },
+    relatedLandings: [
+      { label: 'Browse All Styles', href: '/styles' },
+      { label: 'Custom Couple Portrait', href: '/custom-couple-portrait' },
+      { label: 'Custom Family Portrait', href: '/custom-family-portrait' },
     ],
-    relatedStyleSlugs: ['rick-and-morty-style-portrait', 'simpsons-style-portrait'],
   },
   {
-    slug: 'consejos-para-fotos-perfectas',
-    title: 'Cómo tomar la foto perfecta para tu retrato animado',
-    metaTitle: 'Cómo Tomar la Foto Perfecta para tu Retrato Animado',
+    slug: 'how-to-take-the-perfect-photo-for-a-portrait',
+    title: 'How to Take the Perfect Photo for Your Custom Portrait',
+    metaTitle: 'How to Take the Perfect Photo for Your Cartoon Portrait',
     metaDescription:
-      'La calidad de tu retrato animado empieza en la foto. Guía práctica: luz, ángulo, resolución y errores comunes a evitar antes de hacer tu pedido.',
+      'Your portrait starts with your photo. Practical tips on light, angle, resolution and common mistakes to avoid before ordering your custom cartoon portrait.',
     category: 'Tips',
     date: '2026-05-20',
-    dateLabel: '20 de Mayo, 2026',
-    excerpt: 'Luz, ángulo, resolución y los errores más comunes: todo lo que necesitas saber antes de subir tu foto.',
-    keywords: ['foto para retrato animado', 'como tomar foto para caricatura', 'consejos foto retrato personalizado'],
+    dateLabel: 'May 20, 2026',
+    excerpt:
+      'Light, angle, resolution and the most common mistakes: everything you need to know before you upload your photo.',
+    keywords: ['photo for custom portrait', 'how to take photo for cartoon portrait', 'best photo for a portrait', 'portrait photo tips'],
     image: '',
-    imageAlt: 'Ejemplo de foto bien iluminada para convertir en retrato animado',
+    imageAlt: 'Example of a well-lit photo to turn into a custom cartoon portrait',
     intro:
-      'Nuestros ilustradores dibujan cada retrato a mano partiendo de tu foto. Eso significa que cuanto mejor sea la foto, más fiel y detallado será el resultado: captamos mejor tus rasgos, tu peinado, tu expresión. La buena noticia es que no necesitas cámara profesional — solo seguir estas reglas simples con tu celular.',
+      'Our illustrators draw every portrait by hand, starting from your photo. That means the better the photo, the more faithful and detailed the result: we capture your features, your hair, your expression more accurately. The good news is that you do not need a professional camera — just follow these simple rules with your phone.',
     sections: [
       {
-        h2: 'La regla de oro: que se vea bien tu cara',
+        h2: 'The golden rule: your face has to be clearly visible',
         paragraphs: [
-          'Parece obvio, pero es el error número uno. Fotos de cuerpo entero donde la cara ocupa un 5% de la imagen, selfies con lentes de sol, fotos de espaldas "porque esa me gusta"... El ilustrador necesita ver tus rasgos con claridad: ojos, nariz, boca, forma de la cara y peinado. Si dudas, sube varias fotos — una de cara cercana y otra del look completo que quieres.',
+          'It sounds obvious, but it is the number-one mistake. Full-body shots where the face takes up 5% of the image, selfies with sunglasses, photos from behind "because I like that one"... The illustrator needs to see your features clearly: eyes, nose, mouth, face shape and hair. If in doubt, upload several photos — one close-up of the face and one of the full look you want.',
         ],
       },
       {
-        h2: 'Luz natural, siempre que puedas',
+        h2: 'Natural light, whenever you can',
         paragraphs: [
-          'La mejor foto es la que tomas de día cerca de una ventana o en exteriores con sombra. La luz natural muestra los colores reales de tu piel, pelo y ropa. Evita: contraluces (la ventana detrás de ti), flash directo de noche y luces de neón que tiñen todo de un color.',
+          'The best photo is one taken during the day near a window or outdoors in the shade. Natural light shows the real colors of your skin, hair and clothes. Avoid: backlighting (the window behind you), direct flash at night, and neon lights that tint everything one color.',
         ],
       },
       {
-        h2: 'Resolución: la foto original, no la captura',
+        h2: 'Resolution: the original photo, not a screenshot',
         paragraphs: [
-          'Envía la foto original desde tu galería, no una captura de pantalla ni una imagen reenviada veinte veces por WhatsApp (cada reenvío comprime y pierde calidad). Si la foto está pixelada, los detalles finos — pecas, mechones, texturas de ropa — se pierden para el ilustrador.',
+          'Send the original photo from your gallery, not a screenshot or an image re-forwarded twenty times through a messaging app (every forward compresses and loses quality). If the photo is pixelated, the fine details — freckles, stray hairs, clothing textures — are lost to the illustrator.',
         ],
       },
       {
-        h2: 'Retratos de grupo: una foto por persona vale más que una grupal lejana',
+        h2: 'Group portraits: one photo per person beats a distant group shot',
         paragraphs: [
-          'Para retratos de varias personas no necesitas que todos salgan en la misma foto. De hecho, suele ser mejor enviar una foto clara de cada persona por separado y contarnos en las indicaciones cómo quieres agruparlos y en qué pose. Lo mismo aplica para mascotas: una buena foto del perro mirando a cámara hace magia.',
+          'For portraits of several people you do not need everyone in the same photo. In fact, it is usually better to send one clear photo of each person separately and tell us in the instructions how you want them grouped and posed. The same applies to pets: one good photo of the dog looking at the camera works magic.',
         ],
       },
       {
-        h2: 'Lo que sí puedes pedir aunque no salga en la foto',
+        h2: 'What you can ask for even if it is not in the photo',
         paragraphs: [
-          'El retrato no tiene que ser una copia exacta de la foto. ¿Quieres salir con otra ropa, con tu camiseta favorita, con un accesorio de la serie o abrazando a tu pareja aunque las fotos sean separadas? Escríbelo en las indicaciones especiales del pedido. La foto define tus rasgos; las indicaciones definen la escena.',
-          'Con una buena foto y unas indicaciones claras, el resultado llega en 48 horas y la revisión incluida cubre cualquier ajuste fino. Así de simple.',
+          'The portrait does not have to be an exact copy of the photo. Want to appear in different clothes, in your favorite shirt, with an accessory from the show, or hugging your partner even though the photos are separate? Write it in the special instructions on your order. The photo defines your features; the instructions define the scene.',
+          'With a good photo and clear instructions, the result arrives in 48 hours and the included revision covers any fine-tuning. It is that simple.',
         ],
       },
     ],
     relatedStyleSlugs: ['rick-and-morty-style-portrait', 'gravity-falls-style-portrait'],
+    relatedLandings: [
+      { label: 'Order Your Portrait', href: '/order' },
+      { label: 'How It Works', href: '/how-it-works' },
+    ],
   },
   {
-    slug: 'el-proceso-detras-de-cada-retrato',
-    title: 'El proceso detrás de cada retrato: de tu foto al dibujo final',
-    metaTitle: 'El Proceso Detrás de Cada Retrato Animado — Así lo Hacemos',
+    slug: 'our-hand-drawn-portrait-process',
+    title: 'The Process Behind Every Portrait: From Your Photo to the Final Drawing',
+    metaTitle: 'Our Hand-Drawn Portrait Process — From Photo to Final Art',
     metaDescription:
-      'Así se hace un retrato animado personalizado en NEGASVA: del análisis de tu foto al dibujo a mano, revisión y entrega en 48 horas. Sin IA ni filtros.',
+      'How a custom cartoon portrait is made at NEGASVA: from analyzing your photo to hand-drawing, revision and 48h delivery. No AI, no filters — every step by a real artist.',
     category: 'Behind the Scenes',
     date: '2026-05-12',
-    dateLabel: '12 de Mayo, 2026',
-    excerpt: 'Del análisis de tu foto al dibujo a mano y la entrega final: así trabaja nuestro equipo en cada encargo.',
-    keywords: ['como se hace un retrato animado', 'retrato dibujado a mano', 'proceso ilustracion personalizada'],
+    dateLabel: 'May 12, 2026',
+    excerpt:
+      'From analyzing your photo to the hand-drawing and final delivery: how our team works on every commission.',
+    keywords: ['how a cartoon portrait is made', 'hand-drawn portrait process', 'custom illustration process', 'no AI portrait'],
     image: '',
-    imageAlt: 'Proceso de ilustración de un retrato animado personalizado',
+    imageAlt: 'The illustration process of a custom cartoon portrait',
     intro:
-      'Una de las preguntas que más nos hacen: "¿esto lo hace una IA?". No. Cada retrato de NEGASVA lo dibuja un ilustrador real, a mano, en tableta digital. Por eso los resultados capturan cosas que ningún filtro automático logra: tu gesto característico, el detalle de tus gafas, la postura de tu mascota. Aquí te contamos el proceso completo, paso a paso.',
+      'One of the questions we get most: "is this made by an AI?" No. Every NEGASVA portrait is drawn by a real illustrator, by hand, on a digital tablet. That is why the results capture things no automatic filter can: your signature expression, the detail of your glasses, your pet\'s posture. Here is the full process, step by step.',
     sections: [
       {
-        h2: 'Paso 1: análisis de tu foto y tus indicaciones',
+        h2: 'Step 1: analyzing your photo and your instructions',
         paragraphs: [
-          'Cuando llega tu pedido, lo primero que hace el ilustrador es estudiar tus fotos: forma de la cara, peinado, rasgos distintivos, ropa. Después lee tus indicaciones especiales — la pose que pediste, los accesorios, cómo agrupar a las personas — y define la composición de la escena junto con el fondo que elegiste.',
+          'When your order arrives, the first thing the illustrator does is study your photos: face shape, hair, distinctive features, clothing. Then they read your special instructions — the pose you asked for, the accessories, how to group the people — and define the composition of the scene together with the background you chose.',
         ],
       },
       {
-        h2: 'Paso 2: el boceto en el lenguaje del estilo',
+        h2: "Step 2: the sketch in the style's visual language",
         paragraphs: [
-          'Aquí está la verdadera dificultad del oficio: traducir tus rasgos reales al lenguaje visual de la serie. Cada estilo tiene reglas propias — los ojos de cartoon sci-fi no se construyen igual que los de familia amarilla clasica, y las proporciones de misterio del bosque no tienen nada que ver con las siluetas angulosas de fantasia brillante. El reto es que el dibujo sea 100% fiel al estilo y que aun así cualquiera te reconozca al primer vistazo.',
+          'Here is the real difficulty of the craft: translating your actual features into the visual language of the show. Each style has its own rules — the eyes of a chaotic sci-fi cartoon are not built the same way as those of a classic yellow-family style, and the proportions of a cozy-mystery style have nothing to do with the angular silhouettes of a bright 90s-fantasy style. The challenge is for the drawing to be 100% faithful to the style and still have anyone recognize you at first glance.',
         ],
       },
       {
-        h2: 'Paso 3: línea, color y fondo',
+        h2: 'Step 3: line, color and background',
         paragraphs: [
-          'Sobre el boceto aprobado internamente se trabaja la línea definitiva, el color plano característico de cada serie y la integración con el fondo: que la iluminación del portal verde se refleje en los personajes, que las sombras del sofá de una ciudad animada caigan donde deben. Son los detalles que separan un retrato profesional de un "pegote" de personaje sobre fondo.',
+          'On the internally approved sketch, the artist works the final linework, the flat color characteristic of each show, and the integration with the background: making the green portal\'s lighting reflect on the characters, making the couch shadows of an animated city fall where they should. These are the details that separate a professional portrait from a character crudely pasted onto a backdrop.',
         ],
       },
       {
-        h2: 'Paso 4: entrega en 48 horas y revisión incluida',
+        h2: 'Step 4: 48-hour delivery and included revision',
         paragraphs: [
-          'El archivo final llega a tu correo en alta resolución, listo para imprimir en lienzo, póster o marco, o para usar directamente como avatar. Y si algo no te convence — un tono de pelo, un detalle de la ropa — la revisión está incluida: nos escribes y lo ajustamos.',
-          '¿Por qué no usamos IA? Porque los generadores automáticos no entienden qué te hace reconocible: producen un personaje genérico del estilo con un parecido vago. Nuestro valor está exactamente en lo contrario — que tu retrato sea inconfundiblemente tuyo.',
+          'The final file lands in your inbox in high resolution, ready to print on canvas, poster or frame, or to use directly as an avatar. And if something is not quite right — a hair color, a clothing detail — the revision is included: you write to us and we adjust it.',
+          'Why do we not use AI? Because automatic generators do not understand what makes you recognizable: they produce a generic character in the style with a vague resemblance. Our value is exactly the opposite — making your portrait unmistakably yours.',
         ],
       },
     ],
     relatedStyleSlugs: ['rick-and-morty-style-portrait', 'simpsons-style-portrait', 'gravity-falls-style-portrait', 'fairly-oddparents-style-portrait'],
+    relatedLandings: [
+      { label: 'Hand-Drawn, No AI', href: '/hand-drawn-no-ai' },
+      { label: 'How It Works', href: '/how-it-works' },
+      { label: 'Order Your Portrait', href: '/order' },
+    ],
   },
   {
-    slug: 'retratos-familiares-personalizados',
-    title: 'Retratos familiares personalizados: el regalo que une generaciones',
-    metaTitle: 'Retratos Familiares Personalizados — El Regalo que Une Generaciones',
+    slug: 'custom-family-portrait-gift-guide',
+    title: 'Custom Family Portraits: The Gift That Unites Generations',
+    metaTitle: 'Custom Family Portrait Gift Guide — Up to 8 People, 48h',
     metaDescription:
-      'Por qué un retrato familiar animado es el regalo perfecto: hasta 8 personas y mascotas, estilos familia amarilla o cartoon sci-fi, entrega en 48h desde $15.',
-    category: 'Historias',
+      'Why a custom family cartoon portrait is the perfect gift: up to 8 people and pets, classic yellow-family or chaotic sci-fi styles, hand-drawn and delivered in 48h from $15.',
+    category: 'Stories',
     date: '2026-05-02',
-    dateLabel: '2 de Mayo, 2026',
-    excerpt: 'Por qué un retrato familiar animado es el regalo perfecto para cualquier ocasión especial, y cómo pedirlo bien.',
-    keywords: ['retrato familiar personalizado', 'regalo familiar original', 'caricatura familiar personalizada', 'retrato para familia'],
+    dateLabel: 'May 2, 2026',
+    excerpt:
+      'Why a custom family cartoon portrait is the perfect gift for any special occasion, and how to order it well.',
+    keywords: ['custom family portrait', 'family portrait gift', 'personalized family cartoon', 'family portrait from photo'],
     image: '',
-    imageAlt: 'Retrato familiar animado personalizado con varias personas y mascota',
+    imageAlt: 'Custom cartoon family portrait with several people and a pet',
     intro:
-      'Hay una razón por la que los retratos familiares son nuestro encargo más emotivo: son el único formato donde caben todos. Los abuelos, los niños, el perro que es un miembro más, el primo que vive lejos. Un retrato familiar animado convierte a tu familia en el elenco de una serie — y a diferencia de la típica foto familiar acartonada, este cuadro saca sonrisas cada vez que alguien lo mira.',
+      'There is a reason family portraits are our most emotional commission: they are the only format where everyone fits. The grandparents, the kids, the dog that is one more family member, the cousin who lives far away. A custom family cartoon portrait turns your family into the cast of a show — and unlike the usual stiff family photo, this piece draws a smile every time someone looks at it.',
     sections: [
       {
-        h2: 'Por qué funciona tan bien como regalo',
+        h2: 'Why it works so well as a gift',
         paragraphs: [
-          'Un retrato familiar resuelve el problema clásico de regalar a padres y abuelos: ya lo tienen todo, y lo que de verdad valoran es la familia. Cuando una madre recibe el cuadro de todos sus hijos y nietos en versión familia amarilla, el regalo no es el dibujo — es la escena de la familia completa, junta, en un formato que mezcla humor y cariño.',
-          'Además es un regalo colectivo perfecto: los hermanos se dividen el costo, cada uno aporta una foto, y el resultado supera con creces lo que cualquiera hubiera comprado por separado.',
+          'A family portrait solves the classic problem of gifting parents and grandparents: they already have everything, and what they truly value is family. When a mother receives a portrait of all her children and grandchildren in classic yellow-family style, the gift is not the drawing — it is the scene of the whole family, together, in a format that blends humor and affection.',
+          'It is also a perfect group gift: the siblings split the cost, each one contributes a photo, and the result far outshines whatever anyone would have bought separately.',
         ],
       },
       {
-        h2: 'Hasta 8 personas y mascotas en el mismo retrato',
+        h2: 'Up to 8 people and pets in the same portrait',
         paragraphs: [
-          'Nuestros retratos admiten de 1 a 8 personas, y las mascotas también cuentan como parte de la familia: perros, gatos y hasta animales menos comunes se dibujan con el mismo estilo de la serie. No necesitas una foto donde salgan todos juntos — basta una foto clara de cada miembro, y en las indicaciones nos cuentas cómo agruparlos.',
+          'Our portraits fit from 1 to 8 people, and pets count as part of the family too: dogs, cats and even less common animals are drawn in the same style as the show. You do not need a photo with everyone in it — one clear photo of each member is enough, and in the instructions you tell us how to group them.',
         ],
       },
       {
-        h2: 'El estilo ideal para familias: familia amarilla primero, pero no único',
+        h2: 'The ideal style for families: yellow-family first, but not the only one',
         paragraphs: [
-          'La escena del sofá de una ciudad animada con tu propia familia es el retrato familiar por excelencia: tres generaciones reconocen la referencia al instante. Pero no es la única opción — las familias jóvenes piden cada vez más el estilo cartoon sci-fi con el portal de fondo, y misterio del bosque funciona precioso para familias con niños pequeños por su estética tierna.',
+          'The couch scene of an animated city with your own family is the family portrait par excellence: three generations recognize the reference instantly. But it is not the only option — younger families increasingly ask for the chaotic sci-fi style with the portal background, and the cozy-mystery style looks lovely for families with small children thanks to its sweet aesthetic.',
         ],
       },
       {
-        h2: 'Del archivo digital al cuadro en la pared',
+        h2: 'From digital file to art on the wall',
         paragraphs: [
-          'Entregamos el retrato en alta resolución, apto para imprimir en el tamaño que quieras: lienzo, póster enmarcado, o incluso tazas y camisetas. Un truco que usan muchos clientes: imprimen una copia grande para la casa de los padres y copias pequeñas para cada hermano.',
-          'El pedido completo toma cinco minutos: eliges estilo, indicas cuántas personas, subes las fotos y nos das las indicaciones. En 48 horas, tu familia es oficialmente parte de una ciudad animada. Desde $15 USD.',
+          'We deliver the portrait in high resolution, ready to print at any size: canvas, framed poster, or even mugs and t-shirts. A trick many customers use: they print one large copy for the parents\' house and small copies for each sibling.',
+          'The full order takes five minutes: pick the style, say how many people, upload the photos and give us the instructions. In 48 hours, your family is officially part of an animated city. From $15 USD.',
         ],
       },
     ],
     relatedStyleSlugs: ['simpsons-style-portrait', 'rick-and-morty-style-portrait', 'gravity-falls-style-portrait'],
+    relatedLandings: [
+      { label: 'Custom Family Portrait', href: '/custom-family-portrait' },
+      { label: 'Christmas Gift', href: '/gifts/christmas' },
+      { label: "Mother's Day Gift", href: '/gifts/mothers-day' },
+    ],
   },
 ];
 

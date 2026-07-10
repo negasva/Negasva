@@ -40,6 +40,17 @@ const nextConfig = {
     { source: '/estilos/gravity-falls', destination: '/styles/gravity-falls-style-portrait', permanent: true },
     { source: '/estilos/padrinos-magicos', destination: '/styles/fairly-oddparents-style-portrait', permanent: true },
     { source: '/estilos/:slug', destination: '/styles/:slug', permanent: true },
+    // Páginas legales migradas a slugs EN (SEO / EN-only). /cookies ya es EN.
+    { source: '/privacidad', destination: '/privacy', permanent: true },
+    { source: '/terminos', destination: '/terms', permanent: true },
+    // Posts del blog migrados de ES a EN (SEO / EN-only). El post ES de
+    // comparación de estilos se consolida en su equivalente EN ya existente.
+    { source: '/blog/ideas-para-regalar-un-retrato-animado', destination: '/blog/cartoon-portrait-gift-ideas', permanent: true },
+    { source: '/blog/como-elegir-el-estilo-de-tu-retrato', destination: '/blog/how-to-choose-your-portrait-style', permanent: true },
+    { source: '/blog/rick-y-morty-vs-simpsons-que-estilo-elegir', destination: '/blog/simpsons-vs-rick-and-morty-style', permanent: true },
+    { source: '/blog/consejos-para-fotos-perfectas', destination: '/blog/how-to-take-the-perfect-photo-for-a-portrait', permanent: true },
+    { source: '/blog/el-proceso-detras-de-cada-retrato', destination: '/blog/our-hand-drawn-portrait-process', permanent: true },
+    { source: '/blog/retratos-familiares-personalizados', destination: '/blog/custom-family-portrait-gift-guide', permanent: true },
   ],
   headers: async () => {
     // Content Security Policy. Built to allow the third-parties this app
