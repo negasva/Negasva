@@ -6,8 +6,7 @@ import Logo from '@/components/Logo';
 import ProductIcon from '@/components/ProductIcon';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
 import CurrencySwitcher from '@/components/CurrencySwitcher';
-import { loadStripe } from '@stripe/stripe-js';
-import { EmbeddedCheckout, EmbeddedCheckoutProvider } from '@stripe/react-stripe-js';
+import { PayPalScriptProvider, PayPalButtons } from '@paypal/react-paypal-js';
 import RecaptchaScript from '@/components/RecaptchaScript';
 import MercadoPagoBrick from '@/components/MercadoPagoBrick';
 import { nextFamilyTier } from '@/lib/pricing/calc';
@@ -18,7 +17,7 @@ import StepBody from './StepBody';
 import StepBackground from './StepBackground';
 import { PRINT_PRODUCTS } from '@/lib/content/printProducts';
 
-const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
+const PAYPAL_CLIENT_ID = process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID ?? '';
 
 type Lang = 'es' | 'en' | 'fr';
 const pick3 = (lang: Lang, es: string, en: string, fr: string) =>
@@ -247,7 +246,7 @@ export default function StudioPage() {
     showError,
     checkoutLoading, checkoutError, checkoutParams,
     canAdvance, totalPrice, getProducts,
-    nextStep, prevStep, fetchClientSecret, createMpOrder, handlePhotoUpload,
+    nextStep, prevStep, createPayPalOrder, capturePayPalOrder, createMpOrder, handlePhotoUpload,
     toggleExpress, toggleRecording, setSpecialRequests,
     productQty, addProductUnit, removeProductUnit, removeProductUnitAt, setProductUnitOption,
   } = c;
@@ -600,7 +599,7 @@ export default function StudioPage() {
                   <h2 className="font-black text-3xl text-secondary mb-2 tracking-tighter">{t.studio.pay.title}</h2>
                   <div className="flex items-center justify-center gap-4 text-xs text-secondary-lighter flex-wrap">
                     <span className="flex items-center gap-1"><Lock className="w-3 h-3 text-primary" /> {t.studio.pay.ssl}</span>
-                    <span className="flex items-center gap-1"><ShieldCheck className="w-3 h-3 text-primary" /> {currency === 'COP' ? 'Mercado Pago' : t.studio.pay.stripe}</span>
+                    <span className="flex items-center gap-1"><ShieldCheck className="w-3 h-3 text-primary" /> {currency === 'COP' ? 'Mercado Pago' : 'PayPal'}</span>
                     <span className="flex items-center gap-1"><ShieldCheck className="w-3 h-3 text-primary" /> {t.studio.pay.no_card}</span>
                   </div>
                 </div>
@@ -621,9 +620,13 @@ export default function StudioPage() {
                     {currency === 'COP' ? (
                       <MercadoPagoBrick lang={lang as Lang} createOrder={createMpOrder} />
                     ) : (
-                      <EmbeddedCheckoutProvider stripe={stripePromise} options={{ fetchClientSecret }}>
-                        <EmbeddedCheckout />
-                      </EmbeddedCheckoutProvider>
+                      <PayPalScriptProvider options={{ clientId: PAYPAL_CLIENT_ID, currency, intent: 'capture' }}>
+                        <PayPalButtons
+                          style={{ layout: 'vertical', shape: 'rect' }}
+                          createOrder={createPayPalOrder}
+                          onApprove={async ({ orderID }) => capturePayPalOrder(orderID)}
+                        />
+                      </PayPalScriptProvider>
                     )}
                   </div>
                 </div>

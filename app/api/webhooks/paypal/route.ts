@@ -1,0 +1,113 @@
+import { NextResponse } from 'next/server';
+import { verifyPayPalWebhook } from '@/lib/payments/paypal';
+import { createServiceClient } from '@/lib/supabase/server';
+import { recordDiscountCodeUse } from '@/lib/pricing/server';
+import { notifyNewOrder } from '@/lib/notify/newOrder';
+
+/**
+ * Webhook de PayPal. La firma se verifica con la API oficial
+ * (verify-webhook-signature + PAYPAL_WEBHOOK_ID). El pedido pendiente se
+ * coteja por custom_id (nuestra provider_reference), igual que Mercado Pago.
+ */
+export async function POST(request: Request) {
+  const rawBody = await request.text();
+
+  const valid = await verifyPayPalWebhook(request.headers, rawBody);
+  if (!valid) return NextResponse.json({ error: 'Invalid signature' }, { status: 400 });
+
+  let event: {
+    event_type?: string;
+    resource?: {
+      id?: string;
+      custom_id?: string;
+      invoice_id?: string;
+      payer?: { email_address?: string };
+      // CUSTOMER.DISPUTE.CREATED trae las transacciones disputadas.
+      disputed_transactions?: Array<{ seller_transaction_id?: string; custom_id?: string; invoice_number?: string }>;
+    };
+  };
+  try {
+    event = JSON.parse(rawBody);
+  } catch {
+    return NextResponse.json({ error: 'Invalid body' }, { status: 400 });
+  }
+
+  const supabase = createServiceClient();
+  const resource = event.resource ?? {};
+
+  try {
+    switch (event.event_type) {
+      case 'PAYMENT.CAPTURE.COMPLETED': {
+        const reference = resource.custom_id ?? resource.invoice_id;
+        if (!reference) break;
+
+        // ¿Ya estaba pagado? Evita acreditar el cupón dos veces si PayPal
+        // reintenta el evento.
+        const { data: existing } = await supabase
+          .from('orders')
+          .select('status, discount_code, amount_total, currency, style, body_type, background, people_count, express')
+          .eq('provider', 'paypal')
+          .eq('provider_reference', reference)
+          .maybeSingle();
+        const wasPaid = existing?.status === 'paid';
+
+        await supabase
+          .from('orders')
+          .update({
+            status: 'paid',
+            provider_transaction_id: resource.id ?? null,
+          })
+          .eq('provider', 'paypal')
+          .eq('provider_reference', reference);
+
+        // El cupón se acredita solo en la primera transición a pagado.
+        if (!wasPaid && existing) {
+          if (existing.discount_code) await recordDiscountCodeUse(existing.discount_code);
+          await notifyNewOrder({
+            provider: 'paypal',
+            reference,
+            amountTotal: existing.amount_total ?? null,
+            currency: existing.currency ?? null,
+            style: existing.style,
+            bodyType: existing.body_type,
+            background: existing.background,
+            peopleCount: existing.people_count ?? null,
+            express: existing.express ?? null,
+            customerEmail: resource.payer?.email_address ?? null,
+          });
+        }
+        break;
+      }
+
+      case 'PAYMENT.CAPTURE.REFUNDED':
+      case 'PAYMENT.CAPTURE.REVERSED': {
+        const reference = resource.custom_id ?? resource.invoice_id;
+        if (!reference) break;
+        await supabase
+          .from('orders')
+          .update({ status: 'refunded' })
+          .eq('provider', 'paypal')
+          .eq('provider_reference', reference);
+        break;
+      }
+
+      case 'CUSTOMER.DISPUTE.CREATED': {
+        // La disputa referencia el capture id (provider_transaction_id).
+        for (const tx of resource.disputed_transactions ?? []) {
+          if (tx.seller_transaction_id) {
+            await supabase
+              .from('orders')
+              .update({ status: 'disputed' })
+              .eq('provider', 'paypal')
+              .eq('provider_transaction_id', tx.seller_transaction_id);
+          }
+        }
+        break;
+      }
+    }
+  } catch (err) {
+    console.error(`[webhook/paypal] ${event.event_type} handler failed:`, err);
+  }
+
+  return NextResponse.json({ received: true });
+}

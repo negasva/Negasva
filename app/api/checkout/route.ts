@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
-import Stripe from 'stripe';
 import { errorResponse, rateLimitByIp, readJson } from '@/lib/security/apiHelpers';
 import { newMpReference } from '@/lib/payments/mercadopago';
+import { createPayPalOrder, PAYPAL_CURRENCIES, type PayPalItem } from '@/lib/payments/paypal';
 import { createServiceClient } from '@/lib/supabase/server';
 import { applyDiscountCode, loadPricingConfig } from '@/lib/pricing/server';
 import { computeQuoteUsd } from '@/lib/pricing/calc';
@@ -9,34 +9,6 @@ import { getPodProduct, productsSummaryEs, optionsSurchargeUsd, optionsLabelEs, 
 import { CheckoutSchema } from '@/lib/validation/order';
 import { verifyRecaptcha } from '@/lib/security/recaptcha';
 import { listShippingOptions } from '@/lib/printful';
-
-function getStripe() {
-  const key = process.env.STRIPE_SECRET_KEY;
-  if (!key) throw new Error('STRIPE_SECRET_KEY not configured');
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  return new Stripe(key, { apiVersion: '2024-11-20.acacia' as any });
-}
-
-// Google Pay y Apple Pay se ofrecen automáticamente con 'card' en Stripe
-// Checkout (según navegador/dispositivo); no requieren tipo aparte.
-const STRIPE_PAYMENT_METHODS: Record<string, Stripe.Checkout.SessionCreateParams.PaymentMethodType[]> = {
-  usd: ['card', 'link'],
-  eur: ['card', 'sepa_debit', 'ideal', 'klarna', 'link'],
-  gbp: ['card', 'link'],
-  mxn: ['card'],
-  cad: ['card', 'acss_debit', 'link'],
-};
-
-// PayPal en Stripe hay que activarlo en el dashboard; si la cuenta no lo tiene,
-// añadirlo rompería TODOS los checkouts. Por eso va detrás de un flag de env.
-const PAYPAL_CURRENCIES = new Set(['usd', 'eur', 'gbp']);
-function stripeMethods(currency: string): Stripe.Checkout.SessionCreateParams.PaymentMethodType[] {
-  const base = STRIPE_PAYMENT_METHODS[currency] ?? ['card'];
-  if (process.env.STRIPE_PAYPAL_ENABLED === 'true' && PAYPAL_CURRENCIES.has(currency)) {
-    return [...base, 'paypal' as Stripe.Checkout.SessionCreateParams.PaymentMethodType];
-  }
-  return base;
-}
 
 export async function POST(request: Request) {
   const rl = await rateLimitByIp(request, { prefix: 'checkout', max: 20, windowMs: 60_000 });
@@ -124,8 +96,6 @@ export async function POST(request: Request) {
     return errorResponse('Amount too small', 400);
   }
 
-  const origin = request.headers.get('origin') ?? process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000';
-
   // ── Mercado Pago para Colombia (COP) — checkout embebido (Payment Brick) ──
   // Se persiste el pedido pendiente (con el monto AUTORITATIVO) y se devuelven
   // referencia + monto para inicializar el Brick. El pago real lo crea
@@ -168,110 +138,77 @@ export async function POST(request: Request) {
     });
   }
 
-  // ── Stripe embedded checkout ──────────────────────────────────────────
-  // Resolve human-readable names + images so the customer sees exactly
-  // what they're buying instead of internal UUIDs.
+  // ── PayPal (Orders API v2) para monedas internacionales ─────────────────
+  const currency = d.currency.toUpperCase();
+  if (!PAYPAL_CURRENCIES.has(currency)) {
+    return errorResponse(`Currency ${currency} not supported`, 400);
+  }
+
+  // Resolve human-readable names so the customer sees exactly what they're
+  // buying instead of internal UUIDs.
   let styleName = d.style;
-  let styleImage: string | null = null;
   let bgName = d.background === 'custom' ? 'Fondo personalizado' : d.background;
-  let bgImage: string | null = null;
   try {
     const supabase = createServiceClient();
     const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
     const [styleRes, bgRes] = await Promise.all([
       supabase
         .from('portrait_styles')
-        .select('name, example_image_url')
+        .select('name')
         .eq(isUuid.test(d.style) ? 'id' : 'slug', d.style)
         .maybeSingle(),
       isUuid.test(d.background)
-        ? supabase.from('backgrounds').select('name, image_url').eq('id', d.background).maybeSingle()
+        ? supabase.from('backgrounds').select('name').eq('id', d.background).maybeSingle()
         : Promise.resolve({ data: null }),
     ]);
-    if (styleRes.data) {
-      styleName = styleRes.data.name;
-      styleImage = styleRes.data.example_image_url;
-    }
-    if (bgRes.data) {
-      bgName = bgRes.data.name;
-      bgImage = bgRes.data.image_url;
-    }
+    if (styleRes.data) styleName = styleRes.data.name;
+    if (bgRes.data) bgName = bgRes.data.name;
   } catch (err) {
-    console.error('[checkout/stripe] failed to resolve names:', err);
+    console.error('[checkout/paypal] failed to resolve names:', err);
   }
-
-  // Stripe needs absolute, public image URLs
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://negasva.shop';
-  const absImage = (url: string | null) => {
-    if (!url) return undefined;
-    const abs = url.startsWith('http') ? url : `${siteUrl}${url}`;
-    return abs.startsWith('https://') ? [abs] : undefined;
-  };
 
   const bodyLabel = d.bodyType === 'full_body' ? 'Cuerpo completo' : 'Solo torso';
 
   // Itemized lines that mirror the order summary in the wizard.
-  // Family discount is baked into the per-person price (Stripe allows a
-  // single discount per session, reserved for the promo code below).
+  // Family discount is baked into the per-person price (the promo code goes
+  // in amount.breakdown.discount).
   const perPersonMinor = Math.round(perPersonUsd * (1 - discountRate) * d.rate * 100);
   const bgMinor = Math.round(bgUsd * d.rate * 100);
   const expressMinor = Math.round(expressUsd * d.rate * 100);
   const recordingMinor = Math.round(quote.recordingCost * d.rate * 100);
   const shippingMinor = Math.round(shippingUsd * d.rate * 100);
 
-  const lineItems: Stripe.Checkout.SessionCreateParams.LineItem[] = [
+  const items: PayPalItem[] = [
     {
-      price_data: {
-        currency: d.currency,
-        product_data: {
-          name: `Retrato ${styleName} — ${bodyLabel}`,
-          description: discountRate > 0
-            ? `${d.peopleCount} personas · Incluye ${Math.round(discountRate * 100)}% dcto. pack familia`
-            : `${d.peopleCount} ${d.peopleCount === 1 ? 'persona' : 'personas'}`,
-          images: absImage(styleImage),
-        },
-        unit_amount: perPersonMinor,
-      },
+      name: `Retrato ${styleName} — ${bodyLabel}`,
+      description: discountRate > 0
+        ? `${d.peopleCount} personas · Incluye ${Math.round(discountRate * 100)}% dcto. pack familia`
+        : `${d.peopleCount} ${d.peopleCount === 1 ? 'persona' : 'personas'}`,
+      unitMinor: perPersonMinor,
       quantity: d.peopleCount,
     },
   ];
   if (bgMinor > 0) {
-    lineItems.push({
-      price_data: {
-        currency: d.currency,
-        product_data: {
-          name: `Fondo: ${bgName}`,
-          description: d.background === 'custom' ? 'Fondo a tu medida, descríbenos tu idea' : `Fondo temático ${styleName}`,
-          images: absImage(bgImage),
-        },
-        unit_amount: bgMinor,
-      },
+    items.push({
+      name: `Fondo: ${bgName}`,
+      description: d.background === 'custom' ? 'Fondo a tu medida, descríbenos tu idea' : `Fondo temático ${styleName}`,
+      unitMinor: bgMinor,
       quantity: 1,
     });
   }
   if (expressMinor > 0) {
-    lineItems.push({
-      price_data: {
-        currency: d.currency,
-        product_data: {
-          name: 'Entrega exprés 24h',
-          description: 'Tu retrato salta la cola y llega en 24 horas',
-        },
-        unit_amount: expressMinor,
-      },
+    items.push({
+      name: 'Entrega exprés 24h',
+      description: 'Tu retrato salta la cola y llega en 24 horas',
+      unitMinor: expressMinor,
       quantity: 1,
     });
   }
   if (recordingMinor > 0) {
-    lineItems.push({
-      price_data: {
-        currency: d.currency,
-        product_data: {
-          name: 'Video del proceso de dibujo',
-          description: 'Grabamos cómo se crea tu retrato, de boceto a color',
-        },
-        unit_amount: recordingMinor,
-      },
+    items.push({
+      name: 'Video del proceso de dibujo',
+      description: 'Grabamos cómo se crea tu retrato, de boceto a color',
+      unitMinor: recordingMinor,
       quantity: 1,
     });
   }
@@ -293,96 +230,71 @@ export async function POST(request: Request) {
       const unit = Math.round(priceUsd * d.rate * 100);
       if (unit <= 0) continue;
       const spec = optionsLabelEs(key, opts);
-      lineItems.push({
-        price_data: {
-          currency: d.currency,
-          product_data: {
-            name: `${product.name.es} — tu dibujo impreso`,
-            description: spec ? `${product.desc.es} · ${spec}` : product.desc.es,
-          },
-          unit_amount: unit,
-        },
+      items.push({
+        name: `${product.name.es} — tu dibujo impreso`,
+        description: spec ? `${product.desc.es} · ${spec}` : product.desc.es,
+        unitMinor: unit,
         quantity: qty,
       });
     }
   }
 
-  // Envío elegido: se cobra como línea propia para que el cliente lo vea
-  // desglosado igual que en el resumen del pedido.
-  if (shippingMinor > 0) {
-    lineItems.push({
-      price_data: {
-        currency: d.currency,
-        product_data: {
-          name: `Envío: ${shippingName}`,
-          description: 'Envío de tus productos físicos (Printful)',
-        },
-        unit_amount: shippingMinor,
-      },
-      quantity: 1,
-    });
-  }
-
-  const stripe = getStripe();
-
-  // Promo code shown as a real Stripe discount row instead of text
-  let productsMinor = 0;
-  for (const [key, unitList] of Object.entries(productUnits)) {
-    for (const opts of unitList) {
-      productsMinor += Math.round(
-        ((pricing.podProductsUsd[key] ?? getPodProduct(key)?.priceUsd ?? 0) + optionsSurchargeUsd(key, opts)) * d.rate * 100,
-      );
-    }
-  }
-
-  let couponId: string | undefined;
+  // Promo code as a real discount row in the PayPal breakdown, capped so the
+  // total never drops below the provider minimum.
+  const itemTotalMinor = items.reduce((s, i) => s + i.unitMinor * i.quantity, 0);
+  let discountMinor = 0;
   if (appliedCode) {
-    const lineTotal = perPersonMinor * d.peopleCount + bgMinor + expressMinor + recordingMinor + productsMinor + shippingMinor;
-    const amountOff = Math.min(Math.round(appliedCode.amountUsd * d.rate * 100), lineTotal - 50);
-    if (amountOff > 0) {
-      const coupon = await stripe.coupons.create({
-        amount_off: amountOff,
-        currency: d.currency,
-        duration: 'once',
-        name: `Código ${appliedCode.code}`,
-      });
-      couponId = coupon.id;
-    }
+    discountMinor = Math.max(
+      0,
+      Math.min(Math.round(appliedCode.amountUsd * d.rate * 100), itemTotalMinor + shippingMinor - 50),
+    );
+  }
+  // El monto que se guarda y se cobra es EXACTAMENTE la suma del desglose que
+  // ve el cliente en PayPal (mismo criterio que los line items de antes).
+  const chargedMinor = itemTotalMinor + shippingMinor - discountMinor;
+
+  // Igual que Mercado Pago: primero se persiste el pedido pendiente con el
+  // monto autoritativo y una referencia propia; esa referencia viaja como
+  // custom_id/invoice_id de PayPal y es la que el webhook usa para cotejar.
+  const reference = newMpReference();
+  try {
+    const supabase = createServiceClient();
+    await supabase.from('orders').insert({
+      provider: 'paypal',
+      provider_reference: reference,
+      amount_total: chargedMinor,
+      currency: d.currency,
+      style: d.style,
+      body_type: d.bodyType,
+      background: d.background,
+      people_count: d.peopleCount,
+      express: d.express,
+      special_requests: composedRequests || null,
+      photo_paths: d.photoPaths ?? [],
+      upload_id: d.uploadId ?? null,
+      // Stored so the webhook can credit the code AFTER payment is captured.
+      discount_code: appliedCode?.code ?? null,
+      status: 'pending',
+    });
+  } catch (err) {
+    // Sin BD no se puede cotejar el pago con el pedido — se aborta el checkout.
+    return errorResponse('Could not create order', 500, err);
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const session = await (stripe.checkout.sessions.create as any)({
-    mode: 'payment',
-    ui_mode: 'embedded',
-    return_url: `${origin}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
-    line_items: lineItems,
-    ...(couponId ? { discounts: [{ coupon: couponId }] } : {}),
-    payment_method_types: stripeMethods(d.currency),
-    // Con productos físicos pedimos dirección de envío en el propio checkout;
-    // el costo de envío se cotiza con Printful al preparar el pedido.
-    ...(products.length > 0
-      ? { shipping_address_collection: { allowed_countries: ['CO', 'US', 'MX', 'ES', 'FR', 'GB', 'DE', 'IT', 'CA', 'AR', 'CL', 'PE', 'EC'] } }
-      : {}),
-    metadata: {
-      style: d.style,
-      styleName,
-      bodyType: d.bodyType,
-      background: d.background,
-      backgroundName: bgName,
-      peopleCount: String(d.peopleCount),
-      express: String(d.express),
-      recording: String(d.recording),
-      products: products.join(','),
-      shippingRateId: d.shipping?.rateId ?? '',
-      shippingName,
-      shippingUsd: shippingUsd ? shippingUsd.toFixed(2) : '',
-      discountCode: appliedCode?.code ?? '',
-      uploadId: d.uploadId ?? '',
-      specialRequests: composedRequests.slice(0, 220),
-    },
-  });
+  let orderID: string;
+  try {
+    orderID = await createPayPalOrder({
+      reference,
+      currency,
+      items,
+      shippingMinor,
+      discountMinor,
+    });
+  } catch (err) {
+    return errorResponse('Could not create PayPal order', 502, err);
+  }
 
-  // NOTE: discount usage is recorded by the Stripe webhook on a paid session,
-  // never here — abandoned checkouts must not consume coupon uses.
-  return NextResponse.json({ client_secret: session.client_secret });
+  // NOTE: discount usage is recorded by the PayPal webhook on a captured
+  // payment, never here — abandoned checkouts must not consume coupon uses.
+  return NextResponse.json({ paypal: { orderID, reference } });
 }

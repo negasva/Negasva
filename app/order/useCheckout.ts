@@ -439,8 +439,10 @@ export function useCheckout() {
     setCheckoutLoading(false);
   };
 
-  const fetchClientSecret = useCallback(async () => {
-    if (!checkoutParams) return '';
+  // Crea la orden PayPal (monedas no-COP). El servidor calcula el monto,
+  // persiste el pedido pending y devuelve el orderID para los botones.
+  const createPayPalOrder = useCallback(async (): Promise<string> => {
+    if (!checkoutParams) throw new Error('no checkout params');
     // Token reCAPTCHA fresco por request (son de un solo uso y expiran).
     const recaptchaToken = await getRecaptchaToken('checkout');
     const res = await fetch('/api/checkout', {
@@ -448,9 +450,23 @@ export function useCheckout() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ ...checkoutParams, recaptchaToken }),
     });
-    const data = await res.json();
-    return data.client_secret ?? '';
+    const data = await res.json().catch(() => null);
+    if (!data?.paypal?.orderID) throw new Error('checkout failed');
+    return data.paypal.orderID;
   }, [checkoutParams]);
+
+  // Captura la orden aprobada y redirige al success con la referencia.
+  const capturePayPalOrder = useCallback(async (orderID: string) => {
+    const res = await fetch('/api/checkout/paypal/capture', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ orderID }),
+    });
+    const data = await res.json().catch(() => null);
+    if (!res.ok || data?.status !== 'COMPLETED') throw new Error('capture failed');
+    const ref = data.reference ? `?ref=${encodeURIComponent(data.reference)}&status=APPROVED` : '';
+    window.location.href = `/checkout/success${ref}`;
+  }, []);
 
   // Crea el pedido pendiente de Mercado Pago (COP) y devuelve { reference,
   // amount } para inicializar el Payment Brick embebido.
@@ -587,7 +603,7 @@ export function useCheckout() {
     // derived
     canAdvance, priceBreakdown, totalPrice, getBgName, getStyleBgs, getProducts,
     // actions
-    nextStep, prevStep, fetchClientSecret, createMpOrder, handlePhotoUpload,
+    nextStep, prevStep, createPayPalOrder, capturePayPalOrder, createMpOrder, handlePhotoUpload,
     selectStyle, selectBodyType, decPeople, incPeople,
     selectBackground, toggleExpress, toggleRecording, setSpecialRequests,
     productQty, addProductUnit, removeProductUnit, removeProductUnitAt, setProductUnitOption,
