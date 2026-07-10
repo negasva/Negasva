@@ -50,12 +50,12 @@ const nextConfig = {
       "default-src 'self'",
       `script-src 'self' 'unsafe-inline'${
         process.env.NODE_ENV !== 'production' ? " 'unsafe-eval'" : ''
-      } https://www.googletagmanager.com https://www.google-analytics.com https://www.google.com https://www.gstatic.com https://www.recaptcha.net https://js.stripe.com`,
+      } https://www.googletagmanager.com https://www.google-analytics.com https://www.google.com https://www.gstatic.com https://www.recaptcha.net https://js.stripe.com https://www.paypal.com https://www.paypalobjects.com`,
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
       "font-src 'self' https://fonts.gstatic.com data:",
       "img-src 'self' data: blob: https:",
-      "connect-src 'self' https://*.supabase.co https://www.google-analytics.com https://api.exchangerate-api.com",
-      "frame-src 'self' https://www.google.com https://www.recaptcha.net https://js.stripe.com",
+      "connect-src 'self' https://*.supabase.co https://www.google-analytics.com https://api.exchangerate-api.com https://www.paypal.com https://www.paypalobjects.com https://api-m.paypal.com https://api-m.sandbox.paypal.com",
+      "frame-src 'self' https://www.google.com https://www.recaptcha.net https://js.stripe.com https://www.paypal.com https://www.sandbox.paypal.com",
       "object-src 'none'",
       "base-uri 'self'",
       "form-action 'self'",
