@@ -15,7 +15,6 @@ import { useCheckout, CURRENCY_COUNTRY, type CheckoutController } from './useChe
 import StepStyle from './StepStyle';
 import StepBody from './StepBody';
 import StepBackground from './StepBackground';
-import { PRINT_PRODUCTS } from '@/lib/content/printProducts';
 
 const PAYPAL_CLIENT_ID = process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID ?? '';
 
@@ -515,32 +514,7 @@ export default function StudioPage() {
                     )}
                   </div>
 
-                  {/* 3 · Sube tus fotos (opcional) */}
-
-                  <div>
-                    <h3 className="font-black text-xl text-secondary mb-2 tracking-tighter">Print your drawing</h3>
-                    <p className="text-sm text-secondary-lighter mb-3">Optional - add a physical product.</p>
-                    <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                      {PRINT_PRODUCTS.map((product) => (
-                        <button
-                          key={product.name}
-                          type="button"
-                          className="rounded-2xl border-2 border-primary-lighter bg-white p-2 text-left transition-all hover:border-primary hover:shadow-md"
-                        >
-                          <div className="relative aspect-square rounded-xl overflow-hidden bg-primary-lighter">
-                            <img src={product.image} alt={product.name} className="h-full w-full object-cover" />
-                          </div>
-                          <div className="mt-2">
-                            <p className="font-black text-secondary text-sm leading-tight">{product.name}</p>
-                            <p className="text-xs text-secondary-lighter">{product.price}</p>
-                          </div>
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-
                   {/* 2 · Sube tus fotos (compacto) */}
- main
                   <div>
                     <h2 className="font-black text-xl text-secondary mb-1 tracking-tighter">
                       {t.studio.step5.title}{' '}
