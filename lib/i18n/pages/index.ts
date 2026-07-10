@@ -4,11 +4,8 @@
 
 import type { PageDict } from '@/lib/i18n/pageContent';
 import { blogContent } from './blog';
-import { cookiesContent } from './cookies';
 import { faqContent } from './faq';
-import { privacidadContent } from './privacidad';
 import { seguimientoContent } from './seguimiento';
-import { terminosContent } from './terminos';
 
 export interface PageRegistryEntry {
   key: string;            // pageKey usado en page_content / usePageText
@@ -20,7 +17,4 @@ export const PAGE_REGISTRY: PageRegistryEntry[] = [
   { key: 'faq',          label: 'FAQ',                 defaults: faqContent },
   { key: 'blog',         label: 'Blog (portada)',      defaults: blogContent },
   { key: 'seguimiento',  label: 'Seguimiento',         defaults: seguimientoContent },
-  { key: 'cookies',      label: 'Cookies',             defaults: cookiesContent },
-  { key: 'privacidad',   label: 'Privacidad',          defaults: privacidadContent },
-  { key: 'terminos',     label: 'Términos',            defaults: terminosContent },
 ];

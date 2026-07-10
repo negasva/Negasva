@@ -50,8 +50,8 @@ const DEFAULT_FOOTER: FooterConfig = {
     {
       title_es: 'Legal', title_en: 'Legal', title_fr: 'Légal',
       links: [
-        { label_es: 'Privacidad', label_en: 'Privacy', label_fr: 'Confidentialité', href: '/privacidad' },
-        { label_es: 'Términos', label_en: 'Terms', label_fr: 'Conditions', href: '/terminos' },
+        { label_es: 'Privacidad', label_en: 'Privacy', label_fr: 'Confidentialité', href: '/privacy' },
+        { label_es: 'Términos', label_en: 'Terms', label_fr: 'Conditions', href: '/terms' },
         { label_es: 'Cookies', label_en: 'Cookies', label_fr: 'Cookies', href: '/cookies' },
       ],
     },
