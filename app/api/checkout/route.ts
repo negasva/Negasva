@@ -71,13 +71,20 @@ export async function POST(request: Request) {
     }
   }
 
-  const totalLocal = (quote.total + shippingUsd) * d.rate;
+  // Propina opcional: el % se calcula AQUÍ sobre el total del pedido (no se
+  // confía en un monto del cliente); la personalizada llega en USD acotada.
+  const tipUsd = d.tip?.pct
+    ? quote.total * (d.tip.pct / 100)
+    : Math.min(Math.max(d.tip?.usd ?? 0, 0), 500);
+
+  const totalLocal = (quote.total + shippingUsd + tipUsd) * d.rate;
 
   // Note prepended to the order so the illustrator knows which physical
   // products to fulfill via Printful (the finished art is the print file).
   const productsNote = productsSummaryEs(productUnits);
   const notes = [
     d.recording ? 'Incluye video del proceso de dibujo' : '',
+    tipUsd > 0 ? `Propina: $${tipUsd.toFixed(2)} USD` : '',
     productsNote,
     shippingName
       ? `Envío elegido: ${shippingName} — $${shippingUsd.toFixed(2)} USD (${d.shipping?.country ?? ''})`
@@ -245,6 +252,16 @@ export async function POST(request: Request) {
         quantity: qty,
       });
     }
+  }
+
+  const tipMinor = Math.round(tipUsd * d.rate * 100);
+  if (tipMinor > 0) {
+    items.push({
+      name: 'Propina para el artista',
+      description: 'Gracias por apoyar el trabajo hecho a mano',
+      unitMinor: tipMinor,
+      quantity: 1,
+    });
   }
 
   // Promo code as a real discount row in the PayPal breakdown, capped so the

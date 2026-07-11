@@ -202,6 +202,9 @@ export function useCheckout() {
   // en ese caso no se avanza del paso 4 sin método de envío. Si Printful no
   // cotiza (país sin cobertura, API caída), no se bloquea el checkout.
   const [shippingRequired, setShippingRequired] = useState(false);
+  // Propina opcional (paso 5): 5%, 10% o monto personalizado en USD. El % lo
+  // recalcula el servidor; aquí solo se muestra y viaja la elección.
+  const [tip, setTip] = useState<{ pct?: 5 | 10; usd?: number } | null>(null);
 
   // Al cambiar de paso, la página vuelve siempre al inicio para que el usuario
   // vea el contenido del nuevo paso desde arriba.
@@ -593,6 +596,7 @@ export function useCheckout() {
             customerEmail: contact.email.trim(),
             customerPhone: contact.phone.trim() || undefined,
             ...(cartId ? { cartId } : {}),
+            ...(tip ? { tip } : {}),
             recaptchaToken,
           }),
           signal: controller.signal,
@@ -609,7 +613,7 @@ export function useCheckout() {
       setCheckoutError(t.studio.errors.payment);
       throw err instanceof Error ? err : new Error('checkout failed');
     }
-  }, [checkoutParams, t, contact, cartId]);
+  }, [checkoutParams, t, contact, cartId, tip]);
 
   // Captura la orden aprobada y redirige al success con la referencia.
   const capturePayPalOrder = useCallback(async (orderID: string) => {
@@ -643,12 +647,13 @@ export function useCheckout() {
         customerEmail: contact.email.trim(),
         customerPhone: contact.phone.trim() || undefined,
         ...(cartId ? { cartId } : {}),
+        ...(tip ? { tip } : {}),
         recaptchaToken,
       }),
     });
     const data = await res.json().catch(() => null);
     return data?.mp ?? null;
-  }, [checkoutParams, contact, cartId]);
+  }, [checkoutParams, contact, cartId, tip]);
 
   const prevStep = () => {
     if (step > 1) setStep(step - 1);
@@ -664,8 +669,10 @@ export function useCheckout() {
 
   // The breakdown is whatever the server last quoted — no client-side math.
   const priceBreakdown = (): PriceBreakdown => quote;
-  // El total mostrado incluye el envío elegido (se cobra como línea aparte).
-  const totalPrice = () => quote.total + (shippingSelection?.option.rateUsd ?? 0);
+  // Propina en USD para display (espejo del cálculo del servidor).
+  const tipUsd = tip?.pct ? quote.total * (tip.pct / 100) : (tip?.usd ?? 0);
+  // El total mostrado incluye el envío elegido y la propina (líneas aparte).
+  const totalPrice = () => quote.total + (shippingSelection?.option.rateUsd ?? 0) + tipUsd;
 
   const getBgName = (id: string) =>
     (t.studio.backgrounds as Record<string, string>)[id] ?? id;
@@ -769,6 +776,7 @@ export function useCheckout() {
     applyDiscountCode, removeDiscountCode,
     showError, errorRing, errorShake, onShakeEnd,
     checkoutLoading, checkoutError, setCheckoutError, checkoutParams,
+    tip, setTip, tipUsd,
     // derived
     canAdvance, priceBreakdown, totalPrice, getBgName, getStyleBgs, getProducts,
     // actions
