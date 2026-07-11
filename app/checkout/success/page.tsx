@@ -125,7 +125,7 @@ function PrintUpsell({ orderRef }: { orderRef: string }) {
   if (state === 'done') {
     return (
       <p className="mt-6 text-sm font-bold text-green-600">
-        ✅ {pick3(l, '¡Anotado! Te contactamos para coordinar tu versión impresa.', 'Got it! We’ll contact you to arrange your printed version.', 'C’est noté ! Nous te contactons pour ta version imprimée.')}
+        {pick3(l, '¡Anotado! Te contactamos para coordinar tu versión impresa.', 'Got it! We’ll contact you to arrange your printed version.', 'C’est noté ! Nous te contactons pour ta version imprimée.')}
       </p>
     );
   }
@@ -147,7 +147,7 @@ function PrintUpsell({ orderRef }: { orderRef: string }) {
   return (
     <div className="mt-8 text-left">
       <p className="font-black text-secondary tracking-tighter">
-        🖼️ {pick3(l, '¿Añades una versión impresa a tu pedido?', 'Add a printed version to your order?', 'Ajouter une version imprimée à ta commande ?')}
+        {pick3(l, '¿Añades una versión impresa a tu pedido?', 'Add a printed version to your order?', 'Ajouter une version imprimée à ta commande ?')}
       </p>
       <div className="mt-3 flex flex-wrap gap-2">
         {POD_PRODUCTS.map((p) => {

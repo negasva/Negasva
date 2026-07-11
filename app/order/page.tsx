@@ -38,7 +38,7 @@ function StartNowBanner({ lang }: { lang: Lang }) {
   return (
     <div className="flex items-center justify-between gap-3 rounded-2xl border-2 border-green-500/40 bg-green-50 px-5 py-3.5">
       <span className="font-black text-green-600 text-sm sm:text-base">
-        ✏️ {pick3(lang, 'Empieza ya, sube las fotos luego', 'Start now, upload photos later', 'Commence maintenant, envoie les photos plus tard')}
+        {pick3(lang, 'Empieza ya, sube las fotos luego', 'Start now, upload photos later', 'Commence maintenant, envoie les photos plus tard')}
       </span>
       <span title={pick3(
         lang,
@@ -174,7 +174,7 @@ function PaymentTrustStrip({ lang, cop }: { lang: Lang; cop: boolean }) {
         ))}
       </div>
       <p className="text-xs text-secondary-lighter font-bold">
-        🔒 {pick3(lang,
+        {pick3(lang,
           'Pago seguro · SSL de 256 bits · nunca guardamos tu tarjeta',
           'Secure payment · 256-bit SSL · we never store your card',
           'Paiement sécurisé · SSL 256 bits · nous ne stockons jamais ta carte')}
@@ -215,7 +215,7 @@ function FamilyTierBar({ c }: { c: CheckoutController }) {
     return (
       <div className="rounded-2xl bg-primary-lighter border-2 border-primary p-4 mb-4 text-center">
         <p className="text-sm font-black text-primary">
-          🎉 {pick3(l,
+          {pick3(l,
             `¡Tienes el ${pct}% de descuento familiar, el máximo!`,
             `You've unlocked the maximum ${pct}% family discount!`,
             `Tu as débloqué la remise famille maximale de ${pct}% !`)}
@@ -446,7 +446,7 @@ function OrderSummary({ c, sticky = true }: { c: CheckoutController; sticky?: bo
         )}
         {selected.bodyType && currency === 'COP' && (
           <p className="text-xs font-bold text-primary text-center">
-            💳 {pick3(lang as Lang, 'Hasta 3 cuotas sin interés', 'Up to 3 interest-free installments', 'Jusqu’à 3 fois sans frais')}
+            {pick3(lang as Lang, 'Hasta 3 cuotas sin interés', 'Up to 3 interest-free installments', 'Jusqu’à 3 fois sans frais')}
           </p>
         )}
         {(() => {
@@ -892,7 +892,7 @@ export default function StudioPage() {
                     ) : currency === 'COP' ? (
                       <>
                         <p className="text-center text-xs font-bold text-primary mb-3">
-                          💳 {pick3(lang as Lang, 'Paga hasta en 3 cuotas sin interés', 'Pay in up to 3 interest-free installments', 'Payez jusqu’à 3 fois sans frais')}
+                          {pick3(lang as Lang, 'Paga hasta en 3 cuotas sin interés', 'Pay in up to 3 interest-free installments', 'Payez jusqu’à 3 fois sans frais')}
                         </p>
                         {/* key: si cambia la propina, el Brick se remonta y crea
                             el pedido con el monto nuevo (se monta una sola vez). */}
