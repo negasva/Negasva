@@ -919,32 +919,30 @@ export default function StudioPage() {
                         components={['paypal-payments', 'paypal-guest-payments']}
                         pageType="checkout"
                       >
-                        {/* Express Checkout (PayPal) + tarjeta, centrados y lado
-                            a lado; en móvil se apilan si no caben. */}
-                        <div className="flex flex-col sm:flex-row items-stretch justify-center gap-3">
-                          <div className="flex-1 sm:max-w-[260px]">
-                            <PayPalOneTimePaymentButton
-                              type="checkout"
-                              presentationMode="modal"
-                              createOrder={async () => ({ orderId: await createPayPalOrder() })}
-                              onApprove={async ({ orderId }) => capturePayPalOrder(orderId)}
-                              // Si el SDK cierra el modal por un fallo (incluida la
-                              // orden que no se pudo crear), mostramos el error.
-                              onError={() => setCheckoutError(t.studio.errors.payment)}
-                              // Cancelar no es un error: se limpia el mensaje.
-                              onCancel={() => setCheckoutError('')}
-                            />
-                          </div>
+                        {/* Ambos a ancho completo: el botón de tarjeta despliega
+                            su formulario (guest/BCDC) en su propio contenedor, así
+                            que confinarlo a media columna cortaba los campos a la
+                            mitad — a ancho completo el form abarca todo el espacio. */}
+                        <div className="space-y-3">
+                          <PayPalOneTimePaymentButton
+                            type="checkout"
+                            presentationMode="modal"
+                            createOrder={async () => ({ orderId: await createPayPalOrder() })}
+                            onApprove={async ({ orderId }) => capturePayPalOrder(orderId)}
+                            // Si el SDK cierra el modal por un fallo (incluida la
+                            // orden que no se pudo crear), mostramos el error.
+                            onError={() => setCheckoutError(t.studio.errors.payment)}
+                            // Cancelar no es un error: se limpia el mensaje.
+                            onCancel={() => setCheckoutError('')}
+                          />
                           {/* Botón de pago con tarjeta (guest checkout / BCDC):
                               misma orden y callbacks que el botón de PayPal. */}
-                          <div className="flex-1 sm:max-w-[260px]">
-                            <PayPalGuestPaymentButton
-                              createOrder={async () => ({ orderId: await createPayPalOrder() })}
-                              onApprove={async ({ orderId }) => capturePayPalOrder(orderId)}
-                              onError={() => setCheckoutError(t.studio.errors.payment)}
-                              onCancel={() => setCheckoutError('')}
-                            />
-                          </div>
+                          <PayPalGuestPaymentButton
+                            createOrder={async () => ({ orderId: await createPayPalOrder() })}
+                            onApprove={async ({ orderId }) => capturePayPalOrder(orderId)}
+                            onError={() => setCheckoutError(t.studio.errors.payment)}
+                            onCancel={() => setCheckoutError('')}
+                          />
                         </div>
                       </PayPalProvider>
                     )}
