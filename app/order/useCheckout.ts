@@ -221,6 +221,17 @@ export function useCheckout() {
     if (preselected) {
       setSelected(prev => (prev.style ? prev : { ...prev, style: preselected }));
     }
+    // Código de descuento en la URL (?code=) — lo trae el email de recuperación
+    // de carrito. Se prellena y se aplica: el quote lo valida en cuanto haya
+    // tipo de cuerpo elegido.
+    try {
+      const urlCode = new URLSearchParams(window.location.search).get('code');
+      if (urlCode) {
+        const code = urlCode.trim().toUpperCase().slice(0, 40);
+        setDiscountCodeInput(code);
+        setDiscountCode(code);
+      }
+    } catch { /* no-op */ }
   }, []);
 
   // Rehidratar el carrito guardado para retomar el pedido tras cerrar la
