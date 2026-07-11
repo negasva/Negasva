@@ -5,6 +5,7 @@ import {
   FALLBACK_BACKGROUND_CUSTOM_USD,
   FALLBACK_EXPRESS_SURCHARGE_PCT,
   FALLBACK_RECORDING_USD,
+  FALLBACK_SECOND_PORTRAIT_PCT,
 } from './fallbacks';
 import { FALLBACK_POD_PRICE_USD } from './products';
 
@@ -21,6 +22,7 @@ export interface PricingConfig {
   backgroundCustomUsd: number;
   expressSurchargePct: number; // 0.30 = 30%
   recordingUsd: number; // add-on: video del proceso de dibujo
+  secondPortraitPct: number; // 0.40 = 2º retrato al -40% (admin: second_portrait_pct)
   podProductsUsd: Record<string, number>; // print-on-demand add-on price by product key
 }
 
@@ -30,6 +32,7 @@ const FALLBACK: PricingConfig = {
   backgroundCustomUsd: FALLBACK_BACKGROUND_CUSTOM_USD,
   expressSurchargePct: FALLBACK_EXPRESS_SURCHARGE_PCT / 100,
   recordingUsd: FALLBACK_RECORDING_USD,
+  secondPortraitPct: FALLBACK_SECOND_PORTRAIT_PCT / 100,
   podProductsUsd: { ...FALLBACK_POD_PRICE_USD },
 };
 
@@ -71,6 +74,9 @@ export async function loadPricingConfig(): Promise<PricingConfig> {
         case 'recording_addon':
           config.recordingUsd = amount;
           break;
+        case 'second_portrait_pct':
+          config.secondPortraitPct = amount / 100;
+          break;
         default:
           // POD add-on prices live under `pod_<key>` (e.g. pod_mug).
           if (row.key?.startsWith('pod_')) {
@@ -105,15 +111,21 @@ export interface AppliedDiscount {
   type: 'percentage' | 'fixed';
   value: number;
   amountUsd: number; // discount applied, in USD, already capped
+  combinable: boolean; // false → anula el descuento por nº de personas
 }
 
 /**
  * Validate a discount code against the admin-managed `discount_codes` table.
  * Returns the applied discount or null if the code is invalid/expired/spent.
+ *
+ * `subtotalNoPromosUsd` es el total SIN el descuento por nº de personas: los
+ * códigos no combinables (combinable=false) se calculan y acotan sobre esa
+ * base, porque al aplicarse la promoción de personas se elimina.
  */
 export async function applyDiscountCode(
   code: string,
   subtotalUsd: number,
+  subtotalNoPromosUsd = subtotalUsd,
 ): Promise<AppliedDiscount | null> {
   const normalized = code.trim().toUpperCase();
   if (!normalized) return null;
@@ -122,7 +134,7 @@ export async function applyDiscountCode(
     const db = createServiceClient();
     const { data, error } = await db
       .from('discount_codes')
-      .select('id, code, type, value, expires_at, max_uses, current_uses, active')
+      .select('id, code, type, value, expires_at, max_uses, current_uses, active, combinable')
       .eq('code', normalized)
       .maybeSingle();
 
@@ -133,11 +145,13 @@ export async function applyDiscountCode(
     const value = Number(data.value);
     if (!Number.isFinite(value) || value <= 0) return null;
 
-    const raw = data.type === 'percentage' ? subtotalUsd * (value / 100) : value;
-    const amountUsd = Math.min(Math.max(raw, 0), subtotalUsd);
+    const combinable = data.combinable !== false;
+    const base = combinable ? subtotalUsd : subtotalNoPromosUsd;
+    const raw = data.type === 'percentage' ? base * (value / 100) : value;
+    const amountUsd = Math.min(Math.max(raw, 0), base);
     if (amountUsd <= 0) return null;
 
-    return { code: data.code, type: data.type, value, amountUsd };
+    return { code: data.code, type: data.type, value, amountUsd, combinable };
   } catch (err) {
     console.error('[pricing] discount code lookup failed:', err);
     return null;

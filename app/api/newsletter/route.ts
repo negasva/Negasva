@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
-import { getSupabase } from '@/lib/supabase/client';
+import { createServiceClient } from '@/lib/supabase/server';
+import { createRecoveryDiscount } from '@/lib/carts/recovery';
 import { NewsletterSchema } from '@/lib/validation/schemas';
 import { verifyRecaptcha } from '@/lib/security/recaptcha';
 import {
@@ -26,14 +27,36 @@ export async function POST(request: Request) {
 
   const { email, source } = parsed.data;
 
+  // Código ÚNICO de 20% por email, NO combinable con otras promociones (al
+  // aplicarse anula el descuento por nº de personas — lo valida el server).
+  // Si el email ya tiene código, se le devuelve el mismo (no se re-emite).
+  let code: string | null = null;
   try {
-    await getSupabase()
+    const db = createServiceClient();
+    const { data: existing } = await db
       .from('newsletter_subscribers')
-      .upsert({ email, source: source ?? 'popup' }, { onConflict: 'email' });
+      .select('discount_code')
+      .eq('email', email)
+      .maybeSingle();
+    code = existing?.discount_code ?? null;
+
+    if (!code) {
+      const discount = await createRecoveryDiscount(db, {
+        type: 'percentage',
+        value: 20,
+        prefix: 'HOLA20',
+        combinable: false,
+      });
+      code = discount?.code ?? null;
+    }
+
+    await db
+      .from('newsletter_subscribers')
+      .upsert({ email, source: source ?? 'popup', ...(code ? { discount_code: code } : {}) }, { onConflict: 'email' });
   } catch (err) {
-    console.error('[newsletter] upsert failed', err);
-    // Storage best-effort; client still gets the coupon.
+    console.error('[newsletter] subscribe failed', err);
   }
 
-  return NextResponse.json({ ok: true });
+  if (!code) return errorResponse('No se pudo generar tu código. Inténtalo de nuevo.', 500);
+  return NextResponse.json({ ok: true, code });
 }

@@ -187,11 +187,29 @@ function PaymentTrustStrip({ lang, cop }: { lang: Lang; cop: boolean }) {
 // peopleCount hacia el próximo tier de nextFamilyTier(). En el tier máximo
 // muestra el beneficio logrado.
 function FamilyTierBar({ c }: { c: CheckoutController }) {
-  const { lang, fmt, selected, priceBreakdown } = c;
+  const { lang, fmt, selected, priceMap, priceBreakdown } = c;
   const l = lang as Lang;
   if (!selected.bodyType) return null;
   const tier = nextFamilyTier(selected.peopleCount);
   const b = priceBreakdown();
+  // Con 1 persona el mejor incentivo es el 2º retrato con descuento fuerte
+  // (% del admin de precios), no el pack familia de 3.
+  if (selected.peopleCount === 1) {
+    const pct = Math.round(priceMap.second_portrait_pct ?? 40);
+    return (
+      <div className="rounded-2xl bg-primary-lighter border-2 border-primary p-4 mb-4">
+        <p className="text-xs font-black text-secondary mb-2">
+          {pick3(l,
+            `Agrega otra persona: el 2º retrato con −${pct}% (ahorras ${fmt(b.perPerson * pct / 100)})`,
+            `Add another person: 2nd portrait at −${pct}% (save ${fmt(b.perPerson * pct / 100)})`,
+            `Ajoute une personne : le 2e portrait à −${pct}% (économise ${fmt(b.perPerson * pct / 100)})`)}
+        </p>
+        <div className="h-2 rounded-full bg-white overflow-hidden">
+          <div className="h-full bg-primary transition-all duration-300" style={{ width: '50%' }} />
+        </div>
+      </div>
+    );
+  }
   if (!tier) {
     const pct = Math.round(familyDiscountRate(selected.peopleCount) * 100);
     return (
@@ -432,7 +450,20 @@ function OrderSummary({ c, sticky = true }: { c: CheckoutController; sticky?: bo
           </p>
         )}
         {(() => {
-          const nextTier = selected.bodyType ? nextFamilyTier(selected.peopleCount) : null;
+          if (!selected.bodyType) return null;
+          // Con 1 persona el gancho es el 2º retrato con descuento fuerte.
+          if (selected.peopleCount === 1) {
+            const pct = Math.round(c.priceMap.second_portrait_pct ?? 40);
+            return (
+              <p className="bg-white rounded-xl px-3 py-2 text-xs font-bold text-primary text-center">
+                {pick3(lang as Lang,
+                  `¡Añade a alguien más: 2º retrato con −${pct}%!`,
+                  `Add one more person: 2nd portrait −${pct}%!`,
+                  `Ajoute une personne : 2e portrait −${pct}% !`)}
+              </p>
+            );
+          }
+          const nextTier = nextFamilyTier(selected.peopleCount);
           return nextTier && (
             <p className="bg-white rounded-xl px-3 py-2 text-xs font-bold text-primary text-center">
               {t.studio.step2.next_tier

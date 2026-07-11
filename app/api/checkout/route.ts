@@ -36,12 +36,15 @@ export async function POST(request: Request) {
   const pricing = await loadPricingConfig();
 
   // Same math as /api/pricing/quote (single source of truth in lib/pricing/calc).
-  // First pass without the code to know the base the discount applies to.
+  // First pass without the code to know the base the discount applies to. Los
+  // códigos no combinables se calculan sobre la base sin descuento por
+  // personas y lo anulan en el quote final.
   const base = computeQuoteUsd(d, pricing, 0);
+  const baseNoPromos = computeQuoteUsd(d, pricing, 0, true);
   const appliedCode = d.discountCode
-    ? await applyDiscountCode(d.discountCode, base.preCodeTotal)
+    ? await applyDiscountCode(d.discountCode, base.preCodeTotal, baseNoPromos.preCodeTotal)
     : null;
-  const quote = computeQuoteUsd(d, pricing, appliedCode?.amountUsd ?? 0);
+  const quote = computeQuoteUsd(d, pricing, appliedCode?.amountUsd ?? 0, appliedCode ? !appliedCode.combinable : false);
 
   const perPersonUsd = quote.perPerson;
   const discountRate = quote.discountRate;

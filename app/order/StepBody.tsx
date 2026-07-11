@@ -33,10 +33,16 @@ const EDGE_SHADE_V = `${PANEL_BORDER}, inset 0 9px 12px -9px rgba(0,0,0,0.14), i
 /** Step 2 — body type + number of people. */
 export default function StepBody({ c }: { c: CheckoutController }) {
   const {
-    t, fmt, bodyTypes, selected, priceBreakdown,
+    t, lang, fmt, bodyTypes, selected, priceMap, priceBreakdown,
     errorRing, errorShake, onShakeEnd,
     selectBodyType, decPeople, incPeople,
   } = c;
+  // Gancho para 1 persona: 2º retrato con descuento fuerte (admin de precios).
+  const secondPct = Math.round(priceMap.second_portrait_pct ?? 40);
+  const secondPortraitHint =
+    lang === 'fr' ? `Ajoute une personne : 2e portrait à −${secondPct}% !`
+    : lang === 'en' ? `Add one more person: 2nd portrait −${secondPct}% OFF!`
+    : `¡Añade a alguien más: 2º retrato con −${secondPct}%!`;
 
   // Overrides de imagen editables desde /admin/imagenes (clave order_body_<slug>).
   // Se cachean en localStorage para que al recargar se pinten las imágenes de
@@ -287,13 +293,15 @@ export default function StepBody({ c }: { c: CheckoutController }) {
                   <span className="font-black text-xl text-primary">{fmt(b.peopleSubtotal - b.discount)}</span>
                 </div>
               )}
-              {nextTier && (
+              {(selected.peopleCount === 1 || nextTier) && (
                 <div className="mt-2 bg-gradient-to-r from-primary to-primary-dark text-white rounded-xl px-4 py-3 flex items-center justify-center gap-2 shadow-lg shadow-primary/40 animate-pulse-slow">
                   <Flame className="w-5 h-5 shrink-0" />
                   <p className="font-black text-sm sm:text-base text-center tracking-tight">
-                    {t.studio.step2.next_tier
-                      .replace('{n}', String(nextTier.at - selected.peopleCount))
-                      .replace('{pct}', String(Math.round(nextTier.rate * 100)))}
+                    {selected.peopleCount === 1
+                      ? secondPortraitHint
+                      : t.studio.step2.next_tier
+                          .replace('{n}', String(nextTier!.at - selected.peopleCount))
+                          .replace('{pct}', String(Math.round(nextTier!.rate * 100)))}
                   </p>
                   <Flame className="w-5 h-5 shrink-0" />
                 </div>

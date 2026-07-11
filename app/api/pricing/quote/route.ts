@@ -27,19 +27,24 @@ export async function POST(request: Request) {
   const config = await loadPricingConfig();
 
   // First pass (no code) to know the pre-code total the discount applies to.
+  // La base "sin promos" (sin descuento por personas) es la que usan los
+  // códigos no combinables, que anulan esa promoción al aplicarse.
   const base = computeQuoteUsd(d, config, 0);
+  const baseNoPromos = computeQuoteUsd(d, config, 0, true);
 
   let appliedCode: { code: string; type: 'percentage' | 'fixed'; value: number } | null = null;
   let codeDiscountUsd = 0;
+  let combinable = true;
   if (d.discountCode) {
-    const applied = await applyDiscountCode(d.discountCode, base.preCodeTotal);
+    const applied = await applyDiscountCode(d.discountCode, base.preCodeTotal, baseNoPromos.preCodeTotal);
     if (applied) {
       appliedCode = { code: applied.code, type: applied.type, value: applied.value };
       codeDiscountUsd = applied.amountUsd;
+      combinable = applied.combinable;
     }
   }
 
-  const quote = computeQuoteUsd(d, config, codeDiscountUsd);
+  const quote = computeQuoteUsd(d, config, codeDiscountUsd, !combinable);
 
   return NextResponse.json({
     ...quote,

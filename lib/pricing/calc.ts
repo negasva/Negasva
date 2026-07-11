@@ -74,11 +74,24 @@ export function computeQuoteUsd(
   inputs: QuoteInputs,
   config: PricingConfig,
   codeDiscountUsd = 0,
+  // true cuando el código aplicado NO es combinable: se anula el descuento por
+  // nº de personas (family pack / 2º retrato) y solo aplica el del código.
+  suppressPeopleDiscount = false,
 ): QuoteBreakdown {
   const perPerson = config.perPersonUsd[inputs.bodyType] ?? 25;
   const peopleSubtotal = inputs.peopleCount * perPerson;
-  const discountRate = familyDiscountRate(inputs.peopleCount);
-  const discount = peopleSubtotal * discountRate;
+  // Descuento por nº de personas: el mejor entre el pack familia (% sobre todo
+  // el subtotal) y el 2º retrato con descuento fuerte (% sobre UNA persona).
+  // discountRate queda como tasa EFECTIVA sobre el subtotal para el display.
+  let discountRate = suppressPeopleDiscount ? 0 : familyDiscountRate(inputs.peopleCount);
+  let discount = peopleSubtotal * discountRate;
+  if (!suppressPeopleDiscount && inputs.peopleCount >= 2) {
+    const secondDeal = perPerson * (config.secondPortraitPct ?? 0);
+    if (secondDeal > discount && peopleSubtotal > 0) {
+      discount = secondDeal;
+      discountRate = discount / peopleSubtotal;
+    }
+  }
   const peopleAfterDiscount = peopleSubtotal - discount;
 
   const bgCost = inputs.background === 'custom'
