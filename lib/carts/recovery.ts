@@ -27,24 +27,27 @@ export function discountLabel(type: DiscountType, value: number): string {
 }
 
 /**
- * Crea un código único (VUELVE-XXXXX) en `discount_codes` y lo devuelve. Si
+ * Crea un código único (PREFIJO-XXXXX) en `discount_codes` y lo devuelve. Si
  * choca con uno existente (constraint UNIQUE), reintenta con otro sufijo.
  * Devuelve null si no se pudo crear tras varios intentos.
+ * `combinable: false` marca códigos que anulan el descuento por nº de
+ * personas al aplicarse (lo valida el server en applyDiscountCode).
  */
 export async function createRecoveryDiscount(
   db: SupabaseClient,
-  opts: { type: DiscountType; value: number; expiresAt: Date },
+  opts: { type: DiscountType; value: number; expiresAt?: Date; prefix?: string; combinable?: boolean },
 ): Promise<RecoveryDiscount | null> {
   for (let attempt = 0; attempt < 5; attempt++) {
-    const code = `VUELVE-${randomSuffix()}`;
+    const code = `${opts.prefix ?? 'VUELVE'}-${randomSuffix()}`;
     const { error } = await db.from('discount_codes').insert({
       code,
       type: opts.type,
       value: opts.value,
-      expires_at: opts.expiresAt.toISOString(),
+      expires_at: opts.expiresAt ? opts.expiresAt.toISOString() : null,
       max_uses: 1,
       current_uses: 0,
       active: true,
+      combinable: opts.combinable ?? true,
     });
     if (!error) {
       return { code, type: opts.type, value: opts.value, label: discountLabel(opts.type, opts.value) };

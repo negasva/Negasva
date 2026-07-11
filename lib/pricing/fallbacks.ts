@@ -36,6 +36,9 @@ export const FALLBACK_EXPRESS_SURCHARGE_PCT = 30;
 /** Add-on: video del proceso de dibujo, precio plano en USD. */
 export const FALLBACK_RECORDING_USD = 20;
 
+/** Descuento agresivo al 2º retrato (%). Editable en el admin de precios. */
+export const FALLBACK_SECOND_PORTRAIT_PCT = 40;
+
 /** Fallback for /api/body-types — admin manages the real values. */
 export const FALLBACK_BODY_TYPES: BodyTypeItem[] = [
   {
@@ -62,4 +65,5 @@ export const FALLBACK_PRICES: Record<string, number> = {
   background_custom: FALLBACK_BACKGROUND_CUSTOM_USD,
   express_surcharge_pct: FALLBACK_EXPRESS_SURCHARGE_PCT,
   recording_addon: FALLBACK_RECORDING_USD,
+  second_portrait_pct: FALLBACK_SECOND_PORTRAIT_PCT,
 };
