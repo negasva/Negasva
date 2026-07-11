@@ -298,7 +298,7 @@ export default function AdminGaleriaPage() {
                         title="Clic para editar nombre"
                         onClick={() => { setEditingId(item.id); setEditingTitle(item.title); }}
                       >
-                        ✏️ {item.title}
+                        {item.title}
                       </p>
                     )}
                     {item.style && <p className="text-[10px] text-primary font-semibold truncate mt-0.5">{item.style}</p>}

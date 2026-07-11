@@ -79,52 +79,52 @@ const summaryLine = (s: string | null) =>
 // ── Versión 1 · Recordatorio cálido ───────────────────────────────────────
 function v1(d: RecoveryEmailData) {
   const inner = `
-    <h1 style="font-size:22px;margin:12px 0 8px;">${hi(d.name)}, tu retrato te está esperando 🎨</h1>
+    <h1 style="font-size:22px;margin:12px 0 8px;">${hi(d.name)}, tu retrato te está esperando</h1>
     <p style="font-size:15px;line-height:1.6;">Vimos que empezaste a crear tu retrato personalizado y no llegaste a terminar. ¡Lo tenemos guardado tal cual lo dejaste!</p>
     ${summaryLine(d.summary)}
     <p style="font-size:15px;line-height:1.6;">Para animarte a terminarlo, aquí tienes un descuento:</p>
     ${codeBox(d.code, d.discountLabel, d.expiresLabel)}
     ${button(d.url, 'Terminar mi retrato')}
     <p style="font-size:14px;color:${MUTED};line-height:1.6;">Dibujado a mano por artistas reales. Si tienes dudas, responde a este correo y te ayudamos.</p>`;
-  return { subject: `${hi(d.name)}, tu retrato NEGASVA te espera 🎨`, html: layout(inner, footer()) };
+  return { subject: `${hi(d.name)}, tu retrato NEGASVA te espera`, html: layout(inner, footer()) };
 }
 
 // ── Versión 2 · Urgencia (el descuento caduca) ────────────────────────────
 function v2(d: RecoveryEmailData) {
   const inner = `
-    <h1 style="font-size:22px;margin:12px 0 8px;">Tu descuento de ${d.discountLabel} caduca pronto ⏳</h1>
+    <h1 style="font-size:22px;margin:12px 0 8px;">Tu descuento de ${d.discountLabel} caduca pronto</h1>
     <p style="font-size:15px;line-height:1.6;">${hi(d.name)}, guardamos tu retrato a medias y te reservamos un descuento — pero solo por ${d.expiresLabel}.</p>
     ${codeBox(d.code, d.discountLabel, d.expiresLabel)}
     ${summaryLine(d.summary)}
     ${button(d.url, `Usar mi ${d.discountLabel} de descuento`)}
     <p style="font-size:14px;color:${MUTED};line-height:1.6;">Cuando caduque no podremos reactivarlo. ¡No lo dejes escapar!</p>`;
-  return { subject: `⏳ Tu ${d.discountLabel} de descuento caduca en ${d.expiresLabel}`, html: layout(inner, footer()) };
+  return { subject: `Tu ${d.discountLabel} de descuento caduca en ${d.expiresLabel}`, html: layout(inner, footer()) };
 }
 
 // ── Versión 3 · Prueba social ─────────────────────────────────────────────
 function v3(d: RecoveryEmailData) {
   const inner = `
-    <h1 style="font-size:22px;margin:12px 0 8px;">Únete a +530.000 retratos entregados ⭐️⭐️⭐️⭐️⭐️</h1>
+    <h1 style="font-size:22px;margin:12px 0 8px;">Únete a +530.000 retratos entregados</h1>
     <p style="font-size:15px;line-height:1.6;">${hi(d.name)}, miles de personas ya regalaron su retrato personalizado NEGASVA. El tuyo está a un paso de estar listo.</p>
     ${summaryLine(d.summary)}
     <p style="font-size:15px;line-height:1.6;">Termínalo hoy con este descuento:</p>
     ${codeBox(d.code, d.discountLabel, d.expiresLabel)}
     ${button(d.url, 'Completar mi pedido')}
     <p style="font-size:14px;color:${MUTED};line-height:1.6;">Dibujo 100% a mano, sin IA. Valoración media 4,9/5.</p>`;
-  return { subject: `${hi(d.name)}, únete a +530.000 retratos NEGASVA ⭐️`, html: layout(inner, footer()) };
+  return { subject: `${hi(d.name)}, únete a +530.000 retratos NEGASVA`, html: layout(inner, footer()) };
 }
 
 // ── Versión 4 · Personal / atención al cliente ────────────────────────────
 function v4(d: RecoveryEmailData) {
   const inner = `
-    <h1 style="font-size:22px;margin:12px 0 8px;">¿Te ayudamos a terminar tu retrato? 🙌</h1>
+    <h1 style="font-size:22px;margin:12px 0 8px;">¿Te ayudamos a terminar tu retrato?</h1>
     <p style="font-size:15px;line-height:1.6;">${hi(d.name)}, soy del equipo de NEGASVA. Vi que tu pedido quedó a medias — ¿alguna duda con el estilo, las fotos o el pago?</p>
     ${summaryLine(d.summary)}
     <p style="font-size:15px;line-height:1.6;">Para ponértelo fácil, te dejo un descuento y el enlace para retomarlo justo donde lo dejaste:</p>
     ${codeBox(d.code, d.discountLabel, d.expiresLabel)}
     ${button(d.url, 'Retomar mi pedido')}
     <p style="font-size:14px;color:${MUTED};line-height:1.6;">Responde a este correo con cualquier pregunta — te contesto personalmente.</p>`;
-  return { subject: `${hi(d.name)}, ¿te ayudo a terminar tu retrato? 🙌`, html: layout(inner, footer()) };
+  return { subject: `${hi(d.name)}, ¿te ayudo a terminar tu retrato?`, html: layout(inner, footer()) };
 }
 
 function footer() {

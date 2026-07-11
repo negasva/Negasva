@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { useCurrency, CURRENCIES, CURRENCY_FLAGS, type Currency } from '@/lib/currency/CurrencyContext';
+import { useCurrency, CURRENCIES, type Currency } from '@/lib/currency/CurrencyContext';
 
 function CurrencySwitcher() {
   const { currency, setCurrency } = useCurrency();
@@ -29,7 +29,6 @@ function CurrencySwitcher() {
         className="flex items-center gap-1.5 text-xs font-bold bg-transparent border border-primary-lighter rounded-md pl-2.5 pr-6 py-1.5 text-secondary-lighter hover:border-primary hover:text-secondary focus:outline-none focus:border-primary cursor-pointer transition-colors"
         style={{ touchAction: 'manipulation' }}
       >
-        <span className="text-base leading-none">{CURRENCY_FLAGS[currency]}</span>
         <span>{currency}</span>
       </button>
       <span
@@ -57,7 +56,6 @@ function CurrencySwitcher() {
                   : 'text-secondary-lighter hover:bg-primary-lighter'
               }`}
             >
-              <span className="text-base leading-none">{CURRENCY_FLAGS[c]}</span>
               <span>{c}</span>
             </li>
           ))}
