@@ -103,6 +103,86 @@ function DiscountCode({ c }: { c: CheckoutController }) {
   );
 }
 
+// Propina opcional (paso 5): SOLO 3 opciones — 5%, 10% o monto personalizado.
+// El % lo recalcula el servidor; la personalizada viaja en USD acotada.
+function TipSelector({ c }: { c: CheckoutController }) {
+  const { lang, fmt, currency, rates, tip, setTip, priceBreakdown } = c;
+  const l = lang as Lang;
+  const [customInput, setCustomInput] = useState('');
+  const base = priceBreakdown().total;
+  const rate = rates[currency] ?? 1;
+  const customActive = tip != null && tip.pct == null;
+  const pctBtnCls = (active: boolean) =>
+    `flex-1 rounded-xl border-2 px-3 py-2.5 text-sm font-black transition-all ${
+      active ? 'border-primary bg-primary-lighter text-primary' : 'border-primary-lighter bg-white text-secondary hover:border-primary'
+    }`;
+  return (
+    <div className="rounded-2xl border-2 border-primary-lighter bg-white p-5">
+      <p className="font-black text-secondary text-base tracking-tighter">
+        {pick3(l, '¿Quieres dejar una propina al artista?', 'Want to leave the artist a tip?', 'Envie de laisser un pourboire à l’artiste ?')}{' '}
+        <span className="font-normal text-secondary-lighter text-sm">{t3optional(l)}</span>
+      </p>
+      <div className="mt-3 flex gap-2">
+        {([5, 10] as const).map(pct => (
+          <button
+            key={pct}
+            type="button"
+            onClick={() => { setTip(tip?.pct === pct ? null : { pct }); setCustomInput(''); }}
+            className={pctBtnCls(tip?.pct === pct)}
+          >
+            {pct}% <span className="font-bold text-xs text-secondary-lighter">({fmt(base * pct / 100)})</span>
+          </button>
+        ))}
+        <button
+          type="button"
+          onClick={() => { if (customActive) { setTip(null); setCustomInput(''); } else setTip({ usd: 0 }); }}
+          className={pctBtnCls(customActive)}
+        >
+          {pick3(l, 'Otro', 'Custom', 'Autre')}
+        </button>
+      </div>
+      {customActive && (
+        <input
+          value={customInput}
+          onChange={(e) => {
+            const v = e.target.value.replace(/[^\d.]/g, '');
+            setCustomInput(v);
+            // El input está en la moneda visible; al servidor viaja en USD.
+            setTip({ usd: Math.min(Math.max((Number(v) || 0) / rate, 0), 500) });
+          }}
+          inputMode="decimal"
+          placeholder={`${pick3(l, 'Monto en', 'Amount in', 'Montant en')} ${currency}`}
+          className="mt-3 w-full rounded-lg border-2 border-primary-lighter px-4 py-3 text-sm font-bold text-secondary focus:border-primary focus:outline-none"
+        />
+      )}
+    </div>
+  );
+}
+const t3optional = (l: Lang) => pick3(l, '(opcional)', '(optional)', '(facultatif)');
+
+// Tira de confianza bajo los botones de pago: métodos aceptados + SSL.
+function PaymentTrustStrip({ lang, cop }: { lang: Lang; cop: boolean }) {
+  // ponytail: chips de texto en vez de assets de logos — cero imágenes que mantener.
+  const methods = cop ? ['Mercado Pago', 'PSE', 'Visa', 'Mastercard'] : ['Visa', 'Mastercard', 'Amex', 'PayPal'];
+  return (
+    <div className="mt-5 text-center">
+      <div className="flex justify-center flex-wrap gap-2 mb-2">
+        {methods.map(m => (
+          <span key={m} className="px-2.5 py-1 rounded-md border border-primary-lighter bg-white text-[10px] font-black uppercase tracking-wide text-secondary-lighter">
+            {m}
+          </span>
+        ))}
+      </div>
+      <p className="text-xs text-secondary-lighter font-bold">
+        🔒 {pick3(lang,
+          'Pago seguro · SSL de 256 bits · nunca guardamos tu tarjeta',
+          'Secure payment · 256-bit SSL · we never store your card',
+          'Paiement sécurisé · SSL 256 bits · nous ne stockons jamais ta carte')}
+      </p>
+    </div>
+  );
+}
+
 // Barra de incentivo familiar (arriba del drawer): progreso real por
 // peopleCount hacia el próximo tier de nextFamilyTier(). En el tier máximo
 // muestra el beneficio logrado.
@@ -214,8 +294,8 @@ function ContactForm({ c }: { c: CheckoutController }) {
 // exactly what they're paying for (in the site's own style).
 function OrderSummary({ c, sticky = true }: { c: CheckoutController; sticky?: boolean }) {
   const {
-    t, lang, fmt, selected, styles, appliedCode, shippingEstimate, shippingSelection,
-    priceBreakdown, totalPrice, getBgName, getStyleBgs, getProducts,
+    t, lang, fmt, currency, selected, styles, appliedCode, shippingEstimate, shippingSelection,
+    tipUsd, priceBreakdown, totalPrice, getBgName, getStyleBgs, getProducts,
   } = c;
   const b = priceBreakdown();
   const styleName = styles.find(s => s.id === selected.style)?.name;
@@ -334,11 +414,22 @@ function OrderSummary({ c, sticky = true }: { c: CheckoutController; sticky?: bo
             </div>
           )}
         </div>
+        {tipUsd > 0 && (
+          <div className="flex justify-between">
+            <span className="text-secondary-lighter">{pick3(lang as Lang, 'Propina', 'Tip', 'Pourboire')}</span>
+            <span className="font-bold text-secondary">+{fmt(tipUsd)}</span>
+          </div>
+        )}
         {selected.bodyType && (
           <div className="flex justify-between border-t-2 border-primary pt-3 font-black text-lg">
             <span className="text-secondary">{t.studio.summary.total}</span>
             <span className="text-primary">{fmt(totalPrice())}</span>
           </div>
+        )}
+        {selected.bodyType && currency === 'COP' && (
+          <p className="text-xs font-bold text-primary text-center">
+            💳 {pick3(lang as Lang, 'Hasta 3 cuotas sin interés', 'Up to 3 interest-free installments', 'Jusqu’à 3 fois sans frais')}
+          </p>
         )}
         {(() => {
           const nextTier = selected.bodyType ? nextFamilyTier(selected.peopleCount) : null;
@@ -461,9 +552,9 @@ export default function StudioPage() {
 
       {/* Content */}
       <main className="mx-auto max-w-6xl px-4 pt-8 pb-28 w-full overflow-x-hidden">
-        <div className={`${step > 1 && step < 5 ? 'lg:grid lg:grid-cols-3 lg:gap-8' : ''}`}>
+        <div className={`${step > 1 ? 'lg:grid lg:grid-cols-3 lg:gap-8' : ''}`}>
           {/* Main step content */}
-          <div className={step > 1 && step < 5 ? 'lg:col-span-2' : ''}>
+          <div className={step > 1 ? 'lg:col-span-2' : ''}>
 
             {step === 1 && <StepStyle c={c} />}
             {step === 2 && <StepBody c={c} />}
@@ -740,14 +831,15 @@ export default function StudioPage() {
                     <span className="flex items-center gap-1"><ShieldCheck className="w-3 h-3 text-primary" /> {t.studio.pay.no_card}</span>
                   </div>
                 </div>
-                {/* Resumen detallado del pedido (estilo de la web), siempre visible */}
-                <div className="max-w-xl mx-auto mb-6">
-                  <OrderSummary c={c} sticky={false} />
-                </div>
-
-                {/* Datos de contacto — obligatorios antes de pagar */}
+                {/* Datos de contacto — obligatorios antes de pagar. El resumen
+                    vive en el sidebar (desktop) y en el drawer del carrito. */}
                 <div className="max-w-xl mx-auto mb-6">
                   <ContactForm c={c} />
+                </div>
+
+                {/* Propina opcional: 5%, 10% o personalizada. Viaja al pago. */}
+                <div className="max-w-xl mx-auto mb-6">
+                  <TipSelector c={c} />
                 </div>
 
                 <div className="max-w-xl mx-auto bg-white rounded-2xl border-2 border-primary-lighter shadow-lg overflow-hidden">
@@ -767,7 +859,14 @@ export default function StudioPage() {
                           'Renseigne ton nom et ton email ci-dessus pour continuer.')}
                       </p>
                     ) : currency === 'COP' ? (
-                      <MercadoPagoBrick lang={lang as Lang} createOrder={createMpOrder} />
+                      <>
+                        <p className="text-center text-xs font-bold text-primary mb-3">
+                          💳 {pick3(lang as Lang, 'Paga hasta en 3 cuotas sin interés', 'Pay in up to 3 interest-free installments', 'Payez jusqu’à 3 fois sans frais')}
+                        </p>
+                        {/* key: si cambia la propina, el Brick se remonta y crea
+                            el pedido con el monto nuevo (se monta una sola vez). */}
+                        <MercadoPagoBrick key={JSON.stringify(c.tip)} lang={lang as Lang} createOrder={createMpOrder} />
+                      </>
                     ) : !PAYPAL_CLIENT_ID ? (
                       // Sin client id el SDK de PayPal falla mudo y el recuadro
                       // queda vacío — mejor decir explícitamente qué falta.
@@ -780,37 +879,45 @@ export default function StudioPage() {
                       // ventana externa (que a veces quedaba en about:blank).
                       // La moneda e intent viajan en la orden creada por el
                       // servidor (/api/checkout), no en el proveedor.
+                      // 'paypal-guest-payments' es OBLIGATORIO para el botón de
+                      // tarjeta (guest/BCDC): sin él la sesión falla al crearse
+                      // y el botón queda deshabilitado (cursor prohibido).
                       <PayPalProvider
                         clientId={PAYPAL_CLIENT_ID}
                         environment={PAYPAL_ENVIRONMENT}
-                        components={['paypal-payments']}
+                        components={['paypal-payments', 'paypal-guest-payments']}
                         pageType="checkout"
                       >
-                        <PayPalOneTimePaymentButton
-                          presentationMode="modal"
-                          createOrder={async () => ({ orderId: await createPayPalOrder() })}
-                          onApprove={async ({ orderId }) => capturePayPalOrder(orderId)}
-                          // Si el SDK cierra el modal por un fallo (incluida la
-                          // orden que no se pudo crear), mostramos el error.
-                          onError={() => setCheckoutError(t.studio.errors.payment)}
-                          // Cancelar no es un error: se limpia el mensaje.
-                          onCancel={() => setCheckoutError('')}
-                        />
-                        {/* Botón de pago con tarjeta (guest checkout / BCDC):
-                            el equivalente en SDK v6 al botón "Débito o crédito"
-                            que el layout vertical de PayPalButtons (v5) mostraba
-                            junto al de PayPal. Reutiliza la misma orden y
-                            callbacks que el botón de PayPal. */}
-                        <div className="mt-2">
-                          <PayPalGuestPaymentButton
-                            createOrder={async () => ({ orderId: await createPayPalOrder() })}
-                            onApprove={async ({ orderId }) => capturePayPalOrder(orderId)}
-                            onError={() => setCheckoutError(t.studio.errors.payment)}
-                            onCancel={() => setCheckoutError('')}
-                          />
+                        {/* Express Checkout (PayPal) + tarjeta, centrados y lado
+                            a lado; en móvil se apilan si no caben. */}
+                        <div className="flex flex-col sm:flex-row items-stretch justify-center gap-3">
+                          <div className="flex-1 sm:max-w-[260px]">
+                            <PayPalOneTimePaymentButton
+                              type="checkout"
+                              presentationMode="modal"
+                              createOrder={async () => ({ orderId: await createPayPalOrder() })}
+                              onApprove={async ({ orderId }) => capturePayPalOrder(orderId)}
+                              // Si el SDK cierra el modal por un fallo (incluida la
+                              // orden que no se pudo crear), mostramos el error.
+                              onError={() => setCheckoutError(t.studio.errors.payment)}
+                              // Cancelar no es un error: se limpia el mensaje.
+                              onCancel={() => setCheckoutError('')}
+                            />
+                          </div>
+                          {/* Botón de pago con tarjeta (guest checkout / BCDC):
+                              misma orden y callbacks que el botón de PayPal. */}
+                          <div className="flex-1 sm:max-w-[260px]">
+                            <PayPalGuestPaymentButton
+                              createOrder={async () => ({ orderId: await createPayPalOrder() })}
+                              onApprove={async ({ orderId }) => capturePayPalOrder(orderId)}
+                              onError={() => setCheckoutError(t.studio.errors.payment)}
+                              onCancel={() => setCheckoutError('')}
+                            />
+                          </div>
                         </div>
                       </PayPalProvider>
                     )}
+                    <PaymentTrustStrip lang={lang as Lang} cop={currency === 'COP'} />
                   </div>
                 </div>
                 {/* El error del pago también debe verse en el paso 5 (la barra de
@@ -881,8 +988,9 @@ export default function StudioPage() {
             )}
           </div>
 
-          {/* Sidebar: Order Summary */}
-          {step > 1 && step < 5 && (
+          {/* Sidebar: Order Summary (pasos 2–5; en el 5 es donde vive el
+              resumen — la columna principal solo lleva datos + pago). */}
+          {step > 1 && (
             <div className="hidden lg:block">
               {/* Sticky sobre el conjunto: el cupón va debajo del resumen,
                   fuera de su contenedor, y baja junto con él al hacer scroll. */}

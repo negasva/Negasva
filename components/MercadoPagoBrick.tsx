@@ -98,7 +98,9 @@ export default function MercadoPagoBrick({
               creditCard: 'all',
               debitCard: 'all',
               bankTransfer: 'all',
-              maxInstallments: 1,
+              // Hasta 3 cuotas sin interés (el Brick muestra el selector y el
+              // valor viaja en formData.installments a /api/payments/mercadopago).
+              maxInstallments: 3,
             },
           },
           callbacks: {

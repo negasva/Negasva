@@ -82,6 +82,14 @@ export const CheckoutSchema = OrderSelectionSchema.merge(ContactSchema).extend({
   rate: z.number().positive().finite().max(10_000),
   // Id del carrito (localStorage) para marcarlo convertido al llegar al pago.
   cartId: z.string().trim().max(64).optional(),
+  // Propina opcional (paso 5). El % lo calcula el servidor sobre el total del
+  // pedido; la personalizada viaja en USD y se acota — nunca resta del total.
+  tip: z
+    .object({
+      pct: z.union([z.literal(5), z.literal(10)]).optional(),
+      usd: z.number().nonnegative().finite().max(500).optional(),
+    })
+    .optional(),
 });
 
 // Consulta de seguimiento de pedido (/seguimiento).
