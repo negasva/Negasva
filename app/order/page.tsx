@@ -855,33 +855,33 @@ export default function StudioPage() {
             {step === 5 && checkoutParams && (
               <div>
                 <div className="text-center mb-8">
-                  <h2 className="font-black text-3xl text-secondary mb-2 tracking-tighter">{t.studio.pay.title}</h2>
+                  <h2 className="font-black text-4xl text-secondary mb-3 tracking-tighter">{t.studio.pay.title}</h2>
                   <div className="flex items-center justify-center gap-4 text-xs text-secondary-lighter flex-wrap">
-                    <span className="flex items-center gap-1"><Lock className="w-3 h-3 text-primary" /> {t.studio.pay.ssl}</span>
-                    <span className="flex items-center gap-1"><ShieldCheck className="w-3 h-3 text-primary" /> {currency === 'COP' ? 'Mercado Pago' : 'PayPal'}</span>
-                    <span className="flex items-center gap-1"><ShieldCheck className="w-3 h-3 text-primary" /> {t.studio.pay.no_card}</span>
+                    <span className="flex items-center gap-1.5"><Lock className="w-3.5 h-3.5 text-primary" /> {t.studio.pay.ssl}</span>
+                    <span className="flex items-center gap-1.5"><ShieldCheck className="w-3.5 h-3.5 text-primary" /> {currency === 'COP' ? 'Mercado Pago' : 'PayPal'}</span>
+                    <span className="flex items-center gap-1.5"><ShieldCheck className="w-3.5 h-3.5 text-primary" /> {t.studio.pay.no_card}</span>
                   </div>
                 </div>
-                {/* Datos de contacto — obligatorios antes de pagar. El resumen
-                    vive en el sidebar (desktop) y en el drawer del carrito. */}
-                <div className="max-w-xl mx-auto mb-6">
+
+                {/* Columna de pago (izquierda): datos + propina + caja de pago,
+                    alineada junto al resumen del pedido, que vive en el sidebar
+                    (desktop) y en el drawer del carrito (móvil). */}
+                <div className="space-y-5">
+                  {/* Datos de contacto — obligatorios antes de pagar. */}
                   <ContactForm c={c} />
-                </div>
 
-                {/* Propina opcional: 5%, 10% o personalizada. Viaja al pago. */}
-                <div className="max-w-xl mx-auto mb-6">
+                  {/* Propina opcional: 5%, 10% o personalizada. Viaja al pago. */}
                   <TipSelector c={c} />
-                </div>
 
-                <div className="max-w-xl mx-auto bg-white rounded-2xl border-2 border-primary-lighter shadow-lg overflow-hidden">
-                  <div className="bg-primary-lighter px-6 py-4 flex items-center justify-between">
+                  <div className="bg-white rounded-2xl border-2 border-primary-lighter shadow-lg overflow-hidden">
+                  <div className="bg-primary-lighter px-6 py-3.5 flex items-center justify-between">
                     <span className="font-black text-secondary text-sm">Total: {fmt(totalPrice())}</span>
                     <div className="flex items-center gap-2 text-xs text-secondary-lighter">
                       <Lock className="w-3 h-3" />
                       <span>{t.studio.pay.secure}</span>
                     </div>
                   </div>
-                  <div className="p-4">
+                  <div className="p-5">
                     {!contactValid ? (
                       <p className="text-center text-sm font-bold text-secondary-lighter py-6">
                         {pick3(lang as Lang,
@@ -948,18 +948,24 @@ export default function StudioPage() {
                     )}
                     <PaymentTrustStrip lang={lang as Lang} cop={currency === 'COP'} />
                   </div>
-                </div>
-                {/* El error del pago también debe verse en el paso 5 (la barra de
-                    navegación con checkoutError solo existe en los pasos 1–4). */}
-                {checkoutError && (
-                  <p className="max-w-xl mx-auto mt-4 text-center text-sm font-bold text-red-500">
-                    {checkoutError}
-                  </p>
-                )}
-                <div className="mt-6 text-center">
-                  <button onClick={() => setStep(4)} className="text-secondary-lighter hover:text-primary text-sm font-bold transition-colors">
-                    {t.studio.pay.back}
-                  </button>
+                  </div>
+
+                  {/* El error del pago también debe verse en el paso 5 (la barra
+                      de navegación con checkoutError solo existe en los pasos 1–4). */}
+                  {checkoutError && (
+                    <p className="text-center text-sm font-bold text-red-500">
+                      {checkoutError}
+                    </p>
+                  )}
+
+                  <div className="text-center pt-1">
+                    <button
+                      onClick={() => setStep(4)}
+                      className="text-sm font-bold text-secondary-lighter border-b-2 border-primary-lighter hover:text-primary-dark hover:border-primary transition-colors"
+                    >
+                      {t.studio.pay.back}
+                    </button>
+                  </div>
                 </div>
               </div>
             )}
