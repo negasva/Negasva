@@ -12,7 +12,7 @@ import CurrencySwitcher from '@/components/CurrencySwitcher';
 import { PayPalProvider, PayPalOneTimePaymentButton, PayPalGuestPaymentButton } from '@paypal/react-paypal-js/sdk-v6';
 import RecaptchaScript from '@/components/RecaptchaScript';
 import MercadoPagoBrick from '@/components/MercadoPagoBrick';
-import { nextFamilyTier } from '@/lib/pricing/calc';
+import { nextFamilyTier, familyDiscountRate } from '@/lib/pricing/calc';
 import ShippingCalculator from '@/components/ShippingCalculator';
 import { useCheckout, CURRENCY_COUNTRY, type CheckoutController } from './useCheckout';
 import StepStyle from './StepStyle';
@@ -99,6 +99,48 @@ function DiscountCode({ c }: { c: CheckoutController }) {
       {codeStatus === 'invalid' && (
         <p className="text-xs text-red-500 font-bold mt-2">{t.studio.discount.invalid}</p>
       )}
+    </div>
+  );
+}
+
+// Barra de incentivo familiar (arriba del drawer): progreso real por
+// peopleCount hacia el próximo tier de nextFamilyTier(). En el tier máximo
+// muestra el beneficio logrado.
+function FamilyTierBar({ c }: { c: CheckoutController }) {
+  const { lang, fmt, selected, priceBreakdown } = c;
+  const l = lang as Lang;
+  if (!selected.bodyType) return null;
+  const tier = nextFamilyTier(selected.peopleCount);
+  const b = priceBreakdown();
+  if (!tier) {
+    const pct = Math.round(familyDiscountRate(selected.peopleCount) * 100);
+    return (
+      <div className="rounded-2xl bg-primary-lighter border-2 border-primary p-4 mb-4 text-center">
+        <p className="text-sm font-black text-primary">
+          🎉 {pick3(l,
+            `¡Tienes el ${pct}% de descuento familiar, el máximo!`,
+            `You've unlocked the maximum ${pct}% family discount!`,
+            `Tu as débloqué la remise famille maximale de ${pct}% !`)}
+        </p>
+      </div>
+    );
+  }
+  const missing = tier.at - selected.peopleCount;
+  const perPersonAtTier = b.perPerson * (1 - tier.rate);
+  return (
+    <div className="rounded-2xl bg-primary-lighter border-2 border-primary p-4 mb-4">
+      <p className="text-xs font-black text-secondary mb-2">
+        {pick3(l,
+          `Agrega ${missing} persona${missing > 1 ? 's' : ''} más y baja a ${fmt(perPersonAtTier)} c/u`,
+          `Add ${missing} more ${missing > 1 ? 'people' : 'person'} and drop to ${fmt(perPersonAtTier)} each`,
+          `Ajoute ${missing} personne${missing > 1 ? 's' : ''} de plus et passe à ${fmt(perPersonAtTier)} chacun`)}
+      </p>
+      <div className="h-2 rounded-full bg-white overflow-hidden">
+        <div
+          className="h-full bg-primary transition-all duration-300"
+          style={{ width: `${Math.min(100, (selected.peopleCount / tier.at) * 100)}%` }}
+        />
+      </div>
     </div>
   );
 }
@@ -363,11 +405,25 @@ export default function StudioPage() {
           <div className="flex items-center gap-4">
             <CurrencySwitcher />
             <LanguageSwitcher />
-            {selected.bodyType && (
-              <span className="text-sm font-bold text-white bg-primary px-4 py-2 rounded-full">
-                Total: {fmt(totalPrice())}
+            {/* Carrito siempre visible (desktop y móvil): badge + total, abre el drawer. */}
+            <button
+              type="button"
+              onClick={() => setCartOpen(true)}
+              className="flex items-center gap-2 rounded-full bg-primary text-white pl-3 pr-4 py-2 hover:bg-primary-dark transition-colors"
+              aria-label={pick3(lang as Lang, 'Ver carrito', 'View cart', 'Voir le panier')}
+            >
+              <span className="relative">
+                <ShoppingBag className="w-5 h-5" />
+                {cartCount > 0 && (
+                  <span className="absolute -top-2 -right-2 min-w-4 h-4 px-1 flex items-center justify-center rounded-full bg-secondary text-white text-[10px] font-black">
+                    {cartCount}
+                  </span>
+                )}
               </span>
-            )}
+              {selected.bodyType && (
+                <span className="text-sm font-bold">{fmt(totalPrice())}</span>
+              )}
+            </button>
           </div>
         </div>
       </nav>
@@ -839,54 +895,42 @@ export default function StudioPage() {
         </div>
       </main>
 
-      {/* Carrito flotante (móvil): botón + panel deslizante que reutiliza el
-          resumen del pedido, para dar sensación de carrito estilo turnedyellow.
-          En desktop (lg) ya está el sidebar fijo, así que se oculta. */}
-      {step > 1 && step < 5 && selected.style && (
-        <>
-          <button
-            type="button"
-            onClick={() => setCartOpen(true)}
-            className="lg:hidden fixed bottom-20 right-4 z-40 flex items-center gap-2 rounded-full bg-secondary text-white pl-4 pr-5 py-3 shadow-xl hover:bg-secondary-light transition-colors"
-            aria-label={pick3(lang as Lang, 'Ver carrito', 'View cart', 'Voir le panier')}
-          >
-            <span className="relative">
-              <ShoppingBag className="w-5 h-5" />
-              {cartCount > 0 && (
-                <span className="absolute -top-2 -right-2 min-w-4 h-4 px-1 flex items-center justify-center rounded-full bg-primary text-white text-[10px] font-black">
-                  {cartCount}
-                </span>
-              )}
-            </span>
-            <span className="font-black text-sm">{fmt(totalPrice())}</span>
-          </button>
-
-          {cartOpen && (
-            <div className="lg:hidden fixed inset-0 z-[70]">
-              <div
-                className="absolute inset-0 bg-black/50"
+      {/* Drawer del carrito (desktop y móvil, todos los pasos): panel lateral
+          que reutiliza el resumen del pedido y se actualiza en vivo. Se abre
+          desde el icono del carrito de la nav. */}
+      {cartOpen && (
+        <div className="fixed inset-0 z-[70]">
+          <div
+            className="absolute inset-0 bg-black/50"
+            onClick={() => setCartOpen(false)}
+          />
+          <div className="absolute right-0 top-0 h-full w-[88%] max-w-sm bg-white shadow-2xl overflow-y-auto p-4 pb-24">
+            <div className="flex items-center justify-between mb-4">
+              <span className="font-black text-secondary text-lg tracking-tighter">
+                {pick3(lang as Lang, 'Tu carrito', 'Your cart', 'Ton panier')}
+              </span>
+              <button
+                type="button"
                 onClick={() => setCartOpen(false)}
-              />
-              <div className="absolute right-0 top-0 h-full w-[88%] max-w-sm bg-white shadow-2xl overflow-y-auto p-4 pb-24">
-                <div className="flex items-center justify-between mb-4">
-                  <span className="font-black text-secondary text-lg tracking-tighter">
-                    {pick3(lang as Lang, 'Tu carrito', 'Your cart', 'Ton panier')}
-                  </span>
-                  <button
-                    type="button"
-                    onClick={() => setCartOpen(false)}
-                    className="w-9 h-9 rounded-full flex items-center justify-center hover:bg-primary-lighter transition-colors"
-                    aria-label={pick3(lang as Lang, 'Cerrar', 'Close', 'Fermer')}
-                  >
-                    <X className="w-5 h-5 text-secondary" />
-                  </button>
-                </div>
+                className="w-9 h-9 rounded-full flex items-center justify-center hover:bg-primary-lighter transition-colors"
+                aria-label={pick3(lang as Lang, 'Cerrar', 'Close', 'Fermer')}
+              >
+                <X className="w-5 h-5 text-secondary" />
+              </button>
+            </div>
+            <FamilyTierBar c={c} />
+            {selected.style ? (
+              <>
                 <OrderSummary c={c} sticky={false} />
                 <DiscountCode c={c} />
-              </div>
-            </div>
-          )}
-        </>
+              </>
+            ) : (
+              <p className="text-sm text-secondary-lighter text-center py-8">
+                {pick3(lang as Lang, 'Tu carrito está vacío. Elige un estilo para empezar.', 'Your cart is empty. Pick a style to start.', 'Ton panier est vide. Choisis un style pour commencer.')}
+              </p>
+            )}
+          </div>
+        </div>
       )}
     </div>
   );
