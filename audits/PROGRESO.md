@@ -17,7 +17,7 @@ Estados posibles: `Pendiente` → `Auditado` → `Aprobado`
 | 11 | P1 · Importante | Rendimiento | Core Web Vitals (Lighthouse) | Auditado |
 | 12 | P1 · Importante | Rendimiento | Optimización de imágenes | Auditado |
 | 13 | P1 · Importante | Rendimiento | Bundle JS y peso del checkout | Auditado |
-| 14 | P1 · Importante | Conversión y UX de venta | Fricción en el funnel de checkout | Pendiente |
+| 14 | P1 · Importante | Conversión y UX de venta | Fricción en el funnel de checkout | Auditado |
 | 15 | P1 · Importante | Conversión y UX de venta | Señales de confianza | Pendiente |
 | 16 | P1 · Importante | Conversión y UX de venta | Experiencia móvil | Pendiente |
 | 17 | P1 · Importante | Datos y privacidad | Ciclo de vida de fotos y datos personales | Pendiente |
