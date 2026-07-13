@@ -24,3 +24,8 @@ las repita:
 
 5. **Seguridad.** No commitear secretos, `.env`, claves ni el identificador de
    modelo. Nunca forzar push (`--force`) sobre `main`.
+
+## Buenas prácticas por área
+
+- Antes de tocar código relacionado con confiabilidad y operación, leer
+  `audits/confiabilidad/manejo-errores/BUENAS_PRACTICAS.md`.
