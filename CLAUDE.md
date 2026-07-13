@@ -29,8 +29,33 @@ las repita:
 
 Antes de tocar código de cada área, lee su archivo de buenas prácticas:
 
-- Rendimiento (CWV): `audits/rendimiento/core-web-vitals/BUENAS_PRACTICAS.md`
-- Rendimiento (imágenes): `audits/rendimiento/imagenes/BUENAS_PRACTICAS.md`
-- Rendimiento (bundle/checkout): `audits/rendimiento/bundle-checkout/BUENAS_PRACTICAS.md`
-- Conversión y UX de venta (funnel checkout): `audits/conversion/friccion-checkout/BUENAS_PRACTICAS.md`
-- Conversión y UX de venta (confianza): `audits/conversion/senales-confianza/BUENAS_PRACTICAS.md`
+- Antes de tocar código relacionado con seguridad/autenticación admin, leer
+  `audits/seguridad/autenticacion-admin/BUENAS_PRACTICAS.md`.
+- Antes de tocar migraciones Supabase, RLS o clientes de base de datos, leer
+  `audits/seguridad/rls-supabase/BUENAS_PRACTICAS.md`.
+- Antes de tocar validación de inputs, esquemas Zod, subida de archivos o emails, leer
+  `audits/seguridad/validacion-inputs/BUENAS_PRACTICAS.md`.
+- Antes de tocar checkout, pagos, pricing o tasas de cambio, leer
+  `audits/pagos-y-dinero/integridad-precios/BUENAS_PRACTICAS.md`.
+- Antes de tocar webhooks de pago, leer
+  `audits/pagos-y-dinero/webhooks/BUENAS_PRACTICAS.md`.
+- Antes de tocar código relacionado con confiabilidad y operación, leer
+  `audits/confiabilidad/manejo-errores/BUENAS_PRACTICAS.md`.
+- Antes de tocar código relacionado con seguridad (CSP/headers), leer
+  `audits/seguridad/csp-headers/BUENAS_PRACTICAS.md`.
+- Antes de tocar rutas API o límites de tráfico, leer
+  `audits/seguridad/rate-limiting-antiabuso/BUENAS_PRACTICAS.md`.
+- Antes de tocar variables de entorno o dependencias, leer
+  `audits/seguridad/secretos-dependencias/BUENAS_PRACTICAS.md`.
+- Antes de tocar webhooks, estados de pedido o reembolsos, leer
+  `audits/pagos-y-dinero/conciliacion-pedidos/BUENAS_PRACTICAS.md`.
+- Antes de tocar rendimiento (Core Web Vitals), leer
+  `audits/rendimiento/core-web-vitals/BUENAS_PRACTICAS.md`.
+- Antes de tocar imágenes, leer
+  `audits/rendimiento/imagenes/BUENAS_PRACTICAS.md`.
+- Antes de tocar el bundle JS o el checkout, leer
+  `audits/rendimiento/bundle-checkout/BUENAS_PRACTICAS.md`.
+- Antes de tocar el funnel de checkout (conversión/UX), leer
+  `audits/conversion/friccion-checkout/BUENAS_PRACTICAS.md`.
+- Antes de tocar señales de confianza (reseñas, garantías, páginas legales), leer
+  `audits/conversion/senales-confianza/BUENAS_PRACTICAS.md`.
