@@ -1,8 +1,7 @@
-import { NextResponse } from 'next/server';
 import { createServiceClient } from '@/lib/supabase/server';
 import { requireAdminRoute } from '@/lib/admin/auth';
 import { signOrderPhotos } from '@/lib/payments/orderPhotos';
-import { errorResponse, rateLimitByIp } from '@/lib/security/apiHelpers';
+import { successAdminResponse, errorResponse, rateLimitByIp } from '@/lib/security/apiHelpers';
 
 /**
  * Real paid orders (the `orders` table written by the Stripe/Wompi webhooks),
@@ -34,5 +33,5 @@ export async function GET(request: Request) {
     }),
   );
 
-  return NextResponse.json(orders);
+  return successAdminResponse(orders);
 }

@@ -1,9 +1,8 @@
-import { NextResponse } from 'next/server';
 import { revalidatePath } from 'next/cache';
 import { createServiceClient } from '@/lib/supabase/server';
 import { requireAdminRoute } from '@/lib/admin/auth';
 import { AdminStyleCreateSchema, AdminStyleUpdateSchema, DeleteByIdSchema } from '@/lib/validation/schemas';
-import { errorResponse, pickFields, rateLimitByIp, readJson, validateSameOrigin } from '@/lib/security/apiHelpers';
+import { successAdminResponse, errorResponse, pickFields, rateLimitByIp, readJson, validateSameOrigin } from '@/lib/security/apiHelpers';
 
 async function guard(request: Request, mutating: boolean) {
   if (mutating && !validateSameOrigin(request)) return errorResponse('Invalid origin', 403);
@@ -23,7 +22,7 @@ export async function GET(request: Request) {
     .order('name');
 
   if (error) return errorResponse('Failed to load styles', 500, error);
-  return NextResponse.json(data ?? []);
+  return successAdminResponse(data ?? []);
 }
 
 export async function POST(request: Request) {
@@ -42,7 +41,7 @@ export async function POST(request: Request) {
   const { data, error } = await db.from('portrait_styles').insert(parsed.data).select().single();
   if (error) return errorResponse('Failed to create style', 500, error);
   revalidatePath('/');
-  return NextResponse.json(data, { status: 201 });
+  return successAdminResponse(data, 201);
 }
 
 export async function PUT(request: Request) {
@@ -65,7 +64,7 @@ export async function PUT(request: Request) {
   const { error } = await db.from('portrait_styles').update(fields).eq('id', id);
   if (error) return errorResponse('Failed to update style', 500, error);
   revalidatePath('/');
-  return NextResponse.json({ ok: true });
+  return successAdminResponse({ ok: true });
 }
 
 export async function DELETE(request: Request) {
@@ -84,5 +83,5 @@ export async function DELETE(request: Request) {
   const { error } = await db.from('portrait_styles').delete().eq('id', parsed.data.id);
   if (error) return errorResponse('Failed to delete style', 500, error);
   revalidatePath('/');
-  return NextResponse.json({ ok: true });
+  return successAdminResponse({ ok: true });
 }
