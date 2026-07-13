@@ -7,8 +7,8 @@
 | 3 | P0 | Validación de inputs y subida de archivos | `audits/seguridad/validacion-inputs/` | Pendiente |
 | 4 | P0 | Integridad de precios end-to-end | `audits/pagos-y-dinero/integridad-precios/` | Pendiente |
 | 5 | P0 | Webhooks de pago | `audits/pagos-y-dinero/webhooks/` | Pendiente |
-| 6 | P0 | Manejo de errores y estados de fallo | `audits/confiabilidad/manejo-errores/` | Auditado |
-| 7 | P1 | CSP y headers de seguridad | `audits/seguridad/csp-headers/` | Pendiente |
+| 6 | P0 | Manejo de errores y estados de fallo | `audits/confiabilidad/manejo-errores/` | Aprobado |
+| 7 | P1 | CSP y headers de seguridad | `audits/seguridad/csp-headers/` | Aprobado |
 | 8 | P1 | Rate limiting y anti-abuso | `audits/seguridad/rate-limiting-antiabuso/` | Pendiente |
 | 9 | P1 | Secretos y dependencias vulnerables | `audits/seguridad/secretos-dependencias/` | Pendiente |
 | 10 | P1 | Conciliación de pedidos y reembolsos | `audits/pagos-y-dinero/conciliacion-pedidos/` | Pendiente |

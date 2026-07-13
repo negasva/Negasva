@@ -29,3 +29,5 @@ las repita:
 
 - Antes de tocar código relacionado con confiabilidad y operación, leer
   `audits/confiabilidad/manejo-errores/BUENAS_PRACTICAS.md`.
+- Antes de tocar código relacionado con seguridad (CSP/headers), leer
+  `audits/seguridad/csp-headers/BUENAS_PRACTICAS.md`.
