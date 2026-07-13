@@ -27,6 +27,8 @@ las repita:
 
 ## Buenas prácticas por área
 
+Antes de tocar código de cada área, lee su archivo de buenas prácticas:
+
 - Antes de tocar código relacionado con seguridad/autenticación admin, leer
   `audits/seguridad/autenticacion-admin/BUENAS_PRACTICAS.md`.
 - Antes de tocar migraciones Supabase, RLS o clientes de base de datos, leer
@@ -47,3 +49,13 @@ las repita:
   `audits/seguridad/secretos-dependencias/BUENAS_PRACTICAS.md`.
 - Antes de tocar webhooks, estados de pedido o reembolsos, leer
   `audits/pagos-y-dinero/conciliacion-pedidos/BUENAS_PRACTICAS.md`.
+- Antes de tocar rendimiento (Core Web Vitals), leer
+  `audits/rendimiento/core-web-vitals/BUENAS_PRACTICAS.md`.
+- Antes de tocar imágenes, leer
+  `audits/rendimiento/imagenes/BUENAS_PRACTICAS.md`.
+- Antes de tocar el bundle JS o el checkout, leer
+  `audits/rendimiento/bundle-checkout/BUENAS_PRACTICAS.md`.
+- Antes de tocar el funnel de checkout (conversión/UX), leer
+  `audits/conversion/friccion-checkout/BUENAS_PRACTICAS.md`.
+- Antes de tocar señales de confianza (reseñas, garantías, páginas legales), leer
+  `audits/conversion/senales-confianza/BUENAS_PRACTICAS.md`.

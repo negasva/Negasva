@@ -12,11 +12,11 @@
 | 8 | P1 | Rate limiting y anti-abuso | `audits/seguridad/rate-limiting-antiabuso/` | Aprobado |
 | 9 | P1 | Secretos y dependencias vulnerables | `audits/seguridad/secretos-dependencias/` | Aprobado |
 | 10 | P1 | Conciliación de pedidos y reembolsos | `audits/pagos-y-dinero/conciliacion-pedidos/` | Aprobado |
-| 11 | P1 | Core Web Vitals (Lighthouse) | `audits/rendimiento/core-web-vitals/` | Pendiente |
-| 12 | P1 | Optimización de imágenes | `audits/rendimiento/imagenes/` | Pendiente |
-| 13 | P1 | Bundle JS y peso del checkout | `audits/rendimiento/bundle-checkout/` | Pendiente |
-| 14 | P1 | Fricción en el funnel de checkout | `audits/conversion/friccion-checkout/` | Pendiente |
-| 15 | P1 | Señales de confianza | `audits/conversion/senales-confianza/` | Pendiente |
+| 11 | P1 | Core Web Vitals (Lighthouse) | `audits/rendimiento/core-web-vitals/` | Aprobado |
+| 12 | P1 | Optimización de imágenes | `audits/rendimiento/imagenes/` | Aprobado |
+| 13 | P1 | Bundle JS y peso del checkout | `audits/rendimiento/bundle-checkout/` | Aprobado |
+| 14 | P1 | Fricción en el funnel de checkout | `audits/conversion/friccion-checkout/` | Aprobado |
+| 15 | P1 | Señales de confianza | `audits/conversion/senales-confianza/` | Aprobado |
 | 16 | P1 | Experiencia móvil | `audits/conversion/mobile-responsive/` | Pendiente |
 | 17 | P1 | Ciclo de vida de fotos y datos personales | `audits/datos-y-privacidad/datos-personales-fotos/` | Pendiente |
 | 18 | P1 | Cumplimiento legal (GDPR / Habeas Data / cookies) | `audits/datos-y-privacidad/cumplimiento-legal/` | Pendiente |
