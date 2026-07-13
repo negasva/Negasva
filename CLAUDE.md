@@ -24,3 +24,8 @@ las repita:
 
 5. **Seguridad.** No commitear secretos, `.env`, claves ni el identificador de
    modelo. Nunca forzar push (`--force`) sobre `main`.
+
+## Buenas prácticas por área
+
+- Antes de tocar código relacionado con seguridad/autenticación admin, leer
+  `audits/seguridad/autenticacion-admin/BUENAS_PRACTICAS.md`.
