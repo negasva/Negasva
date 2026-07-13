@@ -2,8 +2,8 @@
 
 | # | Prioridad | Item | Estado |
 |---|---|---|---|
-| 1 | P0 | Autenticación y autorización del panel admin | Auditado |
-| 2 | P0 | Row Level Security (RLS) en Supabase | Pendiente |
+| 1 | P0 | Autenticación y autorización del panel admin | Aprobado |
+| 2 | P0 | Row Level Security (RLS) en Supabase | Auditado |
 | 3 | P0 | Validación de inputs y subida de archivos | Pendiente |
 | 4 | P0 | Integridad de precios end-to-end | Pendiente |
 | 5 | P0 | Webhooks de pago (PayPal / Mercado Pago / legacy) | Pendiente |

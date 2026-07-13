@@ -29,3 +29,5 @@ las repita:
 
 - Antes de tocar código relacionado con seguridad/autenticación admin, leer
   `audits/seguridad/autenticacion-admin/BUENAS_PRACTICAS.md`.
+- Antes de tocar migraciones Supabase, RLS o clientes de base de datos, leer
+  `audits/seguridad/rls-supabase/BUENAS_PRACTICAS.md`.
