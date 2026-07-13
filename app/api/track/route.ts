@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getSupabase } from '@/lib/supabase/client';
+import { createServiceClient } from '@/lib/supabase/server';
 import { TrackOrderSchema } from '@/lib/validation/order';
 import {
   errorResponse,
@@ -31,7 +31,9 @@ export async function POST(request: Request) {
 
   const { orderId, email } = parsed.data;
 
-  const { data, error } = await getSupabase()
+  // Service role: orders is RLS-locked to auth.uid() = user_id, so anon reads
+  // return nothing. Matching (orderId + email) is enforced here in the query.
+  const { data, error } = await createServiceClient()
     .from('orders')
     .select('id, provider_reference, production_status, status, created_at, completed_at')
     .eq('provider_reference', orderId)
