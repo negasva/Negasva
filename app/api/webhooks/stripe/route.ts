@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import Stripe from 'stripe';
+import { rateLimitByIp } from '@/lib/security/apiHelpers';
 import { createServiceClient } from '@/lib/supabase/server';
 import { verifyAmount } from '@/lib/payments/verifyAmount';
 import { recordDiscountCodeUse } from '@/lib/pricing/server';
@@ -41,6 +42,9 @@ function rowFromSession(
 }
 
 export async function POST(request: Request) {
+  const rl = await rateLimitByIp(request, { prefix: 'webhook', max: 120, windowMs: 60_000 });
+  if (rl) return rl;
+
   const sig = request.headers.get('stripe-signature');
   if (!sig) return NextResponse.json({ error: 'Missing signature' }, { status: 400 });
 

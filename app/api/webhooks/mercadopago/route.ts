@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createHmac, timingSafeEqual } from 'crypto';
+import { rateLimitByIp } from '@/lib/security/apiHelpers';
 import { fetchMpPayment, mapMpStatus } from '@/lib/payments/mercadopago';
 import { verifyAmount } from '@/lib/payments/verifyAmount';
 import { createServiceClient } from '@/lib/supabase/server';
@@ -42,6 +43,9 @@ function verifyMpSignature(request: Request, dataId: string): boolean {
  * (un id inventado no devuelve un pago con nuestra external_reference).
  */
 export async function POST(request: Request) {
+  const rl = await rateLimitByIp(request, { prefix: 'webhook', max: 120, windowMs: 60_000 });
+  if (rl) return rl;
+
   let paymentId = '';
   try {
     const url = new URL(request.url);

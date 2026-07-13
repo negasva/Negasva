@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { rateLimitByIp } from '@/lib/security/apiHelpers';
 import { verifyWompiEvent, type WompiEvent } from '@/lib/payments/wompi';
 import { verifyAmount } from '@/lib/payments/verifyAmount';
 import { createServiceClient } from '@/lib/supabase/server';
@@ -18,6 +19,9 @@ function mapStatus(s: WompiEvent['data']['transaction']['status']): string {
 }
 
 export async function POST(request: Request) {
+  const rl = await rateLimitByIp(request, { prefix: 'webhook', max: 120, windowMs: 60_000 });
+  if (rl) return rl;
+
   let payload: WompiEvent;
   try {
     payload = (await request.json()) as WompiEvent;
