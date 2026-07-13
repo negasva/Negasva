@@ -1,4 +1,5 @@
 import { randomUUID } from 'crypto';
+import { fetchWithTimeout } from '@/lib/net';
 
 // Mercado Pago Checkout Pro — https://www.mercadopago.com.co/developers/es/docs/checkout-pro
 // Se usa la API REST directa (sin SDK) para crear una preferencia de pago y
@@ -24,7 +25,7 @@ export async function createMpCheckoutUrl(input: MpPreferenceInput): Promise<str
   const token = process.env.MERCADOPAGO_ACCESS_TOKEN;
   if (!token) throw new Error('Mercado Pago env var missing: MERCADOPAGO_ACCESS_TOKEN');
 
-  const res = await fetch(`${MP_API}/checkout/preferences`, {
+  const res = await fetchWithTimeout(`${MP_API}/checkout/preferences`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -104,7 +105,7 @@ export async function createMpPayment(
   const token = process.env.MERCADOPAGO_ACCESS_TOKEN;
   if (!token) throw new Error('Mercado Pago env var missing: MERCADOPAGO_ACCESS_TOKEN');
 
-  const res = await fetch(`${MP_API}/v1/payments`, {
+  const res = await fetchWithTimeout(`${MP_API}/v1/payments`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -112,7 +113,7 @@ export async function createMpPayment(
       'X-Idempotency-Key': idempotencyKey,
     },
     body: JSON.stringify({ statement_descriptor: 'NEGASVA', ...body }),
-  });
+  }, 15_000);
 
   if (!res.ok) {
     const text = await res.text().catch(() => '');
@@ -145,11 +146,18 @@ export type MpPayment = {
 export async function fetchMpPayment(paymentId: string): Promise<MpPayment | null> {
   const token = process.env.MERCADOPAGO_ACCESS_TOKEN;
   if (!token) return null;
-  const res = await fetch(`${MP_API}/v1/payments/${encodeURIComponent(paymentId)}`, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
-  if (!res.ok) return null;
-  return (await res.json()) as MpPayment;
+  try {
+    const res = await fetchWithTimeout(`${MP_API}/v1/payments/${encodeURIComponent(paymentId)}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    if (!res.ok) return null;
+    return (await res.json()) as MpPayment;
+  } catch (err) {
+    // Timeout/red al re-consultar el pago: el webhook lo trata como "aún no
+    // confirmable" (no toca el pedido) en vez de romper con un AbortError.
+    console.error('[mercadopago] fetchMpPayment failed:', err);
+    return null;
+  }
 }
 
 /** Estado de MP → estado interno de la orden. */

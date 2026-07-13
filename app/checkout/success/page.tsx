@@ -184,28 +184,42 @@ function SuccessContent() {
   const params = useSearchParams();
   const sessionId = params.get('session_id');                  // Stripe — also the provider_reference
   const providerRef = params.get('ref');                        // MP/Wompi provider_reference (negasva-…)
-  // Mercado Pago vuelve con collection_status/status (approved|pending|rejected);
-  // Wompi (pedidos antiguos) con status APPROVED|DECLINED|… — se normalizan.
-  const rawStatus = (params.get('collection_status') ?? params.get('status') ?? 'APPROVED').toUpperCase();
   // ref = the value stored as provider_reference in orders table — used for tracking
   const ref = sessionId ?? providerRef ?? '';
-  const [ready, setReady] = useState(false);
+
+  // El estado autoritativo lo fija el webhook en la BD; nunca se asume por los
+  // query params. Se consulta por ref (capability token de la URL de retorno).
+  const [state, setState] = useState<'loading' | 'success' | 'pending' | 'fail' | 'unverified'>(
+    ref ? 'loading' : 'unverified',
+  );
 
   useEffect(() => {
-    const t = setTimeout(() => setReady(true), 600);
-    return () => clearTimeout(t);
-  }, []);
+    if (!ref) return;
+    let alive = true;
+    fetch(`/api/order/attach-photos?ref=${encodeURIComponent(ref)}`, { signal: AbortSignal.timeout(10_000) })
+      .then((r) => r.json())
+      .then((d) => {
+        if (!alive) return;
+        if (!d.found) { setState('unverified'); return; }
+        const s = String(d.paymentStatus ?? '');
+        setState(s === 'paid' ? 'success' : s === 'pending' ? 'pending' : 'fail');
+      })
+      .catch(() => alive && setState('unverified'));
+    return () => { alive = false; };
+  }, [ref]);
 
-  const isFailure = ['DECLINED', 'ERROR', 'VOIDED', 'REJECTED', 'CANCELLED'].includes(rawStatus);
-  const isPending = ['PENDING', 'IN_PROCESS'].includes(rawStatus);
+  const isFailure = state === 'fail';
+  const isPending = state === 'pending';
 
-  const ui = isFailure
+  const ui = state === 'unverified'
+    ? { icon: 'fail', title: 'No pudimos verificar tu pago', body: 'Si ya pagaste, revisa tu email o contáctanos con tu referencia; no vuelvas a pagar.' }
+    : isFailure
     ? { icon: 'fail', title: 'Pago no completado', body: 'Tu pago no se procesó. Puedes intentarlo de nuevo desde el estudio.' }
     : isPending
     ? { icon: 'pending', title: 'Pago pendiente', body: 'Tu pago está siendo procesado. Te enviaremos un email cuando se confirme.' }
     : { icon: 'success', title: '¡Pago recibido!', body: 'Tu pedido está en camino. Te enviaremos un email de confirmación pronto.' };
 
-  if (!ready) {
+  if (state === 'loading') {
     return (
       <div className="flex flex-col items-center gap-4">
         <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin" />
@@ -230,14 +244,14 @@ function SuccessContent() {
       )}
       {/* Post-venta (nunca bloquea el pago): entrega de fotos si faltan +
           upsell ligero de versión impresa, ligados al pedido por su ref. */}
-      {!isFailure && ref && (
+      {(state === 'success' || state === 'pending') && ref && (
         <>
           <PhotoDelivery orderRef={ref} />
           <PrintUpsell orderRef={ref} />
         </>
       )}
       <div className="mt-8 space-y-3">
-        {isFailure ? (
+        {isFailure || state === 'unverified' ? (
           <Link
             href="/order"
             className="block w-full rounded-xl bg-primary px-6 py-3 font-black text-white hover:bg-primary-dark hover:shadow-xl transition-all"

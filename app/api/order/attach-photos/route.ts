@@ -36,11 +36,17 @@ export async function GET(request: Request) {
     const supabase = createServiceClient();
     const { data } = await supabase
       .from('orders')
-      .select('photo_paths')
+      .select('photo_paths, status')
       .eq('provider_reference', ref)
       .maybeSingle();
-    if (!data) return NextResponse.json({ found: false, hasPhotos: false });
-    return NextResponse.json({ found: true, hasPhotos: (data.photo_paths ?? []).length > 0 });
+    if (!data) return NextResponse.json({ found: false, hasPhotos: false, paymentStatus: null });
+    // paymentStatus es el estado AUTORITATIVO que fija el webhook: la página de
+    // éxito lo usa para no asumir "pagado" solo por llegar a /checkout/success.
+    return NextResponse.json({
+      found: true,
+      hasPhotos: (data.photo_paths ?? []).length > 0,
+      paymentStatus: data.status ?? null,
+    });
   } catch (err) {
     return errorResponse('Lookup failed', 500, err);
   }
