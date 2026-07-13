@@ -35,3 +35,5 @@ las repita:
   `audits/seguridad/validacion-inputs/BUENAS_PRACTICAS.md`.
 - Antes de tocar checkout, pagos, pricing o tasas de cambio, leer
   `audits/pagos-y-dinero/integridad-precios/BUENAS_PRACTICAS.md`.
+- Antes de tocar webhooks de pago, leer
+  `audits/pagos-y-dinero/webhooks/BUENAS_PRACTICAS.md`.
