@@ -23,6 +23,16 @@ describe('admin session token', () => {
     expect(verifySessionToken(bad)).toBe(false);
   });
 
+  it('invalidates live sessions when ADMIN_PASSWORD is rotated (A1)', () => {
+    process.env.ADMIN_PASSWORD = 'old-password';
+    const token = createSessionToken();
+    expect(verifySessionToken(token)).toBe(true);
+
+    process.env.ADMIN_PASSWORD = 'new-password';
+    expect(verifySessionToken(token)).toBe(false);
+    delete process.env.ADMIN_PASSWORD;
+  });
+
   it('safeEqual is true only for identical strings', () => {
     expect(safeEqual('abc', 'abc')).toBe(true);
     expect(safeEqual('abc', 'abd')).toBe(false);

@@ -1,4 +1,3 @@
-import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import {
   SESSION_COOKIE,
@@ -6,7 +5,7 @@ import {
   createSessionToken,
   safeEqual,
 } from '@/lib/admin/session';
-import { errorResponse, rateLimitByIp, readJson, validateSameOrigin } from '@/lib/security/apiHelpers';
+import { successAdminResponse, errorResponse, rateLimitByIp, readJson, validateSameOrigin } from '@/lib/security/apiHelpers';
 
 // POST = log in with the single ADMIN_PASSWORD, set the signed session cookie.
 export async function POST(request: Request) {
@@ -29,11 +28,11 @@ export async function POST(request: Request) {
     path: '/',
     maxAge: SESSION_MAX_AGE,
   });
-  return NextResponse.json({ ok: true });
+  return successAdminResponse({ ok: true });
 }
 
 // DELETE = log out.
 export async function DELETE() {
   cookies().delete(SESSION_COOKIE);
-  return NextResponse.json({ ok: true });
+  return successAdminResponse({ ok: true });
 }

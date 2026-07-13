@@ -1,4 +1,3 @@
-import { NextResponse } from 'next/server';
 import { createServiceClient } from '@/lib/supabase/server';
 import { requireAdminRoute } from '@/lib/admin/auth';
 import {
@@ -12,6 +11,7 @@ import {
   rateLimitByIp,
   readJson,
   validateSameOrigin,
+  successAdminResponse,
 } from '@/lib/security/apiHelpers';
 
 async function guard(request: Request, mutating: boolean) {
@@ -35,7 +35,7 @@ export async function GET(request: Request) {
     .order('created_at', { ascending: false });
 
   if (error) return errorResponse('Failed to load packages', 500, error);
-  return NextResponse.json(data);
+  return successAdminResponse(data);
 }
 
 export async function POST(request: Request) {
@@ -67,7 +67,7 @@ export async function POST(request: Request) {
     .single();
 
   if (error) return errorResponse('Failed to create package', 500, error);
-  return NextResponse.json(data, { status: 201 });
+  return successAdminResponse(data, 201);
 }
 
 export async function PUT(request: Request) {
@@ -94,7 +94,7 @@ export async function PUT(request: Request) {
 
   const { error } = await db.from('packages').update(fields).eq('id', id);
   if (error) return errorResponse('Failed to update package', 500, error);
-  return NextResponse.json({ ok: true });
+  return successAdminResponse({ ok: true });
 }
 
 export async function DELETE(request: Request) {
@@ -113,5 +113,5 @@ export async function DELETE(request: Request) {
 
   const { error } = await db.from('packages').delete().eq('id', parsed.data.id);
   if (error) return errorResponse('Failed to delete package', 500, error);
-  return NextResponse.json({ ok: true });
+  return successAdminResponse({ ok: true });
 }

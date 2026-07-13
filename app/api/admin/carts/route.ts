@@ -1,7 +1,6 @@
-import { NextResponse } from 'next/server';
 import { createServiceClient } from '@/lib/supabase/server';
 import { requireAdminRoute } from '@/lib/admin/auth';
-import { errorResponse, rateLimitByIp } from '@/lib/security/apiHelpers';
+import { successAdminResponse, errorResponse, rateLimitByIp } from '@/lib/security/apiHelpers';
 
 /**
  * Carritos (activos / abandonados / convertidos) para el panel admin. Sirve
@@ -24,5 +23,5 @@ export async function GET(request: Request) {
 
   if (error) return errorResponse('Failed to load carts', 500, error);
 
-  return NextResponse.json(data ?? []);
+  return successAdminResponse(data ?? []);
 }

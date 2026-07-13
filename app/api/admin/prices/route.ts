@@ -1,4 +1,3 @@
-import { NextResponse } from 'next/server';
 import { revalidatePath } from 'next/cache';
 import { createServiceClient } from '@/lib/supabase/server';
 import { requireAdminRoute } from '@/lib/admin/auth';
@@ -9,6 +8,7 @@ import {
   rateLimitByIp,
   readJson,
   validateSameOrigin,
+  successAdminResponse,
 } from '@/lib/security/apiHelpers';
 
 async function guard(request: Request, mutating: boolean) {
@@ -32,7 +32,7 @@ export async function GET(request: Request) {
     .order('key');
 
   if (error) return errorResponse('Failed to load prices', 500, error);
-  return NextResponse.json(data);
+  return successAdminResponse(data);
 }
 
 export async function PUT(request: Request) {
@@ -64,5 +64,5 @@ export async function PUT(request: Request) {
   // regenerarlas ya para que el cambio se vea sin redeploy.
   revalidatePath('/');
   revalidatePath('/pricing');
-  return NextResponse.json({ ok: true });
+  return successAdminResponse({ ok: true });
 }
