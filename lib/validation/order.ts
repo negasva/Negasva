@@ -78,8 +78,8 @@ export const CheckoutSchema = OrderSelectionSchema.merge(ContactSchema).extend({
   // Rutas de las fotos del cliente, ya subidas al bucket order-photos.
   photoPaths: z.array(z.string().max(200)).max(8).optional(),
   uploadId: z.string().max(80).optional(),
-  // Tasa de cambio del cliente — solo para display; el cobro es en la moneda dada.
-  rate: z.number().positive().finite().max(10_000),
+  // La tasa de cambio NO viaja en el body: se obtiene server-side en el checkout
+  // (lib/pricing/rates). Un `rate` del cliente se ignora por completo.
   // Id del carrito (localStorage) para marcarlo convertido al llegar al pago.
   cartId: z.string().trim().max(64).optional(),
   // Propina opcional (paso 5). El % lo calcula el servidor sobre el total del
