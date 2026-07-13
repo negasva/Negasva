@@ -33,3 +33,5 @@ las repita:
   `audits/seguridad/rls-supabase/BUENAS_PRACTICAS.md`.
 - Antes de tocar validación de inputs, esquemas Zod, subida de archivos o emails, leer
   `audits/seguridad/validacion-inputs/BUENAS_PRACTICAS.md`.
+- Antes de tocar checkout, pagos, pricing o tasas de cambio, leer
+  `audits/pagos-y-dinero/integridad-precios/BUENAS_PRACTICAS.md`.
