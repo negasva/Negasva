@@ -4,6 +4,9 @@ import { newMpReference } from '@/lib/payments/mercadopago';
 import { createPayPalOrder, PAYPAL_CURRENCIES, type PayPalItem } from '@/lib/payments/paypal';
 import { createServiceClient } from '@/lib/supabase/server';
 import { listOrderPhotos } from '@/lib/payments/orderPhotos';
+ claude/new-session-899ejb
+import { getServerRate } from '@/lib/pricing/rates';
+ main
 import { applyDiscountCode, loadPricingConfig } from '@/lib/pricing/server';
 import { computeQuoteUsd } from '@/lib/pricing/calc';
 import { getPodProduct, productsSummaryEs, optionsSurchargeUsd, optionsLabelEs, sanitizeProductUnits } from '@/lib/pricing/products';
@@ -38,6 +41,13 @@ export async function POST(request: Request) {
   // sesión de subida (ver BUENAS_PRACTICAS punto 6).
   const photoPaths = await listOrderPhotos(createServiceClient(), d.uploadId);
 
+ claude/new-session-899ejb
+  // La tasa de cambio SIEMPRE se obtiene en el servidor; cualquier `rate` del
+  // cliente se ignora (integridad-precios punto 2).
+  const rate = await getServerRate(d.currency);
+
+
+ main
   // Pricing comes from the admin-managed tables (prices, body_types),
   // with hardcoded fallback only if the DB is unreachable.
   const pricing = await loadPricingConfig();
@@ -87,7 +97,7 @@ export async function POST(request: Request) {
     ? quote.total * (d.tip.pct / 100)
     : Math.min(Math.max(d.tip?.usd ?? 0, 0), 500);
 
-  const totalLocal = (quote.total + shippingUsd + tipUsd) * d.rate;
+  const totalLocal = (quote.total + shippingUsd + tipUsd) * rate;
 
   // Note prepended to the order so the illustrator knows which physical
   // products to fulfill via Printful (the finished art is the print file).
@@ -197,11 +207,11 @@ export async function POST(request: Request) {
   // Itemized lines that mirror the order summary in the wizard.
   // Family discount is baked into the per-person price (the promo code goes
   // in amount.breakdown.discount).
-  const perPersonMinor = Math.round(perPersonUsd * (1 - discountRate) * d.rate * 100);
-  const bgMinor = Math.round(bgUsd * d.rate * 100);
-  const expressMinor = Math.round(expressUsd * d.rate * 100);
-  const recordingMinor = Math.round(quote.recordingCost * d.rate * 100);
-  const shippingMinor = Math.round(shippingUsd * d.rate * 100);
+  const perPersonMinor = Math.round(perPersonUsd * (1 - discountRate) * rate * 100);
+  const bgMinor = Math.round(bgUsd * rate * 100);
+  const expressMinor = Math.round(expressUsd * rate * 100);
+  const recordingMinor = Math.round(quote.recordingCost * rate * 100);
+  const shippingMinor = Math.round(shippingUsd * rate * 100);
 
   const items: PayPalItem[] = [
     {
@@ -252,7 +262,7 @@ export async function POST(request: Request) {
     }
     for (const { opts, qty } of grouped.values()) {
       const priceUsd = (pricing.podProductsUsd[key] ?? product.priceUsd) + optionsSurchargeUsd(key, opts);
-      const unit = Math.round(priceUsd * d.rate * 100);
+      const unit = Math.round(priceUsd * rate * 100);
       if (unit <= 0) continue;
       const spec = optionsLabelEs(key, opts);
       items.push({
@@ -264,7 +274,7 @@ export async function POST(request: Request) {
     }
   }
 
-  const tipMinor = Math.round(tipUsd * d.rate * 100);
+  const tipMinor = Math.round(tipUsd * rate * 100);
   if (tipMinor > 0) {
     items.push({
       name: 'Propina para el artista',
@@ -281,7 +291,7 @@ export async function POST(request: Request) {
   if (appliedCode) {
     discountMinor = Math.max(
       0,
-      Math.min(Math.round(appliedCode.amountUsd * d.rate * 100), itemTotalMinor + shippingMinor - 50),
+      Math.min(Math.round(appliedCode.amountUsd * rate * 100), itemTotalMinor + shippingMinor - 50),
     );
   }
   // El monto que se guarda y se cobra es EXACTAMENTE la suma del desglose que
