@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Webhooks de pago (PayPal / Mercado Pago / legacy) — Auditorías NEGASVA</title><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700;900&display=swap" rel="stylesheet"><style>
+:root{--pink:#F870A0;--pink-mid:#FC90B6;--pink-lighter:#FFE1EC;--pink-wash:#FFF5F8;--pink-dark:#E0517F;--ink:#1A1A1A;--ink-light:#4A4A4A;--ink-lighter:#7A7A7A;}
+*{box-sizing:border-box}
+body{margin:0;background:#fff;color:var(--ink);font-family:'Montserrat',ui-sans-serif,system-ui,sans-serif;line-height:1.55}
+a{color:var(--pink-dark);text-decoration:none}
+a:hover{color:var(--pink)}
+.nav{position:sticky;top:0;z-index:50;background:#fff;border-bottom:2px solid var(--pink-lighter)}
+.nav-in{max-width:1120px;margin:0 auto;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.logo{font-size:24px;letter-spacing:-.05em;line-height:1}
+.logo b{font-weight:900}.logo span{font-weight:400}
+.tag{display:inline-flex;align-items:center;gap:6px;background:var(--pink);color:#fff;border-radius:999px;padding:7px 16px;font-size:12px;font-weight:900}
+.wrap{max-width:1120px;margin:0 auto;padding:36px 20px 90px}
+h1{font-size:38px;font-weight:900;letter-spacing:-.05em;line-height:1.05;margin:0 0 10px}
+.sub{color:var(--ink-lighter);font-size:14px;margin:0 0 6px}
+h2{font-size:24px;font-weight:900;letter-spacing:-.04em;margin:44px 0 6px}
+h3{font-size:16px;font-weight:900;letter-spacing:-.02em;margin:0}
+.badge{display:inline-block;border-radius:999px;padding:4px 12px;font-size:11px;font-weight:900;letter-spacing:.04em}
+.card{background:#fff;border:2px solid var(--pink-lighter);border-radius:16px;padding:20px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px}
+table{width:100%;border-collapse:separate;border-spacing:0;font-size:13px}
+th{text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-lighter);padding:10px 12px;border-bottom:2px solid var(--pink-lighter)}
+td{padding:11px 12px;border-bottom:1px solid var(--pink-lighter);vertical-align:top}
+tr:last-child td{border-bottom:none}
+.path{font-family:ui-monospace,Consolas,monospace;font-size:11.5px;background:var(--pink-wash);border-radius:6px;padding:2px 7px;color:var(--ink-light);white-space:nowrap}
+.legend{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;margin:18px 0 8px}
+.steps{list-style:none;margin:10px 0 0;padding:0}
+.steps li{display:flex;gap:12px;margin:0 0 12px}
+.n{flex:none;width:28px;height:28px;border-radius:999px;background:var(--pink);color:#fff;font-weight:900;font-size:13px;display:flex;align-items:center;justify-content:center}
+.check{margin:10px 0 0;padding:0;list-style:none}
+.check li{padding:8px 0 8px 26px;position:relative;font-size:13.5px;color:var(--ink-light);border-bottom:1px dashed var(--pink-lighter)}
+.check li:last-child{border-bottom:none}
+.check li::before{content:'✓';position:absolute;left:2px;top:8px;color:var(--pink);font-weight:900}
+.hero{background:var(--pink-wash);border:2px solid var(--pink-lighter);border-radius:20px;padding:28px;margin-bottom:28px}
+.footer{margin-top:60px;border-top:2px solid var(--pink-lighter);padding-top:18px;color:var(--ink-lighter);font-size:12px;text-align:center}
+.pill{display:inline-block;background:#fff;border:1px solid var(--pink-lighter);border-radius:6px;padding:3px 9px;font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:.07em;color:var(--ink-lighter);margin:2px 4px 2px 0}
+.btn{display:inline-block;background:var(--ink);color:#fff!important;border-radius:999px;padding:10px 20px;font-size:13px;font-weight:900}
+.btn:hover{background:var(--pink-dark)}
+.btn.alt{background:var(--pink)}
+.crumb{font-size:12px;font-weight:700;color:var(--ink-lighter);margin-bottom:18px;display:block}
+.prio-band{border-left:5px solid;border-radius:16px;padding:18px 20px;margin:16px 0;background:#fff;border-top:2px solid var(--pink-lighter);border-right:2px solid var(--pink-lighter);border-bottom:2px solid var(--pink-lighter)}
+</style></head><body><nav class="nav"><div class="nav-in"><span class="logo"><b>NEGAS</b><span>VA</span></span><span class="tag">Después de la auditoría</span></div></nav>
+<div class="wrap">
+<a class="crumb" href="../../index.html">← Volver al plan de auditorías</a>
+<p style="margin:0 0 8px"><span class="badge" style="color:#E5484D;background:#FDEBEC">P0 · Crítico</span> <span class="pill">💳 Pagos y dinero</span></p>
+<h1 style="font-size:30px">Webhooks de pago (PayPal / Mercado Pago / legacy)</h1>
+<p class="sub" style="max-width:760px">El webhook es quien marca el pedido como pagado. Si la firma no se verifica, cualquiera puede marcar pedidos como pagados gratis; si un evento se pierde, un cliente paga y su pedido queda &#x27;pending&#x27; para siempre.</p>
+
+<div class="card" style="margin-top:22px;background:var(--pink-wash)">
+<h3>📋 Qué revisó la auditoría</h3>
+<ul class="check"><li>Que la verificación de firma esté activa en TODOS los webhooks (PAYPAL_WEBHOOK_ID configurado en producción — si está vacío, verifyPayPalWebhook devuelve false: ¿qué hace entonces el handler, rechaza o procesa igual?).</li><li>Idempotencia: que el mismo evento recibido dos veces no duplique pedidos, emails ni registro de uso de códigos.</li><li>Que se manejen eventos de reversa: PAYMENT.CAPTURE.REFUNDED / DENIED / disputas, no solo COMPLETED.</li><li>Que el webhook coteje el monto del evento contra el monto del pedido en BD (no solo la referencia).</li><li>Que los webhooks legacy (Stripe/Wompi) sigan verificando firma o se eliminen si ya no llegan eventos.</li><li>Qué pasa si el webhook llega ANTES que la captura del cliente termine (carrera capture vs webhook).</li></ul>
+</div>
+
+<h2>Qué hacer después de la auditoría — paso a paso</h2>
+<p class="sub">Trabaja los hallazgos del <span class="path">REPORTE.md</span> en este orden. No pases al siguiente nivel hasta cerrar el anterior.</p>
+<div class="prio-band" style="border-left-color:#E5484D">
+<h3 style="color:#E5484D;font-size:15px">🔴 Crítico — hazlo de inmediato</h3>
+<ol class="steps" style="margin-top:12px"><li><span class="n" style="background:#E5484D">1</span><div style="font-size:13.5px">Configura PAYPAL_WEBHOOK_ID en producción y confirma que el handler RECHAZA eventos sin firma válida.</div></li><li><span class="n" style="background:#E5484D">2</span><div style="font-size:13.5px">Agrega manejo de REFUNDED/DENIED/disputas para que el estado del pedido refleje la realidad.</div></li><li><span class="n" style="background:#E5484D">3</span><div style="font-size:13.5px">Verifica idempotencia con el mismo evento enviado dos veces (PayPal permite reenviar desde el dashboard).</div></li></ol></div><div class="prio-band" style="border-left-color:#B7791F">
+<h3 style="color:#B7791F;font-size:15px">🟠 Importante — agenda este mes</h3>
+<ol class="steps" style="margin-top:12px"><li><span class="n" style="background:#B7791F">1</span><div style="font-size:13.5px">Compara monto y moneda del evento contra el pedido antes de marcarlo pagado.</div></li><li><span class="n" style="background:#B7791F">2</span><div style="font-size:13.5px">Agrega un job/alerta para pedidos en &#x27;pending&#x27; con más de X horas (webhook perdido).</div></li><li><span class="n" style="background:#B7791F">3</span><div style="font-size:13.5px">Registra todos los eventos de webhook crudos en una tabla para poder reconciliar después.</div></li></ol></div><div class="prio-band" style="border-left-color:#1FA971">
+<h3 style="color:#1FA971;font-size:15px">🟢 Opcional — mejora continua</h3>
+<ol class="steps" style="margin-top:12px"><li><span class="n" style="background:#1FA971">1</span><div style="font-size:13.5px">Elimina los webhooks legacy que ya no reciben tráfico (menos superficie).</div></li><li><span class="n" style="background:#1FA971">2</span><div style="font-size:13.5px">Panel admin: botón &#x27;reconciliar&#x27; que consulte la API de PayPal por el estado real de una orden.</div></li></ol></div>
+
+<div class="card" style="margin-top:26px">
+<h3>✅ Cierre del item</h3>
+<ol class="steps" style="margin-top:12px">
+<li><span class="n">1</span><div style="font-size:13.5px">Marca cada hallazgo como resuelto en la tabla de estado del <span class="path">REPORTE.md</span>.</div></li>
+<li><span class="n">2</span><div style="font-size:13.5px">Pide a Claude Code que actualice <span class="path">BUENAS_PRACTICAS.md</span> con lo aprendido al aplicar los fixes.</div></li>
+<li><span class="n">3</span><div style="font-size:13.5px">Agenda la re-auditoría: repite el prompt en 2–3 meses o tras cambios grandes en esta área.</div></li>
+</ol>
+<a class="btn alt" href="../../index.html">Siguiente auditoría →</a>
+</div>
+
+<div class="footer">NEGASVA · Pagos y dinero / Webhooks de pago (PayPal / Mercado Pago / legacy) · P0 · Crítico</div>
+</div></body></html>

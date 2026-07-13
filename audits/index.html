@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Plan de auditorías — Auditorías NEGASVA</title><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700;900&display=swap" rel="stylesheet"><style>
+:root{--pink:#F870A0;--pink-mid:#FC90B6;--pink-lighter:#FFE1EC;--pink-wash:#FFF5F8;--pink-dark:#E0517F;--ink:#1A1A1A;--ink-light:#4A4A4A;--ink-lighter:#7A7A7A;}
+*{box-sizing:border-box}
+body{margin:0;background:#fff;color:var(--ink);font-family:'Montserrat',ui-sans-serif,system-ui,sans-serif;line-height:1.55}
+a{color:var(--pink-dark);text-decoration:none}
+a:hover{color:var(--pink)}
+.nav{position:sticky;top:0;z-index:50;background:#fff;border-bottom:2px solid var(--pink-lighter)}
+.nav-in{max-width:1120px;margin:0 auto;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.logo{font-size:24px;letter-spacing:-.05em;line-height:1}
+.logo b{font-weight:900}.logo span{font-weight:400}
+.tag{display:inline-flex;align-items:center;gap:6px;background:var(--pink);color:#fff;border-radius:999px;padding:7px 16px;font-size:12px;font-weight:900}
+.wrap{max-width:1120px;margin:0 auto;padding:36px 20px 90px}
+h1{font-size:38px;font-weight:900;letter-spacing:-.05em;line-height:1.05;margin:0 0 10px}
+.sub{color:var(--ink-lighter);font-size:14px;margin:0 0 6px}
+h2{font-size:24px;font-weight:900;letter-spacing:-.04em;margin:44px 0 6px}
+h3{font-size:16px;font-weight:900;letter-spacing:-.02em;margin:0}
+.badge{display:inline-block;border-radius:999px;padding:4px 12px;font-size:11px;font-weight:900;letter-spacing:.04em}
+.card{background:#fff;border:2px solid var(--pink-lighter);border-radius:16px;padding:20px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px}
+table{width:100%;border-collapse:separate;border-spacing:0;font-size:13px}
+th{text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-lighter);padding:10px 12px;border-bottom:2px solid var(--pink-lighter)}
+td{padding:11px 12px;border-bottom:1px solid var(--pink-lighter);vertical-align:top}
+tr:last-child td{border-bottom:none}
+.path{font-family:ui-monospace,Consolas,monospace;font-size:11.5px;background:var(--pink-wash);border-radius:6px;padding:2px 7px;color:var(--ink-light);white-space:nowrap}
+.legend{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;margin:18px 0 8px}
+.steps{list-style:none;margin:10px 0 0;padding:0}
+.steps li{display:flex;gap:12px;margin:0 0 12px}
+.n{flex:none;width:28px;height:28px;border-radius:999px;background:var(--pink);color:#fff;font-weight:900;font-size:13px;display:flex;align-items:center;justify-content:center}
+.check{margin:10px 0 0;padding:0;list-style:none}
+.check li{padding:8px 0 8px 26px;position:relative;font-size:13.5px;color:var(--ink-light);border-bottom:1px dashed var(--pink-lighter)}
+.check li:last-child{border-bottom:none}
+.check li::before{content:'✓';position:absolute;left:2px;top:8px;color:var(--pink);font-weight:900}
+.hero{background:var(--pink-wash);border:2px solid var(--pink-lighter);border-radius:20px;padding:28px;margin-bottom:28px}
+.footer{margin-top:60px;border-top:2px solid var(--pink-lighter);padding-top:18px;color:var(--ink-lighter);font-size:12px;text-align:center}
+.pill{display:inline-block;background:#fff;border:1px solid var(--pink-lighter);border-radius:6px;padding:3px 9px;font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:.07em;color:var(--ink-lighter);margin:2px 4px 2px 0}
+.btn{display:inline-block;background:var(--ink);color:#fff!important;border-radius:999px;padding:10px 20px;font-size:13px;font-weight:900}
+.btn:hover{background:var(--pink-dark)}
+.btn.alt{background:var(--pink)}
+.crumb{font-size:12px;font-weight:700;color:var(--ink-lighter);margin-bottom:18px;display:block}
+.prio-band{border-left:5px solid;border-radius:16px;padding:18px 20px;margin:16px 0;background:#fff;border-top:2px solid var(--pink-lighter);border-right:2px solid var(--pink-lighter);border-bottom:2px solid var(--pink-lighter)}
+</style></head><body><nav class="nav"><div class="nav-in"><span class="logo"><b>NEGAS</b><span>VA</span></span><span class="tag">Plan de auditorías</span></div></nav>
+<div class="wrap">
+<div class="hero">
+<h1>Plan de auditorías<br><span style="color:var(--pink)">negasva.shop</span></h1>
+<p class="sub">25 auditorías en 6 áreas · 6 críticas (P0) · Cada item tiene su carpeta con el prompt para Claude Code y los pasos a seguir después.</p>
+<p style="margin:14px 0 0"><span class="pill">🔐 Seguridad</span><span class="pill">💳 Pagos</span><span class="pill">⚡ Rendimiento</span><span class="pill">🛒 Conversión</span><span class="pill">🔏 Datos</span><span class="pill">🛟 Confiabilidad</span></p>
+</div>
+
+<h2>Cómo usar este plan</h2>
+<ol class="steps">
+<li><span class="n">1</span><div><b>Elige el siguiente item</b> según el cuadro de prioridades (empieza por los P0, de arriba hacia abajo).</div></li>
+<li><span class="n">2</span><div><b>Abre su <span class="path">prompt.md</span></b> y pega el prompt completo en Claude Code dentro del repo. La auditoría generará <span class="path">REPORTE.md</span> con hallazgos y <span class="path">BUENAS_PRACTICAS.md</span> con las reglas que Claude Code seguirá desde entonces.</div></li>
+<li><span class="n">3</span><div><b>Abre <span class="path">despues-de-la-auditoria.html</span></b> del mismo item y aplica los fixes en orden: primero 🔴 crítico, luego 🟠 importante, al final 🟢 opcional.</div></li>
+<li><span class="n">4</span><div><b>Marca el item como hecho</b> (columna Estado del reporte) y pasa al siguiente. Re-corre la auditoría cada 2–3 meses o tras cambios grandes en esa área.</div></li>
+</ol>
+
+<h2>Niveles de prioridad</h2>
+<div class="legend"><div class="card" style="border-left:5px solid #E5484D">
+<span class="badge" style="color:#E5484D;background:#FDEBEC">P0 · Crítico</span>
+<p style="margin:10px 0 4px;font-weight:900;font-size:14px">Hazlo esta semana</p>
+<p style="margin:0;font-size:13px;color:var(--ink-lighter)">Riesgo directo de pérdida de dinero, datos de clientes o caída del negocio.</p></div><div class="card" style="border-left:5px solid #B7791F">
+<span class="badge" style="color:#B7791F;background:#FDF3E1">P1 · Importante</span>
+<p style="margin:10px 0 4px;font-weight:900;font-size:14px">Hazlo este mes</p>
+<p style="margin:0;font-size:13px;color:var(--ink-lighter)">Impacto alto en ventas, confianza o mantenibilidad; no es incendio, pero no lo dejes enfriar.</p></div><div class="card" style="border-left:5px solid #1FA971">
+<span class="badge" style="color:#1FA971;background:#E6F6EF">P2 · Mejora</span>
+<p style="margin:10px 0 4px;font-weight:900;font-size:14px">Cuando lo anterior esté hecho</p>
+<p style="margin:0;font-size:13px;color:var(--ink-lighter)">Optimizaciones que suman; hazlas de forma continua después de P0 y P1.</p></div></div>
+
+<h2>Cuadro de prioridades — todas las auditorías</h2>
+<div class="card" style="padding:6px 4px;overflow-x:auto">
+<table>
+<thead><tr><th>Prioridad</th><th>Sección</th><th>Auditoría</th><th>Carpeta</th></tr></thead>
+<tbody><tr>
+<td><span class="badge" style="color:#E5484D;background:#FDEBEC">P0 · Crítico</span></td>
+<td style="font-weight:700;white-space:nowrap">🔐 Seguridad</td>
+<td><a href="seguridad/autenticacion-admin/prompt.md" style="font-weight:900">Autenticación y autorización del panel admin</a><br>
+<span style="color:var(--ink-lighter);font-size:12px">El panel admin usa una contraseña compartida con cookie firmada (ADMIN_PASSWORD / ADMIN_SESSION_SECRET). Si una sola ruta /api/admin/* queda sin prote…</span></td>
+<td><span class="path">/audits/seguridad/autenticacion-admin/</span><br>
+<a href="seguridad/autenticacion-admin/prompt.md" style="font-size:12px;font-weight:700">prompt.md</a> ·
+<a href="seguridad/autenticacion-admin/despues-de-la-auditoria.html" style="font-size:12px;font-weight:700">pasos después</a></td>
+</tr><tr>
+<td><span class="badge" style="color:#E5484D;background:#FDEBEC">P0 · Crítico</span></td>
+<td style="font-weight:700;white-space:nowrap">🔐 Seguridad</td>
+<td><a href="seguridad/rls-supabase/prompt.md" style="font-weight:900">Row Level Security (RLS) en Supabase</a><br>
+<span style="color:var(--ink-lighter);font-size:12px">La SUPABASE_SERVICE_ROLE_KEY se salta todas las políticas RLS. Si la anon key permite leer tablas sin políticas correctas, cualquiera con la URL públi…</span></td>
+<td><span class="path">/audits/seguridad/rls-supabase/</span><br>
+<a href="seguridad/rls-supabase/prompt.md" style="font-size:12px;font-weight:700">prompt.md</a> ·
+<a href="seguridad/rls-supabase/despues-de-la-auditoria.html" style="font-size:12px;font-weight:700">pasos después</a></td>
+</tr><tr>
+<td><span class="badge" style="color:#E5484D;background:#FDEBEC">P0 · Crítico</span></td>
+<td style="font-weight:700;white-space:nowrap">🔐 Seguridad</td>
+<td><a href="seguridad/validacion-inputs/prompt.md" style="font-weight:900">Validación de inputs y subida de archivos</a><br>
+<span style="color:var(--ink-lighter);font-size:12px">El checkout recibe fotos de clientes, textos libres (specialRequests) y parámetros de precio. Un archivo malicioso o un input sin sanitizar puede conv…</span></td>
+<td><span class="path">/audits/seguridad/validacion-inputs/</span><br>
+<a href="seguridad/validacion-inputs/prompt.md" style="font-size:12px;font-weight:700">prompt.md</a> ·
+<a href="seguridad/validacion-inputs/despues-de-la-auditoria.html" style="font-size:12px;font-weight:700">pasos después</a></td>
+</tr><tr>
+<td><span class="badge" style="color:#E5484D;background:#FDEBEC">P0 · Crítico</span></td>
+<td style="font-weight:700;white-space:nowrap">💳 Pagos y dinero</td>
+<td><a href="pagos-y-dinero/integridad-precios/prompt.md" style="font-weight:900">Integridad de precios end-to-end</a><br>
+<span style="color:var(--ink-lighter);font-size:12px">El proyecto ya usa pricing autoritativo del servidor (buena señal), pero basta un solo campo confiado al cliente (rate de moneda, rateId de envío, add…</span></td>
+<td><span class="path">/audits/pagos-y-dinero/integridad-precios/</span><br>
+<a href="pagos-y-dinero/integridad-precios/prompt.md" style="font-size:12px;font-weight:700">prompt.md</a> ·
+<a href="pagos-y-dinero/integridad-precios/despues-de-la-auditoria.html" style="font-size:12px;font-weight:700">pasos después</a></td>
+</tr><tr>
+<td><span class="badge" style="color:#E5484D;background:#FDEBEC">P0 · Crítico</span></td>
+<td style="font-weight:700;white-space:nowrap">💳 Pagos y dinero</td>
+<td><a href="pagos-y-dinero/webhooks/prompt.md" style="font-weight:900">Webhooks de pago (PayPal / Mercado Pago / legacy)</a><br>
+<span style="color:var(--ink-lighter);font-size:12px">El webhook es quien marca el pedido como pagado. Si la firma no se verifica, cualquiera puede marcar pedidos como pagados gratis; si un evento se pier…</span></td>
+<td><span class="path">/audits/pagos-y-dinero/webhooks/</span><br>
+<a href="pagos-y-dinero/webhooks/prompt.md" style="font-size:12px;font-weight:700">prompt.md</a> ·
+<a href="pagos-y-dinero/webhooks/despues-de-la-auditoria.html" style="font-size:12px;font-weight:700">pasos después</a></td>
+</tr><tr>
+<td><span class="badge" style="color:#E5484D;background:#FDEBEC">P0 · Crítico</span></td>
+<td style="font-weight:700;white-space:nowrap">🛟 Confiabilidad y operación</td>
+<td><a href="confiabilidad/manejo-errores/prompt.md" style="font-weight:900">Manejo de errores y estados de fallo</a><br>
+<span style="color:var(--ink-lighter);font-size:12px">Ya viste el patrón peligroso en vivo: la ventana de PayPal en blanco sin ningún mensaje. Cada error silencioso es un cliente que se va (o peor: que pa…</span></td>
+<td><span class="path">/audits/confiabilidad/manejo-errores/</span><br>
+<a href="confiabilidad/manejo-errores/prompt.md" style="font-size:12px;font-weight:700">prompt.md</a> ·
+<a href="confiabilidad/manejo-errores/despues-de-la-auditoria.html" style="font-size:12px;font-weight:700">pasos después</a></td>
+</tr><tr>
+<td><span class="badge" style="color:#B7791F;background:#FDF3E1">P1 · Importante</span></td>
+<td style="font-weight:700;white-space:nowrap">🔐 Seguridad</td>
+<td><a href="seguridad/csp-headers/prompt.md" style="font-weight:900">CSP y headers de seguridad</a><br>
+<span style="color:var(--ink-lighter);font-size:12px">Ya apareció un bug real: la CSP bloqueaba el SDK de PayPal (y el script de Ahrefs). Una CSP correcta es tu mejor defensa contra XSS, pero mal mantenid…</span></td>
+<td><span class="path">/audits/seguridad/csp-headers/</span><br>
+<a href="seguridad/csp-headers/prompt.md" style="font-size:12px;font-weight:700">prompt.md</a> ·
+<a href="seguridad/csp-headers/despues-de-la-auditoria.html" style="font-size:12px;font-weight:700">pasos después</a></td>
+</tr><tr>
+<td><span class="badge" style="color:#B7791F;background:#FDF3E1">P1 · Importante</span></td>
+<td style="font-weight:700;white-space:nowrap">🔐 Seguridad</td>
+<td><a href="seguridad/rate-limiting-antiabuso/prompt.md" style="font-weight:900">Rate limiting y anti-abuso</a><br>
+<span style="color:var(--ink-lighter);font-size:12px">Sin Redis compartido (Upstash), el rate limiting cae a memoria por instancia serverless: en Vercel eso significa que casi no limita. Bots pueden spame…</span></td>
+<td><span class="path">/audits/seguridad/rate-limiting-antiabuso/</span><br>
+<a href="seguridad/rate-limiting-antiabuso/prompt.md" style="font-size:12px;font-weight:700">prompt.md</a> ·
+<a href="seguridad/rate-limiting-antiabuso/despues-de-la-auditoria.html" style="font-size:12px;font-weight:700">pasos después</a></td>
+</tr><tr>
+<td><span class="badge" style="color:#B7791F;background:#FDF3E1">P1 · Importante</span></td>
+<td style="font-weight:700;white-space:nowrap">🔐 Seguridad</td>
+<td><a href="seguridad/secretos-dependencias/prompt.md" style="font-weight:900">Secretos y dependencias vulnerables</a><br>
+<span style="color:var(--ink-lighter);font-size:12px">Una clave filtrada en el historial de git o un paquete npm con CVE conocido comprometen todo lo demás aunque el código propio sea perfecto.…</span></td>
+<td><span class="path">/audits/seguridad/secretos-dependencias/</span><br>
+<a href="seguridad/secretos-dependencias/prompt.md" style="font-size:12px;font-weight:700">prompt.md</a> ·
+<a href="seguridad/secretos-dependencias/despues-de-la-auditoria.html" style="font-size:12px;font-weight:700">pasos después</a></td>
+</tr><tr>
+<td><span class="badge" style="color:#B7791F;background:#FDF3E1">P1 · Importante</span></td>
+<td style="font-weight:700;white-space:nowrap">💳 Pagos y dinero</td>
+<td><a href="pagos-y-dinero/conciliacion-pedidos/prompt.md" style="font-weight:900">Conciliación de pedidos y reembolsos</a><br>
+<span style="color:var(--ink-lighter);font-size:12px">Entre &#x27;el cliente pagó&#x27; y &#x27;el pedido aparece pagado en tu admin&#x27; hay varios puntos de falla. Sin conciliación, pierdes pedidos pagados (cliente furios…</span></td>
+<td><span class="path">/audits/pagos-y-dinero/conciliacion-pedidos/</span><br>
+<a href="pagos-y-dinero/conciliacion-pedidos/prompt.md" style="font-size:12px;font-weight:700">prompt.md</a> ·
+<a href="pagos-y-dinero/conciliacion-pedidos/despues-de-la-auditoria.html" style="font-size:12px;font-weight:700">pasos después</a></td>
+</tr><tr>
+<td><span class="badge" style="color:#B7791F;background:#FDF3E1">P1 · Importante</span></td>
+<td style="font-weight:700;white-space:nowrap">⚡ Rendimiento</td>
+<td><a href="rendimiento/core-web-vitals/prompt.md" style="font-weight:900">Core Web Vitals (Lighthouse)</a><br>
+<span style="color:var(--ink-lighter);font-size:12px">LCP, CLS e INP afectan tanto la conversión como el ranking en Google. Un e-commerce visual como NEGASVA (imágenes grandes de estilos) es especialmente…</span></td>
+<td><span class="path">/audits/rendimiento/core-web-vitals/</span><br>
+<a href="rendimiento/core-web-vitals/prompt.md" style="font-size:12px;font-weight:700">prompt.md</a> ·
+<a href="rendimiento/core-web-vitals/despues-de-la-auditoria.html" style="font-size:12px;font-weight:700">pasos después</a></td>
+</tr><tr>
+<td><span class="badge" style="color:#B7791F;background:#FDF3E1">P1 · Importante</span></td>
+<td style="font-weight:700;white-space:nowrap">⚡ Rendimiento</td>
+<td><a href="rendimiento/imagenes/prompt.md" style="font-weight:900">Optimización de imágenes</a><br>
+<span style="color:var(--ink-lighter);font-size:12px">Los retratos y fondos son el corazón visual del sitio y su mayor peso. Ya hay avif/webp y remotePatterns de Supabase configurados — falta verificar qu…</span></td>
+<td><span class="path">/audits/rendimiento/imagenes/</span><br>
+<a href="rendimiento/imagenes/prompt.md" style="font-size:12px;font-weight:700">prompt.md</a> ·
+<a href="rendimiento/imagenes/despues-de-la-auditoria.html" style="font-size:12px;font-weight:700">pasos después</a></td>
+</tr><tr>
+<td><span class="badge" style="color:#B7791F;background:#FDF3E1">P1 · Importante</span></td>
+<td style="font-weight:700;white-space:nowrap">⚡ Rendimiento</td>
+<td><a href="rendimiento/bundle-checkout/prompt.md" style="font-weight:900">Bundle JS y peso del checkout</a><br>
+<span style="color:var(--ink-lighter);font-size:12px">app/order/page.tsx tiene ~39 KB de código fuente y carga los SDKs de PayPal, Mercado Pago, reCAPTCHA y compresión de imágenes. Cada KB de JS en el che…</span></td>
+<td><span class="path">/audits/rendimiento/bundle-checkout/</span><br>
+<a href="rendimiento/bundle-checkout/prompt.md" style="font-size:12px;font-weight:700">prompt.md</a> ·
+<a href="rendimiento/bundle-checkout/despues-de-la-auditoria.html" style="font-size:12px;font-weight:700">pasos después</a></td>
+</tr><tr>
+<td><span class="badge" style="color:#B7791F;background:#FDF3E1">P1 · Importante</span></td>
+<td style="font-weight:700;white-space:nowrap">🛒 Conversión y UX de venta</td>
+<td><a href="conversion/friccion-checkout/prompt.md" style="font-weight:900">Fricción en el funnel de checkout</a><br>
+<span style="color:var(--ink-lighter);font-size:12px">El wizard tiene 5 pasos + subida de fotos + cálculo de envío. Cada punto de espera o confusión (como la ventana en blanco de PayPal que ya viste) es u…</span></td>
+<td><span class="path">/audits/conversion/friccion-checkout/</span><br>
+<a href="conversion/friccion-checkout/prompt.md" style="font-size:12px;font-weight:700">prompt.md</a> ·
+<a href="conversion/friccion-checkout/despues-de-la-auditoria.html" style="font-size:12px;font-weight:700">pasos después</a></td>
+</tr><tr>
+<td><span class="badge" style="color:#B7791F;background:#FDF3E1">P1 · Importante</span></td>
+<td style="font-weight:700;white-space:nowrap">🛒 Conversión y UX de venta</td>
+<td><a href="conversion/senales-confianza/prompt.md" style="font-weight:900">Señales de confianza</a><br>
+<span style="color:var(--ink-lighter);font-size:12px">Comprar un retrato custom a una tienda desconocida requiere fe. Reseñas, ejemplos reales, garantías y políticas visibles convierten escépticos en comp…</span></td>
+<td><span class="path">/audits/conversion/senales-confianza/</span><br>
+<a href="conversion/senales-confianza/prompt.md" style="font-size:12px;font-weight:700">prompt.md</a> ·
+<a href="conversion/senales-confianza/despues-de-la-auditoria.html" style="font-size:12px;font-weight:700">pasos después</a></td>
+</tr><tr>
+<td><span class="badge" style="color:#B7791F;background:#FDF3E1">P1 · Importante</span></td>
+<td style="font-weight:700;white-space:nowrap">🛒 Conversión y UX de venta</td>
+<td><a href="conversion/mobile-responsive/prompt.md" style="font-weight:900">Experiencia móvil</a><br>
+<span style="color:var(--ink-lighter);font-size:12px">La mayoría del tráfico de e-commerce B2C es móvil, y el flujo NEGASVA (subir fotos, wizard de 5 pasos, popup de PayPal) es especialmente sensible a pa…</span></td>
+<td><span class="path">/audits/conversion/mobile-responsive/</span><br>
+<a href="conversion/mobile-responsive/prompt.md" style="font-size:12px;font-weight:700">prompt.md</a> ·
+<a href="conversion/mobile-responsive/despues-de-la-auditoria.html" style="font-size:12px;font-weight:700">pasos después</a></td>
+</tr><tr>
+<td><span class="badge" style="color:#B7791F;background:#FDF3E1">P1 · Importante</span></td>
+<td style="font-weight:700;white-space:nowrap">🔏 Datos y privacidad</td>
+<td><a href="datos-y-privacidad/datos-personales-fotos/prompt.md" style="font-weight:900">Ciclo de vida de fotos y datos personales</a><br>
+<span style="color:var(--ink-lighter);font-size:12px">Guardas fotos de familias (a veces niños) para pintar retratos. Definir cuánto tiempo se guardan, quién accede y cómo se borran no es opcional: es lo …</span></td>
+<td><span class="path">/audits/datos-y-privacidad/datos-personales-fotos/</span><br>
+<a href="datos-y-privacidad/datos-personales-fotos/prompt.md" style="font-size:12px;font-weight:700">prompt.md</a> ·
+<a href="datos-y-privacidad/datos-personales-fotos/despues-de-la-auditoria.html" style="font-size:12px;font-weight:700">pasos después</a></td>
+</tr><tr>
+<td><span class="badge" style="color:#B7791F;background:#FDF3E1">P1 · Importante</span></td>
+<td style="font-weight:700;white-space:nowrap">🔏 Datos y privacidad</td>
+<td><a href="datos-y-privacidad/cumplimiento-legal/prompt.md" style="font-weight:900">Cumplimiento legal (GDPR / Habeas Data / cookies)</a><br>
+<span style="color:var(--ink-lighter);font-size:12px">Vendes a EU (EUR/GBP), Norteamérica y Colombia: aplican GDPR, leyes de Habeas Data colombiana y reglas de cookies. Además PayPal/MP pueden pedir polít…</span></td>
+<td><span class="path">/audits/datos-y-privacidad/cumplimiento-legal/</span><br>
+<a href="datos-y-privacidad/cumplimiento-legal/prompt.md" style="font-size:12px;font-weight:700">prompt.md</a> ·
+<a href="datos-y-privacidad/cumplimiento-legal/despues-de-la-auditoria.html" style="font-size:12px;font-weight:700">pasos después</a></td>
+</tr><tr>
+<td><span class="badge" style="color:#B7791F;background:#FDF3E1">P1 · Importante</span></td>
+<td style="font-weight:700;white-space:nowrap">🛟 Confiabilidad y operación</td>
+<td><a href="confiabilidad/monitoreo-alertas/prompt.md" style="font-weight:900">Monitoreo, logging y alertas</a><br>
+<span style="color:var(--ink-lighter);font-size:12px">Hoy los errores viven en console.error de funciones serverless: nadie los lee. Sin alertas, un webhook roto puede pasar días perdiendo pedidos sin que…</span></td>
+<td><span class="path">/audits/confiabilidad/monitoreo-alertas/</span><br>
+<a href="confiabilidad/monitoreo-alertas/prompt.md" style="font-size:12px;font-weight:700">prompt.md</a> ·
+<a href="confiabilidad/monitoreo-alertas/despues-de-la-auditoria.html" style="font-size:12px;font-weight:700">pasos después</a></td>
+</tr><tr>
+<td><span class="badge" style="color:#B7791F;background:#FDF3E1">P1 · Importante</span></td>
+<td style="font-weight:700;white-space:nowrap">🛟 Confiabilidad y operación</td>
+<td><a href="confiabilidad/backups-recuperacion/prompt.md" style="font-weight:900">Backups y recuperación ante desastres</a><br>
+<span style="color:var(--ink-lighter);font-size:12px">Un DROP TABLE accidental, una migración mala o la suspensión del proyecto Supabase (plan free se pausa por inactividad — de ahí el keepalive) pueden b…</span></td>
+<td><span class="path">/audits/confiabilidad/backups-recuperacion/</span><br>
+<a href="confiabilidad/backups-recuperacion/prompt.md" style="font-size:12px;font-weight:700">prompt.md</a> ·
+<a href="confiabilidad/backups-recuperacion/despues-de-la-auditoria.html" style="font-size:12px;font-weight:700">pasos después</a></td>
+</tr><tr>
+<td><span class="badge" style="color:#1FA971;background:#E6F6EF">P2 · Mejora</span></td>
+<td style="font-weight:700;white-space:nowrap">💳 Pagos y dinero</td>
+<td><a href="pagos-y-dinero/codigos-descuento/prompt.md" style="font-weight:900">Códigos de descuento y promociones</a><br>
+<span style="color:var(--ink-lighter);font-size:12px">Un código mal limitado (sin expiración, sin tope de usos, acumulable) es dinero que se escapa silenciosamente. También son objetivo de fuerza bruta.…</span></td>
+<td><span class="path">/audits/pagos-y-dinero/codigos-descuento/</span><br>
+<a href="pagos-y-dinero/codigos-descuento/prompt.md" style="font-size:12px;font-weight:700">prompt.md</a> ·
+<a href="pagos-y-dinero/codigos-descuento/despues-de-la-auditoria.html" style="font-size:12px;font-weight:700">pasos después</a></td>
+</tr><tr>
+<td><span class="badge" style="color:#1FA971;background:#E6F6EF">P2 · Mejora</span></td>
+<td style="font-weight:700;white-space:nowrap">⚡ Rendimiento</td>
+<td><a href="rendimiento/caching-api/prompt.md" style="font-weight:900">Caching de API y datos</a><br>
+<span style="color:var(--ink-lighter);font-size:12px">El catálogo (estilos, precios, fondos) casi no cambia pero se consulta en cada visita. Buen caching reduce latencia y carga sobre Supabase (y ya exist…</span></td>
+<td><span class="path">/audits/rendimiento/caching-api/</span><br>
+<a href="rendimiento/caching-api/prompt.md" style="font-size:12px;font-weight:700">prompt.md</a> ·
+<a href="rendimiento/caching-api/despues-de-la-auditoria.html" style="font-size:12px;font-weight:700">pasos después</a></td>
+</tr><tr>
+<td><span class="badge" style="color:#1FA971;background:#E6F6EF">P2 · Mejora</span></td>
+<td style="font-weight:700;white-space:nowrap">🛒 Conversión y UX de venta</td>
+<td><a href="conversion/accesibilidad/prompt.md" style="font-weight:900">Accesibilidad (a11y)</a><br>
+<span style="color:var(--ink-lighter);font-size:12px">Contraste, teclado y lectores de pantalla amplían tu mercado, mejoran SEO y reducen riesgo legal. El rosa claro sobre blanco del branding es un punto …</span></td>
+<td><span class="path">/audits/conversion/accesibilidad/</span><br>
+<a href="conversion/accesibilidad/prompt.md" style="font-size:12px;font-weight:700">prompt.md</a> ·
+<a href="conversion/accesibilidad/despues-de-la-auditoria.html" style="font-size:12px;font-weight:700">pasos después</a></td>
+</tr><tr>
+<td><span class="badge" style="color:#1FA971;background:#E6F6EF">P2 · Mejora</span></td>
+<td style="font-weight:700;white-space:nowrap">🛒 Conversión y UX de venta</td>
+<td><a href="conversion/copy-cta/prompt.md" style="font-weight:900">Copy, CTAs e idiomas</a><br>
+<span style="color:var(--ink-lighter);font-size:12px">El sitio vende en 3 idiomas (EN/ES/FR) y 6 monedas. Un CTA débil o una traducción a medias en el momento del pago genera desconfianza justo donde más …</span></td>
+<td><span class="path">/audits/conversion/copy-cta/</span><br>
+<a href="conversion/copy-cta/prompt.md" style="font-size:12px;font-weight:700">prompt.md</a> ·
+<a href="conversion/copy-cta/despues-de-la-auditoria.html" style="font-size:12px;font-weight:700">pasos después</a></td>
+</tr><tr>
+<td><span class="badge" style="color:#1FA971;background:#E6F6EF">P2 · Mejora</span></td>
+<td style="font-weight:700;white-space:nowrap">🔏 Datos y privacidad</td>
+<td><a href="datos-y-privacidad/analitica-eventos/prompt.md" style="font-weight:900">Analítica y eventos de negocio</a><br>
+<span style="color:var(--ink-lighter);font-size:12px">Sin eventos bien instrumentados no sabes dónde pierdes ventas ni si un cambio mejoró algo. Hoy hay GA y Ahrefs, pero ¿registran el funnel y las compra…</span></td>
+<td><span class="path">/audits/datos-y-privacidad/analitica-eventos/</span><br>
+<a href="datos-y-privacidad/analitica-eventos/prompt.md" style="font-size:12px;font-weight:700">prompt.md</a> ·
+<a href="datos-y-privacidad/analitica-eventos/despues-de-la-auditoria.html" style="font-size:12px;font-weight:700">pasos después</a></td>
+</tr></tbody>
+</table>
+</div>
+
+<h2>Por sección</h2>
+<div class="grid"><div class="card">
+<h3 style="font-size:18px">🔐 Seguridad</h3>
+<p style="margin:6px 0 8px;font-size:13px;color:var(--ink-lighter)">Protege el sitio, el panel admin y los datos de tus clientes contra accesos no autorizados y abuso.</p>
+<ul style="list-style:none;margin:0;padding:0"><li style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 0;border-bottom:1px dashed var(--pink-lighter)">
+<a href="seguridad/autenticacion-admin/prompt.md" style="font-weight:700;font-size:13.5px">Autenticación y autorización del panel admin</a>
+<span class="badge" style="color:#E5484D;background:#FDEBEC">P0 · Crítico</span></li><li style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 0;border-bottom:1px dashed var(--pink-lighter)">
+<a href="seguridad/rls-supabase/prompt.md" style="font-weight:700;font-size:13.5px">Row Level Security (RLS) en Supabase</a>
+<span class="badge" style="color:#E5484D;background:#FDEBEC">P0 · Crítico</span></li><li style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 0;border-bottom:1px dashed var(--pink-lighter)">
+<a href="seguridad/validacion-inputs/prompt.md" style="font-weight:700;font-size:13.5px">Validación de inputs y subida de archivos</a>
+<span class="badge" style="color:#E5484D;background:#FDEBEC">P0 · Crítico</span></li><li style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 0;border-bottom:1px dashed var(--pink-lighter)">
+<a href="seguridad/csp-headers/prompt.md" style="font-weight:700;font-size:13.5px">CSP y headers de seguridad</a>
+<span class="badge" style="color:#B7791F;background:#FDF3E1">P1 · Importante</span></li><li style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 0;border-bottom:1px dashed var(--pink-lighter)">
+<a href="seguridad/rate-limiting-antiabuso/prompt.md" style="font-weight:700;font-size:13.5px">Rate limiting y anti-abuso</a>
+<span class="badge" style="color:#B7791F;background:#FDF3E1">P1 · Importante</span></li><li style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 0;border-bottom:1px dashed var(--pink-lighter)">
+<a href="seguridad/secretos-dependencias/prompt.md" style="font-weight:700;font-size:13.5px">Secretos y dependencias vulnerables</a>
+<span class="badge" style="color:#B7791F;background:#FDF3E1">P1 · Importante</span></li></ul></div><div class="card">
+<h3 style="font-size:18px">💳 Pagos y dinero</h3>
+<p style="margin:6px 0 8px;font-size:13px;color:var(--ink-lighter)">Que cada peso que ve el cliente sea el que se cobra, que ningún pedido pagado se pierda y que nadie pueda manipular precios.</p>
+<ul style="list-style:none;margin:0;padding:0"><li style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 0;border-bottom:1px dashed var(--pink-lighter)">
+<a href="pagos-y-dinero/integridad-precios/prompt.md" style="font-weight:700;font-size:13.5px">Integridad de precios end-to-end</a>
+<span class="badge" style="color:#E5484D;background:#FDEBEC">P0 · Crítico</span></li><li style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 0;border-bottom:1px dashed var(--pink-lighter)">
+<a href="pagos-y-dinero/webhooks/prompt.md" style="font-weight:700;font-size:13.5px">Webhooks de pago (PayPal / Mercado Pago / legacy)</a>
+<span class="badge" style="color:#E5484D;background:#FDEBEC">P0 · Crítico</span></li><li style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 0;border-bottom:1px dashed var(--pink-lighter)">
+<a href="pagos-y-dinero/conciliacion-pedidos/prompt.md" style="font-weight:700;font-size:13.5px">Conciliación de pedidos y reembolsos</a>
+<span class="badge" style="color:#B7791F;background:#FDF3E1">P1 · Importante</span></li><li style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 0;border-bottom:1px dashed var(--pink-lighter)">
+<a href="pagos-y-dinero/codigos-descuento/prompt.md" style="font-weight:700;font-size:13.5px">Códigos de descuento y promociones</a>
+<span class="badge" style="color:#1FA971;background:#E6F6EF">P2 · Mejora</span></li></ul></div><div class="card">
+<h3 style="font-size:18px">⚡ Rendimiento</h3>
+<p style="margin:6px 0 8px;font-size:13px;color:var(--ink-lighter)">Velocidad de carga y fluidez, sobre todo en móvil: cada segundo extra en el checkout cuesta conversiones.</p>
+<ul style="list-style:none;margin:0;padding:0"><li style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 0;border-bottom:1px dashed var(--pink-lighter)">
+<a href="rendimiento/core-web-vitals/prompt.md" style="font-weight:700;font-size:13.5px">Core Web Vitals (Lighthouse)</a>
+<span class="badge" style="color:#B7791F;background:#FDF3E1">P1 · Importante</span></li><li style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 0;border-bottom:1px dashed var(--pink-lighter)">
+<a href="rendimiento/imagenes/prompt.md" style="font-weight:700;font-size:13.5px">Optimización de imágenes</a>
+<span class="badge" style="color:#B7791F;background:#FDF3E1">P1 · Importante</span></li><li style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 0;border-bottom:1px dashed var(--pink-lighter)">
+<a href="rendimiento/bundle-checkout/prompt.md" style="font-weight:700;font-size:13.5px">Bundle JS y peso del checkout</a>
+<span class="badge" style="color:#B7791F;background:#FDF3E1">P1 · Importante</span></li><li style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 0;border-bottom:1px dashed var(--pink-lighter)">
+<a href="rendimiento/caching-api/prompt.md" style="font-weight:700;font-size:13.5px">Caching de API y datos</a>
+<span class="badge" style="color:#1FA971;background:#E6F6EF">P2 · Mejora</span></li></ul></div><div class="card">
+<h3 style="font-size:18px">🛒 Conversión y UX de venta</h3>
+<p style="margin:6px 0 8px;font-size:13px;color:var(--ink-lighter)">Que el máximo de visitantes termine pagando: menos fricción, más confianza y una experiencia móvil impecable.</p>
+<ul style="list-style:none;margin:0;padding:0"><li style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 0;border-bottom:1px dashed var(--pink-lighter)">
+<a href="conversion/friccion-checkout/prompt.md" style="font-weight:700;font-size:13.5px">Fricción en el funnel de checkout</a>
+<span class="badge" style="color:#B7791F;background:#FDF3E1">P1 · Importante</span></li><li style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 0;border-bottom:1px dashed var(--pink-lighter)">
+<a href="conversion/senales-confianza/prompt.md" style="font-weight:700;font-size:13.5px">Señales de confianza</a>
+<span class="badge" style="color:#B7791F;background:#FDF3E1">P1 · Importante</span></li><li style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 0;border-bottom:1px dashed var(--pink-lighter)">
+<a href="conversion/mobile-responsive/prompt.md" style="font-weight:700;font-size:13.5px">Experiencia móvil</a>
+<span class="badge" style="color:#B7791F;background:#FDF3E1">P1 · Importante</span></li><li style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 0;border-bottom:1px dashed var(--pink-lighter)">
+<a href="conversion/accesibilidad/prompt.md" style="font-weight:700;font-size:13.5px">Accesibilidad (a11y)</a>
+<span class="badge" style="color:#1FA971;background:#E6F6EF">P2 · Mejora</span></li><li style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 0;border-bottom:1px dashed var(--pink-lighter)">
+<a href="conversion/copy-cta/prompt.md" style="font-weight:700;font-size:13.5px">Copy, CTAs e idiomas</a>
+<span class="badge" style="color:#1FA971;background:#E6F6EF">P2 · Mejora</span></li></ul></div><div class="card">
+<h3 style="font-size:18px">🔏 Datos y privacidad</h3>
+<p style="margin:6px 0 8px;font-size:13px;color:var(--ink-lighter)">Fotos y datos personales de clientes tratados con cuidado: cumplimiento legal y analítica que sí sirva para decidir.</p>
+<ul style="list-style:none;margin:0;padding:0"><li style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 0;border-bottom:1px dashed var(--pink-lighter)">
+<a href="datos-y-privacidad/datos-personales-fotos/prompt.md" style="font-weight:700;font-size:13.5px">Ciclo de vida de fotos y datos personales</a>
+<span class="badge" style="color:#B7791F;background:#FDF3E1">P1 · Importante</span></li><li style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 0;border-bottom:1px dashed var(--pink-lighter)">
+<a href="datos-y-privacidad/cumplimiento-legal/prompt.md" style="font-weight:700;font-size:13.5px">Cumplimiento legal (GDPR / Habeas Data / cookies)</a>
+<span class="badge" style="color:#B7791F;background:#FDF3E1">P1 · Importante</span></li><li style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 0;border-bottom:1px dashed var(--pink-lighter)">
+<a href="datos-y-privacidad/analitica-eventos/prompt.md" style="font-weight:700;font-size:13.5px">Analítica y eventos de negocio</a>
+<span class="badge" style="color:#1FA971;background:#E6F6EF">P2 · Mejora</span></li></ul></div><div class="card">
+<h3 style="font-size:18px">🛟 Confiabilidad y operación</h3>
+<p style="margin:6px 0 8px;font-size:13px;color:var(--ink-lighter)">Que cuando algo falle te enteres tú antes que el cliente, y que ningún fallo sea silencioso ni irrecuperable.</p>
+<ul style="list-style:none;margin:0;padding:0"><li style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 0;border-bottom:1px dashed var(--pink-lighter)">
+<a href="confiabilidad/manejo-errores/prompt.md" style="font-weight:700;font-size:13.5px">Manejo de errores y estados de fallo</a>
+<span class="badge" style="color:#E5484D;background:#FDEBEC">P0 · Crítico</span></li><li style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 0;border-bottom:1px dashed var(--pink-lighter)">
+<a href="confiabilidad/monitoreo-alertas/prompt.md" style="font-weight:700;font-size:13.5px">Monitoreo, logging y alertas</a>
+<span class="badge" style="color:#B7791F;background:#FDF3E1">P1 · Importante</span></li><li style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 0;border-bottom:1px dashed var(--pink-lighter)">
+<a href="confiabilidad/backups-recuperacion/prompt.md" style="font-weight:700;font-size:13.5px">Backups y recuperación ante desastres</a>
+<span class="badge" style="color:#B7791F;background:#FDF3E1">P1 · Importante</span></li></ul></div></div>
+
+<div class="footer">NEGASVA · Plan de auditorías · Generado con Claude · Empieza siempre por los P0</div>
+</div></body></html>
