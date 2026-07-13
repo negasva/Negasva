@@ -58,9 +58,18 @@ Create `.env.local`:
 NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGc...
 
-# Stripe (from Dashboard → API Keys)
-NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_...
-STRIPE_SECRET_KEY=sk_test_...
+# PayPal (from https://developer.paypal.com)
+NEXT_PUBLIC_PAYPAL_CLIENT_ID=...
+PAYPAL_SECRET=...
+PAYPAL_WEBHOOK_ID=...
+
+# Mercado Pago (from https://www.mercadopago.com/developers)
+NEXT_PUBLIC_MERCADOPAGO_PUBLIC_KEY=...
+MERCADOPAGO_ACCESS_TOKEN=...
+MERCADOPAGO_WEBHOOK_SECRET=...
+
+# Printful (from https://www.printful.com)
+PRINTFUL_API_KEY=...
 
 # Google reCAPTCHA v3 (from https://www.google.com/recaptcha/admin)
 NEXT_PUBLIC_RECAPTCHA_SITE_KEY=6Le...
@@ -68,6 +77,10 @@ RECAPTCHA_SECRET_KEY=6Le...
 
 # Resend Email (from https://resend.com)
 RESEND_API_KEY=re_...
+
+# Upstash Redis (rate limiting, from https://upstash.com)
+UPSTASH_REDIS_REST_URL=...
+UPSTASH_REDIS_REST_TOKEN=...
 
 # Google Analytics (optional, from https://analytics.google.com)
 NEXT_PUBLIC_GA_ID=G-...
@@ -90,7 +103,7 @@ Read **IMPLEMENTATION_GUIDE.md** for exact instructions on:
 
 1. **Week 2**: Build the 6-step wizard components
 2. **Week 3**: Create backend API routes
-3. **Week 4**: Integrate Stripe payments
+3. **Week 4**: Integrate PayPal + Mercado Pago payments
 
 Each step has code examples and testing instructions.
 
@@ -136,10 +149,10 @@ npm run lint      # Check code
 
 ---
 
-## Test Card for Stripe
-- **Number**: 4242 4242 4242 4242
-- **Expiry**: Any future date (12/25)
-- **CVC**: Any 3 digits (123)
+## Test Card for PayPal (sandbox)
+- **Number**: 4032 0324 5074 5013
+- **Expiry**: Any future date
+- **CVC**: Any 3 digits
 
 ---
 
