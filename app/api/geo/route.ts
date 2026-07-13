@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { rateLimitByIp } from '@/lib/security/apiHelpers';
 
 // País del visitante por la cabecera de geolocalización de Vercel. Lista
 // LATAM configurable por env (LATAM_COUNTRIES, ISO-3166 separados por coma).
@@ -9,6 +10,9 @@ export const dynamic = 'force-dynamic';
 const LATAM_DEFAULT = 'AR,BO,BR,CL,CO,CR,CU,DO,EC,GT,HN,MX,NI,PA,PE,PR,PY,SV,UY,VE';
 
 export async function GET(request: Request) {
+  const rl = await rateLimitByIp(request, { prefix: 'geo', max: 60, windowMs: 60_000 });
+  if (rl) return rl;
+
   const country = (request.headers.get('x-vercel-ip-country') ?? '').toUpperCase();
   const latamList = (process.env.LATAM_COUNTRIES ?? LATAM_DEFAULT)
     .split(',')

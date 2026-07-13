@@ -24,6 +24,13 @@ export async function POST(request: Request) {
   }
 
   const d = parsed.data;
+
+  // Discount codes are a guessable secret — brute force gets its own strict
+  // limit on top of the route's general one.
+  if (d.discountCode) {
+    const discountRl = await rateLimitByIp(request, { prefix: 'discount-try', max: 10, windowMs: 60_000 });
+    if (discountRl) return discountRl;
+  }
   const config = await loadPricingConfig();
 
   // First pass (no code) to know the pre-code total the discount applies to.

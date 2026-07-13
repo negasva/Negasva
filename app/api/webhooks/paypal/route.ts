@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { rateLimitByIp } from '@/lib/security/apiHelpers';
 import { verifyPayPalWebhook } from '@/lib/payments/paypal';
 import { verifyAmount } from '@/lib/payments/verifyAmount';
 import { createServiceClient } from '@/lib/supabase/server';
@@ -11,6 +12,9 @@ import { notifyNewOrder } from '@/lib/notify/newOrder';
  * coteja por custom_id (nuestra provider_reference), igual que Mercado Pago.
  */
 export async function POST(request: Request) {
+  const rl = await rateLimitByIp(request, { prefix: 'webhook', max: 120, windowMs: 60_000 });
+  if (rl) return rl;
+
   const rawBody = await request.text();
 
   const valid = await verifyPayPalWebhook(request.headers, rawBody);

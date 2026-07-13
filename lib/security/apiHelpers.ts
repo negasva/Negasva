@@ -3,17 +3,22 @@ import { checkRateLimit, type RateLimitOpts, type RateLimitResult } from './rate
 
 /**
  * Extract the client IP from request headers. On Vercel, x-forwarded-for is
- * client-controllable, so prefer the headers Vercel's proxy sets itself:
- * x-vercel-forwarded-for, then x-real-ip, only then the first hop of
- * x-forwarded-for. Falls back to 'unknown' so the rate limiter still keys on
- * something stable per request batch (M2).
+ * client-controllable (the attacker can prepend any fake IP), so prefer, in
+ * order: request.ip (set by the platform), x-vercel-forwarded-for (also
+ * platform-set, not attacker-reachable), x-real-ip, and only as a last
+ * resort the LAST hop of x-forwarded-for — the entry closest to our edge,
+ * which the platform proxy appended and the client can't spoof. The first
+ * hop is attacker-controlled and never trusted. Falls back to 'unknown' so
+ * the rate limiter still keys on something stable per request batch (M2).
  */
 export function getClientIp(request: Request): string {
+  const ip = (request as { ip?: string }).ip;
+  if (ip) return ip;
   const h = request.headers;
   const trusted = h.get('x-vercel-forwarded-for') || h.get('x-real-ip');
   if (trusted) return trusted.trim();
-  const first = h.get('x-forwarded-for')?.split(',')[0]?.trim();
-  return first || 'unknown';
+  const last = h.get('x-forwarded-for')?.split(',').map((s) => s.trim()).filter(Boolean).pop();
+  return last || 'unknown';
 }
 
 /**

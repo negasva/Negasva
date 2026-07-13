@@ -29,9 +29,17 @@ interface SiteVerifyResponse {
   'error-codes'?: string[];
 }
 
+let warnedNoSecret = false;
+
 export async function verifyRecaptcha(token: string | undefined, opts: VerifyOpts = {}): Promise<boolean> {
   const secret = process.env.RECAPTCHA_SECRET_KEY ?? process.env.RECAPTCHA_SECRET;
-  if (!secret) return true; // no configurado → no bloquear
+  if (!secret) {
+    if (process.env.NODE_ENV === 'production' && !warnedNoSecret) {
+      warnedNoSecret = true;
+      console.warn('[recaptcha] RECAPTCHA_SECRET_KEY not set in production — verification is skipped');
+    }
+    return true; // no configurado → no bloquear
+  }
 
   if (!token) return opts.required ? false : true;
 
