@@ -14,11 +14,11 @@ Estados posibles: `Pendiente` → `Auditado` → `Aprobado`
 | 8 | P1 · Importante | Seguridad | Rate limiting y anti-abuso | Pendiente |
 | 9 | P1 · Importante | Seguridad | Secretos y dependencias vulnerables | Pendiente |
 | 10 | P1 · Importante | Pagos y dinero | Conciliación de pedidos y reembolsos | Pendiente |
-| 11 | P1 · Importante | Rendimiento | Core Web Vitals (Lighthouse) | Auditado |
-| 12 | P1 · Importante | Rendimiento | Optimización de imágenes | Auditado |
-| 13 | P1 · Importante | Rendimiento | Bundle JS y peso del checkout | Auditado |
-| 14 | P1 · Importante | Conversión y UX de venta | Fricción en el funnel de checkout | Auditado |
-| 15 | P1 · Importante | Conversión y UX de venta | Señales de confianza | Pendiente |
+| 11 | P1 · Importante | Rendimiento | Core Web Vitals (Lighthouse) | Aprobado |
+| 12 | P1 · Importante | Rendimiento | Optimización de imágenes | Aprobado |
+| 13 | P1 · Importante | Rendimiento | Bundle JS y peso del checkout | Aprobado |
+| 14 | P1 · Importante | Conversión y UX de venta | Fricción en el funnel de checkout | Aprobado |
+| 15 | P1 · Importante | Conversión y UX de venta | Señales de confianza | Aprobado |
 | 16 | P1 · Importante | Conversión y UX de venta | Experiencia móvil | Pendiente |
 | 17 | P1 · Importante | Datos y privacidad | Ciclo de vida de fotos y datos personales | Pendiente |
 | 18 | P1 · Importante | Datos y privacidad | Cumplimiento legal (GDPR / Habeas Data / cookies) | Pendiente |

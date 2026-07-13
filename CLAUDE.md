@@ -24,3 +24,13 @@ las repita:
 
 5. **Seguridad.** No commitear secretos, `.env`, claves ni el identificador de
    modelo. Nunca forzar push (`--force`) sobre `main`.
+
+## Buenas prácticas por área
+
+Antes de tocar código de cada área, lee su archivo de buenas prácticas:
+
+- Rendimiento (CWV): `audits/rendimiento/core-web-vitals/BUENAS_PRACTICAS.md`
+- Rendimiento (imágenes): `audits/rendimiento/imagenes/BUENAS_PRACTICAS.md`
+- Rendimiento (bundle/checkout): `audits/rendimiento/bundle-checkout/BUENAS_PRACTICAS.md`
+- Conversión y UX de venta (funnel checkout): `audits/conversion/friccion-checkout/BUENAS_PRACTICAS.md`
+- Conversión y UX de venta (confianza): `audits/conversion/senales-confianza/BUENAS_PRACTICAS.md`
