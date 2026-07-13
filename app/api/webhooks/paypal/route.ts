@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { verifyPayPalWebhook } from '@/lib/payments/paypal';
+import { verifyAmount } from '@/lib/payments/verifyAmount';
 import { createServiceClient } from '@/lib/supabase/server';
 import { recordDiscountCodeUse } from '@/lib/pricing/server';
 import { notifyNewOrder } from '@/lib/notify/newOrder';
@@ -21,6 +22,7 @@ export async function POST(request: Request) {
       id?: string;
       custom_id?: string;
       invoice_id?: string;
+      amount?: { value?: string; currency_code?: string };
       payer?: { email_address?: string };
       // CUSTOMER.DISPUTE.CREATED trae las transacciones disputadas.
       disputed_transactions?: Array<{ seller_transaction_id?: string; custom_id?: string; invoice_number?: string }>;
@@ -51,6 +53,14 @@ export async function POST(request: Request) {
           .maybeSingle();
         const wasPaid = existing?.status === 'paid';
 
+        // Coteja el monto capturado contra el monto autoritativo del pedido.
+        // El value de PayPal viene en unidades mayores; amount_total en menores.
+        const paid = Number(resource.amount?.value) * 100;
+        if (existing && !verifyAmount(paid, resource.amount?.currency_code ?? '', existing)) {
+          console.error('amount mismatch', { paid, expected: existing.amount_total, ref: reference });
+          break; // responde 200 (sin reintentos) pero NO marca paid
+        }
+
         await supabase
           .from('orders')
           .update({
@@ -60,21 +70,26 @@ export async function POST(request: Request) {
           .eq('provider', 'paypal')
           .eq('provider_reference', reference);
 
-        // El cupón se acredita solo en la primera transición a pagado.
+        // Post-proceso aislado: el estado ya quedó confirmado arriba, así que un
+        // fallo acreditando el cupón o enviando el email no debe propagarse.
         if (!wasPaid && existing) {
-          if (existing.discount_code) await recordDiscountCodeUse(existing.discount_code);
-          await notifyNewOrder({
-            provider: 'paypal',
-            reference,
-            amountTotal: existing.amount_total ?? null,
-            currency: existing.currency ?? null,
-            style: existing.style,
-            bodyType: existing.body_type,
-            background: existing.background,
-            peopleCount: existing.people_count ?? null,
-            express: existing.express ?? null,
-            customerEmail: resource.payer?.email_address ?? null,
-          });
+          try {
+            if (existing.discount_code) await recordDiscountCodeUse(existing.discount_code);
+            await notifyNewOrder({
+              provider: 'paypal',
+              reference,
+              amountTotal: existing.amount_total ?? null,
+              currency: existing.currency ?? null,
+              style: existing.style,
+              bodyType: existing.body_type,
+              background: existing.background,
+              peopleCount: existing.people_count ?? null,
+              express: existing.express ?? null,
+              customerEmail: resource.payer?.email_address ?? null,
+            });
+          } catch (postErr) {
+            console.error('[webhook/paypal] post-process failed:', postErr);
+          }
         }
         break;
       }

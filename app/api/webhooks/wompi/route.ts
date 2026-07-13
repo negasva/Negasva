@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { verifyWompiEvent, type WompiEvent } from '@/lib/payments/wompi';
+import { verifyAmount } from '@/lib/payments/verifyAmount';
 import { createServiceClient } from '@/lib/supabase/server';
 import { recordDiscountCodeUse } from '@/lib/pricing/server';
 import { notifyNewOrder } from '@/lib/notify/newOrder';
@@ -48,6 +49,18 @@ export async function POST(request: Request) {
       .maybeSingle();
     const wasPaid = existing?.status === 'paid';
 
+    // Coteja el monto pagado contra el monto autoritativo antes de marcar paid.
+    // Wompi expresa el monto en "cents"; COP no tiene decimales, así que /100.
+    if (newStatus === 'paid' && existing &&
+        !verifyAmount(tx.amount_in_cents / 100, tx.currency, existing)) {
+      console.error('amount mismatch', {
+        paid: tx.amount_in_cents / 100,
+        expected: existing.amount_total,
+        ref: tx.reference,
+      });
+      return NextResponse.json({ received: true }); // 200 sin marcar paid
+    }
+
     await supabase
       .from('orders')
       .update({
@@ -58,20 +71,26 @@ export async function POST(request: Request) {
       .eq('provider', 'wompi')
       .eq('provider_reference', tx.reference);
 
+    // Post-proceso aislado: el estado ya quedó confirmado, un fallo aquí no
+    // debe deshacerlo ni propagarse.
     if (newStatus === 'paid' && !wasPaid) {
-      if (existing?.discount_code) await recordDiscountCodeUse(existing.discount_code);
-      await notifyNewOrder({
-        provider: 'wompi',
-        reference: tx.reference,
-        amountTotal: existing?.amount_total ?? null,
-        currency: existing?.currency ?? null,
-        style: existing?.style,
-        bodyType: existing?.body_type,
-        background: existing?.background,
-        peopleCount: existing?.people_count ?? null,
-        express: existing?.express ?? null,
-        customerEmail: tx.customer_email ?? null,
-      });
+      try {
+        if (existing?.discount_code) await recordDiscountCodeUse(existing.discount_code);
+        await notifyNewOrder({
+          provider: 'wompi',
+          reference: tx.reference,
+          amountTotal: existing?.amount_total ?? null,
+          currency: existing?.currency ?? null,
+          style: existing?.style,
+          bodyType: existing?.body_type,
+          background: existing?.background,
+          peopleCount: existing?.people_count ?? null,
+          express: existing?.express ?? null,
+          customerEmail: tx.customer_email ?? null,
+        });
+      } catch (postErr) {
+        console.error('[webhook/wompi] post-process failed:', postErr);
+      }
     }
   } catch (err) {
     console.error('[webhook/wompi] update failed:', err);
