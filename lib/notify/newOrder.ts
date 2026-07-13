@@ -18,6 +18,17 @@ interface NewOrderInfo {
   customerEmail?: string | null;
 }
 
+// Escapa datos que provienen del cliente antes de interpolarlos en el HTML del
+// email, para que no se cuele markup (XSS almacenado hacia el admin).
+function escapeHtml(s: string): string {
+  return s
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
 function money(amount: number | null, currency: string | null): string {
   if (amount == null) return '—';
   const cur = (currency ?? 'usd').toUpperCase();
@@ -50,7 +61,7 @@ export async function notifyNewOrder(o: NewOrderInfo): Promise<void> {
   ];
   const html =
     '<h2>Nuevo pedido pagado</h2><ul>' +
-    rows.filter(([, v]) => v).map(([k, v]) => `<li><strong>${k}:</strong> ${v}</li>`).join('') +
+    rows.filter(([, v]) => v).map(([k, v]) => `<li><strong>${escapeHtml(k)}:</strong> ${escapeHtml(String(v))}</li>`).join('') +
     '</ul>';
 
   try {

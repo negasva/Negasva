@@ -69,7 +69,12 @@ function layout(inner: string, footerNote: string): string {
 // Escapa datos que provienen del cliente (nombre) o de la BD (resumen) antes
 // de inyectarlos en el HTML del email.
 const esc = (s: string) =>
-  s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  s
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
 
 const hi = (name: string | null) =>
   name && name.trim() ? `Hola ${esc(name.trim().split(' ')[0])}` : 'Hola';

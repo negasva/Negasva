@@ -3,6 +3,7 @@ import { errorResponse, rateLimitByIp, readJson } from '@/lib/security/apiHelper
 import { newMpReference } from '@/lib/payments/mercadopago';
 import { createPayPalOrder, PAYPAL_CURRENCIES, type PayPalItem } from '@/lib/payments/paypal';
 import { createServiceClient } from '@/lib/supabase/server';
+import { listOrderPhotos } from '@/lib/payments/orderPhotos';
 import { applyDiscountCode, loadPricingConfig } from '@/lib/pricing/server';
 import { computeQuoteUsd } from '@/lib/pricing/calc';
 import { getPodProduct, productsSummaryEs, optionsSurchargeUsd, optionsLabelEs, sanitizeProductUnits } from '@/lib/pricing/products';
@@ -30,6 +31,12 @@ export async function POST(request: Request) {
   }
 
   const d = parsed.data;
+
+  // Nunca se confía en los `photoPaths` que manda el cliente: se derivan
+  // server-side listando la carpeta `uploadId` en el bucket privado. Así un
+  // pedido solo puede quedar asociado a las fotos realmente subidas en esa
+  // sesión de subida (ver BUENAS_PRACTICAS punto 6).
+  const photoPaths = await listOrderPhotos(createServiceClient(), d.uploadId);
 
   // Pricing comes from the admin-managed tables (prices, body_types),
   // with hardcoded fallback only if the DB is unreachable.
@@ -126,7 +133,7 @@ export async function POST(request: Request) {
         people_count: d.peopleCount,
         express: d.express,
         special_requests: composedRequests || null,
-        photo_paths: d.photoPaths ?? [],
+        photo_paths: photoPaths,
         upload_id: d.uploadId ?? null,
         // Contacto del cliente (quién compra y cómo escribirle).
         customer_name: d.customerName,

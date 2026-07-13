@@ -20,6 +20,7 @@ import { errorResponse, rateLimitByIp, validateSameOrigin } from '@/lib/security
 
 const MAX_FILES = 8;
 const MAX_BYTES = 10 * 1024 * 1024; // 10 MB each
+const MAX_TOTAL_BYTES = 40 * 1024 * 1024; // 40 MB combined across the form
 const ALLOWED = new Set(['image/jpeg', 'image/png', 'image/webp']);
 const EXT: Record<string, string> = { 'image/jpeg': 'jpg', 'image/png': 'png', 'image/webp': 'webp' };
 
@@ -40,10 +41,13 @@ export async function POST(request: Request) {
   if (files.length === 0) return errorResponse('No photos provided', 400);
   if (files.length > MAX_FILES) return errorResponse('Too many photos', 400);
 
+  let totalBytes = 0;
   for (const file of files) {
     if (file.size > MAX_BYTES) return errorResponse('A photo exceeds the 10 MB limit', 400);
     if (!ALLOWED.has(file.type)) return errorResponse('Only JPG, PNG or WEBP images are allowed', 400);
+    totalBytes += file.size;
   }
+  if (totalBytes > MAX_TOTAL_BYTES) return errorResponse('Photos exceed the 40 MB total limit', 413);
 
   const uploadId = randomUUID();
   const supabase = createServiceClient();
