@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import Stripe from 'stripe';
 import { createServiceClient } from '@/lib/supabase/server';
+import { verifyAmount } from '@/lib/payments/verifyAmount';
 import { recordDiscountCodeUse } from '@/lib/pricing/server';
 import { getPodProduct } from '@/lib/pricing/products';
 import { listOrderPhotos } from '@/lib/payments/orderPhotos';
@@ -68,40 +69,62 @@ export async function POST(request: Request) {
         // coupon if Stripe retries the event.
         const { data: existing } = await supabase
           .from('orders')
-          .select('status')
+          .select('status, amount_total, currency')
           .eq('provider_reference', session.id)
           .maybeSingle();
         const wasPaid = existing?.status === 'paid';
 
+        // Cross-check the paid amount against the authoritative order total when
+        // one already exists. On mismatch, keep the order pending (never paid).
+        let effectiveStatus: 'paid' | 'pending' = status;
+        if (status === 'paid' && existing?.amount_total != null &&
+            !verifyAmount(session.amount_total ?? 0, session.currency ?? '', {
+              amount_total: existing.amount_total,
+              currency: existing.currency ?? '',
+            })) {
+          console.error('amount mismatch', {
+            paid: session.amount_total,
+            expected: existing.amount_total,
+            ref: session.id,
+          });
+          effectiveStatus = 'pending';
+        }
+
         const photoPaths = await listOrderPhotos(supabase, session.metadata?.uploadId);
-        await supabase.from('orders').upsert(rowFromSession(session, status, photoPaths), {
+        await supabase.from('orders').upsert(rowFromSession(session, effectiveStatus, photoPaths), {
           onConflict: 'provider_reference',
         });
 
-        // On the first transition to paid: credit the coupon and notify.
+        // Post-process, isolated from the status write above: on the first
+        // transition to paid credit the coupon and notify. A failure here is
+        // logged but never undoes or blocks the confirmed status update.
         // (async OXXO/SEPA flows arrive here as pending and turn paid in
         // async_payment_succeeded; those rarer cases skip the email.)
         const code = session.metadata?.discountCode;
-        if (status === 'paid' && !wasPaid) {
-          if (code) await recordDiscountCodeUse(code);
-          const meta = session.metadata ?? {};
-          await notifyNewOrder({
-            provider: 'stripe',
-            reference: session.id,
-            amountTotal: session.amount_total,
-            currency: session.currency,
-            style: meta.style,
-            bodyType: meta.bodyType,
-            background: meta.background,
-            peopleCount: meta.peopleCount ? Number(meta.peopleCount) : null,
-            express: meta.express === 'true',
-            products: (meta.products || '')
-              .split(',')
-              .map((k) => getPodProduct(k.trim())?.name.es)
-              .filter(Boolean)
-              .join(', ') || null,
-            customerEmail: session.customer_details?.email ?? null,
-          });
+        if (effectiveStatus === 'paid' && !wasPaid) {
+          try {
+            if (code) await recordDiscountCodeUse(code);
+            const meta = session.metadata ?? {};
+            await notifyNewOrder({
+              provider: 'stripe',
+              reference: session.id,
+              amountTotal: session.amount_total,
+              currency: session.currency,
+              style: meta.style,
+              bodyType: meta.bodyType,
+              background: meta.background,
+              peopleCount: meta.peopleCount ? Number(meta.peopleCount) : null,
+              express: meta.express === 'true',
+              products: (meta.products || '')
+                .split(',')
+                .map((k) => getPodProduct(k.trim())?.name.es)
+                .filter(Boolean)
+                .join(', ') || null,
+              customerEmail: session.customer_details?.email ?? null,
+            });
+          } catch (postErr) {
+            console.error('[webhook/stripe] post-process failed:', postErr);
+          }
         }
         break;
       }

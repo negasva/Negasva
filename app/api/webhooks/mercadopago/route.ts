@@ -1,8 +1,40 @@
 import { NextResponse } from 'next/server';
+import { createHmac, timingSafeEqual } from 'crypto';
 import { fetchMpPayment, mapMpStatus } from '@/lib/payments/mercadopago';
+import { verifyAmount } from '@/lib/payments/verifyAmount';
 import { createServiceClient } from '@/lib/supabase/server';
 import { recordDiscountCodeUse } from '@/lib/pricing/server';
 import { notifyNewOrder } from '@/lib/notify/newOrder';
+
+/**
+ * Verifica la firma HMAC-SHA256 del webhook (x-signature + x-request-id) con
+ * MERCADOPAGO_WEBHOOK_SECRET. Falla cerrado: sin secreto o sin cabeceras, no se
+ * confía en el evento. https://www.mercadopago.com.co/developers/es/docs/your-integrations/notifications/webhooks
+ */
+function verifyMpSignature(request: Request, dataId: string): boolean {
+  const secret = process.env.MERCADOPAGO_WEBHOOK_SECRET;
+  if (!secret) return false;
+
+  const xSignature = request.headers.get('x-signature');
+  const xRequestId = request.headers.get('x-request-id');
+  if (!xSignature || !xRequestId) return false;
+
+  // x-signature llega como "ts=1704908010,v1=<hmac hex>".
+  const parts = Object.fromEntries(
+    xSignature.split(',').map((p) => p.split('=').map((s) => s.trim())),
+  );
+  const ts = parts.ts;
+  const v1 = parts.v1;
+  if (!ts || !v1) return false;
+
+  // MP normaliza el data.id a minúsculas cuando es alfanumérico.
+  const manifest = `id:${dataId.toLowerCase()};request-id:${xRequestId};ts:${ts};`;
+  const expected = createHmac('sha256', secret).update(manifest).digest('hex');
+
+  const a = Buffer.from(expected);
+  const b = Buffer.from(v1);
+  return a.length === b.length && timingSafeEqual(a, b);
+}
 
 /**
  * Webhook de Mercado Pago. Llega solo el id del pago; el estado real se
@@ -23,6 +55,11 @@ export async function POST(request: Request) {
 
   if (!paymentId) return NextResponse.json({ error: 'No payment id' }, { status: 400 });
 
+  // Firma HMAC ANTES del re-fetch: rechaza eventos que no vengan de MP.
+  if (!verifyMpSignature(request, paymentId)) {
+    return NextResponse.json({ error: 'Invalid signature' }, { status: 401 });
+  }
+
   const payment = await fetchMpPayment(paymentId);
   if (!payment?.external_reference) return NextResponse.json({ received: true });
 
@@ -38,6 +75,17 @@ export async function POST(request: Request) {
       .maybeSingle();
     const wasPaid = existing?.status === 'paid';
 
+    // Coteja el monto pagado contra el monto autoritativo antes de marcar paid.
+    if (newStatus === 'paid' && existing &&
+        !verifyAmount(payment.transaction_amount ?? 0, payment.currency_id ?? '', existing)) {
+      console.error('amount mismatch', {
+        paid: payment.transaction_amount,
+        expected: existing.amount_total,
+        ref: payment.external_reference,
+      });
+      return NextResponse.json({ received: true }); // 200 sin marcar paid
+    }
+
     await supabase
       .from('orders')
       .update({
@@ -48,21 +96,27 @@ export async function POST(request: Request) {
       .eq('provider', 'mercadopago')
       .eq('provider_reference', payment.external_reference);
 
-    // El cupón se acredita solo en la primera transición a pagado.
+    // Post-proceso aislado: el estado ya quedó confirmado, un fallo aquí no
+    // debe deshacerlo ni propagarse. El cupón se acredita solo en la primera
+    // transición a pagado.
     if (newStatus === 'paid' && !wasPaid) {
-      if (existing?.discount_code) await recordDiscountCodeUse(existing.discount_code);
-      await notifyNewOrder({
-        provider: 'mercadopago',
-        reference: payment.external_reference,
-        amountTotal: existing?.amount_total ?? null,
-        currency: existing?.currency ?? null,
-        style: existing?.style,
-        bodyType: existing?.body_type,
-        background: existing?.background,
-        peopleCount: existing?.people_count ?? null,
-        express: existing?.express ?? null,
-        customerEmail: payment.payer?.email ?? null,
-      });
+      try {
+        if (existing?.discount_code) await recordDiscountCodeUse(existing.discount_code);
+        await notifyNewOrder({
+          provider: 'mercadopago',
+          reference: payment.external_reference,
+          amountTotal: existing?.amount_total ?? null,
+          currency: existing?.currency ?? null,
+          style: existing?.style,
+          bodyType: existing?.body_type,
+          background: existing?.background,
+          peopleCount: existing?.people_count ?? null,
+          express: existing?.express ?? null,
+          customerEmail: payment.payer?.email ?? null,
+        });
+      } catch (postErr) {
+        console.error('[webhook/mercadopago] post-process failed:', postErr);
+      }
     }
   } catch (err) {
     console.error('[webhook/mercadopago] update failed:', err);

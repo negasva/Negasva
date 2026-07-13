@@ -4,9 +4,7 @@ import { newMpReference } from '@/lib/payments/mercadopago';
 import { createPayPalOrder, PAYPAL_CURRENCIES, type PayPalItem } from '@/lib/payments/paypal';
 import { createServiceClient } from '@/lib/supabase/server';
 import { listOrderPhotos } from '@/lib/payments/orderPhotos';
- claude/new-session-899ejb
 import { getServerRate } from '@/lib/pricing/rates';
- main
 import { applyDiscountCode, loadPricingConfig } from '@/lib/pricing/server';
 import { computeQuoteUsd } from '@/lib/pricing/calc';
 import { getPodProduct, productsSummaryEs, optionsSurchargeUsd, optionsLabelEs, sanitizeProductUnits } from '@/lib/pricing/products';
@@ -41,13 +39,10 @@ export async function POST(request: Request) {
   // sesión de subida (ver BUENAS_PRACTICAS punto 6).
   const photoPaths = await listOrderPhotos(createServiceClient(), d.uploadId);
 
- claude/new-session-899ejb
   // La tasa de cambio SIEMPRE se obtiene en el servidor; cualquier `rate` del
   // cliente se ignora (integridad-precios punto 2).
   const rate = await getServerRate(d.currency);
 
-
- main
   // Pricing comes from the admin-managed tables (prices, body_types),
   // with hardcoded fallback only if the DB is unreachable.
   const pricing = await loadPricingConfig();
