@@ -31,3 +31,5 @@ las repita:
   `audits/seguridad/autenticacion-admin/BUENAS_PRACTICAS.md`.
 - Antes de tocar migraciones Supabase, RLS o clientes de base de datos, leer
   `audits/seguridad/rls-supabase/BUENAS_PRACTICAS.md`.
+- Antes de tocar validación de inputs, esquemas Zod, subida de archivos o emails, leer
+  `audits/seguridad/validacion-inputs/BUENAS_PRACTICAS.md`.
