@@ -11,7 +11,7 @@
 | 7 | P1 | CSP y headers de seguridad | `audits/seguridad/csp-headers/` | Aprobado |
 | 8 | P1 | Rate limiting y anti-abuso | `audits/seguridad/rate-limiting-antiabuso/` | Aprobado |
 | 9 | P1 | Secretos y dependencias vulnerables | `audits/seguridad/secretos-dependencias/` | Aprobado |
-| 10 | P1 | Conciliación de pedidos y reembolsos | `audits/pagos-y-dinero/conciliacion-pedidos/` | Pendiente |
+| 10 | P1 | Conciliación de pedidos y reembolsos | `audits/pagos-y-dinero/conciliacion-pedidos/` | Aprobado |
 | 11 | P1 | Core Web Vitals (Lighthouse) | `audits/rendimiento/core-web-vitals/` | Pendiente |
 | 12 | P1 | Optimización de imágenes | `audits/rendimiento/imagenes/` | Pendiente |
 | 13 | P1 | Bundle JS y peso del checkout | `audits/rendimiento/bundle-checkout/` | Pendiente |
