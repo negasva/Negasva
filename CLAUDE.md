@@ -37,3 +37,13 @@ las repita:
   `audits/pagos-y-dinero/integridad-precios/BUENAS_PRACTICAS.md`.
 - Antes de tocar webhooks de pago, leer
   `audits/pagos-y-dinero/webhooks/BUENAS_PRACTICAS.md`.
+- Antes de tocar código relacionado con confiabilidad y operación, leer
+  `audits/confiabilidad/manejo-errores/BUENAS_PRACTICAS.md`.
+- Antes de tocar código relacionado con seguridad (CSP/headers), leer
+  `audits/seguridad/csp-headers/BUENAS_PRACTICAS.md`.
+- Antes de tocar rutas API o límites de tráfico, leer
+  `audits/seguridad/rate-limiting-antiabuso/BUENAS_PRACTICAS.md`.
+- Antes de tocar variables de entorno o dependencias, leer
+  `audits/seguridad/secretos-dependencias/BUENAS_PRACTICAS.md`.
+- Antes de tocar webhooks, estados de pedido o reembolsos, leer
+  `audits/pagos-y-dinero/conciliacion-pedidos/BUENAS_PRACTICAS.md`.
