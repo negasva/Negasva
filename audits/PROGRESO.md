@@ -6,7 +6,7 @@
 | 2 | P0 | Row Level Security (RLS) en Supabase | Aprobado |
 | 3 | P0 | Validación de inputs y subida de archivos | Aprobado |
 | 4 | P0 | Integridad de precios end-to-end | Aprobado |
-| 5 | P0 | Webhooks de pago (PayPal / Mercado Pago / legacy) | Auditado |
+| 5 | P0 | Webhooks de pago (PayPal / Mercado Pago / legacy) | Aprobado |
 | 6 | P0 | Manejo de errores y estados de fallo | Pendiente |
 | 7 | P1 | CSP y headers de seguridad | Pendiente |
 | 8 | P1 | Rate limiting y anti-abuso | Pendiente |
