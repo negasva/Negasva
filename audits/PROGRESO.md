@@ -14,7 +14,7 @@ Estados posibles: `Pendiente` → `Auditado` → `Aprobado`
 | 8 | P1 · Importante | Seguridad | Rate limiting y anti-abuso | Pendiente |
 | 9 | P1 · Importante | Seguridad | Secretos y dependencias vulnerables | Pendiente |
 | 10 | P1 · Importante | Pagos y dinero | Conciliación de pedidos y reembolsos | Pendiente |
-| 11 | P1 · Importante | Rendimiento | Core Web Vitals (Lighthouse) | Pendiente |
+| 11 | P1 · Importante | Rendimiento | Core Web Vitals (Lighthouse) | Auditado |
 | 12 | P1 · Importante | Rendimiento | Optimización de imágenes | Pendiente |
 | 13 | P1 · Importante | Rendimiento | Bundle JS y peso del checkout | Pendiente |
 | 14 | P1 · Importante | Conversión y UX de venta | Fricción en el funnel de checkout | Pendiente |
