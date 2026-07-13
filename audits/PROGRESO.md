@@ -10,7 +10,7 @@
 | 6 | P0 | Manejo de errores y estados de fallo | `audits/confiabilidad/manejo-errores/` | Aprobado |
 | 7 | P1 | CSP y headers de seguridad | `audits/seguridad/csp-headers/` | Aprobado |
 | 8 | P1 | Rate limiting y anti-abuso | `audits/seguridad/rate-limiting-antiabuso/` | Aprobado |
-| 9 | P1 | Secretos y dependencias vulnerables | `audits/seguridad/secretos-dependencias/` | Pendiente |
+| 9 | P1 | Secretos y dependencias vulnerables | `audits/seguridad/secretos-dependencias/` | Aprobado |
 | 10 | P1 | Conciliación de pedidos y reembolsos | `audits/pagos-y-dinero/conciliacion-pedidos/` | Pendiente |
 | 11 | P1 | Core Web Vitals (Lighthouse) | `audits/rendimiento/core-web-vitals/` | Pendiente |
 | 12 | P1 | Optimización de imágenes | `audits/rendimiento/imagenes/` | Pendiente |
