@@ -637,22 +637,45 @@ export function useCheckout() {
   // amount } para inicializar el Payment Brick embebido.
   const createMpOrder = useCallback(async (): Promise<{ reference: string; amount: number } | null> => {
     if (!checkoutParams) return null;
-    const recaptchaToken = await getRecaptchaToken('checkout');
-    const res = await fetch('/api/checkout', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        ...checkoutParams,
-        customerName: contact.name.trim(),
-        customerEmail: contact.email.trim(),
-        customerPhone: contact.phone.trim() || undefined,
-        ...(cartId ? { cartId } : {}),
-        ...(tip ? { tip } : {}),
-        recaptchaToken,
-      }),
-    });
-    const data = await res.json().catch(() => null);
-    return data?.mp ?? null;
+    try {
+      // reCAPTCHA best-effort: si tarda o falla, seguimos sin token (el backend
+      // no bloquea) en vez de dejar el Brick esperando indefinidamente.
+      let recaptchaToken: string | undefined;
+      try {
+        recaptchaToken = await withTimeout(getRecaptchaToken('checkout'), 8000);
+      } catch {
+        recaptchaToken = undefined;
+      }
+
+      // Abortamos si /api/checkout no responde: sin esto el Brick nunca recibe
+      // la referencia y queda cargando para siempre.
+      const controller = new AbortController();
+      const abortTimer = setTimeout(() => controller.abort(), 20000);
+      let data: { mp?: { reference: string; amount: number } } | null;
+      try {
+        const res = await fetch('/api/checkout', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            ...checkoutParams,
+            customerName: contact.name.trim(),
+            customerEmail: contact.email.trim(),
+            customerPhone: contact.phone.trim() || undefined,
+            ...(cartId ? { cartId } : {}),
+            ...(tip ? { tip } : {}),
+            recaptchaToken,
+          }),
+          signal: controller.signal,
+        });
+        data = await res.json().catch(() => null);
+      } finally {
+        clearTimeout(abortTimer);
+      }
+      return data?.mp ?? null;
+    } catch {
+      // El Brick ya maneja order == null mostrando el error de inicialización.
+      return null;
+    }
   }, [checkoutParams, contact, cartId, tip]);
 
   const prevStep = () => {

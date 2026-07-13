@@ -12,6 +12,8 @@
  *    perder ventas por adblockers/fallos de red. El rate-limit cubre ese caso.
  */
 
+import { fetchWithTimeout } from '@/lib/net';
+
 const SITEVERIFY = 'https://www.google.com/recaptcha/api/siteverify';
 
 interface VerifyOpts {
@@ -34,7 +36,7 @@ export async function verifyRecaptcha(token: string | undefined, opts: VerifyOpt
   if (!token) return opts.required ? false : true;
 
   try {
-    const res = await fetch(SITEVERIFY, {
+    const res = await fetchWithTimeout(SITEVERIFY, {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       body: new URLSearchParams({ secret, response: token }),

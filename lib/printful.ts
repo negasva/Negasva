@@ -20,6 +20,7 @@
 
 import { getPodProduct, sanitizeProductUnits, type ProductOptionSelection, type ProductUnits } from '@/lib/pricing/products';
 import { PRINTFUL_VARIANT_CATALOG } from '@/lib/printful-catalog';
+import { fetchWithTimeout } from '@/lib/net';
 
 const PRINTFUL_API = 'https://api.printful.com';
 
@@ -102,7 +103,7 @@ async function fetchRates(
   token: string,
 ): Promise<RatesResponse['result'] | null> {
   try {
-    const res = await fetch(`${PRINTFUL_API}/shipping/rates`, {
+    const res = await fetchWithTimeout(`${PRINTFUL_API}/shipping/rates`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
       body: JSON.stringify({

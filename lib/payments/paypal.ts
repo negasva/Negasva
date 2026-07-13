@@ -2,6 +2,8 @@
 // API REST directa (sin SDK), igual que mercadopago.ts. El entorno lo decide
 // PAYPAL_ENV (sandbox|live); sandbox por defecto.
 
+import { fetchWithTimeout } from '@/lib/net';
+
 function apiBase(): string {
   return process.env.PAYPAL_ENV === 'live'
     ? 'https://api-m.paypal.com'
@@ -12,7 +14,7 @@ async function getAccessToken(): Promise<string> {
   const id = process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID;
   const secret = process.env.PAYPAL_SECRET;
   if (!id || !secret) throw new Error('PayPal env vars missing: NEXT_PUBLIC_PAYPAL_CLIENT_ID / PAYPAL_SECRET');
-  const res = await fetch(`${apiBase()}/v1/oauth2/token`, {
+  const res = await fetchWithTimeout(`${apiBase()}/v1/oauth2/token`, {
     method: 'POST',
     headers: {
       Authorization: `Basic ${Buffer.from(`${id}:${secret}`).toString('base64')}`,
@@ -58,7 +60,7 @@ export async function createPayPalOrder(input: {
   const totalMinor = itemTotalMinor + shippingMinor - discountMinor;
 
   const token = await getAccessToken();
-  const res = await fetch(`${apiBase()}/v2/checkout/orders`, {
+  const res = await fetchWithTimeout(`${apiBase()}/v2/checkout/orders`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -108,10 +110,10 @@ export type PayPalCaptureResult = {
 /** Captura una orden aprobada por el comprador. */
 export async function capturePayPalOrder(orderID: string): Promise<PayPalCaptureResult> {
   const token = await getAccessToken();
-  const res = await fetch(`${apiBase()}/v2/checkout/orders/${encodeURIComponent(orderID)}/capture`, {
+  const res = await fetchWithTimeout(`${apiBase()}/v2/checkout/orders/${encodeURIComponent(orderID)}/capture`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-  });
+  }, 15_000);
   if (!res.ok) {
     const body = await res.text().catch(() => '');
     throw new Error(`PayPal capture failed (${res.status}): ${body.slice(0, 300)}`);
@@ -139,7 +141,7 @@ export async function verifyPayPalWebhook(headers: Headers, rawBody: string): Pr
   if (!webhookId) return false;
   try {
     const token = await getAccessToken();
-    const res = await fetch(`${apiBase()}/v1/notifications/verify-webhook-signature`, {
+    const res = await fetchWithTimeout(`${apiBase()}/v1/notifications/verify-webhook-signature`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
       body: JSON.stringify({

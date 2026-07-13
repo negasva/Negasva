@@ -4,6 +4,8 @@
 //
 // Env: RESEND_API_KEY, RESEND_FROM (remitente verificado en Resend).
 
+import { fetchWithTimeout } from '@/lib/net';
+
 export interface SendEmailInput {
   to: string;
   subject: string;
@@ -18,7 +20,7 @@ export async function sendEmail({ to, subject, html, replyTo }: SendEmailInput):
   if (!key || !from || !to) return false;
 
   try {
-    const res = await fetch('https://api.resend.com/emails', {
+    const res = await fetchWithTimeout('https://api.resend.com/emails', {
       method: 'POST',
       headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' },
       body: JSON.stringify({
