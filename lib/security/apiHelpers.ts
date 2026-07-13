@@ -2,24 +2,18 @@ import { NextResponse } from 'next/server';
 import { checkRateLimit, type RateLimitOpts, type RateLimitResult } from './rateLimit';
 
 /**
- * Extract the client IP from request headers. Trusts the first hop in
- * X-Forwarded-For (Vercel and most reverse proxies set this). Falls back to
- * other common headers, then 'unknown' so the rate limiter still keys on
- * something stable per request batch.
+ * Extract the client IP from request headers. On Vercel, x-forwarded-for is
+ * client-controllable, so prefer the headers Vercel's proxy sets itself:
+ * x-vercel-forwarded-for, then x-real-ip, only then the first hop of
+ * x-forwarded-for. Falls back to 'unknown' so the rate limiter still keys on
+ * something stable per request batch (M2).
  */
 export function getClientIp(request: Request): string {
   const h = request.headers;
-  const xff = h.get('x-forwarded-for');
-  if (xff) {
-    const first = xff.split(',')[0]?.trim();
-    if (first) return first;
-  }
-  return (
-    h.get('x-real-ip') ||
-    h.get('cf-connecting-ip') ||
-    h.get('x-vercel-forwarded-for') ||
-    'unknown'
-  );
+  const trusted = h.get('x-vercel-forwarded-for') || h.get('x-real-ip');
+  if (trusted) return trusted.trim();
+  const first = h.get('x-forwarded-for')?.split(',')[0]?.trim();
+  return first || 'unknown';
 }
 
 /**
@@ -46,6 +40,10 @@ export function validateSameOrigin(request: Request): boolean {
   return allowed.includes(origin);
 }
 
+// Admin/API responses can expose order, customer or photo data. Keep them out
+// of shared caches and the browser back/forward cache (B1).
+const NO_STORE = { 'Cache-Control': 'no-store, no-cache' } as const;
+
 /**
  * Generic error response. Logs the internal detail server-side but never
  * leaks it to the client — prevents schema/constraint disclosure via
@@ -59,7 +57,15 @@ export function errorResponse(
   if (internal !== undefined) {
     console.error(`[api ${status}] ${publicMessage}`, internal);
   }
-  return NextResponse.json({ error: publicMessage }, { status });
+  return NextResponse.json({ error: publicMessage }, { status, headers: NO_STORE });
+}
+
+/**
+ * Success JSON response for admin routes. Adds Cache-Control: no-store so
+ * order/customer/photo data never lands in a shared or browser cache (B1).
+ */
+export function successAdminResponse(body: unknown, status = 200): NextResponse {
+  return NextResponse.json(body, { status, headers: NO_STORE });
 }
 
 export function rateLimitResponse(result: RateLimitResult): NextResponse {

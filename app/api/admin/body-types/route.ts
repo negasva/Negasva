@@ -1,4 +1,3 @@
-import { NextResponse } from 'next/server';
 import { revalidatePath } from 'next/cache';
 import { createServiceClient } from '@/lib/supabase/server';
 import { requireAdminRoute } from '@/lib/admin/auth';
@@ -8,6 +7,7 @@ import {
   rateLimitByIp,
   readJson,
   validateSameOrigin,
+  successAdminResponse,
 } from '@/lib/security/apiHelpers';
 
 async function guard(request: Request, mutating: boolean) {
@@ -55,7 +55,7 @@ export async function GET(request: Request) {
     .order('sort_order', { ascending: true });
 
   if (error) return errorResponse('Failed to load body types', 500, error);
-  return NextResponse.json(data);
+  return successAdminResponse(data);
 }
 
 export async function POST(request: Request) {
@@ -74,7 +74,7 @@ export async function POST(request: Request) {
   const { data, error } = await db.from('body_types').insert(parsed.data).select().single();
   if (error) return errorResponse('Failed to create body type', 500, error);
   revalidatePricingPages();
-  return NextResponse.json(data, { status: 201 });
+  return successAdminResponse(data, 201);
 }
 
 export async function PUT(request: Request) {
@@ -96,7 +96,7 @@ export async function PUT(request: Request) {
   const { error } = await db.from('body_types').update(fields).eq('id', id);
   if (error) return errorResponse('Failed to update body type', 500, error);
   revalidatePricingPages();
-  return NextResponse.json({ ok: true });
+  return successAdminResponse({ ok: true });
 }
 
 export async function DELETE(request: Request) {
@@ -115,5 +115,5 @@ export async function DELETE(request: Request) {
   const { error } = await db.from('body_types').delete().eq('id', parsed.data.id);
   if (error) return errorResponse('Failed to delete body type', 500, error);
   revalidatePricingPages();
-  return NextResponse.json({ ok: true });
+  return successAdminResponse({ ok: true });
 }

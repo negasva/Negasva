@@ -1,6 +1,5 @@
-import { NextResponse } from 'next/server';
 import { requireAdminRoute } from '@/lib/admin/auth';
-import { errorResponse, rateLimitByIp, validateSameOrigin } from '@/lib/security/apiHelpers';
+import { successAdminResponse, errorResponse, rateLimitByIp, validateSameOrigin } from '@/lib/security/apiHelpers';
 
 // Admin image upload. Replaces the old browser-side supabase.storage call that
 // relied on a Supabase Auth JWT — with single-password auth the browser has no
@@ -66,5 +65,5 @@ export async function POST(request: Request) {
   }
 
   const { data } = db.storage.from(BUCKET).getPublicUrl(path);
-  return NextResponse.json({ url: data.publicUrl });
+  return successAdminResponse({ url: data.publicUrl });
 }
