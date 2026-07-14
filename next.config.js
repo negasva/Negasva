@@ -65,7 +65,7 @@ const nextConfig = {
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
       "font-src 'self' https://fonts.gstatic.com data:",
       "img-src 'self' data: blob: https:",
-      "connect-src 'self' https://*.supabase.co https://www.google-analytics.com https://analytics.ahrefs.com https://api.exchangerate-api.com https://www.paypal.com https://www.paypalobjects.com https://api-m.paypal.com https://api-m.sandbox.paypal.com https://api.mercadopago.com https://api-static.mercadopago.com https://events.mercadopago.com https://api.mercadolibre.com https://http2.mlstatic.com https://*.mlstatic.com",
+      "connect-src 'self' https://*.supabase.co https://www.google-analytics.com https://analytics.ahrefs.com https://api.exchangerate-api.com https://www.paypal.com https://www.paypalobjects.com https://api-m.paypal.com https://api-m.sandbox.paypal.com https://api.mercadopago.com https://api-static.mercadopago.com https://events.mercadopago.com https://secure-fields.mercadopago.com https://api.mercadolibre.com https://http2.mlstatic.com https://*.mlstatic.com",
       "frame-src 'self' https://www.google.com https://www.recaptcha.net https://www.paypal.com https://www.sandbox.paypal.com https://*.mercadopago.com https://*.mercadolibre.com",
       "object-src 'none'",
       "base-uri 'self'",
