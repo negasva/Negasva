@@ -1,4 +1,6 @@
--- 027: columnas de pago en `orders` que el checkout/pagos/webhooks ya usaban
+-- 029: columnas de pago en `orders` (antes numerada 027, colisionaba con
+-- 027_conversion_mechanisms.sql y el runner la saltaba en producción)
+-- columnas de pago en `orders` que el checkout/pagos/webhooks ya usaban
 -- pero que ninguna migración había creado. Sin ellas, POST /api/checkout
 -- fallaba al insertar el pedido pendiente (500) y el pago no arrancaba.
 --
