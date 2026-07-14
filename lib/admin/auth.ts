@@ -8,13 +8,13 @@ import { SESSION_COOKIE, verifySessionToken } from './session';
  * True when the caller carries a valid signed admin session cookie. Single
  * shared password (ADMIN_PASSWORD), no Supabase Auth users.
  */
-export function isAdminAuthed(): boolean {
-  return verifySessionToken(cookies().get(SESSION_COOKIE)?.value);
+export async function isAdminAuthed(): Promise<boolean> {
+  return verifySessionToken((await cookies()).get(SESSION_COOKIE)?.value);
 }
 
 /** Server Component / page guard. Redirects to /admin/login when not authed. */
 export async function requireAdmin(): Promise<void> {
-  if (!isAdminAuthed()) redirect('/admin/login');
+  if (!(await isAdminAuthed())) redirect('/admin/login');
 }
 
 /**
@@ -23,6 +23,6 @@ export async function requireAdmin(): Promise<void> {
  * the route can respond 401. Async signature kept for existing callers.
  */
 export async function requireAdminRoute(): Promise<SupabaseClient | null> {
-  if (!isAdminAuthed()) return null;
+  if (!(await isAdminAuthed())) return null;
   return createServiceClient();
 }
