@@ -1,14 +1,13 @@
-import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
 import { createClient } from '@supabase/supabase-js';
-import { cookies } from 'next/headers';
 
+// Cliente para lecturas públicas server-side. No usa cookies: la sesión admin
+// va por cookie firmada propia (lib/admin), no por Supabase Auth. Usar el
+// cliente de auth-helpers aquí rompía en Next 16 (cookies() es async) → 500.
 export function createServerClient() {
-  return createServerComponentClient({ cookies });
-}
-
-export function createRouteClient() {
-  return createRouteHandlerClient({ cookies });
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  if (!url || !key) throw new Error('Supabase no configurado: falta NEXT_PUBLIC_SUPABASE_URL o NEXT_PUBLIC_SUPABASE_ANON_KEY');
+  return createClient(url, key);
 }
 
 // Cliente anónimo sin cookies: para server components públicos con ISR
