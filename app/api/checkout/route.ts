@@ -127,7 +127,7 @@ export async function POST(request: Request) {
 
     try {
       const supabase = createServiceClient();
-      await supabase.from('orders').insert({
+      const { error: insertError } = await supabase.from('orders').insert({
         provider: 'mercadopago',
         provider_reference: reference,
         amount_total: amountMinor,
@@ -148,6 +148,10 @@ export async function POST(request: Request) {
         discount_code: appliedCode?.code ?? null,
         status: 'pending',
       });
+      // Sin fila no hay pedido que cotejar en /api/payments/mercadopago (daba
+      // un 404 fantasma tras "crear" el pedido). insert() no lanza: hay que
+      // mirar el error explícitamente.
+      if (insertError) return errorResponse('Could not create order', 500, insertError);
       // Best-effort: el carrito que llegó al pago deja de ser "abandonado".
       if (d.cartId) {
         await supabase.from('carts').update({ status: 'converted' }).eq('cart_id', d.cartId);
