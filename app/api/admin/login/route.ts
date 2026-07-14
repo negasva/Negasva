@@ -21,7 +21,7 @@ export async function POST(request: Request) {
     return errorResponse('Credenciales incorrectas', 401);
   }
 
-  cookies().set(SESSION_COOKIE, createSessionToken(), {
+  (await cookies()).set(SESSION_COOKIE, createSessionToken(), {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
     sameSite: 'lax',
@@ -33,6 +33,6 @@ export async function POST(request: Request) {
 
 // DELETE = log out.
 export async function DELETE() {
-  cookies().delete(SESSION_COOKIE);
+  (await cookies()).delete(SESSION_COOKIE);
   return successAdminResponse({ ok: true });
 }
