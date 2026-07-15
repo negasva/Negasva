@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
-import { Lock, ShieldCheck, Plus, Minus, Check, X, Info, Video, ShoppingBag } from 'lucide-react';
+import { Lock, ShieldCheck, Plus, Minus, Check, X, Info, Video, ShoppingBag, Truck } from 'lucide-react';
 import Logo from '@/components/Logo';
 import ProductIcon from '@/components/ProductIcon';
 import { mergePodProducts, POD_PLACEHOLDER_IMG } from '@/lib/content/podProducts';
@@ -495,6 +495,13 @@ export default function StudioPage() {
   // Drawer del carrito (móvil): da la sensación de "carrito" tipo turnedyellow
   // reutilizando el resumen del pedido. En desktop ya existe el sidebar fijo.
   const [cartOpen, setCartOpen] = useState(false);
+  // Cerrar el drawer con Esc (además del click en overlay y la X).
+  useEffect(() => {
+    if (!cartOpen) return;
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setCartOpen(false); };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [cartOpen]);
   // Nº de artículos/extras en el carrito para el badge del botón flotante.
   const cartCount =
     (selected.bodyType ? selected.peopleCount : 0) +
@@ -1047,10 +1054,13 @@ export default function StudioPage() {
             className="absolute inset-0 bg-black/50"
             onClick={() => setCartOpen(false)}
           />
-          <div className="absolute right-0 top-0 h-full w-[88%] max-w-sm bg-white shadow-2xl overflow-y-auto p-4 pb-24">
-            <div className="flex items-center justify-between mb-4">
-              <span className="font-black text-secondary text-lg tracking-tighter">
-                {pick3(lang as Lang, 'Tu carrito', 'Your cart', 'Ton panier')}
+          <div className="absolute right-0 top-0 h-full w-[92%] max-w-sm bg-white shadow-2xl flex flex-col animate-slide-in-right">
+            {/* Header: "My Cart" + contador de artículos */}
+            <div className="flex items-center justify-between px-4 py-4 border-b border-primary-lighter">
+              <span className="font-black text-secondary text-lg tracking-tighter flex items-center gap-2">
+                <ShoppingBag className="w-5 h-5 text-primary" />
+                {pick3(lang as Lang, 'Mi carrito', 'My Cart', 'Mon panier')}
+                <span className="text-secondary-lighter font-bold text-sm">({cartCount})</span>
               </span>
               <button
                 type="button"
@@ -1061,16 +1071,58 @@ export default function StudioPage() {
                 <X className="w-5 h-5 text-secondary" />
               </button>
             </div>
-            <FamilyTierBar c={c} />
-            {selected.style ? (
-              <>
-                <OrderSummary c={c} sticky={false} />
-                <DiscountCode c={c} />
-              </>
-            ) : (
-              <p className="text-sm text-secondary-lighter text-center py-8">
-                {pick3(lang as Lang, 'Tu carrito está vacío. Elige un estilo para empezar.', 'Your cart is empty. Pick a style to start.', 'Ton panier est vide. Choisis un style pour commencer.')}
-              </p>
+
+            {/* Barra de envío gratis (verde). El retrato se entrega digital, así
+                que el envío digital siempre es gratis — se celebra como en Shopify. */}
+            <div className="mx-4 mt-4 flex items-center gap-2 rounded-xl bg-green-50 border-2 border-green-500/40 px-4 py-2.5">
+              <Truck className="w-4 h-4 text-green-600 shrink-0" />
+              <span className="text-xs font-black text-green-700">
+                {pick3(lang as Lang,
+                  '¡Envío digital GRATIS desbloqueado!',
+                  "You've unlocked FREE SHIPPING!",
+                  'Livraison numérique GRATUITE débloquée !')}
+              </span>
+            </div>
+
+            {/* Contenido con scroll */}
+            <div className="flex-1 overflow-y-auto px-4 py-4">
+              <FamilyTierBar c={c} />
+              {selected.style ? (
+                <>
+                  <OrderSummary c={c} sticky={false} />
+                  <DiscountCode c={c} />
+                </>
+              ) : (
+                <p className="text-sm text-secondary-lighter text-center py-8">
+                  {pick3(lang as Lang, 'Tu carrito está vacío. Elige un estilo para empezar.', 'Your cart is empty. Pick a style to start.', 'Ton panier est vide. Choisis un style pour commencer.')}
+                </p>
+              )}
+            </div>
+
+            {/* Footer fijo: total + Secure Checkout (dorado, escudo) + métodos */}
+            {selected.bodyType && (
+              <div className="border-t border-primary-lighter px-4 py-4 space-y-3 bg-white">
+                <div className="flex justify-between items-center font-black text-lg">
+                  <span className="text-secondary">{t.studio.summary.total}</span>
+                  <span className="text-secondary">{fmt(totalPrice())}</span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => { setCartOpen(false); if (step < 4) setStep(4); }}
+                  className="w-full flex items-center justify-center gap-2 rounded-full bg-amber-400 hover:bg-amber-500 text-secondary font-black py-3.5 shadow-md transition-colors"
+                >
+                  <ShieldCheck className="w-5 h-5" />
+                  {pick3(lang as Lang, 'Pago seguro', 'Secure Checkout', 'Paiement sécurisé')}
+                </button>
+                {/* ponytail: chips de texto para métodos de pago — cero assets, igual que PaymentTrustStrip. */}
+                <div className="flex justify-center flex-wrap gap-1.5">
+                  {['Visa', 'Mastercard', 'Shop Pay', 'Google Pay', 'PayPal'].map(m => (
+                    <span key={m} className="px-2 py-1 rounded-md border border-primary-lighter bg-white text-[9px] font-black uppercase tracking-wide text-secondary-lighter">
+                      {m}
+                    </span>
+                  ))}
+                </div>
+              </div>
             )}
           </div>
         </div>
