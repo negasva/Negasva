@@ -20,9 +20,9 @@ import StepBody from './StepBody';
 import StepBackground from './StepBackground';
 
 const PAYPAL_CLIENT_ID = process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID ?? '';
-// El SDK v6 exige declarar el entorno explícitamente (el client id ya no lo
+// El SDK v6 exige declarar el entorno explÃ­citamente (el client id ya no lo
 // selecciona). Se toma de NEXT_PUBLIC_PAYPAL_ENV (igual criterio que el
-// PAYPAL_ENV del servidor: 'live' → producción); si falta, se deduce de
+// PAYPAL_ENV del servidor: 'live' â†’ producciÃ³n); si falta, se deduce de
 // NODE_ENV para no exigir una variable nueva en desarrollo.
 const PAYPAL_ENVIRONMENT: 'production' | 'sandbox' =
   (process.env.NEXT_PUBLIC_PAYPAL_ENV ?? (process.env.NODE_ENV === 'production' ? 'live' : 'sandbox')) === 'live'
@@ -33,7 +33,7 @@ type Lang = 'es' | 'en' | 'fr';
 const pick3 = (lang: Lang, es: string, en: string, fr: string) =>
   lang === 'fr' ? fr : lang === 'en' ? en : es;
 
-// Banner verde: puedes empezar ya y enviar las fotos después.
+// Banner verde: puedes empezar ya y enviar las fotos despuÃ©s.
 function StartNowBanner({ lang }: { lang: Lang }) {
   return (
     <div className="flex items-center justify-between gap-3 rounded-2xl border-2 border-green-500/40 bg-green-50 px-5 py-3.5">
@@ -42,7 +42,7 @@ function StartNowBanner({ lang }: { lang: Lang }) {
       </span>
       <span title={pick3(
         lang,
-        'Puedes pagar ahora y enviarnos las fotos después por email o WhatsApp.',
+        'Puedes pagar ahora y enviarnos las fotos despuÃ©s por email o WhatsApp.',
         'You can pay now and send us your photos later by email or WhatsApp.',
         'Tu peux payer maintenant et envoyer tes photos plus tard par email ou WhatsApp.',
       )}>
@@ -52,7 +52,7 @@ function StartNowBanner({ lang }: { lang: Lang }) {
   );
 }
 
-// Código de descuento — vive debajo del resumen del pedido, fuera de su
+// CÃ³digo de descuento â€” vive debajo del resumen del pedido, fuera de su
 // contenedor (y dentro del paso 4 en pantallas sin sidebar).
 function DiscountCode({ c }: { c: CheckoutController }) {
   const {
@@ -67,7 +67,7 @@ function DiscountCode({ c }: { c: CheckoutController }) {
       {appliedCode ? (
         <div className="flex items-center justify-between rounded-2xl border-2 border-primary bg-primary-lighter px-4 py-3">
           <span className="font-bold text-secondary text-sm">
-            {appliedCode.code} · −{appliedCode.type === 'percentage' ? `${appliedCode.value}%` : fmt(appliedCode.value)}
+            {appliedCode.code} Â· âˆ’{appliedCode.type === 'percentage' ? `${appliedCode.value}%` : fmt(appliedCode.value)}
           </span>
           <button
             type="button"
@@ -103,7 +103,7 @@ function DiscountCode({ c }: { c: CheckoutController }) {
   );
 }
 
-// Propina opcional (paso 5): SOLO 3 opciones — 5%, 10% o monto personalizado.
+// Propina opcional (paso 5): SOLO 3 opciones â€” 5%, 10% o monto personalizado.
 // El % lo recalcula el servidor; la personalizada viaja en USD acotada.
 function TipSelector({ c }: { c: CheckoutController }) {
   const { lang, fmt, currency, rates, tip, setTip, priceBreakdown } = c;
@@ -119,7 +119,7 @@ function TipSelector({ c }: { c: CheckoutController }) {
   return (
     <div className="rounded-2xl border-2 border-primary-lighter bg-white p-5">
       <p className="font-black text-secondary text-base tracking-tighter">
-        {pick3(l, '¿Quieres dejar una propina al artista?', 'Want to leave the artist a tip?', 'Envie de laisser un pourboire à l’artiste ?')}{' '}
+        {pick3(l, 'Â¿Quieres dejar una propina al artista?', 'Want to leave the artist a tip?', 'Envie de laisser un pourboire Ã  lâ€™artiste ?')}{' '}
         <span className="font-normal text-secondary-lighter text-sm">{t3optional(l)}</span>
       </p>
       <div className="mt-3 flex gap-2">
@@ -147,7 +147,7 @@ function TipSelector({ c }: { c: CheckoutController }) {
           onChange={(e) => {
             const v = e.target.value.replace(/[^\d.]/g, '');
             setCustomInput(v);
-            // El input está en la moneda visible; al servidor viaja en USD.
+            // El input estÃ¡ en la moneda visible; al servidor viaja en USD.
             setTip({ usd: Math.min(Math.max((Number(v) || 0) / rate, 0), 500) });
           }}
           inputMode="decimal"
@@ -160,9 +160,9 @@ function TipSelector({ c }: { c: CheckoutController }) {
 }
 const t3optional = (l: Lang) => pick3(l, '(opcional)', '(optional)', '(facultatif)');
 
-// Tira de confianza bajo los botones de pago: métodos aceptados + SSL.
+// Tira de confianza bajo los botones de pago: mÃ©todos aceptados + SSL.
 function PaymentTrustStrip({ lang, cop }: { lang: Lang; cop: boolean }) {
-  // ponytail: chips de texto en vez de assets de logos — cero imágenes que mantener.
+  // ponytail: chips de texto en vez de assets de logos â€” cero imÃ¡genes que mantener.
   const methods = cop ? ['Mercado Pago', 'PSE', 'Visa', 'Mastercard'] : ['Visa', 'Mastercard', 'Amex', 'PayPal'];
   return (
     <div className="mt-5 text-center">
@@ -175,16 +175,16 @@ function PaymentTrustStrip({ lang, cop }: { lang: Lang; cop: boolean }) {
       </div>
       <p className="text-xs text-secondary-lighter font-bold">
         {pick3(lang,
-          'Pago seguro · SSL de 256 bits · nunca guardamos tu tarjeta',
-          'Secure payment · 256-bit SSL · we never store your card',
-          'Paiement sécurisé · SSL 256 bits · nous ne stockons jamais ta carte')}
+          'Pago seguro Â· SSL de 256 bits Â· nunca guardamos tu tarjeta',
+          'Secure payment Â· 256-bit SSL Â· we never store your card',
+          'Paiement sÃ©curisÃ© Â· SSL 256 bits Â· nous ne stockons jamais ta carte')}
       </p>
     </div>
   );
 }
 
 // Barra de incentivo familiar (arriba del drawer): progreso real por
-// peopleCount hacia el próximo tier de nextFamilyTier(). En el tier máximo
+// peopleCount hacia el prÃ³ximo tier de nextFamilyTier(). En el tier mÃ¡ximo
 // muestra el beneficio logrado.
 function FamilyTierBar({ c }: { c: CheckoutController }) {
   const { lang, fmt, selected, priceMap, priceBreakdown } = c;
@@ -192,7 +192,7 @@ function FamilyTierBar({ c }: { c: CheckoutController }) {
   if (!selected.bodyType) return null;
   const tier = nextFamilyTier(selected.peopleCount);
   const b = priceBreakdown();
-  // Con 1 persona el mejor incentivo es el 2º retrato con descuento fuerte
+  // Con 1 persona el mejor incentivo es el 2Âº retrato con descuento fuerte
   // (% del admin de precios), no el pack familia de 3.
   if (selected.peopleCount === 1) {
     const pct = Math.round(priceMap.second_portrait_pct ?? 40);
@@ -200,9 +200,9 @@ function FamilyTierBar({ c }: { c: CheckoutController }) {
       <div className="rounded-2xl bg-primary-lighter border-2 border-primary p-4 mb-4">
         <p className="text-xs font-black text-secondary mb-2">
           {pick3(l,
-            `Agrega otra persona: el 2º retrato con −${pct}% (ahorras ${fmt(b.perPerson * pct / 100)})`,
-            `Add another person: 2nd portrait at −${pct}% (save ${fmt(b.perPerson * pct / 100)})`,
-            `Ajoute une personne : le 2e portrait à −${pct}% (économise ${fmt(b.perPerson * pct / 100)})`)}
+            `Agrega otra persona: el 2Âº retrato con âˆ’${pct}% (ahorras ${fmt(b.perPerson * pct / 100)})`,
+            `Add another person: 2nd portrait at âˆ’${pct}% (save ${fmt(b.perPerson * pct / 100)})`,
+            `Ajoute une personne : le 2e portrait Ã  âˆ’${pct}% (Ã©conomise ${fmt(b.perPerson * pct / 100)})`)}
         </p>
         <div className="h-2 rounded-full bg-white overflow-hidden">
           <div className="h-full bg-primary transition-all duration-300" style={{ width: '50%' }} />
@@ -216,9 +216,9 @@ function FamilyTierBar({ c }: { c: CheckoutController }) {
       <div className="rounded-2xl bg-primary-lighter border-2 border-primary p-4 mb-4 text-center">
         <p className="text-sm font-black text-primary">
           {pick3(l,
-            `¡Tienes el ${pct}% de descuento familiar, el máximo!`,
+            `Â¡Tienes el ${pct}% de descuento familiar, el mÃ¡ximo!`,
             `You've unlocked the maximum ${pct}% family discount!`,
-            `Tu as débloqué la remise famille maximale de ${pct}% !`)}
+            `Tu as dÃ©bloquÃ© la remise famille maximale de ${pct}% !`)}
         </p>
       </div>
     );
@@ -229,9 +229,9 @@ function FamilyTierBar({ c }: { c: CheckoutController }) {
     <div className="rounded-2xl bg-primary-lighter border-2 border-primary p-4 mb-4">
       <p className="text-xs font-black text-secondary mb-2">
         {pick3(l,
-          `Agrega ${missing} persona${missing > 1 ? 's' : ''} más y baja a ${fmt(perPersonAtTier)} c/u`,
+          `Agrega ${missing} persona${missing > 1 ? 's' : ''} mÃ¡s y baja a ${fmt(perPersonAtTier)} c/u`,
           `Add ${missing} more ${missing > 1 ? 'people' : 'person'} and drop to ${fmt(perPersonAtTier)} each`,
-          `Ajoute ${missing} personne${missing > 1 ? 's' : ''} de plus et passe à ${fmt(perPersonAtTier)} chacun`)}
+          `Ajoute ${missing} personne${missing > 1 ? 's' : ''} de plus et passe Ã  ${fmt(perPersonAtTier)} chacun`)}
       </p>
       <div className="h-2 rounded-full bg-white overflow-hidden">
         <div
@@ -243,8 +243,8 @@ function FamilyTierBar({ c }: { c: CheckoutController }) {
   );
 }
 
-// Datos de contacto — se piden en el paso de pago para saber quién compra y
-// cómo contactarlo (email + WhatsApp). Sin nombre + email válido no se
+// Datos de contacto â€” se piden en el paso de pago para saber quiÃ©n compra y
+// cÃ³mo contactarlo (email + WhatsApp). Sin nombre + email vÃ¡lido no se
 // muestran los botones de pago.
 function ContactForm({ c }: { c: CheckoutController }) {
   const { lang, contact, setContactField } = c;
@@ -253,13 +253,13 @@ function ContactForm({ c }: { c: CheckoutController }) {
     <div className="rounded-2xl border-2 border-primary-lighter bg-white p-5 space-y-4">
       <div>
         <p className="font-black text-secondary text-base tracking-tighter">
-          {pick3(l, 'Tus datos', 'Your details', 'Tes coordonnées')}
+          {pick3(l, 'Tus datos', 'Your details', 'Tes coordonnÃ©es')}
         </p>
         <p className="text-sm text-secondary-lighter">
           {pick3(l,
-            'Para enviarte tu retrato y avisarte cuando esté listo.',
-            'So we can send your portrait and let you know when it’s ready.',
-            'Pour t’envoyer ton portrait et te prévenir quand il est prêt.')}
+            'Para enviarte tu retrato y avisarte cuando estÃ© listo.',
+            'So we can send your portrait and let you know when itâ€™s ready.',
+            'Pour tâ€™envoyer ton portrait et te prÃ©venir quand il est prÃªt.')}
         </p>
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -270,7 +270,7 @@ function ContactForm({ c }: { c: CheckoutController }) {
           <input
             value={contact.name}
             onChange={(e) => setContactField('name', e.target.value)}
-            placeholder={pick3(l, 'María García', 'Jane Doe', 'Marie Dupont')}
+            placeholder={pick3(l, 'MarÃ­a GarcÃ­a', 'Jane Doe', 'Marie Dupont')}
             maxLength={120}
             autoComplete="name"
             className="w-full rounded-lg border-2 border-primary-lighter px-4 py-3 text-sm font-medium text-secondary focus:border-primary focus:outline-none"
@@ -307,7 +307,7 @@ function ContactForm({ c }: { c: CheckoutController }) {
   );
 }
 
-// Order summary — shown as a sticky sidebar from step 2 onward, and as a
+// Order summary â€” shown as a sticky sidebar from step 2 onward, and as a
 // static, always-visible card on the checkout step so the customer sees
 // exactly what they're paying for (in the site's own style).
 function OrderSummary({ c, sticky = true }: { c: CheckoutController; sticky?: boolean }) {
@@ -341,7 +341,7 @@ function OrderSummary({ c, sticky = true }: { c: CheckoutController; sticky?: bo
             <>
               <div className="flex justify-between">
                 <span className="text-secondary-lighter">
-                  {selected.peopleCount} {t.studio.summary.people_count} × {fmt(b.perPerson)}
+                  {selected.peopleCount} {t.studio.summary.people_count} Ã— {fmt(b.perPerson)}
                 </span>
                 <span className={`font-bold ${b.discountRate > 0 ? 'line-through text-secondary-lighter' : 'text-secondary'}`}>
                   {fmt(b.peopleSubtotal)}
@@ -349,8 +349,8 @@ function OrderSummary({ c, sticky = true }: { c: CheckoutController; sticky?: bo
               </div>
               {b.discountRate > 0 && (
                 <div className="flex justify-between bg-white rounded-xl px-3 py-1.5">
-                  <span className="text-primary font-bold">−{Math.round(b.discountRate * 100)}%</span>
-                  <span className="font-bold text-primary">−{fmt(b.discount)}</span>
+                  <span className="text-primary font-bold">âˆ’{Math.round(b.discountRate * 100)}%</span>
+                  <span className="font-bold text-primary">âˆ’{fmt(b.discount)}</span>
                 </div>
               )}
             </>
@@ -375,7 +375,7 @@ function OrderSummary({ c, sticky = true }: { c: CheckoutController; sticky?: bo
           {selected.recording && (
             <div className="flex justify-between">
               <span className="text-secondary-lighter">
-                {pick3(lang as Lang, 'Video del proceso:', 'Process video:', 'Vidéo du processus :')}
+                {pick3(lang as Lang, 'Video del proceso:', 'Process video:', 'VidÃ©o du processus :')}
               </span>
               <span className="font-bold text-secondary">+{fmt(b.recordingCost)}</span>
             </div>
@@ -394,10 +394,10 @@ function OrderSummary({ c, sticky = true }: { c: CheckoutController; sticky?: bo
                       const variant = (p.options ?? [])
                         .map(g => g.values.find(v => v.key === sel[g.key])?.label[lang])
                         .filter(Boolean)
-                        .join(' · ');
+                        .join(' Â· ');
                       return (
                         <span key={`${p.key}-${i}`} className="text-xs bg-white rounded-full px-2.5 py-1 font-bold text-secondary">
-                          {p.name[lang]}{variant ? ` · ${variant}` : ''}
+                          {p.name[lang]}{variant ? ` Â· ${variant}` : ''}
                         </span>
                       );
                     }),
@@ -406,15 +406,15 @@ function OrderSummary({ c, sticky = true }: { c: CheckoutController; sticky?: bo
               {shippingSelection ? (
                 <div className="flex justify-between">
                   <span className="text-secondary-lighter">
-                    {pick3(lang as Lang, 'Envío', 'Shipping', 'Livraison')}: {shippingSelection.option.name}
+                    {pick3(lang as Lang, 'EnvÃ­o', 'Shipping', 'Livraison')}: {shippingSelection.option.name}
                   </span>
                   <span className="font-bold text-secondary">+{fmt(shippingSelection.option.rateUsd)}</span>
                 </div>
               ) : (
                 <p className="text-xs text-secondary-lighter pl-2">
                   {shippingEstimate != null
-                    ? `${pick3(lang as Lang, 'Envío estimado', 'Estimated shipping', 'Livraison estimée')}: ~${fmt(shippingEstimate)}`
-                    : pick3(lang as Lang, 'Envío calculado en el checkout', 'Shipping calculated at checkout', 'Livraison calculée au paiement')}
+                    ? `${pick3(lang as Lang, 'EnvÃ­o estimado', 'Estimated shipping', 'Livraison estimÃ©e')}: ~${fmt(shippingEstimate)}`
+                    : pick3(lang as Lang, 'EnvÃ­o calculado en el checkout', 'Shipping calculated at checkout', 'Livraison calculÃ©e au paiement')}
                 </p>
               )}
             </>
@@ -422,7 +422,7 @@ function OrderSummary({ c, sticky = true }: { c: CheckoutController; sticky?: bo
           {appliedCode && b.codeDiscount > 0 && (
             <div className="flex justify-between bg-white rounded-xl px-3 py-1.5">
               <span className="text-primary font-bold">{appliedCode.code}</span>
-              <span className="font-bold text-primary">−{fmt(b.codeDiscount)}</span>
+              <span className="font-bold text-primary">âˆ’{fmt(b.codeDiscount)}</span>
             </div>
           )}
           {selected.specialRequests.trim() && (
@@ -446,20 +446,20 @@ function OrderSummary({ c, sticky = true }: { c: CheckoutController; sticky?: bo
         )}
         {selected.bodyType && currency === 'COP' && (
           <p className="text-xs font-bold text-primary text-center">
-            {pick3(lang as Lang, 'Hasta 3 cuotas sin interés', 'Up to 3 interest-free installments', 'Jusqu’à 3 fois sans frais')}
+            {pick3(lang as Lang, 'Hasta 3 cuotas sin interÃ©s', 'Up to 3 interest-free installments', 'Jusquâ€™Ã  3 fois sans frais')}
           </p>
         )}
         {(() => {
           if (!selected.bodyType) return null;
-          // Con 1 persona el gancho es el 2º retrato con descuento fuerte.
+          // Con 1 persona el gancho es el 2Âº retrato con descuento fuerte.
           if (selected.peopleCount === 1) {
             const pct = Math.round(c.priceMap.second_portrait_pct ?? 40);
             return (
               <p className="bg-white rounded-xl px-3 py-2 text-xs font-bold text-primary text-center">
                 {pick3(lang as Lang,
-                  `¡Añade a alguien más: 2º retrato con −${pct}%!`,
-                  `Add one more person: 2nd portrait −${pct}%!`,
-                  `Ajoute une personne : 2e portrait −${pct}% !`)}
+                  `Â¡AÃ±ade a alguien mÃ¡s: 2Âº retrato con âˆ’${pct}%!`,
+                  `Add one more person: 2nd portrait âˆ’${pct}%!`,
+                  `Ajoute une personne : 2e portrait âˆ’${pct}% !`)}
               </p>
             );
           }
@@ -492,17 +492,17 @@ export default function StudioPage() {
 
   const STEPS = t.studio.steps as unknown as string[];
 
-  // Drawer del carrito (móvil): da la sensación de "carrito" tipo turnedyellow
+  // Drawer del carrito (mÃ³vil): da la sensaciÃ³n de "carrito" tipo turnedyellow
   // reutilizando el resumen del pedido. En desktop ya existe el sidebar fijo.
   const [cartOpen, setCartOpen] = useState(false);
-  // Cerrar el drawer con Esc (además del click en overlay y la X).
+  // Cerrar el drawer con Esc (ademÃ¡s del click en overlay y la X).
   useEffect(() => {
     if (!cartOpen) return;
     const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setCartOpen(false); };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
   }, [cartOpen]);
-  // Nº de artículos/extras en el carrito para el badge del botón flotante.
+  // NÂº de artÃ­culos/extras en el carrito para el badge del botÃ³n flotante.
   const cartCount =
     (selected.bodyType ? selected.peopleCount : 0) +
     (selected.background && selected.background !== 'none' ? 1 : 0) +
@@ -534,7 +534,7 @@ export default function StudioPage() {
           <div className="flex items-center gap-4">
             <CurrencySwitcher />
             <LanguageSwitcher />
-            {/* Carrito siempre visible (desktop y móvil): badge + total, abre el drawer. */}
+            {/* Carrito siempre visible (desktop y mÃ³vil): badge + total, abre el drawer. */}
             <button
               type="button"
               onClick={() => setCartOpen(true)}
@@ -606,7 +606,7 @@ export default function StudioPage() {
                   <p className="text-lg text-secondary-lighter">{t.studio.step4.subtitle}</p>
                 </div>
                 <div className="max-w-2xl mx-auto space-y-8">
-                  {/* 1 · Entrega exprés 24h */}
+                  {/* 1 Â· Entrega exprÃ©s 24h */}
                   <button
                     type="button"
                     onClick={toggleExpress}
@@ -628,7 +628,7 @@ export default function StudioPage() {
                     </div>
                   </button>
 
-                  {/* 1b · Video del proceso de dibujo */}
+                  {/* 1b Â· Video del proceso de dibujo */}
                   <button
                     type="button"
                     onClick={toggleRecording}
@@ -645,20 +645,20 @@ export default function StudioPage() {
                       <div className="flex-1">
                         <p className="font-black text-secondary text-lg tracking-tighter flex items-center gap-2">
                           <Video className="w-5 h-5 text-primary" />
-                          {pick3(lang as Lang, 'Video del proceso de dibujo', 'Watch your artwork come to life', 'Vidéo du processus de dessin')}
+                          {pick3(lang as Lang, 'Video del proceso de dibujo', 'Watch your artwork come to life', 'VidÃ©o du processus de dessin')}
                         </p>
                         <p className="text-sm text-secondary-lighter mt-1">
-                          {pick3(lang as Lang, 'Grabamos cómo se crea tu retrato, de boceto a color.', 'We record how your portrait is created, from sketch to color.', 'Nous filmons la création de ton portrait, du croquis à la couleur.')}
+                          {pick3(lang as Lang, 'Grabamos cÃ³mo se crea tu retrato, de boceto a color.', 'We record how your portrait is created, from sketch to color.', 'Nous filmons la crÃ©ation de ton portrait, du croquis Ã  la couleur.')}
                         </p>
                       </div>
                       <span className="font-black text-secondary text-xl whitespace-nowrap">+{fmt(priceMap.recording_addon ?? 20)}</span>
                     </div>
                   </button>
 
-                  {/* Puedes pagar ya y mandar las fotos después */}
+                  {/* Puedes pagar ya y mandar las fotos despuÃ©s */}
                   <StartNowBanner lang={lang as Lang} />
 
-                  {/* 2 · Imprime tu dibujo (print on demand) */}
+                  {/* 2 Â· Imprime tu dibujo (print on demand) */}
                   <div>
                     <h2 className="font-black text-xl text-secondary mb-1 tracking-tighter">{t.studio.products.title}</h2>
                     <p className="text-sm text-secondary-lighter mb-3">{t.studio.products.subtitle}</p>
@@ -732,8 +732,8 @@ export default function StudioPage() {
                       })}
                     </div>
 
-                    {/* Variantes por unidad (talla, modelo…): una fila por unidad,
-                        para elegir el tamaño de cada item por separado. */}
+                    {/* Variantes por unidad (talla, modeloâ€¦): una fila por unidad,
+                        para elegir el tamaÃ±o de cada item por separado. */}
                     {getProducts().filter(p => productQty(p.key) > 0 && p.options?.length).length > 0 && (
                       <div className="mt-4 space-y-3">
                         {getProducts()
@@ -784,8 +784,8 @@ export default function StudioPage() {
 
                     <p className="text-xs text-secondary-lighter mt-3">{t.studio.products.digital_note}</p>
 
-                    {/* Calculador de envío: solo con productos físicos en el
-                        carrito. Obligatorio — sin método elegido no se avanza
+                    {/* Calculador de envÃ­o: solo con productos fÃ­sicos en el
+                        carrito. Obligatorio â€” sin mÃ©todo elegido no se avanza
                         y se resalta en rojo con shake como el resto. */}
                     {Object.values(selected.productUnits).some(list => list.length > 0) && (
                       <div
@@ -806,7 +806,7 @@ export default function StudioPage() {
                     )}
                   </div>
 
-                  {/* 2 · Sube tus fotos (compacto) */}
+                  {/* 2 Â· Sube tus fotos (compacto) */}
                   <div>
                     <h2 className="font-black text-xl text-secondary mb-1 tracking-tighter">
                       {t.studio.step5.title}{' '}
@@ -828,12 +828,12 @@ export default function StudioPage() {
                         </div>
                       )}
                       <p className="mt-4 text-xs text-secondary-lighter">
-                        {t.studio.step5.max_size} · {selected.peopleCount} {selected.peopleCount > 1 ? t.studio.step5.required_photos_plural : t.studio.step5.required_photos}
+                        {t.studio.step5.max_size} Â· {selected.peopleCount} {selected.peopleCount > 1 ? t.studio.step5.required_photos_plural : t.studio.step5.required_photos}
                       </p>
                     </div>
                   </div>
 
-                  {/* 4 · Notas especiales */}
+                  {/* 4 Â· Notas especiales */}
                   <div>
                     <label className="block font-bold text-secondary mb-3">
                       {t.studio.step4.notes_label} <span className="font-normal text-secondary-lighter">{t.studio.step4.notes_optional}</span>
@@ -849,7 +849,7 @@ export default function StudioPage() {
                     <p className="text-right text-xs text-secondary-lighter mt-2">{selected.specialRequests.length}/500</p>
                   </div>
 
-                  {/* 5 · Código de descuento: solo móvil/tablet — en lg vive
+                  {/* 5 Â· CÃ³digo de descuento: solo mÃ³vil/tablet â€” en lg vive
                       debajo del resumen del pedido en el sidebar. */}
                   <div className="lg:hidden">
                     <DiscountCode c={c} />
@@ -872,9 +872,9 @@ export default function StudioPage() {
 
                 {/* Columna de pago (izquierda): datos + propina + caja de pago,
                     alineada junto al resumen del pedido, que vive en el sidebar
-                    (desktop) y en el drawer del carrito (móvil). */}
+                    (desktop) y en el drawer del carrito (mÃ³vil). */}
                 <div className="space-y-5">
-                  {/* Datos de contacto — obligatorios antes de pagar. */}
+                  {/* Datos de contacto â€” obligatorios antes de pagar. */}
                   <ContactForm c={c} />
 
                   {/* Propina opcional: 5%, 10% o personalizada. Viaja al pago. */}
@@ -899,7 +899,7 @@ export default function StudioPage() {
                     ) : currency === 'COP' ? (
                       <>
                         <p className="text-center text-xs font-bold text-primary mb-3">
-                          {pick3(lang as Lang, 'Paga hasta en 3 cuotas sin interés', 'Pay in up to 3 interest-free installments', 'Payez jusqu’à 3 fois sans frais')}
+                          {pick3(lang as Lang, 'Paga hasta en 3 cuotas sin interÃ©s', 'Pay in up to 3 interest-free installments', 'Payez jusquâ€™Ã  3 fois sans frais')}
                         </p>
                         {/* key: si cambia la propina, el Brick se remonta y crea
                             el pedido con el monto nuevo (se monta una sola vez). */}
@@ -907,29 +907,29 @@ export default function StudioPage() {
                       </>
                     ) : !PAYPAL_CLIENT_ID ? (
                       // Sin client id el SDK de PayPal falla mudo y el recuadro
-                      // queda vacío — mejor decir explícitamente qué falta.
+                      // queda vacÃ­o â€” mejor decir explÃ­citamente quÃ© falta.
                       <p className="text-center text-sm font-bold text-red-500 py-6">
-                        PayPal no está configurado (falta NEXT_PUBLIC_PAYPAL_CLIENT_ID).
+                        PayPal no estÃ¡ configurado (falta NEXT_PUBLIC_PAYPAL_CLIENT_ID).
                       </p>
                     ) : (
                       // SDK v6 con presentationMode="modal": el checkout se abre
-                      // SIEMPRE como overlay dentro de la página, nunca en una
+                      // SIEMPRE como overlay dentro de la pÃ¡gina, nunca en una
                       // ventana externa (que a veces quedaba en about:blank).
                       // La moneda e intent viajan en la orden creada por el
                       // servidor (/api/checkout), no en el proveedor.
-                      // 'paypal-guest-payments' es OBLIGATORIO para el botón de
-                      // tarjeta (guest/BCDC): sin él la sesión falla al crearse
-                      // y el botón queda deshabilitado (cursor prohibido).
+                      // 'paypal-guest-payments' es OBLIGATORIO para el botÃ³n de
+                      // tarjeta (guest/BCDC): sin Ã©l la sesiÃ³n falla al crearse
+                      // y el botÃ³n queda deshabilitado (cursor prohibido).
                       <PayPalProvider
                         clientId={PAYPAL_CLIENT_ID}
                         environment={PAYPAL_ENVIRONMENT}
                         components={['paypal-payments', 'paypal-guest-payments']}
                         pageType="checkout"
                       >
-                        {/* Ambos a ancho completo: el botón de tarjeta despliega
-                            su formulario (guest/BCDC) en su propio contenedor, así
+                        {/* Ambos a ancho completo: el botÃ³n de tarjeta despliega
+                            su formulario (guest/BCDC) en su propio contenedor, asÃ­
                             que confinarlo a media columna cortaba los campos a la
-                            mitad — a ancho completo el form abarca todo el espacio. */}
+                            mitad â€” a ancho completo el form abarca todo el espacio. */}
                         <div className="space-y-3">
                           <PayPalOneTimePaymentButton
                             type="checkout"
@@ -942,8 +942,8 @@ export default function StudioPage() {
                             // Cancelar no es un error: se limpia el mensaje.
                             onCancel={() => setCheckoutError('')}
                           />
-                          {/* Botón de pago con tarjeta (guest checkout / BCDC):
-                              misma orden y callbacks que el botón de PayPal. */}
+                          {/* BotÃ³n de pago con tarjeta (guest checkout / BCDC):
+                              misma orden y callbacks que el botÃ³n de PayPal. */}
                           <PayPalGuestPaymentButton
                             createOrder={async () => ({ orderId: await createPayPalOrder() })}
                             onApprove={async ({ orderId }) => capturePayPalOrder(orderId)}
@@ -957,8 +957,8 @@ export default function StudioPage() {
                   </div>
                   </div>
 
-                  {/* El error del pago también debe verse en el paso 5 (la barra
-                      de navegación con checkoutError solo existe en los pasos 1–4). */}
+                  {/* El error del pago tambiÃ©n debe verse en el paso 5 (la barra
+                      de navegaciÃ³n con checkoutError solo existe en los pasos 1â€“4). */}
                   {checkoutError && (
                     <p className="text-center text-sm font-bold text-red-500">
                       {checkoutError}
@@ -977,7 +977,7 @@ export default function StudioPage() {
               </div>
             )}
 
-            {/* Navigation (pasos 1–4). Barra fija abajo (móvil y desktop),
+            {/* Navigation (pasos 1â€“4). Barra fija abajo (mÃ³vil y desktop),
                 siempre accesible sin scrollear. */}
             {step < 5 && (
               <>
@@ -1021,7 +1021,7 @@ export default function StudioPage() {
                           <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
                         )}
                         {step === 4 ? t.studio.nav.checkout : t.studio.nav.next}
-                        {step > 1 && <span className="font-black">· {fmt(totalPrice())}</span>}
+                        {step > 1 && <span className="font-black">Â· {fmt(totalPrice())}</span>}
                       </button>
                     )}
                   </div>
@@ -1030,12 +1030,12 @@ export default function StudioPage() {
             )}
           </div>
 
-          {/* Sidebar: Order Summary (pasos 2–5; en el 5 es donde vive el
-              resumen — la columna principal solo lleva datos + pago). */}
+          {/* Sidebar: Order Summary (pasos 2â€“5; en el 5 es donde vive el
+              resumen â€” la columna principal solo lleva datos + pago). */}
           {step > 1 && (
             <div className="hidden lg:block">
-              {/* Sticky sobre el conjunto: el cupón va debajo del resumen,
-                  fuera de su contenedor, y baja junto con él al hacer scroll. */}
+              {/* Sticky sobre el conjunto: el cupÃ³n va debajo del resumen,
+                  fuera de su contenedor, y baja junto con Ã©l al hacer scroll. */}
               <div className="sticky top-24">
                 <OrderSummary c={c} sticky={false} />
                 <DiscountCode c={c} />
@@ -1045,7 +1045,7 @@ export default function StudioPage() {
         </div>
       </main>
 
-      {/* Drawer del carrito (desktop y móvil, todos los pasos): panel lateral
+      {/* Drawer del carrito (desktop y mÃ³vil, todos los pasos): panel lateral
           que reutiliza el resumen del pedido y se actualiza en vivo. Se abre
           desde el icono del carrito de la nav. */}
       {cartOpen && (
@@ -1055,7 +1055,7 @@ export default function StudioPage() {
             onClick={() => setCartOpen(false)}
           />
           <div className="absolute right-0 top-0 h-full w-[92%] max-w-sm bg-white shadow-2xl flex flex-col animate-slide-in-right">
-            {/* Header: "My Cart" + contador de artículos */}
+            {/* Header: "My Cart" + contador de artÃ­culos */}
             <div className="flex items-center justify-between px-4 py-4 border-b border-primary-lighter">
               <span className="font-black text-secondary text-lg tracking-tighter flex items-center gap-2">
                 <ShoppingBag className="w-5 h-5 text-primary" />
@@ -1071,35 +1071,23 @@ export default function StudioPage() {
                 <X className="w-5 h-5 text-secondary" />
               </button>
             </div>
-
-            {/* Barra de envío gratis (verde). El retrato se entrega digital, así
-                que el envío digital siempre es gratis — se celebra como en Shopify. */}
-            <div className="mx-4 mt-4 flex items-center gap-2 rounded-xl bg-green-50 border-2 border-green-500/40 px-4 py-2.5">
-              <Truck className="w-4 h-4 text-green-600 shrink-0" />
-              <span className="text-xs font-black text-green-700">
-                {pick3(lang as Lang,
-                  '¡Envío digital GRATIS desbloqueado!',
-                  "You've unlocked FREE SHIPPING!",
-                  'Livraison numérique GRATUITE débloquée !')}
-              </span>
-            </div>
-
             {/* Contenido con scroll */}
             <div className="flex-1 overflow-y-auto px-4 py-4">
               <FamilyTierBar c={c} />
               {selected.style ? (
                 <>
+                  <CartDrawerItems c={c} podImages={podImages} />
                   <OrderSummary c={c} sticky={false} />
                   <DiscountCode c={c} />
                 </>
               ) : (
                 <p className="text-sm text-secondary-lighter text-center py-8">
-                  {pick3(lang as Lang, 'Tu carrito está vacío. Elige un estilo para empezar.', 'Your cart is empty. Pick a style to start.', 'Ton panier est vide. Choisis un style pour commencer.')}
+                  {pick3(lang as Lang, 'Tu carrito estÃ¡ vacÃ­o. Elige un estilo para empezar.', 'Your cart is empty. Pick a style to start.', 'Ton panier est vide. Choisis un style pour commencer.')}
                 </p>
               )}
             </div>
 
-            {/* Footer fijo: total + Secure Checkout (dorado, escudo) + métodos */}
+            {/* Footer fijo: total + Secure Checkout (dorado, escudo) + mÃ©todos */}
             {selected.bodyType && (
               <div className="border-t border-primary-lighter px-4 py-4 space-y-3 bg-white">
                 <div className="flex justify-between items-center font-black text-lg">
@@ -1112,9 +1100,9 @@ export default function StudioPage() {
                   className="w-full flex items-center justify-center gap-2 rounded-full bg-amber-400 hover:bg-amber-500 text-secondary font-black py-3.5 shadow-md transition-colors"
                 >
                   <ShieldCheck className="w-5 h-5" />
-                  {pick3(lang as Lang, 'Pago seguro', 'Secure Checkout', 'Paiement sécurisé')}
+                  {pick3(lang as Lang, 'Pago seguro', 'Secure Checkout', 'Paiement sÃ©curisÃ©')}
                 </button>
-                {/* ponytail: chips de texto para métodos de pago — cero assets, igual que PaymentTrustStrip. */}
+                {/* ponytail: chips de texto para mÃ©todos de pago â€” cero assets, igual que PaymentTrustStrip. */}
                 <div className="flex justify-center flex-wrap gap-1.5">
                   {['Visa', 'Mastercard', 'Shop Pay', 'Google Pay', 'PayPal'].map(m => (
                     <span key={m} className="px-2 py-1 rounded-md border border-primary-lighter bg-white text-[9px] font-black uppercase tracking-wide text-secondary-lighter">
@@ -1143,7 +1131,7 @@ function CartDrawerItems({ c, podImages }: { c: CheckoutController; podImages: R
       const variant = (p.options ?? [])
         .map(g => g.values.find(v => v.key === unit[g.key])?.label[lang])
         .filter(Boolean)
-        .join(' · ');
+        .join(' Â· ');
       return { p, i, variant };
     }),
   );
@@ -1156,7 +1144,7 @@ function CartDrawerItems({ c, podImages }: { c: CheckoutController; podImages: R
           <div className="min-w-0 flex-1">
             <p className="font-black text-secondary leading-tight">{style?.name ?? selected.style}</p>
             <p className="text-xs font-bold text-secondary-lighter">
-              {selected.bodyType === 'full_body' ? 'Full body' : 'Torso'} · {selected.peopleCount} people
+              {selected.bodyType === 'full_body' ? 'Full body' : 'Torso'} Â· {selected.peopleCount} people
             </p>
             {selected.bodyType && <p className="mt-1 font-black text-primary">{fmt(b.peopleSubtotal - b.discount)}</p>}
           </div>
