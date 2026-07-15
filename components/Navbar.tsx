@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { Menu, X } from 'lucide-react';
 import Logo from '@/components/Logo';
 import CurrencySwitcher from '@/components/CurrencySwitcher';
+import MainCartDrawer from '@/components/MainCartDrawer';
 import { useLanguage } from '@/lib/i18n/LanguageContext';
 
 // Links SEO del sitio EN estático — texto fijo en inglés, sin i18n.
@@ -39,6 +40,7 @@ function Navbar() {
               </Link>
             ))}
             <CurrencySwitcher />
+            <MainCartDrawer />
             <Link
               href="/order"
               className="bg-secondary rounded-lg px-5 py-2.5 text-sm font-black text-white hover:bg-secondary-light transition-colors shadow-sm"
@@ -49,6 +51,7 @@ function Navbar() {
 
           {/* Mobile: primary CTA stays visible, the rest collapses into a menu */}
           <div className="flex md:hidden items-center gap-2">
+            <MainCartDrawer />
             <Link
               href="/order"
               className="bg-secondary rounded-lg px-4 py-2 text-sm font-black text-white hover:bg-secondary-light transition-colors shadow-sm"
