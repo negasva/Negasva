@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
-import { Lock, ShieldCheck, Plus, Minus, Check, X, Info, Video, ShoppingBag, Trash2 } from 'lucide-react';
+import { CreditCard, Lock, ShieldCheck, Plus, Minus, Check, X, Info, Video, ShoppingBag, Trash2 } from 'lucide-react';
 import Logo from '@/components/Logo';
 import ProductIcon from '@/components/ProductIcon';
 import { mergePodProducts, POD_PLACEHOLDER_IMG } from '@/lib/content/podProducts';
@@ -12,6 +12,7 @@ import CurrencySwitcher from '@/components/CurrencySwitcher';
 import { PayPalProvider, PayPalOneTimePaymentButton, PayPalGuestPaymentButton } from '@paypal/react-paypal-js/sdk-v6';
 import RecaptchaScript from '@/components/RecaptchaScript';
 import MercadoPagoBrick from '@/components/MercadoPagoBrick';
+import { PaymentLogo, PaymentLogoStrip } from '@/components/PaymentLogos';
 import { nextFamilyTier, familyDiscountRate } from '@/lib/pricing/calc';
 import ShippingCalculator from '@/components/ShippingCalculator';
 import { useCheckout, CURRENCY_COUNTRY, type CheckoutController } from './useCheckout';
@@ -67,7 +68,7 @@ function DiscountCode({ c }: { c: CheckoutController }) {
       {appliedCode ? (
         <div className="flex items-center justify-between rounded-2xl border-2 border-primary bg-primary-lighter px-4 py-3">
           <span className="font-bold text-secondary text-sm">
-            {appliedCode.code} Â· âˆ’{appliedCode.type === 'percentage' ? `${appliedCode.value}%` : fmt(appliedCode.value)}
+            {appliedCode.code} - {appliedCode.type === 'percentage' ? `${appliedCode.value}%` : fmt(appliedCode.value)} off
           </span>
           <button
             type="button"
@@ -119,7 +120,7 @@ function TipSelector({ c }: { c: CheckoutController }) {
   return (
     <div className="rounded-2xl border-2 border-primary-lighter bg-white p-5">
       <p className="font-black text-secondary text-base tracking-tighter">
-        {pick3(l, 'Â¿Quieres dejar una propina al artista?', 'Want to leave the artist a tip?', 'Envie de laisser un pourboire Ã  lâ€™artiste ?')}{' '}
+        {pick3(l, 'Want to leave the artist a tip?', 'Want to leave the artist a tip?', 'Want to leave the artist a tip?')}{' '}
         <span className="font-normal text-secondary-lighter text-sm">{t3optional(l)}</span>
       </p>
       <div className="mt-3 flex gap-2">
@@ -162,23 +163,19 @@ const t3optional = (l: Lang) => pick3(l, '(opcional)', '(optional)', '(facultati
 
 // Tira de confianza bajo los botones de pago: mÃ©todos aceptados + SSL.
 function PaymentTrustStrip({ lang, cop }: { lang: Lang; cop: boolean }) {
-  // ponytail: chips de texto en vez de assets de logos â€” cero imÃ¡genes que mantener.
   const methods = cop ? ['Mercado Pago', 'PSE', 'Visa', 'Mastercard'] : ['Visa', 'Mastercard', 'Amex', 'PayPal'];
   return (
-    <div className="mt-5 text-center">
-      <div className="flex justify-center flex-wrap gap-2 mb-2">
-        {methods.map(m => (
-          <span key={m} className="px-2.5 py-1 rounded-md border border-primary-lighter bg-white text-[10px] font-black uppercase tracking-wide text-secondary-lighter">
-            {m}
-          </span>
-        ))}
+    <div className="mt-5 rounded-2xl border-2 border-green-200 bg-green-50 px-4 py-3 text-center">
+      <PaymentLogoStrip methods={methods} />
+      <div className="mt-3 flex items-center justify-center gap-2 text-sm font-black text-green-700">
+        <ShieldCheck className="h-4 w-4" />
+        <span>
+          {pick3(lang,
+            'Secure payment - 256-bit SSL - we never store your card',
+            'Secure payment - 256-bit SSL - we never store your card',
+            'Secure payment - 256-bit SSL - we never store your card')}
+        </span>
       </div>
-      <p className="text-xs text-secondary-lighter font-bold">
-        {pick3(lang,
-          'Pago seguro Â· SSL de 256 bits Â· nunca guardamos tu tarjeta',
-          'Secure payment Â· 256-bit SSL Â· we never store your card',
-          'Paiement sÃ©curisÃ© Â· SSL 256 bits Â· nous ne stockons jamais ta carte')}
-      </p>
     </div>
   );
 }
@@ -200,9 +197,9 @@ function FamilyTierBar({ c }: { c: CheckoutController }) {
       <div className="rounded-2xl bg-primary-lighter border-2 border-primary p-4 mb-4">
         <p className="text-xs font-black text-secondary mb-2">
           {pick3(l,
-            `Agrega otra persona: el 2Âº retrato con âˆ’${pct}% (ahorras ${fmt(b.perPerson * pct / 100)})`,
-            `Add another person: 2nd portrait at âˆ’${pct}% (save ${fmt(b.perPerson * pct / 100)})`,
-            `Ajoute une personne : le 2e portrait Ã  âˆ’${pct}% (Ã©conomise ${fmt(b.perPerson * pct / 100)})`)}
+            `Add another person: 2nd portrait at -${pct}% (save ${fmt(b.perPerson * pct / 100)})`,
+            `Add another person: 2nd portrait at -${pct}% (save ${fmt(b.perPerson * pct / 100)})`,
+            `Add another person: 2nd portrait at -${pct}% (save ${fmt(b.perPerson * pct / 100)})`)}
         </p>
         <div className="h-2 rounded-full bg-white overflow-hidden">
           <div className="h-full bg-primary transition-all duration-300" style={{ width: '50%' }} />
@@ -216,9 +213,9 @@ function FamilyTierBar({ c }: { c: CheckoutController }) {
       <div className="rounded-2xl bg-primary-lighter border-2 border-primary p-4 mb-4 text-center">
         <p className="text-sm font-black text-primary">
           {pick3(l,
-            `Â¡Tienes el ${pct}% de descuento familiar, el mÃ¡ximo!`,
             `You've unlocked the maximum ${pct}% family discount!`,
-            `Tu as dÃ©bloquÃ© la remise famille maximale de ${pct}% !`)}
+            `You've unlocked the maximum ${pct}% family discount!`,
+            `You've unlocked the maximum ${pct}% family discount!`)}
         </p>
       </div>
     );
@@ -229,9 +226,9 @@ function FamilyTierBar({ c }: { c: CheckoutController }) {
     <div className="rounded-2xl bg-primary-lighter border-2 border-primary p-4 mb-4">
       <p className="text-xs font-black text-secondary mb-2">
         {pick3(l,
-          `Agrega ${missing} persona${missing > 1 ? 's' : ''} mÃ¡s y baja a ${fmt(perPersonAtTier)} c/u`,
           `Add ${missing} more ${missing > 1 ? 'people' : 'person'} and drop to ${fmt(perPersonAtTier)} each`,
-          `Ajoute ${missing} personne${missing > 1 ? 's' : ''} de plus et passe Ã  ${fmt(perPersonAtTier)} chacun`)}
+          `Add ${missing} more ${missing > 1 ? 'people' : 'person'} and drop to ${fmt(perPersonAtTier)} each`,
+          `Add ${missing} more ${missing > 1 ? 'people' : 'person'} and drop to ${fmt(perPersonAtTier)} each`)}
       </p>
       <div className="h-2 rounded-full bg-white overflow-hidden">
         <div
@@ -341,7 +338,7 @@ function OrderSummary({ c, sticky = true }: { c: CheckoutController; sticky?: bo
             <>
               <div className="flex justify-between">
                 <span className="text-secondary-lighter">
-                  {selected.peopleCount} {t.studio.summary.people_count} Ã— {fmt(b.perPerson)}
+                  {selected.peopleCount} {t.studio.summary.people_count} x {fmt(b.perPerson)}
                 </span>
                 <span className={`font-bold ${b.discountRate > 0 ? 'line-through text-secondary-lighter' : 'text-secondary'}`}>
                   {fmt(b.peopleSubtotal)}
@@ -349,8 +346,8 @@ function OrderSummary({ c, sticky = true }: { c: CheckoutController; sticky?: bo
               </div>
               {b.discountRate > 0 && (
                 <div className="flex justify-between bg-white rounded-xl px-3 py-1.5">
-                  <span className="text-primary font-bold">âˆ’{Math.round(b.discountRate * 100)}%</span>
-                  <span className="font-bold text-primary">âˆ’{fmt(b.discount)}</span>
+                  <span className="text-primary font-bold">-{Math.round(b.discountRate * 100)}%</span>
+                  <span className="font-bold text-primary">-{fmt(b.discount)}</span>
                 </div>
               )}
             </>
@@ -394,10 +391,10 @@ function OrderSummary({ c, sticky = true }: { c: CheckoutController; sticky?: bo
                       const variant = (p.options ?? [])
                         .map(g => g.values.find(v => v.key === sel[g.key])?.label[lang])
                         .filter(Boolean)
-                        .join(' Â· ');
+                        .join(' - ');
                       return (
                         <span key={`${p.key}-${i}`} className="text-xs bg-white rounded-full px-2.5 py-1 font-bold text-secondary">
-                          {p.name[lang]}{variant ? ` Â· ${variant}` : ''}
+                          {p.name[lang]}{variant ? ` - ${variant}` : ''}
                         </span>
                       );
                     }),
@@ -422,7 +419,7 @@ function OrderSummary({ c, sticky = true }: { c: CheckoutController; sticky?: bo
           {appliedCode && b.codeDiscount > 0 && (
             <div className="flex justify-between bg-white rounded-xl px-3 py-1.5">
               <span className="text-primary font-bold">{appliedCode.code}</span>
-              <span className="font-bold text-primary">âˆ’{fmt(b.codeDiscount)}</span>
+              <span className="font-bold text-primary">-{fmt(b.codeDiscount)}</span>
             </div>
           )}
           {selected.specialRequests.trim() && (
@@ -457,9 +454,9 @@ function OrderSummary({ c, sticky = true }: { c: CheckoutController; sticky?: bo
             return (
               <p className="bg-white rounded-xl px-3 py-2 text-xs font-bold text-primary text-center">
                 {pick3(lang as Lang,
-                  `Â¡AÃ±ade a alguien mÃ¡s: 2Âº retrato con âˆ’${pct}%!`,
-                  `Add one more person: 2nd portrait âˆ’${pct}%!`,
-                  `Ajoute une personne : 2e portrait âˆ’${pct}% !`)}
+                  `Add one more person: 2nd portrait -${pct}%!`,
+                  `Add one more person: 2nd portrait -${pct}%!`,
+                  `Add one more person: 2nd portrait -${pct}%!`)}
               </p>
             );
           }
@@ -745,211 +742,32 @@ export default function StudioPage() {
                                 {p.name[lang]}
                               </p>
                               <div className="space-y-3">
-                                {(selected.productUnits[p.key] ?? []).map((unitSel, idx) => (
-                                  <div key={idx} className="flex items-end gap-2">
-                                    <span className="text-xs font-black text-secondary-lighter w-7 shrink-0 pb-2.5 tabular-nums">#{idx + 1}</span>
-                                    <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-3">
-                                      {(p.options ?? []).map(g => (
-                                        <label key={g.key} className="block">
-                                          <span className="block text-xs font-bold text-secondary-lighter mb-1">{g.label[lang]}</span>
-                                          <select
-                                            value={unitSel[g.key] ?? g.values[0]?.key}
-                                            onChange={(e) => setProductUnitOption(p.key, idx, g.key, e.target.value)}
-                                            className="w-full rounded-lg border-2 border-primary-lighter px-3 py-2.5 text-sm font-bold text-secondary focus:border-primary focus:outline-none bg-white"
-                                          >
-                                            {g.values.map(v => (
-                                              <option key={v.key} value={v.key}>{v.label[lang]}</option>
-                                            ))}
-                                          </select>
-                                        </label>
-                                      ))}
-                                    </div>
-                                    {productQty(p.key) > 1 && (
-                                      <button
-                                        type="button"
-                                        onClick={() => removeProductUnitAt(p.key, idx)}
-                                        aria-label={`${t.studio.products.remove} ${p.name[lang]} #${idx + 1}`}
-                                        className="shrink-0 w-8 h-8 mb-0.5 rounded-full flex items-center justify-center border-2 border-primary-lighter text-secondary-lighter hover:border-primary hover:text-primary transition-colors"
-                                      >
-                                        <X className="w-4 h-4" />
-                                      </button>
-                                    )}
-                                  </div>
-                                ))}
-                              </div>
+                          <div className="rounded-xl border border-[#ffc439] bg-[#fff7d6] p-2">
+                            <div className="mb-2 flex items-center justify-center gap-2 text-sm font-black">
+                              <PaymentLogo name="PayPal" />
+                              <span>Checkout</span>
                             </div>
-                          ))}
-                      </div>
-                    )}
-
-                    <p className="text-xs text-secondary-lighter mt-3">{t.studio.products.digital_note}</p>
-
-                    {/* Calculador de envÃ­o: solo con productos fÃ­sicos en el
-                        carrito. Obligatorio â€” sin mÃ©todo elegido no se avanza
-                        y se resalta en rojo con shake como el resto. */}
-                    {Object.values(selected.productUnits).some(list => list.length > 0) && (
-                      <div
-                        id="required-field"
-                        onAnimationEnd={c.onShakeEnd}
-                        className={`mt-4 ${c.errorRing} ${c.errorShake}`}
-                      >
-                        <ShippingCalculator
-                          key={JSON.stringify(selected.productUnits)}
-                          productUnits={selected.productUnits}
-                          lang={lang as Lang}
-                          fmt={fmt}
-                          defaultCountry={CURRENCY_COUNTRY[currency] ?? 'US'}
-                          onSelect={c.selectShipping}
-                          onRequiredChange={c.setShippingRequired}
-                        />
-                      </div>
-                    )}
-                  </div>
-
-                  {/* 2 Â· Sube tus fotos (compacto) */}
-                  <div>
-                    <h2 className="font-black text-xl text-secondary mb-1 tracking-tighter">
-                      {t.studio.step5.title}{' '}
-                      <span className="text-sm font-normal text-secondary-lighter">{t.studio.step4.notes_optional}</span>
-                    </h2>
-                    <p className="text-sm text-secondary-lighter mb-3">{t.studio.step5.subtitle}</p>
-                    <div
-                      className="rounded-2xl border-2 border-dashed border-primary-lighter bg-white p-6 text-center hover:border-primary hover:bg-primary-lighter transition-all cursor-pointer"
-                    >
-                      <p className="font-bold text-secondary text-sm mb-1">{t.studio.step5.drag}</p>
-                      <p className="text-xs text-secondary-lighter mb-4">{t.studio.step5.or}</p>
-                      <label className="inline-block cursor-pointer rounded-lg bg-primary px-5 py-2.5 text-sm font-bold text-white hover:bg-primary-dark transition-colors">
-                        {t.studio.step5.select_btn}
-                        <input type="file" multiple accept="image/*" onChange={handlePhotoUpload} className="hidden" />
-                      </label>
-                      {selected.photos.length > 0 && (
-                        <div className="mt-4 text-sm text-primary font-bold">
-                          {selected.photos.length} {selected.photos.length > 1 ? t.studio.step5.selected_plural : t.studio.step5.selected}
-                        </div>
-                      )}
-                      <p className="mt-4 text-xs text-secondary-lighter">
-                        {t.studio.step5.max_size} Â· {selected.peopleCount} {selected.peopleCount > 1 ? t.studio.step5.required_photos_plural : t.studio.step5.required_photos}
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* 4 Â· Notas especiales */}
-                  <div>
-                    <label className="block font-bold text-secondary mb-3">
-                      {t.studio.step4.notes_label} <span className="font-normal text-secondary-lighter">{t.studio.step4.notes_optional}</span>
-                    </label>
-                    <textarea
-                      value={selected.specialRequests}
-                      onChange={(e) => setSpecialRequests(e.target.value)}
-                      placeholder={t.studio.step4.notes_placeholder}
-                      rows={5}
-                      maxLength={500}
-                      className="w-full rounded-lg border-2 border-primary-lighter px-4 py-3 text-sm text-secondary focus:border-primary focus:outline-none resize-none"
-                    />
-                    <p className="text-right text-xs text-secondary-lighter mt-2">{selected.specialRequests.length}/500</p>
-                  </div>
-
-                  {/* 5 Â· CÃ³digo de descuento: solo mÃ³vil/tablet â€” en lg vive
-                      debajo del resumen del pedido en el sidebar. */}
-                  <div className="lg:hidden">
-                    <DiscountCode c={c} />
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* PASO 5: Embedded Checkout */}
-            {step === 5 && checkoutParams && (
-              <div>
-                <div className="text-center mb-8">
-                  <h2 className="font-black text-4xl text-secondary mb-3 tracking-tighter">{t.studio.pay.title}</h2>
-                  <div className="flex items-center justify-center gap-4 text-xs text-secondary-lighter flex-wrap">
-                    <span className="flex items-center gap-1.5"><Lock className="w-3.5 h-3.5 text-primary" /> {t.studio.pay.ssl}</span>
-                    <span className="flex items-center gap-1.5"><ShieldCheck className="w-3.5 h-3.5 text-primary" /> {currency === 'COP' ? 'Mercado Pago' : 'PayPal'}</span>
-                    <span className="flex items-center gap-1.5"><ShieldCheck className="w-3.5 h-3.5 text-primary" /> {t.studio.pay.no_card}</span>
-                  </div>
-                </div>
-
-                {/* Columna de pago (izquierda): datos + propina + caja de pago,
-                    alineada junto al resumen del pedido, que vive en el sidebar
-                    (desktop) y en el drawer del carrito (mÃ³vil). */}
-                <div className="space-y-5">
-                  {/* Datos de contacto â€” obligatorios antes de pagar. */}
-                  <ContactForm c={c} />
-
-                  {/* Propina opcional: 5%, 10% o personalizada. Viaja al pago. */}
-                  <TipSelector c={c} />
-
-                  <div className="bg-white rounded-2xl border-2 border-primary-lighter shadow-lg overflow-hidden">
-                  <div className="bg-primary-lighter px-6 py-3.5 flex items-center justify-between">
-                    <span className="font-black text-secondary text-sm">Total: {fmt(totalPrice())}</span>
-                    <div className="flex items-center gap-2 text-xs text-secondary-lighter">
-                      <Lock className="w-3 h-3" />
-                      <span>{t.studio.pay.secure}</span>
-                    </div>
-                  </div>
-                  <div className="p-5">
-                    {!contactValid ? (
-                      <p className="text-center text-sm font-bold text-secondary-lighter py-6">
-                        {pick3(lang as Lang,
-                          'Completa tu nombre y email arriba para continuar con el pago.',
-                          'Fill in your name and email above to continue to payment.',
-                          'Renseigne ton nom et ton email ci-dessus pour continuer.')}
-                      </p>
-                    ) : currency === 'COP' ? (
-                      <>
-                        <p className="text-center text-xs font-bold text-primary mb-3">
-                          {pick3(lang as Lang, 'Paga hasta en 3 cuotas sin interÃ©s', 'Pay in up to 3 interest-free installments', 'Payez jusquâ€™Ã  3 fois sans frais')}
-                        </p>
-                        {/* key: si cambia la propina, el Brick se remonta y crea
-                            el pedido con el monto nuevo (se monta una sola vez). */}
-                        <MercadoPagoBrick key={JSON.stringify(c.tip)} lang={lang as Lang} createOrder={createMpOrder} />
-                      </>
-                    ) : !PAYPAL_CLIENT_ID ? (
-                      // Sin client id el SDK de PayPal falla mudo y el recuadro
-                      // queda vacÃ­o â€” mejor decir explÃ­citamente quÃ© falta.
-                      <p className="text-center text-sm font-bold text-red-500 py-6">
-                        PayPal no estÃ¡ configurado (falta NEXT_PUBLIC_PAYPAL_CLIENT_ID).
-                      </p>
-                    ) : (
-                      // SDK v6 con presentationMode="modal": el checkout se abre
-                      // SIEMPRE como overlay dentro de la pÃ¡gina, nunca en una
-                      // ventana externa (que a veces quedaba en about:blank).
-                      // La moneda e intent viajan en la orden creada por el
-                      // servidor (/api/checkout), no en el proveedor.
-                      // 'paypal-guest-payments' es OBLIGATORIO para el botÃ³n de
-                      // tarjeta (guest/BCDC): sin Ã©l la sesiÃ³n falla al crearse
-                      // y el botÃ³n queda deshabilitado (cursor prohibido).
-                      <PayPalProvider
-                        clientId={PAYPAL_CLIENT_ID}
-                        environment={PAYPAL_ENVIRONMENT}
-                        components={['paypal-payments', 'paypal-guest-payments']}
-                        pageType="checkout"
-                      >
-                        {/* Ambos a ancho completo: el botÃ³n de tarjeta despliega
-                            su formulario (guest/BCDC) en su propio contenedor, asÃ­
-                            que confinarlo a media columna cortaba los campos a la
-                            mitad â€” a ancho completo el form abarca todo el espacio. */}
-                        <div className="space-y-3">
-                          <PayPalOneTimePaymentButton
-                            type="checkout"
-                            presentationMode="modal"
-                            createOrder={async () => ({ orderId: await createPayPalOrder() })}
-                            onApprove={async ({ orderId }) => capturePayPalOrder(orderId)}
-                            // Si el SDK cierra el modal por un fallo (incluida la
-                            // orden que no se pudo crear), mostramos el error.
-                            onError={() => setCheckoutError(t.studio.errors.payment)}
-                            // Cancelar no es un error: se limpia el mensaje.
-                            onCancel={() => setCheckoutError('')}
-                          />
-                          {/* BotÃ³n de pago con tarjeta (guest checkout / BCDC):
-                              misma orden y callbacks que el botÃ³n de PayPal. */}
-                          <PayPalGuestPaymentButton
-                            createOrder={async () => ({ orderId: await createPayPalOrder() })}
-                            onApprove={async ({ orderId }) => capturePayPalOrder(orderId)}
-                            onError={() => setCheckoutError(t.studio.errors.payment)}
-                            onCancel={() => setCheckoutError('')}
-                          />
+                            <PayPalOneTimePaymentButton
+                              type="checkout"
+                              presentationMode="modal"
+                              createOrder={async () => ({ orderId: await createPayPalOrder() })}
+                              onApprove={async ({ orderId }) => capturePayPalOrder(orderId)}
+                              onError={() => setCheckoutError(t.studio.errors.payment)}
+                              onCancel={() => setCheckoutError('')}
+                            />
+                          </div>
+                          <div className="rounded-xl border border-primary-lighter bg-white p-2">
+                            <div className="mb-2 flex items-center justify-center gap-2 text-sm font-black text-secondary">
+                              <CreditCard className="h-4 w-4" />
+                              <span>Card</span>
+                            </div>
+                            <PayPalGuestPaymentButton
+                              createOrder={async () => ({ orderId: await createPayPalOrder() })}
+                              onApprove={async ({ orderId }) => capturePayPalOrder(orderId)}
+                              onError={() => setCheckoutError(t.studio.errors.payment)}
+                              onCancel={() => setCheckoutError('')}
+                            />
+                          </div>
                         </div>
                       </PayPalProvider>
                     )}
@@ -1021,7 +839,7 @@ export default function StudioPage() {
                           <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
                         )}
                         {step === 4 ? t.studio.nav.checkout : t.studio.nav.next}
-                        {step > 1 && <span className="font-black">Â· {fmt(totalPrice())}</span>}
+                        {step > 1 && <span className="font-black">- {fmt(totalPrice())}</span>}
                       </button>
                     )}
                   </div>
@@ -1131,7 +949,7 @@ function CartDrawerItems({ c, podImages }: { c: CheckoutController; podImages: R
       const variant = (p.options ?? [])
         .map(g => g.values.find(v => v.key === unit[g.key])?.label[lang])
         .filter(Boolean)
-        .join(' Â· ');
+        .join(' - ');
       return { p, i, variant };
     }),
   );
