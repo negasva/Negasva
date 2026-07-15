@@ -52,6 +52,10 @@ const config: Config = {
           '0%, 100%': { transform: 'scale(1)' },
           '50%': { transform: 'scale(1.02)' },
         },
+        'slide-in-right': {
+          '0%': { transform: 'translateX(100%)' },
+          '100%': { transform: 'translateX(0)' },
+        },
       },
       animation: {
         'wiggle-slow': 'wiggle 3s ease-in-out infinite',
@@ -60,6 +64,7 @@ const config: Config = {
         'pop-in': 'pop-in 0.35s ease-out',
         // Affordance táctil en móvil: dos ciclos al cargar y se detiene.
         'breathe-twice': 'breathe 2s ease-in-out 2',
+        'slide-in-right': 'slide-in-right 0.25s ease-out',
       },
     },
   },
