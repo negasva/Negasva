@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
-import { Lock, ShieldCheck, Plus, Minus, Check, X, Info, Video, ShoppingBag, Truck } from 'lucide-react';
+import { Lock, ShieldCheck, Plus, Minus, Check, X, Info, Video, ShoppingBag, Trash2 } from 'lucide-react';
 import Logo from '@/components/Logo';
 import ProductIcon from '@/components/ProductIcon';
 import { mergePodProducts, POD_PLACEHOLDER_IMG } from '@/lib/content/podProducts';
@@ -1127,6 +1127,81 @@ export default function StudioPage() {
           </div>
         </div>
       )}
+    </div>
+  );
+}
+
+function CartDrawerItems({ c, podImages }: { c: CheckoutController; podImages: Record<string, string | null> }) {
+  const {
+    lang, fmt, selected, styles, priceBreakdown, getProducts,
+    removePortrait, removeBackground, removeExpress, removeRecording, removeProductUnitAt,
+  } = c;
+  const b = priceBreakdown();
+  const style = styles.find(s => s.id === selected.style);
+  const products = getProducts().flatMap((p) =>
+    (selected.productUnits[p.key] ?? []).map((unit, i) => {
+      const variant = (p.options ?? [])
+        .map(g => g.values.find(v => v.key === unit[g.key])?.label[lang])
+        .filter(Boolean)
+        .join(' · ');
+      return { p, i, variant };
+    }),
+  );
+
+  return (
+    <div className="space-y-3 mb-4">
+      {selected.style && (
+        <div className="flex gap-3 rounded-2xl border-2 border-primary-lighter bg-white p-3">
+          {style?.image && <img src={style.image} alt={style.name} className="h-16 w-16 rounded-xl object-cover" />}
+          <div className="min-w-0 flex-1">
+            <p className="font-black text-secondary leading-tight">{style?.name ?? selected.style}</p>
+            <p className="text-xs font-bold text-secondary-lighter">
+              {selected.bodyType === 'full_body' ? 'Full body' : 'Torso'} · {selected.peopleCount} people
+            </p>
+            {selected.bodyType && <p className="mt-1 font-black text-primary">{fmt(b.peopleSubtotal - b.discount)}</p>}
+          </div>
+          <button type="button" onClick={removePortrait} aria-label="Remove portrait" className="self-start rounded-md p-1 text-red-500 hover:bg-red-50">
+            <Trash2 size={16} />
+          </button>
+        </div>
+      )}
+
+      {selected.background && selected.background !== 'none' && (
+        <CartMiniRow label="Background" value={fmt(b.bgCost)} onRemove={removeBackground} />
+      )}
+      {selected.express && (
+        <CartMiniRow label="Express 24h" value={fmt(b.expressSurcharge)} onRemove={removeExpress} />
+      )}
+      {selected.recording && (
+        <CartMiniRow label="Process video" value={fmt(b.recordingCost)} onRemove={removeRecording} />
+      )}
+      {products.map(({ p, i, variant }) => (
+        <div key={`${p.key}-${i}`} className="flex gap-3 rounded-2xl border-2 border-primary-lighter bg-white p-3">
+          <img src={podImages[p.key] || POD_PLACEHOLDER_IMG} alt={p.name[lang]} className="h-14 w-14 rounded-xl object-cover" />
+          <div className="min-w-0 flex-1">
+            <p className="font-black text-secondary leading-tight">{p.name[lang]}</p>
+            {variant && <p className="text-xs font-bold text-secondary-lighter">{variant}</p>}
+            <p className="mt-1 font-black text-primary">{fmt(p.priceUsd)}</p>
+          </div>
+          <button type="button" onClick={() => removeProductUnitAt(p.key, i)} aria-label={`Remove ${p.name[lang]}`} className="self-start rounded-md p-1 text-red-500 hover:bg-red-50">
+            <Trash2 size={16} />
+          </button>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function CartMiniRow({ label, value, onRemove }: { label: string; value: string; onRemove: () => void }) {
+  return (
+    <div className="flex items-center gap-3 rounded-xl border border-primary-lighter bg-white p-3">
+      <div className="min-w-0 flex-1">
+        <p className="font-black text-secondary leading-tight">{label}</p>
+        <p className="text-sm font-black text-primary">{value}</p>
+      </div>
+      <button type="button" onClick={onRemove} aria-label={`Remove ${label}`} className="rounded-md p-1 text-red-500 hover:bg-red-50">
+        <Trash2 size={16} />
+      </button>
     </div>
   );
 }

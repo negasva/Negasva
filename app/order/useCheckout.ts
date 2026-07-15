@@ -766,6 +766,22 @@ export function useCheckout() {
       else delete productUnits[key];
       return { ...prev, productUnits };
     });
+  const removePortrait = () =>
+    setSelected(prev => ({
+      ...prev,
+      style: '',
+      bodyType: '',
+      background: '',
+      peopleCount: 1,
+      express: false,
+      recording: false,
+    }));
+  const removeBackground = () =>
+    setSelected(prev => ({ ...prev, background: '' }));
+  const removeExpress = () =>
+    setSelected(prev => ({ ...prev, express: false }));
+  const removeRecording = () =>
+    setSelected(prev => ({ ...prev, recording: false }));
   // Cambia la variante (talla, modelo…) de una unidad concreta.
   const setProductUnitOption = (key: string, index: number, group: string, value: string) =>
     setSelected(prev => {
@@ -805,7 +821,7 @@ export function useCheckout() {
     // actions
     nextStep, prevStep, createPayPalOrder, capturePayPalOrder, createMpOrder, handlePhotoUpload,
     selectStyle, selectBodyType, decPeople, incPeople,
-    selectBackground, toggleExpress, toggleRecording, setSpecialRequests,
+    selectBackground, toggleExpress, toggleRecording, removePortrait, removeBackground, removeExpress, removeRecording, setSpecialRequests,
     productQty, addProductUnit, removeProductUnit, removeProductUnitAt, setProductUnitOption,
   };
 }
