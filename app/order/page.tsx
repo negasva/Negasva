@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
+import { CreditCard, Lock, ShieldCheck, Plus, Minus, Check, X, Info, Video, ShoppingBag, Trash2 } from 'lucide-react';
 import Logo from '@/components/Logo';
 import ProductIcon from '@/components/ProductIcon';
 import { mergePodProducts, POD_PLACEHOLDER_IMG } from '@/lib/content/podProducts';
