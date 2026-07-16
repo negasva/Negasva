@@ -887,7 +887,7 @@ export default function StudioPage() {
                           <div className="space-y-3 paypal-checkout-panels">
                             <div className="rounded-xl border border-[#ffc439] bg-[#fff7d6] p-3">
                               <div className="mb-2 flex items-center justify-center gap-2 text-sm font-black">
-                                <PaymentLogo name="PayPal" />
+                                <PaymentLogo name="" />
                                 <span></span>
                               </div>
                               <PayPalOneTimePaymentButton
