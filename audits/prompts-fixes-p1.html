@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Prompts de fix P1 — NEGASVA</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{--pink:#F870A0;--pink-lighter:#FFE1EC;--pink-wash:#FFF5F8;--pink-dark:#E0517F;--ink:#1A1A1A;--ink-light:#4A4A4A;--ink-lighter:#7A7A7A;--amber:#B7791F;--amber-bg:#FDF3E1;--gray:#6B7280;--gray-bg:#F3F4F6;}
+*{box-sizing:border-box}
+body{margin:0;background:#fff;color:var(--ink);font-family:'Montserrat',ui-sans-serif,system-ui,sans-serif;line-height:1.55}
+.nav{position:sticky;top:0;z-index:50;background:#fff;border-bottom:2px solid var(--pink-lighter)}
+.nav-in{max-width:1000px;margin:0 auto;padding:14px 20px;display:flex;align-items:center;justify-content:space-between}
+.logo{font-size:22px;letter-spacing:-.05em}.logo b{font-weight:900}.logo span{font-weight:400}
+.tag{display:inline-flex;align-items:center;background:var(--amber);color:#fff;border-radius:999px;padding:6px 14px;font-size:11px;font-weight:900}
+.wrap{max-width:1000px;margin:0 auto;padding:32px 20px 80px}
+.hero{background:var(--pink-wash);border:2px solid var(--pink-lighter);border-radius:16px;padding:24px;margin-bottom:32px}
+h1{font-size:32px;font-weight:900;letter-spacing:-.04em;margin:0 0 8px}
+.sub{color:var(--ink-lighter);font-size:13px;margin:0}
+.section-label{font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.1em;color:var(--ink-lighter);margin:32px 0 12px;padding-bottom:8px;border-bottom:2px solid var(--pink-lighter)}
+.card{border:2px solid var(--pink-lighter);border-left:5px solid var(--amber);border-radius:14px;padding:22px;margin-bottom:20px;background:#fff}
+.card.pending{border-left-color:var(--gray)}
+.card-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:10px}
+.card-title{font-size:16px;font-weight:900;letter-spacing:-.02em;margin:0;line-height:1.2}
+.badge{display:inline-flex;align-items:center;gap:4px;border-radius:999px;padding:4px 11px;font-size:10px;font-weight:900;letter-spacing:.05em;white-space:nowrap}
+.badge.p1{background:var(--amber-bg);color:var(--amber)}
+.badge.pending{background:var(--gray-bg);color:var(--gray)}
+.num{display:inline-flex;width:26px;height:26px;align-items:center;justify-content:center;background:var(--amber);color:#fff;border-radius:999px;font-size:12px;font-weight:900;flex-shrink:0}
+.num.gray{background:var(--gray)}
+.resumen{font-size:13px;color:var(--ink-light);margin:0 0 14px}
+.label{font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:.1em;color:var(--ink-lighter);margin:0 0 6px}
+.prompt-box{position:relative;background:#0f0f0f;border-radius:10px;padding:16px 16px 14px}
+.prompt-text{color:#e8e8e8;font-family:ui-monospace,Consolas,monospace;font-size:12px;line-height:1.6;margin:0;white-space:pre-wrap;word-break:break-word}
+.copy-btn{position:absolute;top:10px;right:10px;background:#333;color:#ccc;border:none;border-radius:6px;padding:5px 10px;font-size:10px;font-weight:700;cursor:pointer;font-family:'Montserrat',sans-serif;transition:background .15s}
+.copy-btn:hover{background:var(--pink-dark);color:#fff}
+.copy-btn.copied{background:#1FA971;color:#fff}
+.audit-needed{background:var(--gray-bg);border-radius:10px;padding:14px 16px;font-size:13px;color:var(--gray);font-weight:700}
+.footer{margin-top:50px;border-top:2px solid var(--pink-lighter);padding-top:16px;color:var(--ink-lighter);font-size:11px;text-align:center}
+.order-note{display:flex;align-items:center;gap:10px;margin-bottom:16px;font-size:12px;color:var(--ink-lighter);font-weight:700}
+</style></head>
+<body>
+<nav class="nav"><div class="nav-in">
+  <span class="logo"><b>NEGAS</b><span>VA</span></span>
+  <span class="tag">Prompts fix P1</span>
+</div></nav>
+
+<div class="wrap">
+<div class="hero">
+  <h1>Fix P1 — 14 items importantes</h1>
+  <p class="sub">9 auditados con reporte · 5 pendientes de auditoría · Un prompt por hallazgo. Activan /ponytail + caveman mode.</p>
+</div>
+
+<div class="order-note">
+  <span class="num">!</span>
+  Orden sugerido dentro de P1: seguridad → pagos → rendimiento → conversión → datos → confiabilidad.
+</div>
+
+<!-- ══════════════════════════════════════════
+     SEGURIDAD
+══════════════════════════════════════════ -->
+<p class="section-label">🔐 Seguridad</p>
+
+<!-- CSP HEADERS -->
+<div class="card">
+  <div class="card-head">
+    <div style="display:flex;align-items:center;gap:10px">
+      <span class="num">1</span>
+      <h2 class="card-title">CSP bloquea Mercado Pago y permite dominios muertos</h2>
+    </div>
+    <span class="badge p1">P1 · Importante</span>
+  </div>
+  <p class="resumen">La CSP actual bloquea el SDK de MP (checkout COP roto en producción hoy), Ahrefs sigue sin añadirse, y Stripe está en la whitelist sin ningún uso browser. Además, <code>COOP: same-origin</code> puede romper popups de pago.</p>
+  <p class="label">Prompt para Claude Code</p>
+  <div class="prompt-box">
+    <button class="copy-btn" onclick="copy(this)">Copiar</button>
+    <pre class="prompt-text">/ponytail caveman mode on.
+
+Lee audits/seguridad/csp-headers/BUENAS_PRACTICAS.md antes de tocar código.
+
+Todos los cambios van en next.config.js (sección headers CSP).
+
+Fix H-01 — añadir Mercado Pago a la CSP (checkout COP está roto):
+  script-src: + https://sdk.mercadopago.com https://http2.mlstatic.com
+  connect-src: + https://api.mercadopago.com https://api-static.mercadopago.com https://events.mercadopago.com
+  frame-src:   + https://*.mercadopago.com https://*.mercadolibre.com
+
+Fix H-02 — añadir Ahrefs (o eliminarlo si ya no se usa):
+  Si app/layout.tsx:143-145 aún carga analytics.ahrefs.com →
+    script-src + connect-src: + https://analytics.ahrefs.com
+  Si se eliminó el script → no tocar la CSP.
+
+Fix H-03 — quitar Stripe de la CSP (sin uso en navegador):
+  Elimina https://js.stripe.com de script-src y frame-src.
+  Elimina NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY del bloque env de next.config.js.
+
+Fix H-06 — COOP puede romper popups de pago PayPal:
+  Cross-Origin-Opener-Policy: same-origin  →  same-origin-allow-popups
+
+Fix H-07 — X-XSS-Protection obsoleto:
+  Cambiar a 0 (o eliminar el header).
+
+Commit: fix(csp): añadir MP, quitar Stripe, COOP allow-popups, Ahrefs</pre>
+  </div>
+</div>
+
+<!-- RATE LIMITING -->
+<div class="card">
+  <div class="card-head">
+    <div style="display:flex;align-items:center;gap:10px">
+      <span class="num">2</span>
+      <h2 class="card-title">Rate limiting: IP spoofable y fuerza bruta de descuentos</h2>
+    </div>
+    <span class="badge p1">P1 · Importante</span>
+  </div>
+  <p class="resumen">La IP del rate limit toma el primer hop de XFF (controlado por el atacante). Código de descuento se puede bruteforcear 60 veces/min. Sin Upstash configurado en Vercel el límite es por instancia (casi nulo).</p>
+  <p class="label">Prompt para Claude Code</p>
+  <div class="prompt-box">
+    <button class="copy-btn" onclick="copy(this)">Copiar</button>
+    <pre class="prompt-text">/ponytail caveman mode on.
+
+Lee audits/seguridad/rate-limiting-antiabuso/BUENAS_PRACTICAS.md antes de tocar código.
+
+Fix H-02 — IP del rate limit toma primer hop XFF (spoofeable):
+- lib/security/apiHelpers.ts:10-23 — getClientIp() debe preferir en orden:
+  1. request.ip (Next.js/Vercel)
+  2. x-vercel-forwarded-for (fijado por la plataforma, no manipulable)
+  3. x-real-ip
+  4. ÚLTIMO hop de x-forwarded-for (el más cercano al edge, no el primero)
+  Deja el primer hop de XFF solo como último recurso.
+
+Fix H-03 — brute force de códigos de descuento sin límite propio:
+- app/api/pricing/quote/route.ts — cuando el body trae discountCode,
+  aplica un segundo rateLimitByIp con clave 'discount-try' y max 10/min.
+  Si supera el límite, responde 429 aunque el límite general no se haya alcanzado.
+
+Fix H-04 — reCAPTCHA se omite en silencio sin SECRET:
+- lib/security/recaptcha.ts:32 — si NODE_ENV === 'production' && !secret,
+  loguea un console.warn una vez por cold start.
+
+Fix H-05 + H-06 — webhooks y /api/geo sin límite:
+- app/api/webhooks/*.ts — añade rateLimitByIp('webhook', 120/min) antes de verificar firma.
+- app/api/geo/route.ts — añade rateLimitByIp('geo', 60/min).
+
+Commit: fix(rate-limit): IP real en Vercel, límite de descuentos, geo+webhook rate limit</pre>
+  </div>
+</div>
+
+<!-- SECRETOS Y DEPS -->
+<div class="card">
+  <div class="card-head">
+    <div style="display:flex;align-items:center;gap:10px">
+      <span class="num">3</span>
+      <h2 class="card-title">Dependencias muertas y sin CI de seguridad</h2>
+    </div>
+    <span class="badge p1">P1 · Importante</span>
+  </div>
+  <p class="resumen">Sin escaneo automático de secretos ni Dependabot. 4 paquetes instalados sin ningún uso real (axios, react-hook-form, dotenv, stripe legacy). Next 14.2.35 con advisories high conocidos.</p>
+  <p class="label">Prompt para Claude Code</p>
+  <div class="prompt-box">
+    <button class="copy-btn" onclick="copy(this)">Copiar</button>
+    <pre class="prompt-text">/ponytail caveman mode on.
+
+Lee audits/seguridad/secretos-dependencias/BUENAS_PRACTICAS.md antes de tocar código.
+
+Fix H-04 — eliminar dependencias muertas:
+  npm uninstall axios react-hook-form @hookform/resolvers dotenv
+  Si el webhook de Stripe (app/api/webhooks/stripe/route.ts) ya no recibe eventos:
+    npm uninstall stripe
+    Elimina app/api/webhooks/stripe/route.ts.
+    Elimina NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY de next.config.js (ya cubierto en CSP fix).
+  Confirma que browser-image-compression está en dependencies, no devDependencies.
+
+Fix H-02 — CI de seguridad automático:
+  Crea .github/workflows/security.yml con:
+    - Trigger: push + pull_request a main
+    - Job 1: npm audit --audit-level=high (falla si hay high/critical nuevos)
+    - Job 2: gitleaks detect --no-git (o usa la GitHub Action oficial de gitleaks)
+  Activa en GitHub: Settings → Security → Secret scanning + Push protection.
+  Activa Dependabot: crea .github/dependabot.yml con ecosystem npm, schedule weekly.
+
+Fix H-01 — documentar plan para Next 15/16:
+  Crea audits/seguridad/secretos-dependencias/next-upgrade-plan.md con:
+    - Lista de advisories high actuales de next@14.2.35 (copia el output de npm audit).
+    - Cuáles aplican en Vercel (DoS imagen: mitigado; smuggling/cache-poisoning: revisar).
+    - Pasos para migrar a Next 15: leer AGENTS.md, ejecutar el upgrade script oficial.
+  No migrar todavía — solo documentar.
+
+Fix H-05 — actualizar GETTING_STARTED.md:
+  Reemplaza las referencias a Stripe/STRIPE_SECRET_KEY por el stack real: PayPal, MP, Printful, Resend, Upstash.
+
+Commit: fix(deps): eliminar paquetes muertos, CI de seguridad, plan de upgrade Next</pre>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     PAGOS Y DINERO
+══════════════════════════════════════════ -->
+<p class="section-label">💳 Pagos y dinero</p>
+
+<!-- CONCILIACIÓN -->
+<div class="card">
+  <div class="card-head">
+    <div style="display:flex;align-items:center;gap:10px">
+      <span class="num">4</span>
+      <h2 class="card-title">Webhooks: BD fallida devuelve 200, sin email al cliente, sin conciliación</h2>
+    </div>
+    <span class="badge p1">P1 · Importante</span>
+  </div>
+  <p class="resumen">Si Supabase falla en el momento del webhook, el proveedor no reintenta (recibe 200) y el pedido queda <code>pending</code> para siempre. El cliente nunca recibe email de confirmación aunque la success page lo promete. Los contracargos de MP llegan como <code>refunded</code> sin señal de disputa.</p>
+  <p class="label">Prompt para Claude Code</p>
+  <div class="prompt-box">
+    <button class="copy-btn" onclick="copy(this)">Copiar</button>
+    <pre class="prompt-text">/ponytail caveman mode on.
+
+Lee audits/pagos-y-dinero/conciliacion-pedidos/BUENAS_PRACTICAS.md antes de tocar código.
+
+Fix H-01 — webhook devuelve 200 aunque la BD falle:
+- app/api/webhooks/paypal/route.ts y mercadopago/route.ts:
+  El catch exterior que envuelve el handler debe responder 500 (no 200)
+  cuando el error viene de la actualización de BD.
+  Patrón: si el update de Supabase lanza, no atrapes el error — deja que
+  Next devuelva 500 para que el proveedor reintente con backoff.
+  Mantén 200 para eventos que no aplican (tipos de evento ignorados).
+
+Fix H-07 — carrera en el guard anti-duplicado:
+- En paypal/route.ts y mercadopago/route.ts, reemplaza el patrón
+  SELECT wasPaid → UPDATE status='paid' (dos queries) por una sola:
+    UPDATE orders SET status='paid', ... WHERE id=X AND status != 'paid' RETURNING id
+  Ejecuta recordDiscountCodeUse + notifyNewOrder SOLO si RETURNING devuelve una fila.
+
+Fix H-03 — el cliente nunca recibe email de confirmación:
+- lib/notify/ — crea sendOrderConfirmationToCustomer(order) usando lib/notify/email.ts.
+  Contenido mínimo: referencia del pedido, resumen (estilo, personas, importe),
+  link a /track-order?ref=... y recordatorio de "envía tus fotos si no lo hiciste".
+- Llama a esta función dentro del mismo guard wasPaid (junto a notifyNewOrder)
+  en los webhooks de PayPal y Mercado Pago.
+
+Fix H-05 — contracargo MP mapeado como refunded:
+- lib/payments/mercadopago.ts:161-162 — mapear charged_back → 'disputed' (no 'refunded').
+  Añade notificación al admin en esa transición (llama a notifyNewOrder o función propia).
+
+Fix H-04 — pendings abandonados sin expirar:
+- app/api/cron/recover-carts/route.ts (o nuevo cron) — añade un step que marque
+  'expired' los orders con status='pending' y created_at < NOW() - INTERVAL '48 hours'
+  que ya hayan pasado por la conciliación y sigan sin pago. Filtra en el admin por defecto.
+
+Commit: fix(conciliacion): 500 en BD fallida, guard atómico, email cliente, chargebacks MP</pre>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     RENDIMIENTO
+══════════════════════════════════════════ -->
+<p class="section-label">⚡ Rendimiento</p>
+
+<!-- CORE WEB VITALS -->
+<div class="card">
+  <div class="card-head">
+    <div style="display:flex;align-items:center;gap:10px">
+      <span class="num">5</span>
+      <h2 class="card-title">Core Web Vitals: hero LCP con img crudo, shifts de layout, sin telemetría</h2>
+    </div>
+    <span class="badge p1">P1 · Importante</span>
+  </div>
+  <p class="resumen">Los 4 retratos del hero se sirven como <code>&lt;img&gt;</code> crudo del original de Supabase (sin next/image, sin srcset). El badge de pedidos semanales y las FAQs causan layout shift. No existe ninguna telemetría de campo (RUM/CrUX).</p>
+  <p class="label">Prompt para Claude Code</p>
+  <div class="prompt-box">
+    <button class="copy-btn" onclick="copy(this)">Copiar</button>
+    <pre class="prompt-text">/ponytail caveman mode on.
+
+Lee audits/rendimiento/core-web-vitals/BUENAS_PRACTICAS.md antes de tocar código.
+
+Fix A1 — hero LCP con img crudo:
+- app/home-islands.tsx:62,75 — migra los 2 retratos del hero a next/image.
+  Props: fill, sizes="(max-width:768px) 100vw, 50vw", priority (solo en estos dos).
+  El remotePattern **.supabase.co ya está en next.config.js.
+
+Fix A3 — sin telemetría de campo:
+- Añade @vercel/speed-insights: npm install @vercel/speed-insights
+- app/layout.tsx — importa SpeedInsights y renderiza <SpeedInsights /> al final del body.
+  Eso es todo; Vercel recoge LCP/CLS/INP automáticamente.
+
+Fix M1 — CLS del WeeklyOrdersBadge:
+- app/home-islands.tsx:145-159 — reserva la altura del badge con min-h fijo (p.ej. min-h-[28px])
+  en el contenedor padre antes de que llegue el fetch, para que no haya shift.
+
+Fix M2 — FAQ de la home carga tras fetch cliente (shift + invisible para SEO):
+- app/page.tsx — añade un fetch de /api/faqs en el server component (ISR, revalidate 300).
+  Pasa las FAQs como prop a HomeFaq. Quita el fetch interno de home-islands.tsx:164-183.
+
+Fix B1 — Ahrefs como script crudo bloqueante:
+- app/layout.tsx:142-148 — migra a <Script strategy="lazyOnload">.
+
+Commit: perf(cwv): next/image en hero LCP, speed insights, CLS badge/FAQ, Ahrefs lazyOnload</pre>
+  </div>
+</div>
+
+<!-- IMÁGENES -->
+<div class="card">
+  <div class="card-head">
+    <div style="display:flex;align-items:center;gap:10px">
+      <span class="num">6</span>
+      <h2 class="card-title">Imágenes: sin recompresión server-side, 400 en next/image, steps con img crudo</h2>
+    </div>
+    <span class="badge p1">P1 · Importante</span>
+  </div>
+  <p class="resumen">Las fotos de clientes suben sin recomprimir (hasta 80 MB por pedido). Los 4 retratos del hero y los "3 steps" usan <code>&lt;img&gt;</code> crudo. Hay 400 en <code>/_next/image</code> por URLs de la BD fuera del remotePattern.</p>
+  <p class="label">Prompt para Claude Code</p>
+  <div class="prompt-box">
+    <button class="copy-btn" onclick="copy(this)">Copiar</button>
+    <pre class="prompt-text">/ponytail caveman mode on.
+
+Lee audits/rendimiento/imagenes/BUENAS_PRACTICAS.md antes de tocar código.
+
+Fix A1 — recompresión server-side de fotos de clientes con sharp (ya instalado):
+- app/api/order/upload/route.ts:52-62 — antes de subir al bucket,
+  pasa cada buffer por sharp: resize a max 2200px (sin upscale), jpeg/webp calidad 80.
+  sharp ya está en devDependencies — muévelo a dependencies primero.
+  Usa sharp().resize(2200, 2200, {fit:'inside', withoutEnlargement:true}).toBuffer().
+
+Fix A3 — steps de landing con img crudo (eager + sin srcset):
+- app/home-islands.tsx:100,110,123,133 (sección "3 steps") —
+  migra a next/image con fill + sizes="(max-width:768px) 100vw, 33vw".
+  Sin priority (están bajo el fold → lazy implícito).
+  Los 2 del hero ya se cubren en el fix de CWV (item anterior).
+
+Fix A2 — 400 en /_next/image por URLs fuera de remotePatterns:
+- Audita las URLs en BD: gallery_items.image_url, testimonios photo, pod_products,
+  portrait_styles.example_image_url — deben ser https://*.supabase.co/storage/v1/object/public/*.
+  Si alguna no cumple: corrige en el admin o en la migración de datos.
+  Si se necesita un host extra (ej. CDN de Printful), añade su patrón a next.config.js:remotePatterns.
+
+Fix M2 — marquee de galería con fetch no-store y shuffle en cliente:
+- app/page.tsx — mueve el fetch de galería al server component con revalidate: 3600.
+  Baraja con seed diaria (date-based) antes de pasar como prop a GalleryMarquee.
+  GalleryMarquee ya no hace fetch propio.
+
+Commit: perf(images): sharp en upload, next/image en steps, fix 400 remotePatterns, marquee ISR</pre>
+  </div>
+</div>
+
+<!-- BUNDLE -->
+<div class="card">
+  <div class="card-head">
+    <div style="display:flex;align-items:center;gap:10px">
+      <span class="num">7</span>
+      <h2 class="card-title">Bundle: reCAPTCHA desde paso 1, PayPal estático para usuarios COP</h2>
+    </div>
+    <span class="badge p1">P1 · Importante</span>
+  </div>
+  <p class="resumen"><code>/order</code> pesa 147 kB gzip (first load). reCAPTCHA se descarga desde el paso 1 aunque solo se use al pagar. El wrapper de PayPal entra al bundle inicial incluso para usuarios que pagarán con Mercado Pago.</p>
+  <p class="label">Prompt para Claude Code</p>
+  <div class="prompt-box">
+    <button class="copy-btn" onclick="copy(this)">Copiar</button>
+    <pre class="prompt-text">/ponytail caveman mode on.
+
+Lee audits/rendimiento/bundle-checkout/BUENAS_PRACTICAS.md antes de tocar código.
+
+Fix M1 — reCAPTCHA cargando desde el paso 1:
+- app/order/page.tsx — mueve <RecaptchaScript /> para que solo se monte
+  cuando step >= 4 (antes de llegar al pago el script ya tiene tiempo de cargar).
+  Condición: {step >= 4 && <RecaptchaScript />}
+
+Fix M2 — wrapper PayPal en bundle inicial (código muerto para COP):
+- app/order/page.tsx:12 — reemplaza el import estático de PayPalProvider
+  por next/dynamic({ ssr: false }).
+  El componente ya solo se monta en paso 5 con currency !== 'COP', así que
+  el chunk solo se descarga cuando se necesita.
+
+Fix M3 — /order monolítico, 5 pasos en un chunk:
+- Convierte StepStyle, StepBody, StepBackground, ShippingCalculator, MercadoPagoBrick
+  en imports dinámicos (next/dynamic, ssr:false donde usen hooks de cliente).
+  Objetivo: first load de /order <= 120 kB gzip.
+
+Fix B1 — browser-image-compression en devDependencies (rompe builds --omit=dev):
+  npm install browser-image-compression  (mover a dependencies)
+
+Fix B2 — añadir bundle-analyzer para control continuo:
+  npm install --save-dev @next/bundle-analyzer
+  Añade script en package.json: "analyze": "ANALYZE=true next build"
+  Anota el first load actual de /order (147 kB) como línea base en un comentario.
+
+Commit: perf(bundle): recaptcha lazy, paypal dynamic, steps dynamic, bundle-analyzer</pre>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     CONVERSIÓN Y UX
+══════════════════════════════════════════ -->
+<p class="section-label">🛒 Conversión y UX de venta</p>
+
+<!-- FRICCIÓN CHECKOUT -->
+<div class="card">
+  <div class="card-head">
+    <div style="display:flex;align-items:center;gap:10px">
+      <span class="num">8</span>
+      <h2 class="card-title">Funnel sin eventos GA, captura PayPal silenciosa, upsell en el paso de pago</h2>
+    </div>
+    <span class="badge p1">P1 · Importante</span>
+  </div>
+  <p class="resumen">GA no tiene un solo evento de e-commerce: imposible saber dónde se abandona. Si falla la captura de PayPal, el usuario ve el modal cerrado sin mensaje. El upsell de "añade alguien más" aparece en el paso 5 distraendo justo al pagar.</p>
+  <p class="label">Prompt para Claude Code</p>
+  <div class="prompt-box">
+    <button class="copy-btn" onclick="copy(this)">Copiar</button>
+    <pre class="prompt-text">/ponytail caveman mode on.
+
+Lee audits/conversion/friccion-checkout/BUENAS_PRACTICAS.md antes de tocar código.
+
+Fix A1 — funnel sin eventos GA (conversión a ciegas):
+- Crea lib/analytics/events.ts con funciones wrapper sobre window.gtag:
+    trackEvent(name, params) — guarda si gtag no está listo.
+  Eventos mínimos en app/order/useCheckout.ts:
+    - Al avanzar al paso 2: trackEvent('begin_checkout', {step:2})
+    - Al ir al pago (paso 5): trackEvent('add_payment_info', {currency, value: quote.total})
+    - En capturePayPalOrder (éxito): trackEvent('purchase', {transaction_id, value, currency})
+    - En createMpOrder (éxito): ídem
+    - En error de pago: trackEvent('checkout_error', {reason})
+  En app/checkout/success — trackEvent('purchase') con la ref si no se envió ya.
+
+Fix A2 — captura PayPal sin mensaje garantizado al usuario:
+- app/order/useCheckout.ts:619-634 — en el catch de capturePayPalOrder,
+  llama a setCheckoutError con mensaje específico:
+  "Tu pago fue aprobado pero no pudimos confirmarlo. Guarda el ID: ${orderID} y escríbenos."
+  Añade un AbortSignal.timeout(20_000) al fetch de captura (como tiene createPayPalOrder).
+
+Fix M2 — upsell en el paso de pago (distrae, no convierte):
+- app/order/page.tsx — en el sidebar/drawer, suprime los hints de FamilyTierBar
+  y el CTA de "Añadir otra persona" cuando step === 5.
+  El resumen en paso 5 debe ser puro (solo lo que se va a cobrar).
+
+Fix M3 — reCAPTCHA bloqueante solo para MP/COP:
+  (Cubierto en fix P0 H-03 de manejo de errores, verificar que ya se aplicó)
+  Si no: app/order/useCheckout.ts:640 — wrappear getRecaptchaToken con
+  withTimeout(8000) + try/catch best-effort, igual que PayPal en línea 577-582.
+
+Commit: feat(conversion): eventos GA4 e-commerce, mensaje captura PayPal, ocultar upsell en paso 5</pre>
+  </div>
+</div>
+
+<!-- SEÑALES CONFIANZA -->
+<div class="card">
+  <div class="card-head">
+    <div style="display:flex;align-items:center;gap:10px">
+      <span class="num">9</span>
+      <h2 class="card-title">Señales de confianza: reseñas falsas marcadas como "verificadas", garantía inconsistente</h2>
+    </div>
+    <span class="badge p1">P1 · Importante</span>
+  </div>
+  <p class="resumen">"Verified purchase" se pinta en TODAS las reseñas hardcodeado, sea real o no. La garantía de revisiones dice "ilimitadas" en la home, "1 revisión" en otro sitio y "ajustes menores 24 h" en los términos. Track-order no muestra fecha estimada y los labels están solo en español.</p>
+  <p class="label">Prompt para Claude Code</p>
+  <div class="prompt-box">
+    <button class="copy-btn" onclick="copy(this)">Copiar</button>
+    <pre class="prompt-text">/ponytail caveman mode on.
+
+Lee audits/conversion/senales-confianza/BUENAS_PRACTICAS.md antes de tocar código.
+
+Fix M1 — "Verified purchase" hardcodeado en todas las reseñas:
+- components/TestimonialsScroll.tsx:69 — haz que el sello sea condicional:
+  solo renderiza el badge si testimonial.verified === true.
+- lib/content/homeContent.ts — añade campo verified: false (default) a los
+  testimonios de ejemplo; ponlo en true solo en los pedidos reales entregados.
+- Si hay un campo editable en el admin para testimonios, añade el toggle verified.
+
+Fix M2 — política de revisiones inconsistente:
+  Define UNA política: p.ej. "1 revisión incluida · reembolso si no coincide con las instrucciones".
+  Aplícala en:
+    - lib/content/homeContent.ts (trust strip y sección de garantía)
+    - lib/i18n/translations.ts (clave de revisiones)
+    - app/terms/page.tsx (sección de reembolso y revisiones)
+    - lib/content/blogPosts.ts (mención de revisión)
+  Solo 1 definición canónica; el resto la importa o la copia.
+
+Fix M3 — track-order sin fecha estimada y labels en español:
+- app/api/track/route.ts:11-17 — devuelve la clave de estado (p.ej. 'in_progress')
+  y el created_at del pedido, no el label en español.
+  Añade una campo estimatedDelivery: new Date(order.created_at + SLA_HOURS).
+- app/track-order/page.tsx — traduce la clave de estado con el i18n existente.
+  Muestra "Entrega estimada: {fecha}" bajo el estado.
+
+Fix B1 — falta garantía + WhatsApp junto al botón de pago:
+- app/order/page.tsx (PaymentTrustStrip o justo debajo) — añade una línea:
+  "1 revisión incluida · Reembolso si no coincide · ¿Dudas? [WhatsApp]"
+  Usa la constante de WhatsApp ya existente (WHATSAPP_NUMBER).
+
+Commit: fix(trust): verified purchase condicional, garantía unificada, track-order i18n + ETA</pre>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     PENDIENTES DE AUDITORÍA
+══════════════════════════════════════════ -->
+<p class="section-label">⏳ Pendientes — auditar primero</p>
+<p style="font-size:13px;color:var(--ink-lighter);margin:0 0 16px">Estos 5 items P1 aún no tienen REPORTE.md. Ejecuta el prompt de auditoría de cada uno antes de aplicar fixes.</p>
+
+<div class="card pending">
+  <div class="card-head">
+    <div style="display:flex;align-items:center;gap:10px">
+      <span class="num gray">A</span>
+      <h2 class="card-title">Experiencia móvil</h2>
+    </div>
+    <span class="badge pending">Sin auditoría</span>
+  </div>
+  <p class="resumen">El wizard de 5 pasos + subida de fotos + popups de pago no ha sido auditado en mobile. Correr primero el prompt de auditoría en <code>audits/conversion/mobile-responsive/prompt.md</code>.</p>
+  <div class="audit-needed">Abre audits/conversion/mobile-responsive/prompt.md y pégalo en Claude Code. Luego vuelve aquí para el fix.</div>
+</div>
+
+<div class="card pending">
+  <div class="card-head">
+    <div style="display:flex;align-items:center;gap:10px">
+      <span class="num gray">B</span>
+      <h2 class="card-title">Ciclo de vida de fotos y datos personales</h2>
+    </div>
+    <span class="badge pending">Sin auditoría</span>
+  </div>
+  <p class="resumen">Fotos de familias (a veces niños) para retratos. Retención, acceso y borrado no auditados. Correr primero <code>audits/datos-y-privacidad/datos-personales-fotos/prompt.md</code>.</p>
+  <div class="audit-needed">Abre audits/datos-y-privacidad/datos-personales-fotos/prompt.md y pégalo en Claude Code.</div>
+</div>
+
+<div class="card pending">
+  <div class="card-head">
+    <div style="display:flex;align-items:center;gap:10px">
+      <span class="num gray">C</span>
+      <h2 class="card-title">Cumplimiento legal (GDPR / Habeas Data / cookies)</h2>
+    </div>
+    <span class="badge pending">Sin auditoría</span>
+  </div>
+  <p class="resumen">Ventas a EU, Colombia y Norteamérica. GDPR, Habeas Data y reglas de cookies sin auditar. Correr primero <code>audits/datos-y-privacidad/cumplimiento-legal/prompt.md</code>.</p>
+  <div class="audit-needed">Abre audits/datos-y-privacidad/cumplimiento-legal/prompt.md y pégalo en Claude Code.</div>
+</div>
+
+<div class="card pending">
+  <div class="card-head">
+    <div style="display:flex;align-items:center;gap:10px">
+      <span class="num gray">D</span>
+      <h2 class="card-title">Monitoreo, logging y alertas</h2>
+    </div>
+    <span class="badge pending">Sin auditoría</span>
+  </div>
+  <p class="resumen">Errores viven en console.error de serverless que nadie lee. Sin alertas un webhook roto puede pasar días perdiendo pedidos. Correr primero <code>audits/confiabilidad/monitoreo-alertas/prompt.md</code>.</p>
+  <div class="audit-needed">Abre audits/confiabilidad/monitoreo-alertas/prompt.md y pégalo en Claude Code.</div>
+</div>
+
+<div class="card pending">
+  <div class="card-head">
+    <div style="display:flex;align-items:center;gap:10px">
+      <span class="num gray">E</span>
+      <h2 class="card-title">Backups y recuperación ante desastres</h2>
+    </div>
+    <span class="badge pending">Sin auditoría</span>
+  </div>
+  <p class="resumen">El plan free de Supabase se pausa por inactividad. Estrategia de backup y runbook de recuperación no auditados. Correr primero <code>audits/confiabilidad/backups-recuperacion/prompt.md</code>.</p>
+  <div class="audit-needed">Abre audits/confiabilidad/backups-recuperacion/prompt.md y pégalo en Claude Code.</div>
+</div>
+
+<div class="footer">NEGASVA · Prompts fix P1 · 9 auditados · 5 pendientes de auditoría · 2026-07-13</div>
+</div>
+
+<script>
+function copy(btn) {
+  const text = btn.closest('.prompt-box').querySelector('.prompt-text').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = '¡Copiado!';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'Copiar'; btn.classList.remove('copied'); }, 2000);
+  });
+}
+</script>
+</body></html>

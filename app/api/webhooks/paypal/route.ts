@@ -51,7 +51,7 @@ export async function POST(request: Request) {
         // reintenta el evento.
         const { data: existing } = await supabase
           .from('orders')
-          .select('status, discount_code, amount_total, currency, style, body_type, background, people_count, express')
+          .select('status, discount_code, amount_total, currency, style, body_type, background, people_count, express, cart_id')
           .eq('provider', 'paypal')
           .eq('provider_reference', reference)
           .maybeSingle();
@@ -78,6 +78,10 @@ export async function POST(request: Request) {
         // fallo acreditando el cupón o enviando el email no debe propagarse.
         if (!wasPaid && existing) {
           try {
+            // Conversión REAL del carrito: solo al confirmarse el pago.
+            if (existing.cart_id) {
+              await supabase.from('carts').update({ status: 'converted' }).eq('cart_id', existing.cart_id);
+            }
             if (existing.discount_code) await recordDiscountCodeUse(existing.discount_code);
             await notifyNewOrder({
               provider: 'paypal',

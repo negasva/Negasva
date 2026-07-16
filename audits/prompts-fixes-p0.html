@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Prompts de fix P0 — NEGASVA</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{--pink:#F870A0;--pink-lighter:#FFE1EC;--pink-wash:#FFF5F8;--pink-dark:#E0517F;--ink:#1A1A1A;--ink-light:#4A4A4A;--ink-lighter:#7A7A7A;--red:#E5484D;--red-bg:#FDEBEC;}
+*{box-sizing:border-box}
+body{margin:0;background:#fff;color:var(--ink);font-family:'Montserrat',ui-sans-serif,system-ui,sans-serif;line-height:1.55}
+.nav{position:sticky;top:0;z-index:50;background:#fff;border-bottom:2px solid var(--pink-lighter)}
+.nav-in{max-width:1000px;margin:0 auto;padding:14px 20px;display:flex;align-items:center;justify-content:space-between}
+.logo{font-size:22px;letter-spacing:-.05em}.logo b{font-weight:900}.logo span{font-weight:400}
+.tag{display:inline-flex;align-items:center;background:var(--red);color:#fff;border-radius:999px;padding:6px 14px;font-size:11px;font-weight:900}
+.wrap{max-width:1000px;margin:0 auto;padding:32px 20px 80px}
+.hero{background:var(--pink-wash);border:2px solid var(--pink-lighter);border-radius:16px;padding:24px;margin-bottom:32px}
+h1{font-size:32px;font-weight:900;letter-spacing:-.04em;margin:0 0 8px}
+.sub{color:var(--ink-lighter);font-size:13px;margin:0}
+.card{border:2px solid var(--pink-lighter);border-left:5px solid var(--red);border-radius:14px;padding:22px;margin-bottom:24px;background:#fff}
+.card-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:10px}
+.card-title{font-size:17px;font-weight:900;letter-spacing:-.02em;margin:0;line-height:1.2}
+.badge{display:inline-flex;align-items:center;gap:4px;border-radius:999px;padding:4px 11px;font-size:10px;font-weight:900;letter-spacing:.05em;white-space:nowrap;background:var(--red-bg);color:var(--red)}
+.resumen{font-size:13px;color:var(--ink-light);margin:0 0 14px;padding:0}
+.label{font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:.1em;color:var(--ink-lighter);margin:0 0 6px}
+.prompt-box{position:relative;background:#0f0f0f;border-radius:10px;padding:16px 16px 14px}
+.prompt-text{color:#e8e8e8;font-family:ui-monospace,Consolas,monospace;font-size:12.5px;line-height:1.6;margin:0;white-space:pre-wrap;word-break:break-word}
+.copy-btn{position:absolute;top:10px;right:10px;background:#333;color:#ccc;border:none;border-radius:6px;padding:5px 10px;font-size:10px;font-weight:700;cursor:pointer;font-family:'Montserrat',sans-serif;transition:background .15s}
+.copy-btn:hover{background:var(--pink-dark);color:#fff}
+.copy-btn.copied{background:#1FA971;color:#fff}
+.num{display:inline-flex;width:26px;height:26px;align-items:center;justify-content:center;background:var(--red);color:#fff;border-radius:999px;font-size:12px;font-weight:900;flex-shrink:0}
+.footer{margin-top:50px;border-top:2px solid var(--pink-lighter);padding-top:16px;color:var(--ink-lighter);font-size:11px;text-align:center}
+.order-note{display:flex;align-items:center;gap:10px;margin-bottom:16px;font-size:12px;color:var(--ink-lighter);font-weight:700}
+</style></head>
+<body>
+<nav class="nav"><div class="nav-in">
+  <span class="logo"><b>NEGAS</b><span>VA</span></span>
+  <span class="tag">Prompts fix P0</span>
+</div></nav>
+
+<div class="wrap">
+<div class="hero">
+  <h1>Fix P0 — un prompt por hallazgo</h1>
+  <p class="sub">Pega cada prompt en Claude Code dentro del repo. Ejecútalos en orden. Cada uno usa /ponytail + caveman mode.</p>
+</div>
+
+<div class="order-note">
+  <span class="num">!</span>
+  Orden sugerido: 4 → 1 → 2 → 3 → 5 → 6 · Empieza por el bypass de precio (dinero en riesgo ahora mismo).
+</div>
+
+<!-- ─── FIX 4: Integridad de precios ─── -->
+<div class="card">
+  <div class="card-head">
+    <div style="display:flex;align-items:center;gap:10px">
+      <span class="num">1°</span>
+      <h2 class="card-title">Bypass de precio: rate del cliente controla el cobro</h2>
+    </div>
+    <span class="badge">P0 · Crítico</span>
+  </div>
+  <p class="resumen">El campo <code>rate</code> del payload del cliente multiplica todo el cobro. Un comprador puede pagar una fracción enviando <code>rate: 0.01</code>. La tasa autoritativa existe en <code>/api/rates</code> pero no se usa en el checkout.</p>
+  <p class="label">Prompt para Claude Code</p>
+  <div class="prompt-box">
+    <button class="copy-btn" onclick="copy(this)">Copiar</button>
+    <pre class="prompt-text">/ponytail caveman mode on.
+
+Lee audits/pagos-y-dinero/integridad-precios/BUENAS_PRACTICAS.md antes de tocar código.
+
+Fix C1 — rate del cliente controla el cobro:
+
+1. app/api/checkout/route.ts
+   - Elimina d.rate del payload como campo de confianza.
+   - Obtén la tasa server-side: reutiliza la lógica de app/api/rates/route.ts (o extrae el fetch a lib/pricing/rates.ts si no existe).
+   - Reemplaza d.rate en líneas 83, 193-197, 248, 260, 277 por la tasa del servidor.
+
+2. lib/validation/order.ts
+   - Elimina el campo rate del CheckoutSchema (línea 82). Ya no viene del cliente.
+
+3. Crea lib/pricing/rates.ts si no existe — función getServerRate(currency) que devuelve la tasa cacheada.
+
+Regla: ningún valor monetario multiplicador puede venir del cliente. Si rate llega en el body, ignorarlo.
+
+Commit: fix(checkout): obtener tasa de cambio del servidor, no del cliente (C1)</pre>
+  </div>
+</div>
+
+<!-- ─── FIX 1: Autenticación admin ─── -->
+<div class="card">
+  <div class="card-head">
+    <div style="display:flex;align-items:center;gap:10px">
+      <span class="num">2°</span>
+      <h2 class="card-title">Autenticación admin: rotar contraseña no invalida sesiones</h2>
+    </div>
+    <span class="badge">P0 · Crítico</span>
+  </div>
+  <p class="resumen">La clave HMAC es <code>ADMIN_SESSION_SECRET || ADMIN_PASSWORD</code>. Si existe <code>ADMIN_SESSION_SECRET</code>, rotar la contraseña no mata sesiones activas. Además, el IP de rate limit es spoofable vía XFF y las respuestas admin no tienen <code>Cache-Control: no-store</code>.</p>
+  <p class="label">Prompt para Claude Code</p>
+  <div class="prompt-box">
+    <button class="copy-btn" onclick="copy(this)">Copiar</button>
+    <pre class="prompt-text">/ponytail caveman mode on.
+
+Lee audits/seguridad/autenticacion-admin/BUENAS_PRACTICAS.md antes de tocar código.
+
+Fix A1 — rotar ADMIN_PASSWORD debe invalidar sesiones:
+- lib/admin/session.ts:14 — el token HMAC incluye un hash de ADMIN_PASSWORD en el payload.
+  Forma mínima: al firmar, añade un campo passwordHash: sha256(ADMIN_PASSWORD).slice(0,8).
+  Al verificar, rechaza si no coincide con el hash actual.
+
+Fix M2 — XFF spoofable en rate limit del login:
+- lib/security/apiHelpers.ts:12-16 — en Vercel, preferir en orden:
+  x-vercel-forwarded-for → x-real-ip → primer valor de x-forwarded-for.
+
+Fix B1 — Cache-Control en respuestas admin:
+- lib/security/apiHelpers.ts — en errorResponse y en un nuevo helper successAdminResponse,
+  añadir el header Cache-Control: no-store, no-cache.
+- app/api/admin/**/route.ts — usa el helper en todas las respuestas JSON de admin.
+
+Commit: fix(admin): invalidar sesión al rotar password, IP real en rate limit, no-store en admin</pre>
+  </div>
+</div>
+
+<!-- ─── FIX 2: RLS Supabase ─── -->
+<div class="card">
+  <div class="card-head">
+    <div style="display:flex;align-items:center;gap:10px">
+      <span class="num">3°</span>
+      <h2 class="card-title">RLS Supabase: is_admin() usa metadata editable por el usuario</h2>
+    </div>
+    <span class="badge">P0 · Crítico</span>
+  </div>
+  <p class="resumen"><code>is_admin()</code> lee <code>user_metadata.role</code>, que cualquier usuario autenticado puede autoeditar. Si el signup de Supabase está abierto, cualquiera puede darse rol admin. Además, <code>/api/track</code> lee <code>orders</code> con la anon key — incompatible con las políticas versionadas.</p>
+  <p class="label">Prompt para Claude Code</p>
+  <div class="prompt-box">
+    <button class="copy-btn" onclick="copy(this)">Copiar</button>
+    <pre class="prompt-text">/ponytail caveman mode on.
+
+Lee audits/seguridad/rls-supabase/BUENAS_PRACTICAS.md antes de tocar código.
+
+Fix A1 — is_admin() no debe confiar en user_metadata:
+- supabase/migrations/ — crea nueva migración que reemplace:
+    auth.jwt() -> 'user_metadata' ->> 'role' = 'admin'
+  por:
+    auth.jwt() -> 'app_metadata' ->> 'role' = 'admin'
+  en TODOS los lugares donde aparezca (006_admin_tables.sql, 019_order_photos.sql y cualquier otro).
+  app_metadata solo es modificable con service role key.
+
+Fix A2 — /api/track debe usar service role, no anon key:
+- app/api/track/route.ts — cambia getSupabase() (anon) por createServiceClient() (service role)
+  para la consulta a orders. La lógica de matching (orderId + email) se queda en el servidor.
+  Elimina cualquier política SELECT anon sobre la tabla orders si existe fuera del repo.
+
+Fix M2 — INSERT anon en newsletter saltea rate limit:
+- supabase/migrations/ — nueva migración: elimina la política WITH CHECK (true) de INSERT anon
+  en newsletter_subscribers. El insert debe hacerse solo desde /api/newsletter con service role.
+
+Commit: fix(rls): usar app_metadata en is_admin, service role en /api/track, quitar insert anon newsletter</pre>
+  </div>
+</div>
+
+<!-- ─── FIX 3: Validación inputs ─── -->
+<div class="card">
+  <div class="card-head">
+    <div style="display:flex;align-items:center;gap:10px">
+      <span class="num">4°</span>
+      <h2 class="card-title">Validación inputs: email de nuevo pedido interpola HTML sin escapar</h2>
+    </div>
+    <span class="badge">P0 · Crítico</span>
+  </div>
+  <p class="resumen">El email de aviso al admin (<code>notifyNewOrder</code>) interpola <code>customerEmail</code> y otros campos del cliente directamente en HTML. Un valor malicioso llega como HTML injection al buzón del admin. Además, <code>photoPaths</code> del cliente se persisten sin verificar contra el upload real.</p>
+  <p class="label">Prompt para Claude Code</p>
+  <div class="prompt-box">
+    <button class="copy-btn" onclick="copy(this)">Copiar</button>
+    <pre class="prompt-text">/ponytail caveman mode on.
+
+Lee audits/seguridad/validacion-inputs/BUENAS_PRACTICAS.md antes de tocar código.
+
+Fix A1 — HTML injection en email de nuevo pedido:
+- lib/notify/newOrder.ts:52-54 — añade helper escapeHtml(s: string) que escape
+  &amp; < > " ' (5 entidades, una línea de replace encadenado).
+  Aplica escapeHtml() a cada valor interpolado en el template HTML.
+  Revisa buildRecoveryEmail y emails/order-confirmation.html: aplica escapeHtml
+  en cualquier punto donde se inserten datos del cliente en HTML.
+
+Fix M2 — photoPaths del cliente sin validar:
+- app/api/checkout/route.ts — en vez de persistir photoPaths del body,
+  deriva los paths server-side desde el uploadId usando listOrderPhotos o
+  el patrón ${uploadId}/${i}. Si no existe helper, crea función getPhotoPaths(uploadId)
+  en lib/payments/orderPhotos.ts que liste el prefijo en el bucket.
+  Ignora photoPaths del body del cliente.
+
+Fix B1 — sin límite de tamaño total del multipart:
+- app/api/order/upload/route.ts — antes de procesar, suma el tamaño de todos los archivos.
+  Rechaza con 413 si superan 40 MB en total.
+
+Commit: fix(inputs): escapar HTML en emails, derivar photoPaths server-side, límite multipart total</pre>
+  </div>
+</div>
+
+<!-- ─── FIX 5: Webhooks ─── -->
+<div class="card">
+  <div class="card-head">
+    <div style="display:flex;align-items:center;gap:10px">
+      <span class="num">5°</span>
+      <h2 class="card-title">Webhooks: ninguno coteja el monto pagado contra el pedido</h2>
+    </div>
+    <span class="badge">P0 · Crítico</span>
+  </div>
+  <p class="resumen">Los 4 webhooks marcan un pedido como pagado solo por coincidencia de referencia, sin comparar el importe capturado contra <code>orders.amount_total</code>. Un pago parcial o con importe manipulado marca el pedido como pagado. Además, Mercado Pago no verifica firma HMAC.</p>
+  <p class="label">Prompt para Claude Code</p>
+  <div class="prompt-box">
+    <button class="copy-btn" onclick="copy(this)">Copiar</button>
+    <pre class="prompt-text">/ponytail caveman mode on.
+
+Lee audits/pagos-y-dinero/webhooks/BUENAS_PRACTICAS.md antes de tocar código.
+
+Fix A1 — cotejar monto pagado contra orders.amount_total en todos los webhooks:
+Crea helper lib/payments/verifyAmount.ts:
+  verifyAmount(paid: number, currency: string, order: {amount_total: number, currency: string}): boolean
+  Retorna true solo si moneda coincide y paid >= order.amount_total * 0.99 (1% de margen por redondeo).
+
+Aplica en cada handler justo antes de marcar paid:
+- app/api/webhooks/paypal/route.ts — usa amount.value del evento CAPTURE.COMPLETED.
+- app/api/webhooks/mercadopago/route.ts — usa transaction_amount del pago re-fetched.
+- app/api/webhooks/stripe/route.ts — usa amount_total del PaymentIntent.
+- app/api/webhooks/wompi/route.ts — usa amount_in_cents / 100.
+Si verifyAmount falla: responde 200 (para que el provider no reintente) pero NO marques paid.
+Loguea con console.error('amount mismatch', {paid, expected, ref}).
+
+Fix M1 — Mercado Pago sin firma HMAC:
+- app/api/webhooks/mercadopago/route.ts — verifica x-signature + x-request-id con HMAC-SHA256
+  usando process.env.MERCADOPAGO_WEBHOOK_SECRET antes del re-fetch.
+  Rechaza con 401 si la firma no coincide.
+
+Fix M3 — post-proceso de cupón/email no aislado del update de estado:
+- En cada webhook, separa el bloque update de status (crítico) del bloque post-proceso
+  (recordDiscountCodeUse + notifyNewOrder). Pon el post-proceso en un try/catch propio
+  que loguee el error pero no lance; el update de estado ya está confirmado.
+
+Commit: fix(webhooks): cotejar monto pagado, firma HMAC en MP, aislar post-proceso</pre>
+  </div>
+</div>
+
+<!-- ─── FIX 6: Manejo de errores ─── -->
+<div class="card">
+  <div class="card-head">
+    <div style="display:flex;align-items:center;gap:10px">
+      <span class="num">6°</span>
+      <h2 class="card-title">Manejo de errores: success page falsa, timeouts ausentes, errores silenciosos</h2>
+    </div>
+    <span class="badge">P0 · Crítico</span>
+  </div>
+  <p class="resumen">La página de éxito muestra "¡Pago recibido!" sin consultar la BD (cualquier URL con <code>status=APPROVED</code> engaña al cliente). Los fetches a PayPal/MP/Printful no tienen timeout server-side. <code>createMpOrder</code> puede colgarse indefinidamente.</p>
+  <p class="label">Prompt para Claude Code</p>
+  <div class="prompt-box">
+    <button class="copy-btn" onclick="copy(this)">Copiar</button>
+    <pre class="prompt-text">/ponytail caveman mode on.
+
+Lee audits/confiabilidad/manejo-errores/BUENAS_PRACTICAS.md antes de tocar código.
+
+Fix H-01 — success page no valida el pago contra la BD:
+- app/checkout/success/page.tsx — al montar, llama GET /api/track?ref=&lt;ref&gt;&email=&lt;email&gt;
+  (o un endpoint GET /api/checkout/status?ref= si track requiere email).
+  Mientras carga: spinner real (no setTimeout cosmético).
+  Renderiza éxito/pendiente/fallo según la respuesta de la BD.
+  Si ref falta en la URL: muestra "no pudimos verificar tu pago, contacta soporte".
+
+Fix H-04 — fetches server-side a proveedores sin timeout:
+- lib/payments/paypal.ts, lib/payments/mercadopago.ts, lib/printful.ts,
+  lib/security/recaptcha.ts, lib/notify/email.ts — en cada fetch(), añade:
+    signal: AbortSignal.timeout(10_000)   // 15_000 para capture
+  Ajusta el catch para devolver un error controlado (no propagar AbortError crudo).
+
+Fix H-03 — createMpOrder puede colgarse (sin timeout en getRecaptchaToken ni fetch):
+- app/order/useCheckout.ts:638-656 — replica el patrón de createPayPalOrder:
+  1. withTimeout(getRecaptchaToken('checkout'), 8000) con try/catch best-effort.
+  2. AbortController de 20s en el fetch a /api/checkout.
+  3. En catch, devuelve null (el Brick ya maneja order == null).
+
+Fix H-09 — faltan error boundaries de Next.js:
+- Crea app/error.tsx, app/global-error.tsx, app/not-found.tsx.
+  Mínimo: mensaje amigable + botón "Volver al inicio". Sin librerías nuevas.
+
+Commit: fix(errors): success page valida BD, timeouts en fetches externos, error boundaries</pre>
+  </div>
+</div>
+
+<div class="footer">NEGASVA · Prompts fix P0 · 6 hallazgos críticos · Generado con Claude · 2026-07-13</div>
+</div>
+
+<script>
+function copy(btn) {
+  const text = btn.closest('.prompt-box').querySelector('.prompt-text').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = '¡Copiado!';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'Copiar'; btn.classList.remove('copied'); }, 2000);
+  });
+}
+</script>
+</body></html>

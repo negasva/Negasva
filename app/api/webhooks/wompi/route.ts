@@ -47,7 +47,7 @@ export async function POST(request: Request) {
     // transition to paid (Wompi may deliver the event more than once).
     const { data: existing } = await supabase
       .from('orders')
-      .select('status, discount_code, amount_total, currency, style, body_type, background, people_count, express')
+      .select('status, discount_code, amount_total, currency, style, body_type, background, people_count, express, cart_id')
       .eq('provider', 'wompi')
       .eq('provider_reference', tx.reference)
       .maybeSingle();
@@ -79,6 +79,10 @@ export async function POST(request: Request) {
     // debe deshacerlo ni propagarse.
     if (newStatus === 'paid' && !wasPaid) {
       try {
+        // Conversión REAL del carrito: solo al confirmarse el pago.
+        if (existing?.cart_id) {
+          await supabase.from('carts').update({ status: 'converted' }).eq('cart_id', existing.cart_id);
+        }
         if (existing?.discount_code) await recordDiscountCodeUse(existing.discount_code);
         await notifyNewOrder({
           provider: 'wompi',

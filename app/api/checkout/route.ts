@@ -146,16 +146,15 @@ export async function POST(request: Request) {
         customer_phone: d.customerPhone || null,
         // Stored so the webhook can credit the code AFTER payment is approved.
         discount_code: appliedCode?.code ?? null,
+        // Enlace al carrito para calcular la conversión REAL (cuando el pago se
+        // apruebe). No marcamos `converted` aquí: eso lo decide el pago pagado.
+        cart_id: d.cartId ?? null,
         status: 'pending',
       });
       // Sin fila no hay pedido que cotejar en /api/payments/mercadopago (daba
       // un 404 fantasma tras "crear" el pedido). insert() no lanza: hay que
       // mirar el error explícitamente.
       if (insertError) return errorResponse('Could not create order', 500, insertError);
-      // Best-effort: el carrito que llegó al pago deja de ser "abandonado".
-      if (d.cartId) {
-        await supabase.from('carts').update({ status: 'converted' }).eq('cart_id', d.cartId);
-      }
     } catch (err) {
       // Sin BD no se puede cotejar el pago con el pedido — se aborta el checkout.
       return errorResponse('Could not create order', 500, err);
@@ -322,12 +321,11 @@ export async function POST(request: Request) {
       customer_phone: d.customerPhone || null,
       // Stored so the webhook can credit the code AFTER payment is captured.
       discount_code: appliedCode?.code ?? null,
+      // Enlace al carrito para calcular la conversión REAL (cuando el pago se
+      // capture). No marcamos `converted` aquí: eso lo decide el pago pagado.
+      cart_id: d.cartId ?? null,
       status: 'pending',
     });
-    // Best-effort: el carrito que llegó al pago deja de ser "abandonado".
-    if (d.cartId) {
-      await supabase.from('carts').update({ status: 'converted' }).eq('cart_id', d.cartId);
-    }
   } catch (err) {
     // Sin BD no se puede cotejar el pago con el pedido — se aborta el checkout.
     return errorResponse('Could not create order', 500, err);

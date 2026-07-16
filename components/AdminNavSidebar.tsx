@@ -4,7 +4,16 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
-export interface NavItem { href: string; label: string }
+export interface NavItem {
+  href: string;
+  label: string;
+  /** Clave del contador de /api/admin/badges que se muestra en el círculo rojo. */
+  badgeKey?: 'total' | 'pagos' | 'carritos' | 'pedidos';
+  /** Secciones operativas clave: se resaltan visualmente en el menú. */
+  important?: boolean;
+}
+
+interface Badges { total: number; pagos: number; carritos: number; pedidos: number }
 
 function Brand() {
   return (
@@ -16,39 +25,43 @@ function Brand() {
 }
 
 // Shared admin sidebar for both panels (/admin operation, /adminlanding content).
-// The "new paid orders" badge is operation-only, gated by newOrdersHref.
+// Cuando showBadges está activo (panel de operación), sondea /api/admin/badges y
+// pinta círculos rojos con el nº de items sin gestionar por sección.
 export default function AdminNavSidebar({
   items,
   subtitle,
-  newOrdersHref,
+  showBadges = false,
 }: {
   items: NavItem[];
   subtitle: string;
-  newOrdersHref?: string;
+  showBadges?: boolean;
 }) {
   const pathname = usePathname();
   const router = useRouter();
   const [open, setOpen] = useState(false);
-  const [newOrders, setNewOrders] = useState(0);
+  const [badges, setBadges] = useState<Badges>({ total: 0, pagos: 0, carritos: 0, pedidos: 0 });
 
-  // Live "new paid orders" badge: poll the cheap count endpoint and subtract
-  // the count last seen on the Pedidos pagados page (stored in localStorage).
+  // Contadores "sin gestionar" en vivo: se sondean cada 20s.
   useEffect(() => {
-    if (!newOrdersHref) return;
+    if (!showBadges) return;
     let alive = true;
     async function poll() {
       try {
-        const res = await fetch('/api/admin/orders/new-count');
+        const res = await fetch('/api/admin/badges');
         if (!res.ok) return;
-        const { count } = await res.json();
-        const seen = Number(localStorage.getItem('adminOrdersSeen') || '0');
-        if (alive) setNewOrders(Math.max(0, count - seen));
+        const data = await res.json();
+        if (alive) setBadges({
+          total: Number(data.total) || 0,
+          pagos: Number(data.pagos) || 0,
+          carritos: Number(data.carritos) || 0,
+          pedidos: Number(data.pedidos) || 0,
+        });
       } catch { /* ignore */ }
     }
     poll();
     const id = setInterval(poll, 20000);
     return () => { alive = false; clearInterval(id); };
-  }, [pathname, newOrdersHref]);
+  }, [pathname, showBadges]);
 
   async function handleLogout() {
     await fetch('/api/admin/login', { method: 'DELETE' });
@@ -59,23 +72,24 @@ export default function AdminNavSidebar({
   const NavLinks = ({ onNav }: { onNav?: () => void }) => (
     <>
       <nav className="flex-1 py-4 px-3 space-y-0.5 overflow-y-auto">
-        {items.map(({ href, label }) => {
+        {items.map(({ href, label, badgeKey, important }) => {
           const active = href === pathname || (href !== '/admin' && href !== '/adminlanding' && pathname.startsWith(href));
+          const count = showBadges && badgeKey ? badges[badgeKey] : 0;
+          const base = 'flex items-center justify-between px-3 py-2.5 rounded-lg text-sm transition-colors';
+          const state = active
+            ? 'bg-primary text-white font-bold shadow-sm'
+            : important
+              ? 'text-white font-bold bg-white/5 hover:bg-white/15 ring-1 ring-white/10'
+              : 'text-gray-400 font-semibold hover:text-white hover:bg-white/10';
           return (
-            <Link
-              key={href}
-              href={href}
-              onClick={onNav}
-              className={`flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-semibold transition-colors ${
-                active
-                  ? 'bg-primary text-white'
-                  : 'text-gray-400 hover:text-white hover:bg-white/10'
-              }`}
-            >
-              <span>{label}</span>
-              {newOrdersHref && href === newOrdersHref && newOrders > 0 && (
-                <span className="ml-2 min-w-5 h-5 px-1.5 flex items-center justify-center rounded-full bg-red-500 text-white text-xs font-black">
-                  {newOrders}
+            <Link key={href} href={href} onClick={onNav} className={`${base} ${state}`}>
+              <span className="flex items-center gap-2">
+                {important && !active && <span className="w-1.5 h-1.5 rounded-full bg-primary" />}
+                {label}
+              </span>
+              {count > 0 && (
+                <span className="ml-2 min-w-5 h-5 px-1.5 flex items-center justify-center rounded-full bg-red-500 text-white text-xs font-black shadow ring-2 ring-secondary animate-pulse">
+                  {count > 99 ? '99+' : count}
                 </span>
               )}
             </Link>
@@ -94,6 +108,9 @@ export default function AdminNavSidebar({
     </>
   );
 
+  // Total de items sin gestionar para el punto rojo del botón de menú móvil.
+  const mobileTotal = showBadges ? badges.total : 0;
+
   return (
     <>
       {/* Mobile top bar */}
@@ -101,12 +118,17 @@ export default function AdminNavSidebar({
         <Brand />
         <button
           onClick={() => setOpen(!open)}
-          className="w-10 h-10 flex flex-col items-center justify-center gap-1.5 rounded-lg hover:bg-white/10 transition-colors"
+          className="relative w-10 h-10 flex flex-col items-center justify-center gap-1.5 rounded-lg hover:bg-white/10 transition-colors"
           aria-label="Menu"
         >
           <span className={`block w-6 h-0.5 bg-white transition-all ${open ? 'rotate-45 translate-y-2' : ''}`} />
           <span className={`block w-6 h-0.5 bg-white transition-all ${open ? 'opacity-0' : ''}`} />
           <span className={`block w-6 h-0.5 bg-white transition-all ${open ? '-rotate-45 -translate-y-2' : ''}`} />
+          {mobileTotal > 0 && !open && (
+            <span className="absolute -top-0.5 -right-0.5 min-w-4 h-4 px-1 flex items-center justify-center rounded-full bg-red-500 text-white text-[10px] font-black ring-2 ring-secondary">
+              {mobileTotal > 99 ? '99+' : mobileTotal}
+            </span>
+          )}
         </button>
       </header>
 

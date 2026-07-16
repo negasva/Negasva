@@ -58,20 +58,33 @@ export default function CheckoutOrdersPage() {
   const [orders, setOrders] = useState<CheckoutOrder[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<'all' | 'paid' | 'pending'>('all');
+  const [archiving, setArchiving] = useState<string | null>(null);
 
   useEffect(() => {
     fetch('/api/admin/checkout-orders')
       .then((r) => r.json())
-      .then((d) => {
-        const list: CheckoutOrder[] = Array.isArray(d) ? d : [];
-        setOrders(list);
-        // Mark current paid count as seen so the sidebar "new orders" badge clears.
-        const paid = list.filter((o) => o.status === 'paid').length;
-        try { localStorage.setItem('adminOrdersSeen', String(paid)); } catch { /* ignore */ }
-      })
+      .then((d) => setOrders(Array.isArray(d) ? d : []))
       .catch(() => setOrders([]))
       .finally(() => setLoading(false));
   }, []);
+
+  async function archive(id: string) {
+    if (!confirm('¿Ocultar este pago del panel? El dato no se borra de la base de datos, solo deja de mostrarse aquí.')) return;
+    setArchiving(id);
+    try {
+      const res = await fetch('/api/admin/checkout-orders', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id }),
+      });
+      if (res.ok) setOrders((prev) => prev.filter((o) => o.id !== id));
+      else alert('No se pudo ocultar el pago.');
+    } catch {
+      alert('No se pudo ocultar el pago.');
+    } finally {
+      setArchiving(null);
+    }
+  }
 
   const shown = orders.filter((o) => filter === 'all' || o.status === filter);
 
@@ -79,7 +92,7 @@ export default function CheckoutOrdersPage() {
     <div className="max-w-5xl">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-black text-secondary tracking-tighter">Pedidos pagados</h1>
+          <h1 className="text-2xl font-black text-secondary tracking-tighter">Pagos Pendientes</h1>
           <p className="text-sm text-gray-500 mt-1">Pedidos reales con sus fotos para ilustrar.</p>
         </div>
       </div>
@@ -115,9 +128,19 @@ export default function CheckoutOrdersPage() {
                   {o.express && <span className="text-xs font-bold text-primary">Exprés</span>}
                   {o.status === 'paid' && <Deadline createdAt={o.created_at} express={o.express} />}
                 </div>
-                <span className="text-xs text-gray-400">
-                  {new Date(o.created_at).toLocaleString('es')} · {o.provider}
-                </span>
+                <div className="flex items-center gap-3">
+                  <span className="text-xs text-gray-400">
+                    {new Date(o.created_at).toLocaleString('es')} · {o.provider}
+                  </span>
+                  <button
+                    onClick={() => archive(o.id)}
+                    disabled={archiving === o.id}
+                    className="text-xs font-bold text-gray-400 hover:text-red-600 hover:bg-red-50 px-2 py-1 rounded-md transition-colors disabled:opacity-50"
+                    title="Ocultar del panel (no borra el dato)"
+                  >
+                    {archiving === o.id ? '…' : '🗑 Borrar'}
+                  </button>
+                </div>
               </div>
 
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-x-4 gap-y-2 text-sm mb-3">

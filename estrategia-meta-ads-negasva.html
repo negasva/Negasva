@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Negasva · Estrategia Meta Ads (1 mes)</title>
+<style>
+  :root{
+    --bg:#0f1115; --card:#171a21; --card2:#1e222b; --line:#2b303b;
+    --ink:#eef1f6; --mut:#a2acbd; --pri:#ff5a3c; --pri2:#ffb020;
+    --ok:#37d67a; --blue:#4aa3ff; --pur:#a97bff;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.5;font-size:15px}
+  .wrap{max-width:1080px;margin:0 auto;padding:28px 20px 80px}
+  header.hero{background:linear-gradient(135deg,#ff5a3c22,#ffb02011);border:1px solid var(--line);
+    border-radius:20px;padding:28px;margin-bottom:24px}
+  h1{font-size:30px;margin:0 0 6px;letter-spacing:-.5px}
+  h2{font-size:22px;margin:38px 0 12px;letter-spacing:-.3px;display:flex;align-items:center;gap:10px}
+  h2 .n{background:var(--pri);color:#fff;font-size:14px;width:28px;height:28px;border-radius:8px;
+    display:inline-flex;align-items:center;justify-content:center;font-weight:800;flex:0 0 auto}
+  h3{font-size:16px;margin:22px 0 8px;color:var(--pri2)}
+  p{margin:6px 0}
+  .sub{color:var(--mut)}
+  .pills{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+  .pill{background:var(--card2);border:1px solid var(--line);border-radius:999px;padding:6px 12px;font-size:13px}
+  .pill b{color:var(--pri2)}
+  .grid{display:grid;gap:14px}
+  .g3{grid-template-columns:repeat(3,1fr)}
+  .g2{grid-template-columns:repeat(2,1fr)}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px}
+  .card h4{margin:0 0 6px;font-size:15px}
+  .tag{display:inline-block;font-size:11px;font-weight:800;padding:3px 8px;border-radius:6px;letter-spacing:.4px}
+  .t-hook{background:#4aa3ff22;color:var(--blue)}
+  .t-proof{background:#37d67a22;color:var(--ok)}
+  .t-offer{background:#ff5a3c22;color:var(--pri)}
+  .t-story{background:#a97bff22;color:var(--pur)}
+  table{width:100%;border-collapse:collapse;margin:10px 0;font-size:13.5px;overflow:hidden;border-radius:12px}
+  th,td{border:1px solid var(--line);padding:9px 11px;text-align:left;vertical-align:top}
+  th{background:var(--card2);color:var(--pri2);font-size:12px;text-transform:uppercase;letter-spacing:.5px}
+  tr:nth-child(even) td{background:#14171e}
+  .copy{background:#0b0d11;border:1px dashed var(--line);border-left:3px solid var(--pri);
+    border-radius:10px;padding:12px 14px;margin:10px 0;font-size:14px}
+  .copy .lbl{color:var(--pri2);font-weight:800;font-size:12px;letter-spacing:.5px;text-transform:uppercase}
+  .copy code{color:var(--mut)}
+  .cal{grid-template-columns:repeat(7,1fr);gap:8px}
+  .day{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:9px;min-height:104px;font-size:12px}
+  .day .d{font-weight:800;color:var(--mut);font-size:11px}
+  .day .act{margin-top:5px;font-size:11.5px;line-height:1.35}
+  .rec{border-left:3px solid var(--blue)}
+  .pub{border-left:3px solid var(--ok)}
+  .ad{border-left:3px solid var(--pri)}
+  .rest{border-left:3px solid var(--line);opacity:.7}
+  .legend{display:flex;gap:14px;flex-wrap:wrap;margin:6px 0 12px;font-size:12px}
+  .legend span{display:inline-flex;align-items:center;gap:6px}
+  .dot{width:11px;height:11px;border-radius:3px;display:inline-block}
+  ul.clean{margin:6px 0;padding-left:18px}
+  ul.clean li{margin:4px 0}
+  .kpi{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px}
+  .kpi div{flex:1;min-width:150px;background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:12px}
+  .kpi b{display:block;font-size:20px;color:var(--pri2)}
+  .warn{background:#ffb0200f;border:1px solid #ffb02033;border-radius:12px;padding:12px 14px;margin:10px 0}
+  .go{background:#37d67a0f;border:1px solid #37d67a33;border-radius:12px;padding:12px 14px;margin:10px 0}
+  hr{border:none;border-top:1px solid var(--line);margin:26px 0}
+  .foot{color:var(--mut);font-size:12px;margin-top:40px;text-align:center}
+  @media(max-width:820px){.g3,.g2{grid-template-columns:1fr}.cal{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="hero">
+  <h1>🎨 Negasva — Estrategia Meta Ads que no falla</h1>
+  <p class="sub">Retratos caricatura hechos a mano, sin IA. Tú, dibujado por un artista real. Plan de 1 mes: qué grabar, cómo, copies y grid de anuncios.</p>
+  <div class="pills">
+    <span class="pill">Presupuesto: <b>$5–10/día</b></span>
+    <span class="pill">Mercado: <b>USA / Global (EN)</b></span>
+    <span class="pill">Objetivo: <b>Ventas directas</b></span>
+    <span class="pill">Ticket: <b>$15–$160</b></span>
+    <span class="pill">Prueba social: <b>@negasva TikTok + IG</b></span>
+  </div>
+</header>
+
+<!-- 1. LA GRAN IDEA -->
+<h2><span class="n">1</span> La gran idea (por qué vendes)</h2>
+<p>Todos usan filtros de IA. Tú no. <b>Un humano real te dibuja a mano.</b> Ese es el ángulo #1 y se ve en cámara. Cada anuncio debe probar 3 cosas en segundos:</p>
+<div class="grid g3">
+  <div class="card"><span class="tag t-proof">REAL</span><h4>Eres una persona real</h4><p class="sub">Tu mano, tu lápiz/tableta, tu cara. La IA no puede grabar esto.</p></div>
+  <div class="card"><span class="tag t-hook">MAGIA</span><h4>Foto → caricatura</h4><p class="sub">El "antes/después" es el gancho más fuerte. Muéstralo siempre.</p></div>
+  <div class="card"><span class="tag t-offer">FÁCIL</span><h4>Pedirlo es simple</h4><p class="sub">Subes foto, eliges estilo, en 48h lo tienes. Desde $15.</p></div>
+</div>
+<div class="go"><b>Frase madre (úsala en todo):</b> “Not with a filter — with an artist.” / “Hecho a mano, no por IA.”</div>
+
+<!-- 2. QUE GRABAR -->
+<h2><span class="n">2</span> Qué grabar (tu banco de clips)</h2>
+<p class="sub">Graba con el celular en <b>vertical 9:16</b>, luz natural de ventana, audio limpio. No necesitas editar bonito: lo crudo vende más. Estos son los 8 tipos de clip. Graba varios de cada uno.</p>
+
+<table>
+  <tr><th>#</th><th>Clip</th><th>Qué se ve</th><th>Cómo grabarlo</th><th>Dur.</th></tr>
+  <tr><td>1</td><td><b>Foto → Dibujo (timelapse)</b></td><td>La foto del cliente al lado y tu mano dibujándola acelerado, hasta el reveal final.</td><td>Cámara fija sobre la tableta/papel (trípode o libros apilados). Graba todo, acelera x20–40. Termina en el reveal lado a lado.</td><td>15–30s</td></tr>
+  <tr><td>2</td><td><b>Reacción del cliente</b></td><td>Mensajes reales: “omg esto es increíble 😭”.</td><td>Screen-record del chat (tapa datos personales) + tu dibujo. O video del creador reaccionando.</td><td>10–20s</td></tr>
+  <tr><td>3</td><td><b>Hablando a cámara (tú)</b></td><td>Tú: “Envíame una foto y te dibujo así”.</td><td>Selfie a la altura de los ojos, luz al frente. Una idea, directo. Subtítulos grandes.</td><td>15–25s</td></tr>
+  <tr><td>4</td><td><b>Detalle satisfactorio</b></td><td>Primer plano del trazo, sombreado, el brillo del ojo.</td><td>Acércate mucho. Sonido real del lápiz. ASMR visual.</td><td>8–15s</td></tr>
+  <tr><td>5</td><td><b>Elige tu estilo</b></td><td>La misma foto en 3–4 estilos (Simpsons, anime, Ghibli…).</td><td>Muestra la foto, luego swipe entre estilos. “¿En cuál te dibujo?”.</td><td>12–20s</td></tr>
+  <tr><td>6</td><td><b>Regalo / ocasión</b></td><td>Retrato de pareja, familia o mascota como regalo.</td><td>Enfoque emocional: aniversario, cumpleaños, memorial de mascota. Muestra la reacción.</td><td>15–25s</td></tr>
+  <tr><td>7</td><td><b>Prueba anti-IA</b></td><td>Filtro IA genérico vs tu dibujo a mano.</td><td>Split screen: “IA” (plástico) vs “yo” (con alma). Cara a cámara señalando la diferencia.</td><td>12–20s</td></tr>
+  <tr><td>8</td><td><b>UGC de creadores</b></td><td>Creadores reaccionando a tus dibujos (ya los tienes).</td><td>Reusa sus clips con permiso. La voz de un tercero convierte más que la tuya.</td><td>15–30s</td></tr>
+</table>
+<div class="warn"><b>Regla de oro del hook:</b> los primeros <b>3 segundos</b> deciden todo. Empieza SIEMPRE con movimiento o el reveal, nunca con logo/intro. Texto en pantalla desde el segundo 0.</div>
+
+<!-- 3. FORMATOS -->
+<h2><span class="n">3</span> Tipos de publicación / formato de anuncio</h2>
+<div class="grid g2">
+  <div class="card rec"><span class="tag t-hook">PRINCIPAL</span><h4>Reel / Video vertical 9:16</h4><p class="sub">El 80% de tu inversión. Timelapse foto→dibujo + subtítulos + CTA. Formato que Meta premia con alcance barato.</p></div>
+  <div class="card pub"><span class="tag t-proof">SOPORTE</span><h4>Carrusel antes/después</h4><p class="sub">3–5 tarjetas: foto real → dibujo → estilos → precio → CTA. Bueno para retargeting y para quien no ve video.</p></div>
+  <div class="card ad"><span class="tag t-story">REFUERZO</span><h4>Imagen única (reveal)</h4><p class="sub">1 imagen de alto impacto lado-a-lado. Barata de producir, útil para testear ángulos rápido.</p></div>
+  <div class="card"><span class="tag t-offer">CIERRE</span><h4>Colección / catálogo de estilos</h4><p class="sub">Mosaico de estilos → lleva directo a /order. Ideal en fase de escalado.</p></div>
+</div>
+<p class="sub" style="margin-top:10px"><b>Colocaciones:</b> deja <b>Advantage+ (automáticas)</b> — Meta reparte entre Reels, Stories y Feed. Sube el creativo en 9:16 para que se vea bien en todas.</p>
+
+<!-- 4. COPIES -->
+<h2><span class="n">4</span> Copies listos (EN — mercado USA/Global)</h2>
+<p class="sub">Estructura ganadora: <b>Hook → Prueba → Oferta → CTA</b>. 6 anuncios completos. Emoji con moderación.</p>
+
+<div class="copy"><span class="lbl">AD 1 · Anti-IA (Video timelapse)</span>
+<p><b>Primary text:</b> Everyone's using AI filters. I'm not. 🎨<br>
+Send me a photo and I'll hand-draw you — stroke by stroke — in the cartoon style you love. No AI, no generic face. Just you, animated.<br>
+✅ 12+ styles · ✅ Delivered in 48h · ✅ From $15<br>
+👉 Tap to cartoon yourself.</p>
+<p><code>Headline: Hand-Drawn by a Real Artist — Not AI · CTA: Shop Now</code></p></div>
+
+<div class="copy"><span class="lbl">AD 2 · Antes/Después (Carrusel)</span>
+<p><b>Primary text:</b> This started as a normal selfie. 📷 → 🎨<br>
+Swipe to see how a real artist turned it into a custom cartoon. Your turn?<br>
+From $15 · Ready in 48 hours · +1,000 happy clients.</p>
+<p><code>Headline: Turn Your Photo Into a Cartoon · CTA: Order Now</code></p></div>
+
+<div class="copy"><span class="lbl">AD 3 · Regalo / emocional</span>
+<p><b>Primary text:</b> The best gift isn't bought — it's drawn. 🎁<br>
+A hand-drawn cartoon of your partner, your family, or your pet. Something they'll never scroll past.<br>
+Couples, groups & pets welcome (up to 8 in one scene). Delivered in 48h.</p>
+<p><code>Headline: A Gift They'll Actually Keep · CTA: Get Yours</code></p></div>
+
+<div class="copy"><span class="lbl">AD 4 · Prueba social (UGC creador)</span>
+<p><b>Primary text:</b> "Wait… a REAL person drew this?" 😳<br>
+Yep. No filters. Send a photo, pick a style, and I draw you by hand.<br>
+See why +1,000 people chose the artist over the app. From $15.</p>
+<p><code>Headline: Real Artist. Real Drawing. Really You. · CTA: Shop Now</code></p></div>
+
+<div class="copy"><span class="lbl">AD 5 · Elige tu estilo</span>
+<p><b>Primary text:</b> Simpsons? Anime? Ghibli? Rick & Morty? 🌀<br>
+Same photo, any universe you want. A real artist redraws you in your favorite cartoon style.<br>
+Pick your world 👇 From $15 · 48h.</p>
+<p><code>Headline: Which Universe Do You Belong In? · CTA: Choose Style</code></p></div>
+
+<div class="copy"><span class="lbl">AD 6 · Retargeting (ya te vieron)</span>
+<p><b>Primary text:</b> Still thinking about it? 🤔<br>
+Your cartoon is one photo away. Hand-drawn, no AI, delivered in 48h — 24h if you're in a hurry.<br>
+A revision is always included. Let's make it. From $15.</p>
+<p><code>Headline: Your Cartoon Is Waiting · CTA: Finish My Order</code></p></div>
+
+<!-- 5. ESTRUCTURA -->
+<h2><span class="n">5</span> Estructura de campaña en Meta</h2>
+<p class="sub">Con $5–10/día, <b>simple gana</b>. No abras 10 conjuntos: divides el presupuesto y no aprende. Estructura de arranque:</p>
+<table>
+  <tr><th>Nivel</th><th>Config</th><th>Detalle</th></tr>
+  <tr><td><b>Campaña</b></td><td>Objetivo: <b>Ventas (Sales)</b></td><td>Optimizar por <b>Compra</b>. Advantage+ Shopping o campaña manual. Pixel instalado y evento "Purchase" verificado.</td></tr>
+  <tr><td><b>Conjunto (Ad Set)</b></td><td><b>1 solo</b> conjunto, ~$8/día</td><td>Advantage+ Audience (deja que Meta busque). Países: US + tier 1 EN (UK, CA, AU). Edad 18–45. Colocaciones automáticas.</td></tr>
+  <tr><td><b>Anuncios</b></td><td><b>3–4 creativos</b> distintos</td><td>Mismo conjunto, varios videos (AD 1, 2, 4, 5). Meta reparte al ganador. NO pausar antes de 3–4 días.</td></tr>
+</table>
+<div class="warn"><b>Píxel primero.</b> Antes de gastar $1: instala el Meta Pixel + Conversions API en negasva.shop y confirma que dispara <b>ViewContent, InitiateCheckout y Purchase</b>. Sin esto, la optimización a ventas no funciona.</div>
+<p><b>Semana 4 (escalar):</b> duplica el ganador en un conjunto nuevo con +20–30% de presupuesto, y crea 1 conjunto de <b>retargeting</b> (visitantes web + video 50% + engagement IG/TikTok) con el AD 6.</p>
+
+<!-- 6. CALENDARIO -->
+<h2><span class="n">6</span> Calendario de 1 mes — qué hacer cada día</h2>
+<p class="sub">Semanas 1–2: <b>construyes el banco de contenido</b> y calientas tus redes orgánicas (prueba social gratis). Semanas 3–4: <b>lanzas y escalas los ads</b>. Grabar es en lote: 1–2 sesiones producen material para semanas.</p>
+<div class="legend">
+  <span><i class="dot" style="background:var(--blue)"></i> Grabar/Producir</span>
+  <span><i class="dot" style="background:var(--ok)"></i> Publicar orgánico</span>
+  <span><i class="dot" style="background:var(--pri)"></i> Acción en Ads</span>
+  <span><i class="dot" style="background:var(--line)"></i> Descanso/Analizar</span>
+</div>
+
+<h3>Semana 1 — Producción + calentar orgánico</h3>
+<div class="grid cal">
+  <div class="day rec"><div class="d">LUN 1</div><div class="act">Sesión grabación #1: 4 timelapses foto→dibujo (clip 1)</div></div>
+  <div class="day pub"><div class="d">MAR 2</div><div class="act">Sube 1 Reel timelapse a TikTok+IG @negasva</div></div>
+  <div class="day rec"><div class="d">MIÉ 3</div><div class="act">Graba clips 3,4,7 (a cámara, detalle, anti-IA)</div></div>
+  <div class="day pub"><div class="d">JUE 4</div><div class="act">Sube Reel "elige tu estilo" (clip 5)</div></div>
+  <div class="day rec"><div class="d">VIE 5</div><div class="act">Recopila UGC de creadores (clip 8) + screenshots de reviews</div></div>
+  <div class="day pub"><div class="d">SÁB 6</div><div class="act">Sube reacción de cliente (clip 2)</div></div>
+  <div class="day rest"><div class="d">DOM 7</div><div class="act">Instala/verifica Pixel + eventos. Descansa.</div></div>
+</div>
+
+<h3>Semana 2 — Más contenido + preparar cuenta de ads</h3>
+<div class="grid cal">
+  <div class="day rec"><div class="d">LUN 8</div><div class="act">Sesión grabación #2: clip regalo/emocional (6) x3</div></div>
+  <div class="day pub"><div class="d">MAR 9</div><div class="act">Sube Reel anti-IA (clip 7)</div></div>
+  <div class="day ad"><div class="d">MIÉ 10</div><div class="act">Monta Business Manager, cuenta de ads, pago, dominio verificado</div></div>
+  <div class="day pub"><div class="d">JUE 11</div><div class="act">Sube Reel regalo (clip 6)</div></div>
+  <div class="day ad"><div class="d">VIE 12</div><div class="act">Edita 4 creativos finales para ads (subtítulos + CTA)</div></div>
+  <div class="day pub"><div class="d">SÁB 13</div><div class="act">Sube detalle satisfactorio (clip 4)</div></div>
+  <div class="day rest"><div class="d">DOM 14</div><div class="act">Carga copies (AD 1–6). Descansa.</div></div>
+</div>
+
+<h3>Semana 3 — LANZAMIENTO de ads 🚀</h3>
+<div class="grid cal">
+  <div class="day ad"><div class="d">LUN 15</div><div class="act"><b>LANZA</b> campaña Ventas: 1 ad set ~$8/día, 4 anuncios (AD 1,2,4,5)</div></div>
+  <div class="day pub"><div class="d">MAR 16</div><div class="act">Sigue orgánico 1 Reel. NO toques los ads (aprendizaje)</div></div>
+  <div class="day rest"><div class="d">MIÉ 17</div><div class="act">Solo observa métricas. No pausar nada aún.</div></div>
+  <div class="day pub"><div class="d">JUE 18</div><div class="act">Orgánico 1 Reel. Responde comentarios/DMs rápido</div></div>
+  <div class="day ad"><div class="d">VIE 19</div><div class="act">1ª revisión: pausa el anuncio con peor CTR/CPA. Deja correr el resto</div></div>
+  <div class="day pub"><div class="d">SÁB 20</div><div class="act">Orgánico + guarda nuevos reviews/reacciones como creativos</div></div>
+  <div class="day rest"><div class="d">DOM 21</div><div class="act">Análisis semanal (tabla KPI abajo)</div></div>
+</div>
+
+<h3>Semana 4 — Optimizar + escalar 📈</h3>
+<div class="grid cal">
+  <div class="day ad"><div class="d">LUN 22</div><div class="act">Duplica el ad ganador en ad set nuevo, +20% presupuesto</div></div>
+  <div class="day ad"><div class="d">MAR 23</div><div class="act">Crea ad set <b>retargeting</b> (web+video 50%) con AD 6</div></div>
+  <div class="day rec"><div class="d">MIÉ 24</div><div class="act">Graba 2 creativos nuevos (variantes del ganador)</div></div>
+  <div class="day pub"><div class="d">JUE 25</div><div class="act">Orgánico + añade 1 creativo fresco al ad set ganador</div></div>
+  <div class="day ad"><div class="d">VIE 26</div><div class="act">Pausa perdedores. Sube +20% al ganador si el CPA es sano</div></div>
+  <div class="day pub"><div class="d">SÁB 27</div><div class="act">Orgánico. Testea 1 hook nuevo</div></div>
+  <div class="day rest"><div class="d">DOM 28</div><div class="act">Balance del mes + plan mes 2</div></div>
+</div>
+<p class="sub" style="margin-top:8px">Días 29–30: repite el ciclo — más de lo que funciona, corta lo que no.</p>
+
+<!-- 7. GRID DE ADS -->
+<h2><span class="n">7</span> Grid de anuncios del mes</h2>
+<p class="sub">Qué anuncio corre en cada semana y con qué rol. 🟢 = activo, ⚪ = en espera/rotar.</p>
+<table>
+  <tr><th>Anuncio</th><th>Formato</th><th>Ángulo</th><th>Sem 3 (launch)</th><th>Sem 4 (scale)</th><th>Rol</th></tr>
+  <tr><td>AD 1 Anti-IA</td><td>Video timelapse</td><td>Diferenciación</td><td>🟢 Activo</td><td>🟢 Escalar</td><td>Caballo de batalla</td></tr>
+  <tr><td>AD 2 Antes/Después</td><td>Carrusel</td><td>Transformación</td><td>🟢 Activo</td><td>🟢 Activo</td><td>Prueba visual</td></tr>
+  <tr><td>AD 4 UGC creador</td><td>Video reacción</td><td>Prueba social</td><td>🟢 Activo</td><td>🟢 Escalar</td><td>Confianza</td></tr>
+  <tr><td>AD 5 Elige estilo</td><td>Video / colección</td><td>Variedad</td><td>🟢 Activo</td><td>⚪ Rotar</td><td>Descubrimiento</td></tr>
+  <tr><td>AD 3 Regalo</td><td>Video emocional</td><td>Ocasión</td><td>⚪ Espera</td><td>🟢 Activar</td><td>Estacional/regalo</td></tr>
+  <tr><td>AD 6 Retargeting</td><td>Video / carrusel</td><td>Recordatorio</td><td>⚪ Espera</td><td>🟢 Activo</td><td>Cierre de venta</td></tr>
+</table>
+
+<!-- 8. METRICAS -->
+<h2><span class="n">8</span> Métricas y reglas de decisión</h2>
+<div class="kpi">
+  <div><b>≥1%</b> CTR (link) sano. Menos = hook débil.</div>
+  <div><b>≤$1</b> CPC objetivo aprox. Mercado EN.</div>
+  <div><b>≥2x</b> ROAS mínimo para escalar.</div>
+  <div><b>3–4 días</b> antes de juzgar un ad.</div>
+</div>
+<h3>Reglas simples (síguelas sin emoción)</h3>
+<ul class="clean">
+  <li><b>Hook malo:</b> CTR &lt;1% tras 1.000 impresiones → cambia los primeros 3s.</li>
+  <li><b>Sin ventas:</b> gastaste 2x el precio del producto sin compra ni checkout → pausa ese ad.</li>
+  <li><b>Ganador:</b> ROAS ≥2x estable 3 días → sube presupuesto +20% cada 3 días (no dupliques de golpe).</li>
+  <li><b>Fatiga:</b> el CPA sube y la frecuencia pasa de ~2.5 → mete creativo nuevo.</li>
+  <li><b>Nunca</b> apagues la campaña por 1 día malo. Decisiones por semana, no por hora.</li>
+</ul>
+
+<hr>
+<!-- CHECKLIST -->
+<h2><span class="n">✓</span> Checklist antes de gastar $1</h2>
+<div class="grid g2">
+  <div class="card"><ul class="clean">
+    <li>☐ Meta Pixel + Conversions API en negasva.shop</li>
+    <li>☐ Eventos ViewContent / InitiateCheckout / Purchase disparando</li>
+    <li>☐ Dominio verificado en Business Manager</li>
+    <li>☐ Medio de pago cargado en cuenta de ads</li>
+  </ul></div>
+  <div class="card"><ul class="clean">
+    <li>☐ 4 creativos 9:16 con subtítulos + CTA</li>
+    <li>☐ Copies AD 1–6 listos</li>
+    <li>☐ Reviews/UGC anclados en la web (ya ✅)</li>
+    <li>☐ Checkout probado de punta a punta (pago real)</li>
+  </ul></div>
+</div>
+
+<p class="foot">Negasva · Estrategia Meta Ads · Plan de 30 días · Escala el ganador, corta lo demás.</p>
+
+</div>
+</body>
+</html>

@@ -13,6 +13,7 @@ interface Cart {
   customer_name: string | null;
   customer_email: string | null;
   customer_phone: string | null;
+  recovery_sent_at: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -53,6 +54,7 @@ export default function CartsPage() {
   const [carts, setCarts] = useState<Cart[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<'all' | 'abandoned' | 'converted'>('all');
+  const [busy, setBusy] = useState<string | null>(null);
 
   useEffect(() => {
     fetch('/api/admin/carts')
@@ -61,6 +63,47 @@ export default function CartsPage() {
       .catch(() => setCarts([]))
       .finally(() => setLoading(false));
   }, []);
+
+  async function archive(id: string) {
+    if (!confirm('¿Ocultar este carrito del panel? El dato no se borra de la base de datos, solo deja de mostrarse aquí.')) return;
+    setBusy(id);
+    try {
+      const res = await fetch('/api/admin/carts', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id }),
+      });
+      if (res.ok) setCarts((prev) => prev.filter((c) => c.id !== id));
+      else alert('No se pudo ocultar el carrito.');
+    } catch {
+      alert('No se pudo ocultar el carrito.');
+    } finally {
+      setBusy(null);
+    }
+  }
+
+  async function sendRecovery(id: string) {
+    if (!confirm('¿Enviar el email de recuperación? Se genera un cupón único y se manda al cliente por Resend.')) return;
+    setBusy(id);
+    try {
+      const res = await fetch('/api/admin/carts/send-recovery', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (res.ok) {
+        setCarts((prev) => prev.map((c) => (c.id === id ? { ...c, recovery_sent_at: new Date().toISOString() } : c)));
+        alert(`Email enviado a ${data.sentTo}. Cupón: ${data.code}`);
+      } else {
+        alert(data.error || 'No se pudo enviar el email.');
+      }
+    } catch {
+      alert('No se pudo enviar el email.');
+    } finally {
+      setBusy(null);
+    }
+  }
 
   const shown = carts.filter((c) => filter === 'all' || effectiveStatus(c) === filter);
   const counts = {
@@ -113,9 +156,19 @@ export default function CartsPage() {
                       Paso {c.step}/5 · {STEP_LABELS[c.step] ?? ''}
                     </span>
                   </div>
-                  <span className="text-xs text-gray-400">
-                    {new Date(c.updated_at).toLocaleString('es')}
-                  </span>
+                  <div className="flex items-center gap-3">
+                    <span className="text-xs text-gray-400">
+                      {new Date(c.updated_at).toLocaleString('es')}
+                    </span>
+                    <button
+                      onClick={() => archive(c.id)}
+                      disabled={busy === c.id}
+                      className="text-xs font-bold text-gray-400 hover:text-red-600 hover:bg-red-50 px-2 py-1 rounded-md transition-colors disabled:opacity-50"
+                      title="Ocultar del panel (no borra el dato)"
+                    >
+                      {busy === c.id ? '…' : '🗑 Borrar'}
+                    </button>
+                  </div>
                 </div>
 
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-x-4 gap-y-2 text-sm mb-3">
@@ -125,15 +178,26 @@ export default function CartsPage() {
                   <Field label="Resumen" value={c.summary} />
                 </div>
 
-                {(c.customer_email || wa) && st !== 'converted' && (
-                  <div className="flex gap-2 flex-wrap pt-2 border-t border-gray-50">
-                    {c.customer_email && (
-                      <a
-                        href={`mailto:${c.customer_email}?subject=${encodeURIComponent('Tu retrato NEGASVA te espera')}`}
-                        className="text-xs font-bold bg-primary/10 text-primary hover:bg-primary/20 px-3 py-1.5 rounded-lg transition-colors"
-                      >
-                        Enviar email
-                      </a>
+                {st !== 'converted' && (
+                  <div className="flex gap-2 flex-wrap items-center pt-2 border-t border-gray-50">
+                    {c.customer_email ? (
+                      <>
+                        <button
+                          onClick={() => sendRecovery(c.id)}
+                          disabled={busy === c.id}
+                          className="text-xs font-bold bg-primary/10 text-primary hover:bg-primary/20 px-3 py-1.5 rounded-lg transition-colors disabled:opacity-50"
+                          title="Genera un cupón único y envía el email de recuperación por Resend"
+                        >
+                          {busy === c.id ? 'Enviando…' : c.recovery_sent_at ? 'Reenviar email' : 'Enviar email'}
+                        </button>
+                        {c.recovery_sent_at && (
+                          <span className="text-xs text-green-600 font-semibold">
+                            ✓ Enviado {new Date(c.recovery_sent_at).toLocaleDateString('es')}
+                          </span>
+                        )}
+                      </>
+                    ) : (
+                      <span className="text-xs text-gray-400 italic">Sin email — no se puede enviar recuperación</span>
                     )}
                     {wa && (
                       <a
