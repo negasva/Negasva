@@ -884,8 +884,8 @@ export default function StudioPage() {
                           components={['paypal-payments', 'paypal-guest-payments']}
                           pageType="checkout"
                         >
-                          <div className="space-y-3">
-                            <div className="rounded-xl border border-[#ffc439] bg-[#fff7d6] p-2">
+                          <div className="space-y-3 paypal-checkout-panels">
+                            <div className="rounded-xl border border-[#ffc439] bg-[#fff7d6] p-3">
                               <div className="mb-2 flex items-center justify-center gap-2 text-sm font-black">
                                 <PaymentLogo name="PayPal" />
                                 <span>Checkout</span>
@@ -899,10 +899,10 @@ export default function StudioPage() {
                                 onCancel={() => setCheckoutError('')}
                               />
                             </div>
-                            <div className="rounded-xl border border-primary-lighter bg-white p-2">
+                            <div className="rounded-xl border border-primary-lighter bg-white p-3">
                               <div className="mb-2 flex items-center justify-center gap-2 text-sm font-black text-secondary">
                                 <CreditCard className="h-4 w-4" />
-                                <span>Card</span>
+                                <span>Debit or Credit Card</span>
                               </div>
                               <PayPalGuestPaymentButton
                                 createOrder={async () => ({ orderId: await createPayPalOrder() })}
@@ -912,6 +912,19 @@ export default function StudioPage() {
                               />
                             </div>
                           </div>
+                          <style jsx global>{`
+                            .paypal-checkout-panels paypal-button,
+                            .paypal-checkout-panels paypal-basic-card-button,
+                            .paypal-checkout-panels paypal-basic-card-container {
+                              display: block;
+                              width: 100% !important;
+                              max-width: none !important;
+                            }
+                            .paypal-checkout-panels iframe {
+                              width: 100% !important;
+                              max-width: none !important;
+                            }
+                          `}</style>
                         </PayPalProvider>
                       )}
                       <PaymentTrustStrip lang={lang as Lang} cop={currency === 'COP'} />
