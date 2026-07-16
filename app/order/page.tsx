@@ -888,7 +888,7 @@ export default function StudioPage() {
                             <div className="rounded-xl border border-[#ffc439] bg-[#fff7d6] p-3">
                               <div className="mb-2 flex items-center justify-center gap-2 text-sm font-black">
                                 <PaymentLogo name="PayPal" />
-                                <span>Checkout</span>
+                                <span></span>
                               </div>
                               <PayPalOneTimePaymentButton
                                 type="checkout"
@@ -902,7 +902,7 @@ export default function StudioPage() {
                             <div className="rounded-xl border border-primary-lighter bg-white p-3">
                               <div className="mb-2 flex items-center justify-center gap-2 text-sm font-black text-secondary">
                                 <CreditCard className="h-4 w-4" />
-                                <span>Debit or Credit Card</span>
+                                <span>Card Payment</span>
                               </div>
                               <PayPalGuestPaymentButton
                                 createOrder={async () => ({ orderId: await createPayPalOrder() })}
