@@ -11,6 +11,7 @@ import Navbar from '@/components/Navbar';
 import PageFooter from '@/components/PageFooter';
 import TestimonialsScroll from '@/components/TestimonialsScroll';
 import GalleryMarquee from '@/components/GalleryMarquee';
+import MainCartAddButton from '@/components/MainCartAddButton';
 import { HeroPortraits, StepsPortraits, WeeklyOrdersBadge, HomeFaq, StickyOrderCta } from './home-islands';
 
 // Server component: la home llega como HTML estático en inglés (SEO).
@@ -335,6 +336,12 @@ export default async function Home() {
                 <p className="text-xs text-primary-dark font-bold mt-1">
                   {t.pod_from_label} {usd(pricing.podProductsUsd[p.key] ?? p.priceUsd)}
                 </p>
+                <MainCartAddButton
+                  id={p.key}
+                  name={p.name}
+                  price={usd(pricing.podProductsUsd[p.key] ?? p.priceUsd)}
+                  image={p.image || POD_PLACEHOLDER_IMG}
+                />
               </div>
             ))}
           </div>
