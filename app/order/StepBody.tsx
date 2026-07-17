@@ -248,7 +248,7 @@ export default function StepBody({ c }: { c: CheckoutController }) {
               onClick={decPeople}
               disabled={selected.peopleCount <= 1}
               aria-label={t.studio.step2.remove_person}
-              className="w-9 h-9 rounded-full bg-white shadow flex items-center justify-center text-secondary hover:bg-primary hover:text-white transition-all disabled:opacity-30"
+              className="w-11 h-11 rounded-full bg-white shadow flex items-center justify-center text-secondary hover:bg-primary hover:text-white transition-all disabled:opacity-30"
             >
               <Minus className="w-4 h-4" />
             </button>
@@ -258,7 +258,7 @@ export default function StepBody({ c }: { c: CheckoutController }) {
               onClick={incPeople}
               disabled={selected.peopleCount >= MAX_PEOPLE}
               aria-label={t.studio.step2.add_person}
-              className="w-9 h-9 rounded-full bg-primary text-white shadow flex items-center justify-center hover:bg-primary-dark transition-all disabled:opacity-30 disabled:bg-primary-lighter disabled:text-secondary"
+              className="w-11 h-11 rounded-full bg-primary text-white shadow flex items-center justify-center hover:bg-primary-dark transition-all disabled:opacity-30 disabled:bg-primary-lighter disabled:text-secondary"
             >
               <Plus className="w-4 h-4" />
             </button>
