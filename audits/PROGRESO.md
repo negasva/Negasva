@@ -22,8 +22,8 @@
 | 18 | P1 | Cumplimiento legal (GDPR / Habeas Data / cookies) | `audits/datos-y-privacidad/cumplimiento-legal/` | Auditado |
 | 19 | P1 | Monitoreo, logging y alertas | `audits/confiabilidad/monitoreo-alertas/` | Auditado |
 | 20 | P1 | Backups y recuperación ante desastres | `audits/confiabilidad/backups-recuperacion/` | Auditado |
-| 21 | P2 | Códigos de descuento y promociones | `audits/pagos-y-dinero/codigos-descuento/` | Pendiente |
-| 22 | P2 | Caching de API y datos | `audits/rendimiento/caching-api/` | Pendiente |
-| 23 | P2 | Accesibilidad (a11y) | `audits/conversion/accesibilidad/` | Pendiente |
-| 24 | P2 | Copy, CTAs e idiomas | `audits/conversion/copy-cta/` | Pendiente |
-| 25 | P2 | Analítica y eventos de negocio | `audits/datos-y-privacidad/analitica-eventos/` | Pendiente |
+| 21 | P2 | Códigos de descuento y promociones | `audits/pagos-y-dinero/codigos-descuento/` | Auditado |
+| 22 | P2 | Caching de API y datos | `audits/rendimiento/caching-api/` | Auditado |
+| 23 | P2 | Accesibilidad (a11y) | `audits/conversion/accesibilidad/` | Auditado |
+| 24 | P2 | Copy, CTAs e idiomas | `audits/conversion/copy-cta/` | Auditado |
+| 25 | P2 | Analítica y eventos de negocio | `audits/datos-y-privacidad/analitica-eventos/` | Auditado |

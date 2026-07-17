@@ -69,3 +69,13 @@ Antes de tocar código de cada área, lee su archivo de buenas prácticas:
   `audits/confiabilidad/monitoreo-alertas/BUENAS_PRACTICAS.md`.
 - Antes de tocar migraciones, buckets o configuración de infraestructura (backups), leer
   `audits/confiabilidad/backups-recuperacion/BUENAS_PRACTICAS.md`.
+- Antes de tocar códigos de descuento, promociones o el conteo de usos, leer
+  `audits/pagos-y-dinero/codigos-descuento/BUENAS_PRACTICAS.md`.
+- Antes de tocar caching, cabeceras Cache-Control o TTLs de catálogo, leer
+  `audits/rendimiento/caching-api/BUENAS_PRACTICAS.md`.
+- Antes de tocar tokens de color, el wizard o componentes interactivos (accesibilidad), leer
+  `audits/conversion/accesibilidad/BUENAS_PRACTICAS.md`.
+- Antes de tocar textos, CTAs, i18n o emails transaccionales (copy), leer
+  `audits/conversion/copy-cta/BUENAS_PRACTICAS.md`.
+- Antes de tocar analytics, eventos de conversión o el evento purchase, leer
+  `audits/datos-y-privacidad/analitica-eventos/BUENAS_PRACTICAS.md`.
