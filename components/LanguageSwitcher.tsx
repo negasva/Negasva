@@ -15,22 +15,14 @@ function LanguageSwitcher() {
         <span key={l} className="flex items-center">
           <button
             onClick={() => setLang(l)}
- claude/ponytail-caveman-mode-76u40v
             className={`min-h-[44px] px-1 text-xs font-bold transition-colors ${
-
-            className={`min-h-[44px] px-0.5 text-xs font-bold transition-colors ${
- main
               lang === l ? 'text-primary' : 'text-secondary-lighter hover:text-secondary'
             }`}
           >
             {l.toUpperCase()}
           </button>
           {i < LANGS.length - 1 && (
- claude/ponytail-caveman-mode-76u40v
             <span className="text-secondary-lighter mx-1 text-xs hidden sm:inline">·</span>
-
-            <span className="text-secondary-lighter mx-0.5 text-xs">·</span>
- main
           )}
         </span>
       ))}
