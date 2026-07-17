@@ -125,18 +125,23 @@ export default function MercadoPagoBrick({
                       resolve();
                       return;
                     }
+                    // Enrutado por estado: solo pagos aprobados llegan a
+                    // /checkout/success (Meta cuenta la compra por esa URL).
                     const s = String(data.status ?? '');
-                    if (['approved', 'authorized', 'pending', 'in_process'].includes(s)) {
-                      window.location.href =
-                        `/checkout/success?provider=mercadopago&ref=${encodeURIComponent(order.reference)}&collection_status=${encodeURIComponent(s)}`;
-                      resolve();
-                      return;
+                    const path = ['approved', 'authorized'].includes(s)
+                      ? '/checkout/success'
+                      : ['pending', 'in_process'].includes(s)
+                      ? '/checkout/pending'
+                      : '/checkout/invalid';
+                    if (path === '/checkout/invalid') {
+                      // Rechazado: mensaje visible antes de salir del Brick.
+                      const msg = pick3(lang, 'El pago fue rechazado. Prueba con otro medio de pago.', 'Payment was rejected. Try another payment method.', 'Le paiement a été refusé. Essaie un autre moyen.');
+                      setMessage(msg);
+                      onError?.(msg);
                     }
-                    // Rechazado: se muestra el error y el Brick permite reintentar.
-                    const msg = pick3(lang, 'El pago fue rechazado. Prueba con otro medio de pago.', 'Payment was rejected. Try another payment method.', 'Le paiement a été refusé. Essaie un autre moyen.');
-                    setMessage(msg);
-                    onError?.(msg);
-                    reject(new Error(s || 'rejected'));
+                    window.location.href =
+                      `${path}?provider=mercadopago&ref=${encodeURIComponent(order.reference)}&collection_status=${encodeURIComponent(s)}`;
+                    resolve();
                   })
                   .catch(() => {
                     const msg = pick3(lang, 'No se pudo procesar el pago. Inténtalo de nuevo.', 'Could not process the payment. Try again.', 'Impossible de traiter le paiement. Réessaie.');
