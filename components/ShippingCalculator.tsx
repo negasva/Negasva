@@ -248,7 +248,7 @@ export default function ShippingCalculator({
   };
 
   const inputClass =
-    'w-full rounded-lg border-2 border-primary-lighter px-3 py-2.5 text-sm font-bold text-secondary focus:border-primary focus:outline-none bg-white';
+    'w-full rounded-lg border-2 border-primary-lighter px-3 py-2.5 text-base font-bold text-secondary focus:border-primary focus:outline-none bg-white';
 
   return (
     <div className="rounded-2xl border-2 border-primary-lighter bg-white p-4">

@@ -131,7 +131,7 @@ export default function EmailCapturePopup() {
                 placeholder={pick3(l, 'tu@correo.com', 'you@email.com', 'toi@email.com')}
                 autoComplete="email"
                 required
-                className="w-full rounded-lg border-2 border-primary-lighter px-4 py-3 text-sm text-secondary focus:border-primary focus:outline-none"
+                className="w-full rounded-lg border-2 border-primary-lighter px-4 py-3 text-base text-secondary focus:border-primary focus:outline-none"
               />
               {error && <p className="text-xs text-red-500">{error}</p>}
               <button

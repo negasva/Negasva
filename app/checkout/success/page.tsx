@@ -96,7 +96,7 @@ function PhotoDelivery({ orderRef }: { orderRef: string }) {
         maxLength={500}
         rows={3}
         placeholder={pick3(l, 'Breve descripción: quiénes salen, detalles importantes…', 'Short description: who’s in it, important details…', 'Courte description : qui apparaît, détails importants…')}
-        className="mt-3 w-full rounded-lg border-2 border-primary-lighter px-4 py-3 text-sm text-secondary focus:border-primary focus:outline-none resize-none bg-white"
+        className="mt-3 w-full rounded-lg border-2 border-primary-lighter px-4 py-3 text-base text-secondary focus:border-primary focus:outline-none resize-none bg-white"
       />
       {error && <p className="text-xs text-red-500 font-bold mt-2">{error}</p>}
       <button

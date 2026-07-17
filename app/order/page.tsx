@@ -21,9 +21,9 @@ import StepBody from './StepBody';
 import StepBackground from './StepBackground';
 
 const PAYPAL_CLIENT_ID = process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID ?? '';
-// El SDK v6 exige declarar el entorno explÃƒÂ­citamente (el client id ya no lo
+// El SDK v6 exige declarar el entorno explícitamente (el client id ya no lo
 // selecciona). Se toma de NEXT_PUBLIC_PAYPAL_ENV (igual criterio que el
-// PAYPAL_ENV del servidor: 'live' Ã¢â€ â€™ producciÃƒÂ³n); si falta, se deduce de
+// PAYPAL_ENV del servidor: 'live' → producción); si falta, se deduce de
 // NODE_ENV para no exigir una variable nueva en desarrollo.
 const PAYPAL_ENVIRONMENT: 'production' | 'sandbox' =
   (process.env.NEXT_PUBLIC_PAYPAL_ENV ?? (process.env.NODE_ENV === 'production' ? 'live' : 'sandbox')) === 'live'
@@ -34,7 +34,7 @@ type Lang = 'es' | 'en' | 'fr';
 const pick3 = (lang: Lang, es: string, en: string, fr: string) =>
   lang === 'fr' ? fr : lang === 'en' ? en : es;
 
-// Banner verde: puedes empezar ya y enviar las fotos despuÃƒÂ©s.
+// Banner verde: puedes empezar ya y enviar las fotos después.
 function StartNowBanner({ lang }: { lang: Lang }) {
   return (
     <div className="flex items-center justify-between gap-3 rounded-2xl border-2 border-green-500/40 bg-green-50 px-5 py-3.5">
@@ -43,7 +43,7 @@ function StartNowBanner({ lang }: { lang: Lang }) {
       </span>
       <span title={pick3(
         lang,
-        'Puedes pagar ahora y enviarnos las fotos despuÃƒÂ©s por email o WhatsApp.',
+        'Puedes pagar ahora y enviarnos las fotos después por email o WhatsApp.',
         'You can pay now and send us your photos later by email or WhatsApp.',
         'Tu peux payer maintenant et envoyer tes photos plus tard par email ou WhatsApp.',
       )}>
@@ -53,7 +53,7 @@ function StartNowBanner({ lang }: { lang: Lang }) {
   );
 }
 
-// CÃƒÂ³digo de descuento Ã¢â‚¬â€ vive debajo del resumen del pedido, fuera de su
+// Código de descuento — vive debajo del resumen del pedido, fuera de su
 // contenedor (y dentro del paso 4 en pantallas sin sidebar).
 function DiscountCode({ c }: { c: CheckoutController }) {
   const {
@@ -73,7 +73,7 @@ function DiscountCode({ c }: { c: CheckoutController }) {
           <button
             type="button"
             onClick={removeDiscountCode}
-            className="text-xs font-bold text-secondary-lighter hover:text-primary transition-colors"
+            className="min-h-[44px] px-2 text-xs font-bold text-secondary-lighter hover:text-primary transition-colors"
           >
             {t.studio.discount.remove}
           </button>
@@ -85,7 +85,7 @@ function DiscountCode({ c }: { c: CheckoutController }) {
             onChange={(e) => onDiscountInput(e.target.value)}
             placeholder="MICODIGO"
             maxLength={40}
-            className="flex-1 min-w-0 rounded-lg border-2 border-primary-lighter px-4 py-3 text-sm font-bold text-secondary uppercase focus:border-primary focus:outline-none"
+            className="flex-1 min-w-0 rounded-lg border-2 border-primary-lighter px-4 py-3 text-base font-bold text-secondary uppercase focus:border-primary focus:outline-none"
           />
           <button
             type="button"
@@ -104,7 +104,7 @@ function DiscountCode({ c }: { c: CheckoutController }) {
   );
 }
 
-// Propina opcional (paso 5): SOLO 3 opciones Ã¢â‚¬â€ 5%, 10% o monto personalizado.
+// Propina opcional (paso 5): SOLO 3 opciones — 5%, 10% o monto personalizado.
 // El % lo recalcula el servidor; la personalizada viaja en USD acotada.
 function TipSelector({ c }: { c: CheckoutController }) {
   const { lang, fmt, currency, rates, tip, setTip, priceBreakdown } = c;
@@ -114,7 +114,7 @@ function TipSelector({ c }: { c: CheckoutController }) {
   const rate = rates[currency] ?? 1;
   const customActive = tip != null && tip.pct == null;
   const pctBtnCls = (active: boolean) =>
-    `flex-1 rounded-xl border-2 px-3 py-2.5 text-sm font-black transition-all ${
+    `flex-1 rounded-xl border-2 px-3 py-3 min-h-[44px] text-sm font-black transition-all ${
       active ? 'border-primary bg-primary-lighter text-primary' : 'border-primary-lighter bg-white text-secondary hover:border-primary'
     }`;
   return (
@@ -148,12 +148,12 @@ function TipSelector({ c }: { c: CheckoutController }) {
           onChange={(e) => {
             const v = e.target.value.replace(/[^\d.]/g, '');
             setCustomInput(v);
-            // El input estÃƒÂ¡ en la moneda visible; al servidor viaja en USD.
+            // El input está en la moneda visible; al servidor viaja en USD.
             setTip({ usd: Math.min(Math.max((Number(v) || 0) / rate, 0), 500) });
           }}
           inputMode="decimal"
           placeholder={`${pick3(l, 'Monto en', 'Amount in', 'Montant en')} ${currency}`}
-          className="mt-3 w-full rounded-lg border-2 border-primary-lighter px-4 py-3 text-sm font-bold text-secondary focus:border-primary focus:outline-none"
+          className="mt-3 w-full rounded-lg border-2 border-primary-lighter px-4 py-3 text-base font-bold text-secondary focus:border-primary focus:outline-none"
         />
       )}
     </div>
@@ -161,7 +161,7 @@ function TipSelector({ c }: { c: CheckoutController }) {
 }
 const t3optional = (l: Lang) => pick3(l, '(opcional)', '(optional)', '(facultatif)');
 
-// Tira de confianza bajo los botones de pago: mÃƒÂ©todos aceptados + SSL.
+// Tira de confianza bajo los botones de pago: métodos aceptados + SSL.
 function PaymentTrustStrip({ lang, cop }: { lang: Lang; cop: boolean }) {
   const methods = cop ? ['Mercado Pago', 'PSE', 'Visa', 'Mastercard'] : ['Visa', 'Mastercard', 'Amex', 'PayPal'];
   return (
@@ -181,7 +181,7 @@ function PaymentTrustStrip({ lang, cop }: { lang: Lang; cop: boolean }) {
 }
 
 // Barra de incentivo familiar (arriba del drawer): progreso real por
-// peopleCount hacia el prÃƒÂ³ximo tier de nextFamilyTier(). En el tier mÃƒÂ¡ximo
+// peopleCount hacia el próximo tier de nextFamilyTier(). En el tier máximo
 // muestra el beneficio logrado.
 function FamilyTierBar({ c }: { c: CheckoutController }) {
   const { lang, fmt, selected, priceMap, priceBreakdown } = c;
@@ -189,7 +189,7 @@ function FamilyTierBar({ c }: { c: CheckoutController }) {
   if (!selected.bodyType) return null;
   const tier = nextFamilyTier(selected.peopleCount);
   const b = priceBreakdown();
-  // Con 1 persona el mejor incentivo es el 2Ã‚Âº retrato con descuento fuerte
+  // Con 1 persona el mejor incentivo es el 2º retrato con descuento fuerte
   // (% del admin de precios), no el pack familia de 3.
   if (selected.peopleCount === 1) {
     const pct = Math.round(priceMap.second_portrait_pct ?? 40);
@@ -240,8 +240,8 @@ function FamilyTierBar({ c }: { c: CheckoutController }) {
   );
 }
 
-// Datos de contacto Ã¢â‚¬â€ se piden en el paso de pago para saber quiÃƒÂ©n compra y
-// cÃƒÂ³mo contactarlo (email + WhatsApp). Sin nombre + email vÃƒÂ¡lido no se
+// Datos de contacto — se piden en el paso de pago para saber quién compra y
+// cómo contactarlo (email + WhatsApp). Sin nombre + email válido no se
 // muestran los botones de pago.
 function ContactForm({ c }: { c: CheckoutController }) {
   const { lang, contact, setContactField } = c;
@@ -250,13 +250,13 @@ function ContactForm({ c }: { c: CheckoutController }) {
     <div className="rounded-2xl border-2 border-primary-lighter bg-white p-5 space-y-4">
       <div>
         <p className="font-black text-secondary text-base tracking-tighter">
-          {pick3(l, 'Tus datos', 'Your details', 'Tes coordonnÃƒÂ©es')}
+          {pick3(l, 'Tus datos', 'Your details', 'Tes coordonnées')}
         </p>
         <p className="text-sm text-secondary-lighter">
           {pick3(l,
-            'Para enviarte tu retrato y avisarte cuando estÃƒÂ© listo.',
-            'So we can send your portrait and let you know when itÃ¢â‚¬â„¢s ready.',
-            'Pour tÃ¢â‚¬â„¢envoyer ton portrait et te prÃƒÂ©venir quand il est prÃƒÂªt.')}
+            'Para enviarte tu retrato y avisarte cuando esté listo.',
+            'So we can send your portrait and let you know when it’s ready.',
+            'Pour t’envoyer ton portrait et te prévenir quand il est prêt.')}
         </p>
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -267,10 +267,10 @@ function ContactForm({ c }: { c: CheckoutController }) {
           <input
             value={contact.name}
             onChange={(e) => setContactField('name', e.target.value)}
-            placeholder={pick3(l, 'MarÃƒÂ­a GarcÃƒÂ­a', 'Jane Doe', 'Marie Dupont')}
+            placeholder={pick3(l, 'María García', 'Jane Doe', 'Marie Dupont')}
             maxLength={120}
             autoComplete="name"
-            className="w-full rounded-lg border-2 border-primary-lighter px-4 py-3 text-sm font-medium text-secondary focus:border-primary focus:outline-none"
+            className="w-full rounded-lg border-2 border-primary-lighter px-4 py-3 text-base font-medium text-secondary focus:border-primary focus:outline-none"
           />
         </label>
         <label className="block">
@@ -282,7 +282,7 @@ function ContactForm({ c }: { c: CheckoutController }) {
             type="email"
             maxLength={255}
             autoComplete="email"
-            className="w-full rounded-lg border-2 border-primary-lighter px-4 py-3 text-sm font-medium text-secondary focus:border-primary focus:outline-none"
+            className="w-full rounded-lg border-2 border-primary-lighter px-4 py-3 text-base font-medium text-secondary focus:border-primary focus:outline-none"
           />
         </label>
         <label className="block">
@@ -296,7 +296,7 @@ function ContactForm({ c }: { c: CheckoutController }) {
             type="tel"
             maxLength={40}
             autoComplete="tel"
-            className="w-full rounded-lg border-2 border-primary-lighter px-4 py-3 text-sm font-medium text-secondary focus:border-primary focus:outline-none"
+            className="w-full rounded-lg border-2 border-primary-lighter px-4 py-3 text-base font-medium text-secondary focus:border-primary focus:outline-none"
           />
         </label>
       </div>
@@ -304,7 +304,7 @@ function ContactForm({ c }: { c: CheckoutController }) {
   );
 }
 
-// Order summary Ã¢â‚¬â€ shown as a sticky sidebar from step 2 onward, and as a
+// Order summary — shown as a sticky sidebar from step 2 onward, and as a
 // static, always-visible card on the checkout step so the customer sees
 // exactly what they're paying for (in the site's own style).
 function OrderSummary({ c, sticky = true }: { c: CheckoutController; sticky?: boolean }) {
@@ -372,7 +372,7 @@ function OrderSummary({ c, sticky = true }: { c: CheckoutController; sticky?: bo
           {selected.recording && (
             <div className="flex justify-between">
               <span className="text-secondary-lighter">
-                {pick3(lang as Lang, 'Video del proceso:', 'Process video:', 'VidÃƒÂ©o du processus :')}
+                {pick3(lang as Lang, 'Video del proceso:', 'Process video:', 'Vidéo du processus :')}
               </span>
               <span className="font-bold text-secondary">+{fmt(b.recordingCost)}</span>
             </div>
@@ -403,15 +403,15 @@ function OrderSummary({ c, sticky = true }: { c: CheckoutController; sticky?: bo
               {shippingSelection ? (
                 <div className="flex justify-between">
                   <span className="text-secondary-lighter">
-                    {pick3(lang as Lang, 'EnvÃƒÂ­o', 'Shipping', 'Livraison')}: {shippingSelection.option.name}
+                    {pick3(lang as Lang, 'Envío', 'Shipping', 'Livraison')}: {shippingSelection.option.name}
                   </span>
                   <span className="font-bold text-secondary">+{fmt(shippingSelection.option.rateUsd)}</span>
                 </div>
               ) : (
                 <p className="text-xs text-secondary-lighter pl-2">
                   {shippingEstimate != null
-                    ? `${pick3(lang as Lang, 'EnvÃƒÂ­o estimado', 'Estimated shipping', 'Livraison estimÃƒÂ©e')}: ~${fmt(shippingEstimate)}`
-                    : pick3(lang as Lang, 'EnvÃƒÂ­o calculado en el checkout', 'Shipping calculated at checkout', 'Livraison calculÃƒÂ©e au paiement')}
+                    ? `${pick3(lang as Lang, 'Envío estimado', 'Estimated shipping', 'Livraison estimée')}: ~${fmt(shippingEstimate)}`
+                    : pick3(lang as Lang, 'Envío calculado en el checkout', 'Shipping calculated at checkout', 'Livraison calculée au paiement')}
                 </p>
               )}
             </>
@@ -443,12 +443,12 @@ function OrderSummary({ c, sticky = true }: { c: CheckoutController; sticky?: bo
         )}
         {selected.bodyType && currency === 'COP' && (
           <p className="text-xs font-bold text-primary text-center">
-            {pick3(lang as Lang, 'Hasta 3 cuotas sin interÃƒÂ©s', 'Up to 3 interest-free installments', 'JusquÃ¢â‚¬â„¢ÃƒÂ  3 fois sans frais')}
+            {pick3(lang as Lang, 'Hasta 3 cuotas sin interés', 'Up to 3 interest-free installments', 'Jusqu’à 3 fois sans frais')}
           </p>
         )}
         {(() => {
           if (!selected.bodyType) return null;
-          // Con 1 persona el gancho es el 2Ã‚Âº retrato con descuento fuerte.
+          // Con 1 persona el gancho es el 2º retrato con descuento fuerte.
           if (selected.peopleCount === 1) {
             const pct = Math.round(c.priceMap.second_portrait_pct ?? 40);
             return (
@@ -490,17 +490,17 @@ export default function StudioPage() {
 
   const STEPS = t.studio.steps as unknown as string[];
 
-  // Drawer del carrito (mÃƒÂ³vil): da la sensaciÃƒÂ³n de "carrito" tipo turnedyellow
+  // Drawer del carrito (móvil): da la sensación de "carrito" tipo turnedyellow
   // reutilizando el resumen del pedido. En desktop ya existe el sidebar fijo.
   const [cartOpen, setCartOpen] = useState(false);
-  // Cerrar el drawer con Esc (ademÃƒÂ¡s del click en overlay y la X).
+  // Cerrar el drawer con Esc (además del click en overlay y la X).
   useEffect(() => {
     if (!cartOpen) return;
     const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setCartOpen(false); };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
   }, [cartOpen]);
-  // NÃ‚Âº de artÃƒÂ­culos/extras en el carrito para el badge del botÃƒÂ³n flotante.
+  // Nº de artículos/extras en el carrito para el badge del botón flotante.
   const cartCount =
     (selected.bodyType ? selected.peopleCount : 0) +
     (selected.background && selected.background !== 'none' ? 1 : 0) +
@@ -527,16 +527,17 @@ export default function StudioPage() {
       <RecaptchaScript />
       {/* Nav */}
       <nav className="bg-white border-b border-primary-lighter sticky top-0 z-[60] w-full">
-        <div className="mx-auto max-w-6xl px-4 py-4 flex items-center justify-between">
-          <Logo href="/" size="md" />
-          <div className="flex items-center gap-4">
+        <div className="mx-auto max-w-6xl px-3 sm:px-4 py-4 flex items-center justify-between">
+          <span className="sm:hidden"><Logo href="/" size="sm" /></span>
+          <span className="hidden sm:block"><Logo href="/" size="md" /></span>
+          <div className="flex items-center gap-1.5 sm:gap-4">
             <CurrencySwitcher />
             <LanguageSwitcher />
-            {/* Carrito siempre visible (desktop y mÃƒÂ³vil): badge + total, abre el drawer. */}
+            {/* Carrito siempre visible (desktop y móvil): badge + total, abre el drawer. */}
             <button
               type="button"
               onClick={() => setCartOpen(true)}
-              className="flex items-center gap-2 rounded-full bg-primary text-white pl-3 pr-4 py-2 hover:bg-primary-dark transition-colors"
+              className="shrink-0 flex items-center gap-2 rounded-full bg-primary text-white min-h-[44px] pl-2.5 pr-3 sm:pl-3 sm:pr-4 py-2 hover:bg-primary-dark transition-colors"
               aria-label={pick3(lang as Lang, 'Ver carrito', 'View cart', 'Voir le panier')}
             >
               <span className="relative">
@@ -548,7 +549,7 @@ export default function StudioPage() {
                 )}
               </span>
               {selected.bodyType && (
-                <span className="text-sm font-bold">{fmt(totalPrice())}</span>
+                <span className="text-sm font-bold hidden min-[360px]:inline">{fmt(totalPrice())}</span>
               )}
             </button>
           </div>
@@ -564,7 +565,7 @@ export default function StudioPage() {
                 <button
                   onClick={() => i + 1 <= step && setStep(i + 1)}
                   disabled={i + 1 > step}
-                  className="flex flex-col items-center focus:outline-none disabled:cursor-not-allowed group"
+                  className="flex flex-col items-center justify-center min-w-[44px] min-h-[44px] focus:outline-none disabled:cursor-not-allowed group"
                 >
                   <div className={`flex h-7 w-7 sm:h-10 sm:w-10 items-center justify-center rounded-full text-xs sm:text-sm font-bold transition-all ${
                     i + 1 < step ? 'bg-primary text-white group-hover:bg-primary-dark cursor-pointer' :
@@ -578,7 +579,7 @@ export default function StudioPage() {
                   </span>
                 </button>
                 {i < 4 && (
-                  <div className={`w-4 sm:w-10 h-1 mx-1 sm:mx-2 ${i + 1 < step ? 'bg-primary' : 'bg-primary-lighter'}`} />
+                  <div className={`w-3 sm:w-10 h-1 mx-0.5 sm:mx-2 ${i + 1 < step ? 'bg-primary' : 'bg-primary-lighter'}`} />
                 )}
               </div>
             ))}
@@ -604,7 +605,7 @@ export default function StudioPage() {
                   <p className="text-lg text-secondary-lighter">{t.studio.step4.subtitle}</p>
                 </div>
                 <div className="max-w-2xl mx-auto space-y-8">
-                  {/* 1 Ã‚Â· Entrega exprÃƒÂ©s 24h */}
+                  {/* 1 · Entrega exprés 24h */}
                   <button
                     type="button"
                     onClick={toggleExpress}
@@ -626,7 +627,7 @@ export default function StudioPage() {
                     </div>
                   </button>
 
-                  {/* 1b Ã‚Â· Video del proceso de dibujo */}
+                  {/* 1b · Video del proceso de dibujo */}
                   <button
                     type="button"
                     onClick={toggleRecording}
@@ -643,20 +644,20 @@ export default function StudioPage() {
                       <div className="flex-1">
                         <p className="font-black text-secondary text-lg tracking-tighter flex items-center gap-2">
                           <Video className="w-5 h-5 text-primary" />
-                          {pick3(lang as Lang, 'Video del proceso de dibujo', 'Watch your artwork come to life', 'VidÃƒÂ©o du processus de dessin')}
+                          {pick3(lang as Lang, 'Video del proceso de dibujo', 'Watch your artwork come to life', 'Vidéo du processus de dessin')}
                         </p>
                         <p className="text-sm text-secondary-lighter mt-1">
-                          {pick3(lang as Lang, 'Grabamos cÃƒÂ³mo se crea tu retrato, de boceto a color.', 'We record how your portrait is created, from sketch to color.', 'Nous filmons la crÃƒÂ©ation de ton portrait, du croquis ÃƒÂ  la couleur.')}
+                          {pick3(lang as Lang, 'Grabamos cómo se crea tu retrato, de boceto a color.', 'We record how your portrait is created, from sketch to color.', 'Nous filmons la création de ton portrait, du croquis à la couleur.')}
                         </p>
                       </div>
                       <span className="font-black text-secondary text-xl whitespace-nowrap">+{fmt(priceMap.recording_addon ?? 20)}</span>
                     </div>
                   </button>
 
-                  {/* Puedes pagar ya y mandar las fotos despuÃƒÂ©s */}
+                  {/* Puedes pagar ya y mandar las fotos después */}
                   <StartNowBanner lang={lang as Lang} />
 
-                  {/* 2 Ã‚Â· Imprime tu dibujo (print on demand) */}
+                  {/* 2 · Imprime tu dibujo (print on demand) */}
                   <div>
                     <h2 className="font-black text-xl text-secondary mb-1 tracking-tighter">{t.studio.products.title}</h2>
                     <p className="text-sm text-secondary-lighter mb-3">{t.studio.products.subtitle}</p>
@@ -699,7 +700,7 @@ export default function StudioPage() {
                                   type="button"
                                   onClick={() => addProductUnit(p.key)}
                                   aria-label={`${t.studio.products.add} ${p.name[lang]}`}
-                                  className="shrink-0 w-8 h-8 rounded-full flex items-center justify-center shadow-md transition-colors bg-white border-2 border-primary text-primary hover:bg-primary hover:text-white"
+                                  className="shrink-0 w-11 h-11 rounded-full flex items-center justify-center shadow-md transition-colors bg-white border-2 border-primary text-primary hover:bg-primary hover:text-white"
                                 >
                                   <Plus className="w-4 h-4" />
                                 </button>
@@ -709,7 +710,7 @@ export default function StudioPage() {
                                     type="button"
                                     onClick={() => removeProductUnit(p.key)}
                                     aria-label={`${t.studio.products.remove} ${p.name[lang]}`}
-                                    className="w-6 h-6 rounded-full flex items-center justify-center hover:bg-white/20 transition-colors"
+                                    className="w-9 h-9 rounded-full flex items-center justify-center hover:bg-white/20 transition-colors"
                                   >
                                     <Minus className="w-3.5 h-3.5" />
                                   </button>
@@ -718,7 +719,7 @@ export default function StudioPage() {
                                     type="button"
                                     onClick={() => addProductUnit(p.key)}
                                     aria-label={`${t.studio.products.add} ${p.name[lang]}`}
-                                    className="w-6 h-6 rounded-full flex items-center justify-center hover:bg-white/20 transition-colors"
+                                    className="w-9 h-9 rounded-full flex items-center justify-center hover:bg-white/20 transition-colors"
                                   >
                                     <Plus className="w-3.5 h-3.5" />
                                   </button>
@@ -755,7 +756,7 @@ export default function StudioPage() {
                                           <select
                                             value={unit[group.key] ?? ''}
                                             onChange={(e) => setProductUnitOption(p.key, unitIndex, group.key, e.target.value)}
-                                            className="w-full rounded-lg border-2 border-primary-lighter px-3 py-2.5 text-sm font-bold text-secondary focus:border-primary focus:outline-none"
+                                            className="w-full rounded-lg border-2 border-primary-lighter px-3 py-2.5 text-base font-bold text-secondary focus:border-primary focus:outline-none"
                                           >
                                             {(group.values ?? []).map((value) => (
                                               <option key={value.key} value={value.key}>
@@ -825,7 +826,7 @@ export default function StudioPage() {
                           placeholder={t.studio.step4.notes_placeholder}
                           rows={5}
                           maxLength={500}
-                          className="mt-3 w-full resize-none rounded-lg border-2 border-primary-lighter px-4 py-3 text-sm text-secondary focus:border-primary focus:outline-none"
+                          className="mt-3 w-full resize-none rounded-lg border-2 border-primary-lighter px-4 py-3 text-base text-secondary focus:border-primary focus:outline-none"
                         />
                       </label>
                     </div>
@@ -931,8 +932,8 @@ export default function StudioPage() {
                     </div>
                   </div>
 
-                  {/* El error del pago tambiÃƒÂ©n debe verse en el paso 5 (la barra
-                      de navegaciÃƒÂ³n con checkoutError solo existe en los pasos 1Ã¢â‚¬â€œ4). */}
+                  {/* El error del pago también debe verse en el paso 5 (la barra
+                      de navegación con checkoutError solo existe en los pasos 1–4). */}
                   {checkoutError && (
                     <p className="text-center text-sm font-bold text-red-500">
                       {checkoutError}
@@ -951,7 +952,7 @@ export default function StudioPage() {
               </div>
             )}
 
-            {/* Navigation (pasos 1Ã¢â‚¬â€œ4). Barra fija abajo (mÃƒÂ³vil y desktop),
+            {/* Navigation (pasos 1–4). Barra fija abajo (móvil y desktop),
                 siempre accesible sin scrollear. */}
             {step < 5 && (
               <>
@@ -1004,12 +1005,12 @@ export default function StudioPage() {
             )}
           </div>
 
-          {/* Sidebar: Order Summary (pasos 2Ã¢â‚¬â€œ5; en el 5 es donde vive el
-              resumen Ã¢â‚¬â€ la columna principal solo lleva datos + pago). */}
+          {/* Sidebar: Order Summary (pasos 2–5; en el 5 es donde vive el
+              resumen — la columna principal solo lleva datos + pago). */}
           {step > 1 && (
             <div className="hidden lg:block">
-              {/* Sticky sobre el conjunto: el cupÃƒÂ³n va debajo del resumen,
-                  fuera de su contenedor, y baja junto con ÃƒÂ©l al hacer scroll. */}
+              {/* Sticky sobre el conjunto: el cupón va debajo del resumen,
+                  fuera de su contenedor, y baja junto con él al hacer scroll. */}
               <div className="sticky top-24">
                 <OrderSummary c={c} sticky={false} />
                 <DiscountCode c={c} />
@@ -1019,7 +1020,7 @@ export default function StudioPage() {
         </div>
       </main>
 
-      {/* Drawer del carrito (desktop y mÃƒÂ³vil, todos los pasos): panel lateral
+      {/* Drawer del carrito (desktop y móvil, todos los pasos): panel lateral
           que reutiliza el resumen del pedido y se actualiza en vivo. Se abre
           desde el icono del carrito de la nav. */}
       {cartOpen && (
@@ -1029,7 +1030,7 @@ export default function StudioPage() {
             onClick={() => setCartOpen(false)}
           />
           <div className="absolute right-0 top-0 h-full w-[92%] max-w-sm bg-white shadow-2xl flex flex-col animate-slide-in-right">
-            {/* Header: "My Cart" + contador de artÃƒÂ­culos */}
+            {/* Header: "My Cart" + contador de artículos */}
             <div className="flex items-center justify-between px-4 py-4 border-b border-primary-lighter">
               <span className="font-black text-secondary text-lg tracking-tighter flex items-center gap-2">
                 <ShoppingBag className="w-5 h-5 text-primary" />
@@ -1039,7 +1040,7 @@ export default function StudioPage() {
               <button
                 type="button"
                 onClick={() => setCartOpen(false)}
-                className="w-9 h-9 rounded-full flex items-center justify-center hover:bg-primary-lighter transition-colors"
+                className="w-11 h-11 rounded-full flex items-center justify-center hover:bg-primary-lighter transition-colors"
                 aria-label={pick3(lang as Lang, 'Cerrar', 'Close', 'Fermer')}
               >
                 <X className="w-5 h-5 text-secondary" />
@@ -1056,12 +1057,12 @@ export default function StudioPage() {
                 </>
               ) : (
                 <p className="text-sm text-secondary-lighter text-center py-8">
-                  {pick3(lang as Lang, 'Tu carrito estÃƒÂ¡ vacÃƒÂ­o. Elige un estilo para empezar.', 'Your cart is empty. Pick a style to start.', 'Ton panier est vide. Choisis un style pour commencer.')}
+                  {pick3(lang as Lang, 'Tu carrito está vacío. Elige un estilo para empezar.', 'Your cart is empty. Pick a style to start.', 'Ton panier est vide. Choisis un style pour commencer.')}
                 </p>
               )}
             </div>
 
-            {/* Footer fijo: total + Secure Checkout (dorado, escudo) + mÃƒÂ©todos */}
+            {/* Footer fijo: total + Secure Checkout (dorado, escudo) + métodos */}
             {selected.bodyType && (
               <div className="border-t border-primary-lighter px-4 py-4 space-y-3 bg-white">
                 <div className="flex justify-between items-center font-black text-lg">
@@ -1074,9 +1075,9 @@ export default function StudioPage() {
                   className="w-full flex items-center justify-center gap-2 rounded-full bg-amber-400 hover:bg-amber-500 text-secondary font-black py-3.5 shadow-md transition-colors"
                 >
                   <ShieldCheck className="w-5 h-5" />
-                  {pick3(lang as Lang, 'Pago seguro', 'Secure Checkout', 'Paiement sÃƒÂ©curisÃƒÂ©')}
+                  {pick3(lang as Lang, 'Pago seguro', 'Secure Checkout', 'Paiement sécurisé')}
                 </button>
-                {/* ponytail: chips de texto para mÃƒÂ©todos de pago Ã¢â‚¬â€ cero assets, igual que PaymentTrustStrip. */}
+                {/* ponytail: chips de texto para métodos de pago — cero assets, igual que PaymentTrustStrip. */}
                 <div className="flex justify-center flex-wrap gap-1.5">
                   {['Visa', 'Mastercard', 'Shop Pay', 'Google Pay', 'PayPal'].map(m => (
                     <span key={m} className="px-2 py-1 rounded-md border border-primary-lighter bg-white text-[9px] font-black uppercase tracking-wide text-secondary-lighter">
@@ -1118,11 +1119,11 @@ function CartDrawerItems({ c, podImages }: { c: CheckoutController; podImages: R
           <div className="min-w-0 flex-1">
             <p className="font-black text-secondary leading-tight">{style?.name ?? selected.style}</p>
             <p className="text-xs font-bold text-secondary-lighter">
-              {selected.bodyType === 'full_body' ? 'Full body' : 'Torso'} Ã‚Â· {selected.peopleCount} people
+              {selected.bodyType === 'full_body' ? 'Full body' : 'Torso'} · {selected.peopleCount} people
             </p>
             {selected.bodyType && <p className="mt-1 font-black text-primary">{fmt(b.peopleSubtotal - b.discount)}</p>}
           </div>
-          <button type="button" onClick={removePortrait} aria-label="Remove portrait" className="self-start rounded-md p-1 text-red-500 hover:bg-red-50">
+          <button type="button" onClick={removePortrait} aria-label="Remove portrait" className="self-start rounded-md p-3 -m-2 text-red-500 hover:bg-red-50">
             <Trash2 size={16} />
           </button>
         </div>
@@ -1145,7 +1146,7 @@ function CartDrawerItems({ c, podImages }: { c: CheckoutController; podImages: R
             {variant && <p className="text-xs font-bold text-secondary-lighter">{variant}</p>}
             <p className="mt-1 font-black text-primary">{fmt(p.priceUsd)}</p>
           </div>
-          <button type="button" onClick={() => removeProductUnitAt(p.key, i)} aria-label={`Remove ${p.name[lang]}`} className="self-start rounded-md p-1 text-red-500 hover:bg-red-50">
+          <button type="button" onClick={() => removeProductUnitAt(p.key, i)} aria-label={`Remove ${p.name[lang]}`} className="self-start rounded-md p-3 -m-2 text-red-500 hover:bg-red-50">
             <Trash2 size={16} />
           </button>
         </div>
@@ -1161,7 +1162,7 @@ function CartMiniRow({ label, value, onRemove }: { label: string; value: string;
         <p className="font-black text-secondary leading-tight">{label}</p>
         <p className="text-sm font-black text-primary">{value}</p>
       </div>
-      <button type="button" onClick={onRemove} aria-label={`Remove ${label}`} className="rounded-md p-1 text-red-500 hover:bg-red-50">
+      <button type="button" onClick={onRemove} aria-label={`Remove ${label}`} className="rounded-md p-3 -m-2 text-red-500 hover:bg-red-50">
         <Trash2 size={16} />
       </button>
     </div>
