@@ -53,7 +53,7 @@ export default function AboutPage() {
       {/* Hero */}
       <section className="bg-primary-lighter/30 py-20 px-4">
         <div className="mx-auto max-w-7xl">
-          <h1 className="font-black text-5xl md:text-6xl tracking-tighter text-secondary mb-4">
+          <h1 className="font-black text-4xl sm:text-5xl md:text-6xl tracking-tighter text-secondary mb-4">
             Meet the Artist Behind Negasva
           </h1>
           <p className="text-lg text-secondary-lighter max-w-2xl">

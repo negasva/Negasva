@@ -75,7 +75,7 @@ function Lightbox({ item, onClose }: { item: Item; onClose: () => void }) {
       <button
         onClick={onClose}
         aria-label="Cerrar"
-        className="absolute top-4 right-4 text-white text-2xl font-black leading-none w-10 h-10 flex items-center justify-center rounded-full"
+        className="absolute top-4 right-4 text-white text-2xl font-black leading-none w-11 h-11 flex items-center justify-center rounded-full"
         style={{ textShadow: '0 0 12px #FC90B6, 0 0 24px #FC90B6' }}
       >
         ✕

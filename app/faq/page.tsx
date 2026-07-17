@@ -83,7 +83,7 @@ export default async function FaqPage() {
 
       <section className="bg-primary-lighter/30 py-20 px-4">
         <div className="mx-auto max-w-3xl text-center">
-          <h1 className="font-black text-5xl md:text-6xl tracking-tighter text-secondary mb-4">
+          <h1 className="font-black text-4xl sm:text-5xl md:text-6xl tracking-tighter text-secondary mb-4">
             {tx.title}
           </h1>
           <p className="text-lg text-secondary-lighter">
