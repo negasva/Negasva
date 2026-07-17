@@ -59,3 +59,13 @@ Antes de tocar código de cada área, lee su archivo de buenas prácticas:
   `audits/conversion/friccion-checkout/BUENAS_PRACTICAS.md`.
 - Antes de tocar señales de confianza (reseñas, garantías, páginas legales), leer
   `audits/conversion/senales-confianza/BUENAS_PRACTICAS.md`.
+- Antes de tocar experiencia móvil, el wizard de checkout o el order page, leer
+  `audits/conversion/mobile-responsive/BUENAS_PRACTICAS.md`.
+- Antes de tocar subida de fotos, el bucket `order-photos` o datos personales, leer
+  `audits/datos-y-privacidad/datos-personales-fotos/BUENAS_PRACTICAS.md`.
+- Antes de tocar analytics, scripts de terceros, páginas legales o newsletter, leer
+  `audits/datos-y-privacidad/cumplimiento-legal/BUENAS_PRACTICAS.md`.
+- Antes de tocar logging, alertas, webhooks o crons (monitoreo), leer
+  `audits/confiabilidad/monitoreo-alertas/BUENAS_PRACTICAS.md`.
+- Antes de tocar migraciones, buckets o configuración de infraestructura (backups), leer
+  `audits/confiabilidad/backups-recuperacion/BUENAS_PRACTICAS.md`.

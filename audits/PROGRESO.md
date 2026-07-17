@@ -17,11 +17,11 @@
 | 13 | P1 | Bundle JS y peso del checkout | `audits/rendimiento/bundle-checkout/` | Aprobado |
 | 14 | P1 | Fricción en el funnel de checkout | `audits/conversion/friccion-checkout/` | Aprobado |
 | 15 | P1 | Señales de confianza | `audits/conversion/senales-confianza/` | Aprobado |
-| 16 | P1 | Experiencia móvil | `audits/conversion/mobile-responsive/` | Pendiente |
-| 17 | P1 | Ciclo de vida de fotos y datos personales | `audits/datos-y-privacidad/datos-personales-fotos/` | Pendiente |
-| 18 | P1 | Cumplimiento legal (GDPR / Habeas Data / cookies) | `audits/datos-y-privacidad/cumplimiento-legal/` | Pendiente |
-| 19 | P1 | Monitoreo, logging y alertas | `audits/confiabilidad/monitoreo-alertas/` | Pendiente |
-| 20 | P1 | Backups y recuperación ante desastres | `audits/confiabilidad/backups-recuperacion/` | Pendiente |
+| 16 | P1 | Experiencia móvil | `audits/conversion/mobile-responsive/` | Auditado |
+| 17 | P1 | Ciclo de vida de fotos y datos personales | `audits/datos-y-privacidad/datos-personales-fotos/` | Auditado |
+| 18 | P1 | Cumplimiento legal (GDPR / Habeas Data / cookies) | `audits/datos-y-privacidad/cumplimiento-legal/` | Auditado |
+| 19 | P1 | Monitoreo, logging y alertas | `audits/confiabilidad/monitoreo-alertas/` | Auditado |
+| 20 | P1 | Backups y recuperación ante desastres | `audits/confiabilidad/backups-recuperacion/` | Auditado |
 | 21 | P2 | Códigos de descuento y promociones | `audits/pagos-y-dinero/codigos-descuento/` | Pendiente |
 | 22 | P2 | Caching de API y datos | `audits/rendimiento/caching-api/` | Pendiente |
 | 23 | P2 | Accesibilidad (a11y) | `audits/conversion/accesibilidad/` | Pendiente |
