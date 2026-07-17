@@ -623,14 +623,25 @@ export function useCheckout() {
       body: JSON.stringify({ orderID }),
     });
     const data = await res.json().catch(() => null);
-    if (!res.ok || data?.status !== 'COMPLETED') throw new Error('capture failed');
-    // Pago hecho: se descarta el carrito guardado para empezar limpio.
-    try {
-      localStorage.removeItem(CART_STORAGE_KEY);
-      localStorage.removeItem(CART_ID_KEY);
-    } catch { /* no-op */ }
-    const ref = data.reference ? `?ref=${encodeURIComponent(data.reference)}&status=APPROVED` : '';
-    window.location.href = `/checkout/success${ref}`;
+    // Enrutado por estado: solo COMPLETED llega a /checkout/success (Meta
+    // cuenta la compra por esa URL). El estado autoritativo lo fija el webhook.
+    const status = res.ok ? String(data?.status ?? '') : '';
+    const [path, label] =
+      status === 'COMPLETED'
+        ? ['/checkout/success', 'APPROVED']
+        : status === 'PENDING'
+        ? ['/checkout/pending', 'PENDING']
+        : ['/checkout/invalid', 'REJECTED'];
+    if (status === 'COMPLETED') {
+      // Pago hecho: se descarta el carrito guardado para empezar limpio.
+      // En pending/invalid se conserva para que el usuario pueda reintentar.
+      try {
+        localStorage.removeItem(CART_STORAGE_KEY);
+        localStorage.removeItem(CART_ID_KEY);
+      } catch { /* no-op */ }
+    }
+    const ref = data?.reference ? `?ref=${encodeURIComponent(data.reference)}&status=${label}` : '';
+    window.location.href = `${path}${ref}`;
   }, []);
 
   // Crea el pedido pendiente de Mercado Pago (COP) y devuelve { reference,
