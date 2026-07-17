@@ -53,7 +53,11 @@ function StartNowBanner({ lang }: { lang: Lang }) {
   );
 }
 
+ claude/ponytail-caveman-mode-76u40v
+// Código de descuento — vive debajo del resumen del pedido, fuera de su
+
 // Código de descuento — vive debajo del resumen del pedido, fuera de su
+ main
 // contenedor (y dentro del paso 4 en pantallas sin sidebar).
 function DiscountCode({ c }: { c: CheckoutController }) {
   const {
@@ -73,7 +77,7 @@ function DiscountCode({ c }: { c: CheckoutController }) {
           <button
             type="button"
             onClick={removeDiscountCode}
-            className="text-xs font-bold text-secondary-lighter hover:text-primary transition-colors"
+            className="min-h-[44px] px-2 text-xs font-bold text-secondary-lighter hover:text-primary transition-colors"
           >
             {t.studio.discount.remove}
           </button>
@@ -85,7 +89,7 @@ function DiscountCode({ c }: { c: CheckoutController }) {
             onChange={(e) => onDiscountInput(e.target.value)}
             placeholder="MICODIGO"
             maxLength={40}
-            className="flex-1 min-w-0 rounded-lg border-2 border-primary-lighter px-4 py-3 text-sm font-bold text-secondary uppercase focus:border-primary focus:outline-none"
+            className="flex-1 min-w-0 rounded-lg border-2 border-primary-lighter px-4 py-3 text-base font-bold text-secondary uppercase focus:border-primary focus:outline-none"
           />
           <button
             type="button"
@@ -104,7 +108,11 @@ function DiscountCode({ c }: { c: CheckoutController }) {
   );
 }
 
+ claude/ponytail-caveman-mode-76u40v
+// Propina opcional (paso 5): SOLO 3 opciones — 5%, 10% o monto personalizado.
+
 // Propina opcional (paso 5): SOLO 3 opciones — 5%, 10% o monto personalizado.
+ main
 // El % lo recalcula el servidor; la personalizada viaja en USD acotada.
 function TipSelector({ c }: { c: CheckoutController }) {
   const { lang, fmt, currency, rates, tip, setTip, priceBreakdown } = c;
@@ -114,7 +122,7 @@ function TipSelector({ c }: { c: CheckoutController }) {
   const rate = rates[currency] ?? 1;
   const customActive = tip != null && tip.pct == null;
   const pctBtnCls = (active: boolean) =>
-    `flex-1 rounded-xl border-2 px-3 py-2.5 text-sm font-black transition-all ${
+    `flex-1 rounded-xl border-2 px-3 py-3 min-h-[44px] text-sm font-black transition-all ${
       active ? 'border-primary bg-primary-lighter text-primary' : 'border-primary-lighter bg-white text-secondary hover:border-primary'
     }`;
   return (
@@ -153,7 +161,7 @@ function TipSelector({ c }: { c: CheckoutController }) {
           }}
           inputMode="decimal"
           placeholder={`${pick3(l, 'Monto en', 'Amount in', 'Montant en')} ${currency}`}
-          className="mt-3 w-full rounded-lg border-2 border-primary-lighter px-4 py-3 text-sm font-bold text-secondary focus:border-primary focus:outline-none"
+          className="mt-3 w-full rounded-lg border-2 border-primary-lighter px-4 py-3 text-base font-bold text-secondary focus:border-primary focus:outline-none"
         />
       )}
     </div>
@@ -240,7 +248,11 @@ function FamilyTierBar({ c }: { c: CheckoutController }) {
   );
 }
 
+ claude/ponytail-caveman-mode-76u40v
+// Datos de contacto — se piden en el paso de pago para saber quién compra y
+
 // Datos de contacto — se piden en el paso de pago para saber quién compra y
+ main
 // cómo contactarlo (email + WhatsApp). Sin nombre + email válido no se
 // muestran los botones de pago.
 function ContactForm({ c }: { c: CheckoutController }) {
@@ -270,7 +282,7 @@ function ContactForm({ c }: { c: CheckoutController }) {
             placeholder={pick3(l, 'María García', 'Jane Doe', 'Marie Dupont')}
             maxLength={120}
             autoComplete="name"
-            className="w-full rounded-lg border-2 border-primary-lighter px-4 py-3 text-sm font-medium text-secondary focus:border-primary focus:outline-none"
+            className="w-full rounded-lg border-2 border-primary-lighter px-4 py-3 text-base font-medium text-secondary focus:border-primary focus:outline-none"
           />
         </label>
         <label className="block">
@@ -282,7 +294,7 @@ function ContactForm({ c }: { c: CheckoutController }) {
             type="email"
             maxLength={255}
             autoComplete="email"
-            className="w-full rounded-lg border-2 border-primary-lighter px-4 py-3 text-sm font-medium text-secondary focus:border-primary focus:outline-none"
+            className="w-full rounded-lg border-2 border-primary-lighter px-4 py-3 text-base font-medium text-secondary focus:border-primary focus:outline-none"
           />
         </label>
         <label className="block">
@@ -296,7 +308,7 @@ function ContactForm({ c }: { c: CheckoutController }) {
             type="tel"
             maxLength={40}
             autoComplete="tel"
-            className="w-full rounded-lg border-2 border-primary-lighter px-4 py-3 text-sm font-medium text-secondary focus:border-primary focus:outline-none"
+            className="w-full rounded-lg border-2 border-primary-lighter px-4 py-3 text-base font-medium text-secondary focus:border-primary focus:outline-none"
           />
         </label>
       </div>
@@ -304,7 +316,11 @@ function ContactForm({ c }: { c: CheckoutController }) {
   );
 }
 
+ claude/ponytail-caveman-mode-76u40v
+// Order summary — shown as a sticky sidebar from step 2 onward, and as a
+
 // Order summary — shown as a sticky sidebar from step 2 onward, and as a
+ main
 // static, always-visible card on the checkout step so the customer sees
 // exactly what they're paying for (in the site's own style).
 function OrderSummary({ c, sticky = true }: { c: CheckoutController; sticky?: boolean }) {
@@ -528,15 +544,25 @@ export default function StudioPage() {
       {/* Nav */}
       <nav className="bg-white border-b border-primary-lighter sticky top-0 z-[60] w-full">
         <div className="mx-auto max-w-6xl px-3 sm:px-4 py-4 flex items-center justify-between">
+ claude/ponytail-caveman-mode-76u40v
+          <span className="sm:hidden"><Logo href="/" size="sm" /></span>
+          <span className="hidden sm:block"><Logo href="/" size="md" /></span>
+          <div className="flex items-center gap-1.5 sm:gap-4">
+
           <Logo href="/" size="md" />
           <div className="flex items-center gap-2 sm:gap-4">
+ main
             <CurrencySwitcher />
             <LanguageSwitcher />
             {/* Carrito siempre visible (desktop y móvil): badge + total, abre el drawer. */}
             <button
               type="button"
               onClick={() => setCartOpen(true)}
+ claude/ponytail-caveman-mode-76u40v
+              className="shrink-0 flex items-center gap-2 rounded-full bg-primary text-white min-h-[44px] pl-2.5 pr-3 sm:pl-3 sm:pr-4 py-2 hover:bg-primary-dark transition-colors"
+
               className="flex min-h-[44px] items-center gap-2 rounded-full bg-primary text-white pl-2.5 pr-3 sm:pl-3 sm:pr-4 py-2.5 hover:bg-primary-dark transition-colors"
+ main
               aria-label={pick3(lang as Lang, 'Ver carrito', 'View cart', 'Voir le panier')}
             >
               <span className="relative">
@@ -548,7 +574,11 @@ export default function StudioPage() {
                 )}
               </span>
               {selected.bodyType && (
+ claude/ponytail-caveman-mode-76u40v
+                <span className="text-sm font-bold hidden min-[360px]:inline">{fmt(totalPrice())}</span>
+
                 <span className="hidden xs:inline text-sm font-bold">{fmt(totalPrice())}</span>
+ main
               )}
             </button>
           </div>
@@ -564,7 +594,11 @@ export default function StudioPage() {
                 <button
                   onClick={() => i + 1 <= step && setStep(i + 1)}
                   disabled={i + 1 > step}
+<<<<<< claude/ponytail-caveman-mode-76u40v
+                  className="flex flex-col items-center justify-center min-w-[44px] min-h-[44px] focus:outline-none disabled:cursor-not-allowed group"
+
                   className="flex flex-col items-center justify-center min-h-[44px] min-w-[44px] focus:outline-none disabled:cursor-not-allowed group"
+ main
                 >
                   <div className={`flex h-7 w-7 sm:h-10 sm:w-10 items-center justify-center rounded-full text-xs sm:text-sm font-bold transition-all ${
                     i + 1 < step ? 'bg-primary text-white group-hover:bg-primary-dark cursor-pointer' :
@@ -578,7 +612,11 @@ export default function StudioPage() {
                   </span>
                 </button>
                 {i < 4 && (
+ claude/ponytail-caveman-mode-76u40v
+                  <div className={`w-3 sm:w-10 h-1 mx-0.5 sm:mx-2 ${i + 1 < step ? 'bg-primary' : 'bg-primary-lighter'}`} />
+
                   <div className={`w-2 sm:w-10 h-1 mx-0.5 sm:mx-2 ${i + 1 < step ? 'bg-primary' : 'bg-primary-lighter'}`} />
+ main
                 )}
               </div>
             ))}
@@ -710,7 +748,11 @@ export default function StudioPage() {
                                     type="button"
                                     onClick={() => removeProductUnit(p.key)}
                                     aria-label={`${t.studio.products.remove} ${p.name[lang]}`}
+ claude/ponytail-caveman-mode-76u40v
+                                    className="w-9 h-9 rounded-full flex items-center justify-center hover:bg-white/20 transition-colors"
+
                                     className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-white/20 transition-colors"
+ main
                                   >
                                     <Minus className="w-3.5 h-3.5" />
                                   </button>
@@ -719,7 +761,11 @@ export default function StudioPage() {
                                     type="button"
                                     onClick={() => addProductUnit(p.key)}
                                     aria-label={`${t.studio.products.add} ${p.name[lang]}`}
+ claude/ponytail-caveman-mode-76u40v
+                                    className="w-9 h-9 rounded-full flex items-center justify-center hover:bg-white/20 transition-colors"
+
                                     className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-white/20 transition-colors"
+ main
                                   >
                                     <Plus className="w-3.5 h-3.5" />
                                   </button>
@@ -756,7 +802,7 @@ export default function StudioPage() {
                                           <select
                                             value={unit[group.key] ?? ''}
                                             onChange={(e) => setProductUnitOption(p.key, unitIndex, group.key, e.target.value)}
-                                            className="w-full rounded-lg border-2 border-primary-lighter px-3 py-2.5 text-sm font-bold text-secondary focus:border-primary focus:outline-none"
+                                            className="w-full rounded-lg border-2 border-primary-lighter px-3 py-2.5 text-base font-bold text-secondary focus:border-primary focus:outline-none"
                                           >
                                             {(group.values ?? []).map((value) => (
                                               <option key={value.key} value={value.key}>
@@ -826,7 +872,7 @@ export default function StudioPage() {
                           placeholder={t.studio.step4.notes_placeholder}
                           rows={5}
                           maxLength={500}
-                          className="mt-3 w-full resize-none rounded-lg border-2 border-primary-lighter px-4 py-3 text-sm text-secondary focus:border-primary focus:outline-none"
+                          className="mt-3 w-full resize-none rounded-lg border-2 border-primary-lighter px-4 py-3 text-base text-secondary focus:border-primary focus:outline-none"
                         />
                       </label>
                     </div>
@@ -1006,7 +1052,11 @@ export default function StudioPage() {
           </div>
 
           {/* Sidebar: Order Summary (pasos 2–5; en el 5 es donde vive el
+ claude/ponytail-caveman-mode-76u40v
+              resumen — la columna principal solo lleva datos + pago). */}
+
               resumen — la columna principal solo lleva datos + pago). */}
+ main
           {step > 1 && (
             <div className="hidden lg:block">
               {/* Sticky sobre el conjunto: el cupón va debajo del resumen,
@@ -1077,7 +1127,11 @@ export default function StudioPage() {
                   <ShieldCheck className="w-5 h-5" />
                   {pick3(lang as Lang, 'Pago seguro', 'Secure Checkout', 'Paiement sécurisé')}
                 </button>
+ claude/ponytail-caveman-mode-76u40v
+                {/* ponytail: chips de texto para métodos de pago — cero assets, igual que PaymentTrustStrip. */}
+
                 {/* ponytail: chips de texto para métodos de pago — cero assets, igual que PaymentTrustStrip. */}
+ main
                 <div className="flex justify-center flex-wrap gap-1.5">
                   {['Visa', 'Mastercard', 'Shop Pay', 'Google Pay', 'PayPal'].map(m => (
                     <span key={m} className="px-2 py-1 rounded-md border border-primary-lighter bg-white text-[9px] font-black uppercase tracking-wide text-secondary-lighter">
@@ -1123,7 +1177,7 @@ function CartDrawerItems({ c, podImages }: { c: CheckoutController; podImages: R
             </p>
             {selected.bodyType && <p className="mt-1 font-black text-primary">{fmt(b.peopleSubtotal - b.discount)}</p>}
           </div>
-          <button type="button" onClick={removePortrait} aria-label="Remove portrait" className="self-start rounded-md p-1 text-red-500 hover:bg-red-50">
+          <button type="button" onClick={removePortrait} aria-label="Remove portrait" className="self-start rounded-md p-3 -m-2 text-red-500 hover:bg-red-50">
             <Trash2 size={16} />
           </button>
         </div>
@@ -1146,7 +1200,7 @@ function CartDrawerItems({ c, podImages }: { c: CheckoutController; podImages: R
             {variant && <p className="text-xs font-bold text-secondary-lighter">{variant}</p>}
             <p className="mt-1 font-black text-primary">{fmt(p.priceUsd)}</p>
           </div>
-          <button type="button" onClick={() => removeProductUnitAt(p.key, i)} aria-label={`Remove ${p.name[lang]}`} className="self-start rounded-md p-1 text-red-500 hover:bg-red-50">
+          <button type="button" onClick={() => removeProductUnitAt(p.key, i)} aria-label={`Remove ${p.name[lang]}`} className="self-start rounded-md p-3 -m-2 text-red-500 hover:bg-red-50">
             <Trash2 size={16} />
           </button>
         </div>
@@ -1162,7 +1216,7 @@ function CartMiniRow({ label, value, onRemove }: { label: string; value: string;
         <p className="font-black text-secondary leading-tight">{label}</p>
         <p className="text-sm font-black text-primary">{value}</p>
       </div>
-      <button type="button" onClick={onRemove} aria-label={`Remove ${label}`} className="rounded-md p-1 text-red-500 hover:bg-red-50">
+      <button type="button" onClick={onRemove} aria-label={`Remove ${label}`} className="rounded-md p-3 -m-2 text-red-500 hover:bg-red-50">
         <Trash2 size={16} />
       </button>
     </div>
