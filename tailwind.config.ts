@@ -8,6 +8,10 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      // ponytail: solo el breakpoint que necesitamos (precio del carrito en el wizard a 320px)
+      screens: {
+        xs: "360px",
+      },
       colors: {
         primary: "#FC90B6",
         "primary-dark": "#F870A0",

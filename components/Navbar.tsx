@@ -64,7 +64,7 @@ function Navbar() {
               aria-label={t.nav.menu}
               aria-haspopup="true"
               aria-expanded={menuOpen}
-              className="inline-flex items-center justify-center h-10 w-10 rounded-lg border border-primary-lighter text-secondary hover:border-primary hover:text-secondary focus:outline-none focus:border-primary transition-colors"
+              className="inline-flex items-center justify-center h-11 w-11 shrink-0 rounded-lg border border-primary-lighter text-secondary hover:border-primary hover:text-secondary focus:outline-none focus:border-primary transition-colors"
               style={{ touchAction: 'manipulation' }}
             >
               {menuOpen ? <X size={20} /> : <Menu size={20} />}

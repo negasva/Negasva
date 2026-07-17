@@ -15,7 +15,7 @@ export default function Content({ children }: { children: React.ReactNode }) {
       <section className="bg-primary-lighter/30 py-20 px-4">
         <div className="mx-auto max-w-4xl">
           <p className="text-sm font-bold text-primary uppercase tracking-widest mb-3">{tx.badge}</p>
-          <h1 className="font-black text-5xl md:text-6xl tracking-tighter text-secondary mb-4">
+          <h1 className="font-black text-4xl sm:text-5xl md:text-6xl tracking-tighter text-secondary mb-4">
             {tx.title}
           </h1>
           <p className="text-lg text-secondary-lighter max-w-2xl">

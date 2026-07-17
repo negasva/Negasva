@@ -185,7 +185,7 @@ export default function MainCartDrawer() {
 
   return (
     <>
-      <button type="button" onClick={() => setOpen(true)} aria-label="View cart" className="relative inline-flex h-10 w-10 items-center justify-center rounded-lg border border-primary-lighter text-secondary hover:border-primary focus:outline-none focus:border-primary">
+      <button type="button" onClick={() => setOpen(true)} aria-label="View cart" className="relative inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-primary-lighter text-secondary hover:border-primary focus:outline-none focus:border-primary">
         <ShoppingBag size={19} />
         {count > 0 && <span className="absolute -right-2 -top-2 min-w-5 rounded-full bg-primary px-1 text-xs font-black text-white">{count}</span>}
       </button>
@@ -225,10 +225,18 @@ export default function MainCartDrawer() {
                           <p className="font-black leading-tight text-secondary">{name}</p>
                           <p className="mt-1 text-xs font-bold text-secondary-lighter">{item.price}</p>
                           <div className="mt-3 flex items-center gap-2">
+ claude/ponytail-caveman-mode-76u40v
                             <button type="button" aria-label="Decrease quantity" onClick={() => decrement(item.id)} className="flex h-11 w-11 items-center justify-center rounded-md border border-primary-lighter"><Minus size={14} /></button>
                             <span className="w-6 text-center text-sm font-black">{item.qty}</span>
                             <button type="button" aria-label="Increase quantity" onClick={() => item.id !== 'portrait' && addMainCartItem(item)} disabled={item.id === 'portrait'} className="flex h-11 w-11 items-center justify-center rounded-md border border-primary-lighter disabled:opacity-40"><Plus size={14} /></button>
                             <button type="button" aria-label="Remove item" onClick={() => remove(item.id)} className="ml-auto flex h-11 w-11 items-center justify-center rounded-md text-red-500 hover:bg-red-50"><Trash2 size={16} /></button>
+
+                            {/* ponytail: 40px, no 44 — tres botones de 44 no caben en el drawer a 320px */}
+                            <button type="button" aria-label="Decrease quantity" onClick={() => decrement(item.id)} className="flex h-10 w-10 items-center justify-center rounded-md border border-primary-lighter"><Minus size={14} /></button>
+                            <span className="w-6 text-center text-sm font-black">{item.qty}</span>
+                            <button type="button" aria-label="Increase quantity" onClick={() => item.id !== 'portrait' && addMainCartItem(item)} disabled={item.id === 'portrait'} className="flex h-10 w-10 items-center justify-center rounded-md border border-primary-lighter disabled:opacity-40"><Plus size={14} /></button>
+                            <button type="button" aria-label="Remove item" onClick={() => remove(item.id)} className="ml-auto flex h-10 w-10 items-center justify-center rounded-md text-red-500 hover:bg-red-50"><Trash2 size={16} /></button>
+ main
                           </div>
                         </div>
                       </div>

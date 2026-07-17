@@ -181,7 +181,7 @@ function PageFooter({ minimal = false }: PageFooterProps) {
               <ul className="space-y-2 text-sm">
                 {col.links.map((link) => (
                   <li key={link.href}>
-                    <Link href={link.href} className="text-white/70 hover:text-primary transition-colors">
+                    <Link href={link.href} className="inline-block py-1 text-white/70 hover:text-primary transition-colors">
                       {pick(link.label_es, link.label_en, link.label_fr)}
                     </Link>
                   </li>
@@ -196,7 +196,7 @@ function PageFooter({ minimal = false }: PageFooterProps) {
               <ul className="space-y-2 text-sm">
                 {col.links.map((link) => (
                   <li key={link.href}>
-                    <Link href={link.href} className="text-white/70 hover:text-primary transition-colors">
+                    <Link href={link.href} className="inline-block py-1 text-white/70 hover:text-primary transition-colors">
                       {link.label}
                     </Link>
                   </li>

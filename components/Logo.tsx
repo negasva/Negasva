@@ -13,7 +13,7 @@ interface LogoProps {
 function Logo({ href = '/', className = '', size = 'md', variant = 'dark' }: LogoProps) {
   const sizeClasses = {
     sm: 'text-xl',
-    md: 'text-2xl',
+    md: 'text-xl sm:text-2xl',
     lg: 'text-4xl',
   };
 
