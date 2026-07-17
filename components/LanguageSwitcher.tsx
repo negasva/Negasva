@@ -15,14 +15,14 @@ function LanguageSwitcher() {
         <span key={l} className="flex items-center">
           <button
             onClick={() => setLang(l)}
-            className={`text-xs font-bold transition-colors ${
+            className={`min-h-[44px] px-0.5 text-xs font-bold transition-colors ${
               lang === l ? 'text-primary' : 'text-secondary-lighter hover:text-secondary'
             }`}
           >
             {l.toUpperCase()}
           </button>
           {i < LANGS.length - 1 && (
-            <span className="text-secondary-lighter mx-1 text-xs">·</span>
+            <span className="text-secondary-lighter mx-0.5 text-xs">·</span>
           )}
         </span>
       ))}

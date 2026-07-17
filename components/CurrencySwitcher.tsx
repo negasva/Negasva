@@ -26,7 +26,7 @@ function CurrencySwitcher() {
         aria-haspopup="listbox"
         aria-expanded={open}
         aria-label="Seleccionar divisa"
-        className="flex items-center gap-1.5 text-xs font-bold bg-transparent border border-primary-lighter rounded-md pl-2.5 pr-6 py-1.5 text-secondary-lighter hover:border-primary hover:text-secondary focus:outline-none focus:border-primary cursor-pointer transition-colors"
+        className="flex min-h-[44px] items-center gap-1.5 text-xs font-bold bg-transparent border border-primary-lighter rounded-md pl-2.5 pr-5 py-1.5 text-secondary-lighter hover:border-primary hover:text-secondary focus:outline-none focus:border-primary cursor-pointer transition-colors"
         style={{ touchAction: 'manipulation' }}
       >
         <span>{currency}</span>

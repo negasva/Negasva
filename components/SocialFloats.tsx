@@ -98,7 +98,7 @@ export default function SocialFloats() {
 
   return (
     <div
-      className={`fixed ${bottom} right-5 z-50 flex flex-col items-end gap-2`}
+      className={`fixed ${bottom} right-3 sm:right-5 z-50 flex flex-col items-end gap-2`}
     >
       {latam && WHATSAPP_NUMBER && (
         <a
