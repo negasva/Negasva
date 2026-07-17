@@ -32,7 +32,7 @@ function gradientFor(name: string) {
 const ReviewCard = memo(function ReviewCard({ name, comment, photo, rating, title }: HomeTestimonial) {
   const stars = Math.max(1, Math.min(5, Math.round(rating ?? 5)));
   return (
-    <div className="w-[340px] sm:w-[400px] flex-shrink-0 snap-start rounded-2xl border-2 border-primary-lighter bg-white overflow-hidden shadow-sm">
+    <div className="w-[min(340px,calc(100vw-48px))] sm:w-[400px] flex-shrink-0 snap-start rounded-2xl border-2 border-primary-lighter bg-white overflow-hidden shadow-sm">
       {/* Foto del retrato entregado — placeholder si aún no hay imagen */}
       <div className="relative h-44 w-full bg-primary-lighter/40 flex items-center justify-center">
         <Camera className="w-8 h-8 text-primary/40" aria-hidden />

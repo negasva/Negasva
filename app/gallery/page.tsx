@@ -52,7 +52,7 @@ export default async function GalleryPage() {
       {/* Hero */}
       <section className="bg-primary-lighter/30 py-20 px-4">
         <div className="mx-auto max-w-7xl">
-          <h1 className="font-black text-5xl md:text-6xl tracking-tighter text-secondary mb-4">
+          <h1 className="font-black text-4xl sm:text-5xl md:text-6xl tracking-tighter text-secondary mb-4">
             Work Gallery
           </h1>
           <p className="text-lg text-secondary-lighter max-w-2xl">
@@ -66,7 +66,7 @@ export default async function GalleryPage() {
       {items.length > 0 && (
         <section className="py-20 px-4">
           <div className="mx-auto max-w-7xl">
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-3 sm:gap-6">
               {items.map((item) => (
                 <div
                   key={item.id}
@@ -81,8 +81,8 @@ export default async function GalleryPage() {
                       sizes="(max-width: 768px) 50vw, 33vw"
                     />
                   </div>
-                  <div className="p-6 bg-white">
-                    <h3 className="font-bold text-secondary mb-2">{displayTitle(item.title)}</h3>
+                  <div className="p-3 sm:p-6 bg-white">
+                    <h3 className="font-bold text-secondary mb-2 text-sm sm:text-base">{displayTitle(item.title)}</h3>
                     {item.style && <p className="text-sm text-primary font-semibold">{item.style}</p>}
                   </div>
                 </div>
