@@ -244,10 +244,23 @@ function FamilyTierBar({ c }: { c: CheckoutController }) {
 // cómo contactarlo (email + WhatsApp). Sin nombre + email válido no se
 // muestran los botones de pago.
 function ContactForm({ c }: { c: CheckoutController }) {
-  const { lang, contact, setContactField } = c;
+  const { lang, contact, setContactField, contactError, contactShake, onContactShakeEnd } = c;
   const l = lang as Lang;
+  // Solo se marcan en rojo al intentar pagar sin completar (contactError).
+  const nameMissing = contactError && contact.name.trim().length < 2;
+  const emailMissing = contactError && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contact.email.trim());
+  const inputCls = (bad: boolean) =>
+    `w-full rounded-lg border-2 px-4 py-3 text-base font-medium text-secondary focus:outline-none ${
+      bad ? 'border-red-500 focus:border-red-500' : 'border-primary-lighter focus:border-primary'
+    }`;
   return (
-    <div className="rounded-2xl border-2 border-primary-lighter bg-white p-5 space-y-4">
+    <div
+      id="contact-fields"
+      onAnimationEnd={onContactShakeEnd}
+      className={`rounded-2xl border-2 bg-white p-5 space-y-4 ${
+        contactError ? 'border-red-500' : 'border-primary-lighter'
+      } ${contactShake ? 'animate-shake' : ''}`}
+    >
       <div>
         <p className="font-black text-secondary text-base tracking-tighter">
           {pick3(l, 'Tus datos', 'Your details', 'Tes coordonnées')}
@@ -270,7 +283,7 @@ function ContactForm({ c }: { c: CheckoutController }) {
             placeholder={pick3(l, 'María García', 'Jane Doe', 'Marie Dupont')}
             maxLength={120}
             autoComplete="name"
-            className="w-full rounded-lg border-2 border-primary-lighter px-4 py-3 text-base font-medium text-secondary focus:border-primary focus:outline-none"
+            className={inputCls(nameMissing)}
           />
         </label>
         <label className="block">
@@ -282,7 +295,7 @@ function ContactForm({ c }: { c: CheckoutController }) {
             type="email"
             maxLength={255}
             autoComplete="email"
-            className="w-full rounded-lg border-2 border-primary-lighter px-4 py-3 text-base font-medium text-secondary focus:border-primary focus:outline-none"
+            className={inputCls(emailMissing)}
           />
         </label>
         <label className="block">
@@ -478,7 +491,7 @@ export default function StudioPage() {
   const {
     t, lang, fmt, currency,
     step, setStep, selected, priceMap,
-    contact, setContactField, contactValid,
+    contact, setContactField, contactValid, flagContact,
     showError,
     checkoutLoading, checkoutError, setCheckoutError, checkoutParams,
     canAdvance, totalPrice, getProducts,
@@ -863,11 +876,16 @@ export default function StudioPage() {
                       </div>
                     </div>
                     <div className="p-5">
-                      {!contactValid ? (
-                        <p className="py-6 text-center text-sm font-bold text-secondary-lighter">
-                          Fill in your name and email above to continue to payment.
+                      {!contactValid && (
+                        <p className="mb-3 text-center text-sm font-bold text-secondary-lighter">
+                          Fill in your name and email above to unlock payment.
                         </p>
-                      ) : currency === 'COP' ? (
+                      )}
+                      {/* Métodos SIEMPRE visibles. Sin datos válidos van atenuados
+                          y un overlay captura el click para llevar al contacto. */}
+                      <div className="relative">
+                       <div className={!contactValid ? 'opacity-50 pointer-events-none select-none' : ''}>
+                      {currency === 'COP' ? (
                         <>
                           <p className="mb-3 text-center text-xs font-bold text-primary">
                             Pay in up to 3 interest-free installments
@@ -928,6 +946,16 @@ export default function StudioPage() {
                           `}</style>
                         </PayPalProvider>
                       )}
+                       </div>
+                       {!contactValid && (
+                         <button
+                           type="button"
+                           onClick={flagContact}
+                           aria-label="Fill in your name and email to pay"
+                           className="absolute inset-0 z-20 w-full cursor-not-allowed rounded-xl"
+                         />
+                       )}
+                      </div>
                       <PaymentTrustStrip lang={lang as Lang} cop={currency === 'COP'} />
                     </div>
                   </div>

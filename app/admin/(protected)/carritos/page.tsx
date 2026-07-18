@@ -54,15 +54,34 @@ export default function CartsPage() {
   const [carts, setCarts] = useState<Cart[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<'all' | 'abandoned' | 'converted'>('all');
+  const [showArchived, setShowArchived] = useState(false);
   const [busy, setBusy] = useState<string | null>(null);
 
   useEffect(() => {
-    fetch('/api/admin/carts')
+    setLoading(true);
+    fetch('/api/admin/carts' + (showArchived ? '?archived=1' : ''))
       .then((r) => r.json())
       .then((d) => setCarts(Array.isArray(d) ? d : []))
       .catch(() => setCarts([]))
       .finally(() => setLoading(false));
-  }, []);
+  }, [showArchived]);
+
+  async function restore(id: string) {
+    setBusy(id);
+    try {
+      const res = await fetch('/api/admin/carts', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id }),
+      });
+      if (res.ok) setCarts((prev) => prev.filter((c) => c.id !== id));
+      else alert('No se pudo restaurar el carrito.');
+    } catch {
+      alert('No se pudo restaurar el carrito.');
+    } finally {
+      setBusy(null);
+    }
+  }
 
   async function archive(id: string) {
     if (!confirm('¿Ocultar este carrito del panel? El dato no se borra de la base de datos, solo deja de mostrarse aquí.')) return;
@@ -121,8 +140,8 @@ export default function CartsPage() {
         </p>
       </div>
 
-      <div className="flex gap-2 mb-6">
-        {([['all', 'Todos'], ['abandoned', 'Abandonados'], ['converted', 'Convertidos']] as const).map(([f, label]) => (
+      <div className="flex gap-2 mb-6 flex-wrap">
+        {!showArchived && ([['all', 'Todos'], ['abandoned', 'Abandonados'], ['converted', 'Convertidos']] as const).map(([f, label]) => (
           <button
             key={f}
             onClick={() => setFilter(f)}
@@ -133,6 +152,14 @@ export default function CartsPage() {
             {label} ({counts[f]})
           </button>
         ))}
+        <button
+          onClick={() => setShowArchived((v) => !v)}
+          className={`px-4 py-2 rounded-lg text-sm font-semibold transition-colors ${showArchived ? 'ml-0' : 'ml-auto'} ${
+            showArchived ? 'bg-secondary text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+          }`}
+        >
+          {showArchived ? '← Activos' : '🗄 Archivados'}
+        </button>
       </div>
 
       {loading ? (
@@ -160,14 +187,25 @@ export default function CartsPage() {
                     <span className="text-xs text-gray-400">
                       {new Date(c.updated_at).toLocaleString('es')}
                     </span>
-                    <button
-                      onClick={() => archive(c.id)}
-                      disabled={busy === c.id}
-                      className="text-xs font-bold text-gray-400 hover:text-red-600 hover:bg-red-50 px-2 py-1 rounded-md transition-colors disabled:opacity-50"
-                      title="Ocultar del panel (no borra el dato)"
-                    >
-                      {busy === c.id ? '…' : '🗑 Borrar'}
-                    </button>
+                    {showArchived ? (
+                      <button
+                        onClick={() => restore(c.id)}
+                        disabled={busy === c.id}
+                        className="text-xs font-bold text-gray-400 hover:text-green-600 hover:bg-green-50 px-2 py-1 rounded-md transition-colors disabled:opacity-50"
+                        title="Volver a mostrar en el panel"
+                      >
+                        {busy === c.id ? '…' : '↩ Restaurar'}
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() => archive(c.id)}
+                        disabled={busy === c.id}
+                        className="text-xs font-bold text-gray-400 hover:text-red-600 hover:bg-red-50 px-2 py-1 rounded-md transition-colors disabled:opacity-50"
+                        title="Ocultar del panel (no borra el dato)"
+                      >
+                        {busy === c.id ? '…' : '🗑 Borrar'}
+                      </button>
+                    )}
                   </div>
                 </div>
 

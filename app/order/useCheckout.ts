@@ -701,6 +701,21 @@ export function useCheckout() {
 
   const onShakeEnd = () => setShaking(false);
 
+  // Gate de los métodos de pago: cuando faltan datos de contacto, los métodos
+  // se ven pero bloqueados. Al intentar pagar, se marca el error (borde rojo +
+  // shake) y se hace scroll al formulario de contacto.
+  const [contactError, setContactError] = useState(false);
+  const [contactShake, setContactShake] = useState(false);
+  const flagContact = useCallback(() => {
+    setContactError(true);
+    setContactShake(true);
+    requestAnimationFrame(() => {
+      document.getElementById('contact-fields')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
+  }, []);
+  useEffect(() => { if (contactValid) setContactError(false); }, [contactValid]);
+  const onContactShakeEnd = () => setContactShake(false);
+
   // The breakdown is whatever the server last quoted — no client-side math.
   const priceBreakdown = (): PriceBreakdown => quote;
   // Propina en USD para display (espejo del cálculo del servidor).
@@ -820,6 +835,7 @@ export function useCheckout() {
     step, setStep,
     selected,
     contact, setContactField, contactValid,
+    contactError, contactShake, flagContact, onContactShakeEnd,
     styles, bodyTypes, priceMap, shippingEstimate, shippingSelection, selectShipping, setShippingRequired,
     discountCodeInput, onDiscountInput,
     appliedCode, codeStatus,
