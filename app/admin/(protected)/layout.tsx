@@ -9,8 +9,8 @@ export const dynamic = 'force-dynamic';
 const NAV: NavItem[] = [
   { href: '/admin',              label: 'Dashboard',       important: true, badgeKey: 'total'    },
   { href: '/admin/pedidos-pago', label: 'Pagos Pendientes', important: true, badgeKey: 'pagos'    },
-  { href: '/admin/carritos',     label: 'Carritos',        important: true, badgeKey: 'carritos' },
-  { href: '/admin/orders',       label: 'Pedidos',         important: true, badgeKey: 'pedidos'  },
+  { href: '/admin/carritos',     label: 'Carritos',        important: true },
+  { href: '/admin/orders',       label: 'Pedidos',         important: true },
   { href: '/admin/estilos',      label: 'Estilos'         },
   { href: '/admin/body-types',   label: 'Tipos de cuerpo' },
   { href: '/admin/backgrounds',  label: 'Fondos'          },

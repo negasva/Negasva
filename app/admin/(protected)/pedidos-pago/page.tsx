@@ -58,15 +58,34 @@ export default function CheckoutOrdersPage() {
   const [orders, setOrders] = useState<CheckoutOrder[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<'all' | 'paid' | 'pending'>('all');
+  const [showArchived, setShowArchived] = useState(false);
   const [archiving, setArchiving] = useState<string | null>(null);
 
   useEffect(() => {
-    fetch('/api/admin/checkout-orders')
+    setLoading(true);
+    fetch('/api/admin/checkout-orders' + (showArchived ? '?archived=1' : ''))
       .then((r) => r.json())
       .then((d) => setOrders(Array.isArray(d) ? d : []))
       .catch(() => setOrders([]))
       .finally(() => setLoading(false));
-  }, []);
+  }, [showArchived]);
+
+  async function restore(id: string) {
+    setArchiving(id);
+    try {
+      const res = await fetch('/api/admin/checkout-orders', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id }),
+      });
+      if (res.ok) setOrders((prev) => prev.filter((o) => o.id !== id));
+      else alert('No se pudo restaurar el pago.');
+    } catch {
+      alert('No se pudo restaurar el pago.');
+    } finally {
+      setArchiving(null);
+    }
+  }
 
   async function archive(id: string) {
     if (!confirm('¿Ocultar este pago del panel? El dato no se borra de la base de datos, solo deja de mostrarse aquí.')) return;
@@ -97,8 +116,8 @@ export default function CheckoutOrdersPage() {
         </div>
       </div>
 
-      <div className="flex gap-2 mb-6">
-        {(['all', 'paid', 'pending'] as const).map((f) => (
+      <div className="flex gap-2 mb-6 flex-wrap">
+        {!showArchived && (['all', 'paid', 'pending'] as const).map((f) => (
           <button
             key={f}
             onClick={() => setFilter(f)}
@@ -109,6 +128,14 @@ export default function CheckoutOrdersPage() {
             {f === 'all' ? 'Todos' : f === 'paid' ? 'Pagados' : 'Pendientes'}
           </button>
         ))}
+        <button
+          onClick={() => setShowArchived((v) => !v)}
+          className={`px-4 py-2 rounded-lg text-sm font-semibold transition-colors ${showArchived ? 'ml-0' : 'ml-auto'} ${
+            showArchived ? 'bg-secondary text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+          }`}
+        >
+          {showArchived ? '← Activos' : '🗄 Archivados'}
+        </button>
       </div>
 
       {loading ? (
@@ -132,14 +159,25 @@ export default function CheckoutOrdersPage() {
                   <span className="text-xs text-gray-400">
                     {new Date(o.created_at).toLocaleString('es')} · {o.provider}
                   </span>
-                  <button
-                    onClick={() => archive(o.id)}
-                    disabled={archiving === o.id}
-                    className="text-xs font-bold text-gray-400 hover:text-red-600 hover:bg-red-50 px-2 py-1 rounded-md transition-colors disabled:opacity-50"
-                    title="Ocultar del panel (no borra el dato)"
-                  >
-                    {archiving === o.id ? '…' : '🗑 Borrar'}
-                  </button>
+                  {showArchived ? (
+                    <button
+                      onClick={() => restore(o.id)}
+                      disabled={archiving === o.id}
+                      className="text-xs font-bold text-gray-400 hover:text-green-600 hover:bg-green-50 px-2 py-1 rounded-md transition-colors disabled:opacity-50"
+                      title="Volver a mostrar en el panel"
+                    >
+                      {archiving === o.id ? '…' : '↩ Restaurar'}
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => archive(o.id)}
+                      disabled={archiving === o.id}
+                      className="text-xs font-bold text-gray-400 hover:text-red-600 hover:bg-red-50 px-2 py-1 rounded-md transition-colors disabled:opacity-50"
+                      title="Ocultar del panel (no borra el dato)"
+                    >
+                      {archiving === o.id ? '…' : '🗑 Borrar'}
+                    </button>
+                  )}
                 </div>
               </div>
 

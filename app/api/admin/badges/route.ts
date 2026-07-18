@@ -44,8 +44,10 @@ export async function GET(request: Request) {
     pedidos: pedidos.count ?? 0,
   };
 
+  // El panel solo notifica COMPRAS: el total (Dashboard + móvil) refleja solo
+  // los pagos pendientes. Carritos y pedidos ya no generan notificación.
   return successAdminResponse({
     ...counts,
-    total: counts.pagos + counts.carritos + counts.pedidos,
+    total: counts.pagos,
   });
 }
