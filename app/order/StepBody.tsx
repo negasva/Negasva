@@ -101,23 +101,25 @@ export default function StepBody({ c }: { c: CheckoutController }) {
   const lastIndex = options.length - 1;
   const selectedIndex = options.findIndex((o) => o.id === selected.bodyType);
 
-  const imgSrc = (id: string) =>
+  const imgDesktop = (id: string) =>
     siteImages[`order_body_${id}`] || BODY_TYPE_IMAGES[id] || `/body-types/${id}.webp`;
+  // Móvil: foto propia; si falta, cae a la de desktop para no romper la vista.
+  const imgMobile = (id: string) => siteImages[`order_body_${id}_mobile`] || imgDesktop(id);
 
   const ariaLabel = (name: string, price: number) =>
     `Select ${name} - ${fmt(price)}${t.studio.body_types.per_person}`;
 
   // Placeholder rosa con icono + texto (igual al sistema actual), con la
   // imagen real encima cuando existe.
-  const Panel = ({ id, name }: { id: string; name: string }) => (
+  const Panel = ({ src, name }: { src: string; name: string }) => (
     <>
       <div className="absolute inset-0 flex flex-col items-center justify-center gap-1 bg-primary-lighter/50 text-primary/60">
         <ImageIcon className="w-8 h-8" aria-hidden />
         <span className="text-xs font-black">{name}</span>
       </div>
       <Image
-        key={imgSrc(id)}
-        src={imgSrc(id)}
+        key={src}
+        src={src}
         alt={name}
         fill
         className="object-cover"
@@ -176,7 +178,7 @@ export default function StepBody({ c }: { c: CheckoutController }) {
                     zIndex: lit ? 10 : undefined,
                   }}
                 >
-                  <Panel id={b.id} name={b.name} />
+                  <Panel src={imgDesktop(b.id)} name={b.name} />
                 </button>
               </div>
 
@@ -218,7 +220,7 @@ export default function StepBody({ c }: { c: CheckoutController }) {
                 } ${i === 0 ? 'rounded-t-xl' : ''} ${i === lastIndex ? 'rounded-b-xl' : ''} ${showTap ? 'animate-breathe-twice' : ''}`}
                 style={{ boxShadow: ringed ? GLOW : EDGE_SHADE_V }}
               >
-                <Panel id={b.id} name={b.name} />
+                <Panel src={imgMobile(b.id)} name={b.name} />
                 {showTap && (
                   <span className="absolute bottom-1 right-1 z-10 w-6 h-6 rounded-full bg-white/90 text-primary flex items-center justify-center shadow">
                     <Hand className="w-3.5 h-3.5" aria-hidden />

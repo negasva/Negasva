@@ -22,8 +22,13 @@ export const SITE_IMAGE_SLOTS: SiteImageSlot[] = [
   { key: 'landing_hero_img2', page: 'Landing (/)', section: 'Hero',           label: 'Hero — foto "After" (retrato)',   def: '', recommended: '440 × 580 px' },
   { key: 'landing_paso_img1', page: 'Landing (/)', section: '3 simple steps', label: 'Pasos — foto 1 (retrato estilo)', def: '', recommended: '480 × 640 px' },
   { key: 'landing_paso_img2', page: 'Landing (/)', section: '3 simple steps', label: 'Pasos — foto 2 (retrato pareja)', def: '', recommended: '440 × 600 px' },
-  { key: 'order_body_torso_only', page: 'Pedido (/order)', section: 'Tipo de cuerpo', label: 'Tarjeta Solo Torso',         def: '/body-types/torso_only.webp', recommended: '600 × 400 px'   },
-  { key: 'order_body_full_body',  page: 'Pedido (/order)', section: 'Tipo de cuerpo', label: 'Tarjeta Cuerpo Completo',    def: '/body-types/full_body.webp',  recommended: '600 × 400 px'   },
+  // Cada tipo de cuerpo tiene DOS fotos: Desktop y Móvil. En el front, desktop
+  // usa la clave base y móvil la clave `_mobile`; si falta la móvil se cae a la
+  // desktop (ver StepBody). La móvil no lleva `def` para que ese fallback opere.
+  { key: 'order_body_torso_only',        page: 'Pedido (/order)', section: 'Tipo de cuerpo', label: 'Tarjeta Solo Torso — Foto Desktop',      def: '/body-types/torso_only.webp', recommended: '600 × 400 px' },
+  { key: 'order_body_torso_only_mobile', page: 'Pedido (/order)', section: 'Tipo de cuerpo', label: 'Tarjeta Solo Torso — Foto Móvil',        def: '',                            recommended: '400 × 400 px' },
+  { key: 'order_body_full_body',         page: 'Pedido (/order)', section: 'Tipo de cuerpo', label: 'Tarjeta Cuerpo Completo — Foto Desktop', def: '/body-types/full_body.webp',  recommended: '600 × 400 px' },
+  { key: 'order_body_full_body_mobile',  page: 'Pedido (/order)', section: 'Tipo de cuerpo', label: 'Tarjeta Cuerpo Completo — Foto Móvil',   def: '',                            recommended: '400 × 400 px' },
 ];
 
 export type SiteImages = Record<string, string>;

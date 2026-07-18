@@ -155,9 +155,10 @@ function PageFooter({ minimal = false }: PageFooterProps) {
   return (
     <footer className="bg-secondary py-16 px-4">
       <div className="mx-auto max-w-7xl">
-        <div className="grid md:grid-cols-3 lg:grid-cols-6 gap-10 md:gap-12 mb-12">
+        {/* Móvil: 2 columnas agrupadas por sección (compacto) → desktop igual. */}
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-x-6 gap-y-8 md:gap-12 mb-12">
           {/* Brand + social */}
-          <div className="flex flex-col items-center md:items-start text-center md:text-left">
+          <div className="col-span-2 md:col-span-1 flex flex-col items-center md:items-start text-center md:text-left">
             <Logo size="lg" variant="light" className="mb-4 block" />
             <p className="text-sm mb-6 text-white/70">{pick(footer.tagline_es, footer.tagline_en, footer.tagline_fr)}</p>
             <div className="flex gap-4 justify-center md:justify-start">
@@ -176,7 +177,7 @@ function PageFooter({ minimal = false }: PageFooterProps) {
           </div>
 
           {footer.columns.map((col, i) => (
-            <div key={i} className="text-center md:text-left">
+            <div key={i} className="text-left">
               <h4 className="font-bold text-white mb-4">{pick(col.title_es, col.title_en, col.title_fr)}</h4>
               <ul className="space-y-2 text-sm">
                 {col.links.map((link) => (
@@ -191,7 +192,7 @@ function PageFooter({ minimal = false }: PageFooterProps) {
           ))}
 
           {SEO_COLUMNS.map((col) => (
-            <div key={col.title} className="text-center md:text-left">
+            <div key={col.title} className="text-left">
               <h4 className="font-bold text-white mb-4">{col.title}</h4>
               <ul className="space-y-2 text-sm">
                 {col.links.map((link) => (

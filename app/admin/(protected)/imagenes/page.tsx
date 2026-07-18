@@ -34,14 +34,24 @@ export default function SiteImagesPage() {
     if (Array.isArray(btRes)) {
       const extra: SiteImageSlot[] = btRes
         .filter((bt: { slug: string }) => !SITE_IMAGE_SLOTS.some((s) => s.key === `order_body_${bt.slug}`))
-        .map((bt: { slug: string; name: string }) => ({
-          key: `order_body_${bt.slug}`,
-          page: 'Pedido (/order)',
-          section: 'Tipo de cuerpo',
-          label: `Tarjeta ${bt.name}`,
-          def: `/body-types/${bt.slug}.webp`,
-          recommended: '600 × 400 px',
-        }));
+        .flatMap((bt: { slug: string; name: string }) => [
+          {
+            key: `order_body_${bt.slug}`,
+            page: 'Pedido (/order)',
+            section: 'Tipo de cuerpo',
+            label: `Tarjeta ${bt.name} — Foto Desktop`,
+            def: `/body-types/${bt.slug}.webp`,
+            recommended: '600 × 400 px',
+          },
+          {
+            key: `order_body_${bt.slug}_mobile`,
+            page: 'Pedido (/order)',
+            section: 'Tipo de cuerpo',
+            label: `Tarjeta ${bt.name} — Foto Móvil`,
+            def: '',
+            recommended: '400 × 400 px',
+          },
+        ]);
       setSlots([...SITE_IMAGE_SLOTS, ...extra]);
     }
     setLoading(false);
