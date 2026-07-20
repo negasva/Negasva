@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@paypal/react-paypal-js": "^10.1.2",
-    "@supabase/supabase-js": "^2.110.3",
+    "@supabase/supabase-js": "^2.110.7",
     "@upstash/ratelimit": "^2.0.8",
     "@upstash/redis": "^1.38.0",
     "autoprefixer": "^10.5.4",
