@@ -12,7 +12,7 @@
     "@paypal/react-paypal-js": "^10.3.0",
     "@supabase/supabase-js": "^2.111.0",
     "@upstash/ratelimit": "^2.0.8",
-    "@upstash/redis": "^1.38.0",
+    "@upstash/redis": "^1.38.1",
     "autoprefixer": "^10.5.4",
     "browser-image-compression": "^2.0.2",
     "lucide-react": "^1.28.0",
